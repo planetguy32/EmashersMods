@@ -313,6 +313,7 @@ public class SocketsMod
 		ModuleRegistry.registerModule(new ModPressurizer(95));
 		ModuleRegistry.registerModule(new ModRangeSelector(96));
 		if(enableHusher) ModuleRegistry.registerModule(new ModHusher(97));
+		ModuleRegistry.registerModule(new ModStirlingGenerator(98));
 		
 		//Register 3rd party modules
 		for(IModuleRegistrationManager reg : ModuleRegistry.registers)

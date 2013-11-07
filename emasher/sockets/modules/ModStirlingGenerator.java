@@ -50,8 +50,13 @@ public class ModStirlingGenerator extends SocketModule {
 	@Override
 	public void addRecipe()
 	{
-		//CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ggg", "u u", " b ", Character.valueOf('h'), Block.hopperBlock, Character.valueOf('u'), Item.bucketEmpty,
-		//		Character.valueOf('g'), Block.thinGlass, Character.valueOf('b'), SocketsMod.blankSide));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID),
+				"g g",
+				" F ",
+				" b ",
+				Character.valueOf('g'), Block.stone,
+				Character.valueOf('F'), Block.furnaceIdle,
+				Character.valueOf('b'), SocketsMod.blankSide));
 	}
 
 	@Override
@@ -61,7 +66,7 @@ public class ModStirlingGenerator extends SocketModule {
 	public boolean hasInventoryIndicator() { return true; }
 
 	@Override
-	public boolean isMachine() { return true; }
+	public boolean isMachine() { return false; }
 
 	@Override
 	public boolean canBeInstalled(SocketTileAccess ts, ForgeDirection side)

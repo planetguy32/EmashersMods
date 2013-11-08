@@ -28,7 +28,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import emasher.core.*;
 
-@Mod(modid="emasherdefense", name="Defense", version="1.2.1.0", dependencies = "required-after:emashercore")
+@Mod(modid="emasherdefense", name="Defense", version="1.2.1.1", dependencies = "required-after:emashercore")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false)
 public class EmasherDefense
 {

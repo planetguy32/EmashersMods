@@ -125,14 +125,15 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	
 	public void updateEntity()
 	{
+		/*if(worldObj.getBlockId(xCoord, yCoord, zCoord) != SocketsMod.socket.blockID && worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) instanceof TileSocket)
+		{
+			worldObj.removeBlockTileEntity(xCoord, yCoord, zCoord);
+			return;
+		}*/
+		
+		
 		if(! worldObj.isRemote)
 		{
-			if(worldObj.getBlockId(xCoord, yCoord, zCoord) != SocketsMod.socket.blockID)
-			{
-				worldObj.removeBlockTileEntity(xCoord, yCoord, zCoord);
-				return;
-			}
-			
 			ForgeDirection d;
 			SocketModule m;
 			SideConfig c;
@@ -203,6 +204,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	@Override
 	public void invalidate()
 	{
+		super.invalidate();
 		MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
 		addedToEnergyNet = false;
 	}
@@ -210,6 +212,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	@Override
 	public void onChunkUnload()
 	{
+		super.onChunkUnload();
 		MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
 		addedToEnergyNet = false;
 	}
@@ -252,7 +255,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		if(this.worldObj.isRemote)
 		{
 			for(int i = 0; i < 6; i++)
-			emasher.sockets.client.ClientPacketHandler.instance.requestSideData(this, (byte)i);
+				emasher.sockets.client.ClientPacketHandler.instance.requestSideData(this, (byte)i);
 			for(int i = 0; i < 3; i++)
 			{
 				emasher.sockets.client.ClientPacketHandler.instance.requestInventoryData(this, (byte)i);

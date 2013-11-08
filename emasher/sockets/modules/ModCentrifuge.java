@@ -138,7 +138,7 @@ public class ModCentrifuge extends SocketModule
 				if(re != null)
 				{
 					int num = ts.forceOutputItem(re.getOutput().copy());
-					if(num != 0) config.rsControl[2] = true;
+					if(num == 0) config.rsControl[2] = true;
 					else
 					{
 						config.rsControl[2] = false;
@@ -156,7 +156,7 @@ public class ModCentrifuge extends SocketModule
 				if(re != null && (re.shouldOuputSecondary(ts.worldObj.rand) || config.rsControl[2]))
 				{
 					int num = ts.forceOutputItem(re.getSecondaryOutput().copy());
-					if(num != 0) config.rsControl[2] = true;
+					if(num == 0) config.rsControl[2] = true;
 					else config.rsControl[2] = false;
 				}
 			}

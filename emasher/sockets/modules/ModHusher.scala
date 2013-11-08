@@ -80,6 +80,8 @@ class ModHusher(id: Int) extends SocketModule(id, "sockets:husher")
 						{
 							if(block.getBlockHardness(ts.worldObj, tile.x, tile.y, tile.z) < Block.stone.blockHardness) canExtractBlock = true;
 							else if(pressure && tile.y > 32) canExtractBlock = true;
+							
+							if(block.getBlockHardness(ts.worldObj, tile.x, tile.y, tile.z) >= Block.obsidian.blockHardness) canExtractBlock = false;
 						}
 						else if(f.fluidID == SocketsMod.fluidSlickwater.getID)
 						{

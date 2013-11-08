@@ -3,10 +3,7 @@ package emasher.core;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -67,8 +64,8 @@ import buildcraft.api.recipes.*;
 
 import java.util.*;
 
-import tconstruct.library.TConstructRegistry;
-import tconstruct.library.crafting.Smeltery;
+/*import tconstruct.library.TConstructRegistry;
+import tconstruct.library.crafting.Smeltery;*/
 
 
 @Mod(modid="emashercore", name="Emasher Resource", version="1.2.1.4")
@@ -280,7 +277,7 @@ public class EmasherCore
 		hempPantsID = config.get(Configuration.CATEGORY_ITEM, "Hemp Pants ID",3044).getInt();
 		hempShoesID = config.get(Configuration.CATEGORY_ITEM, "Hemp Shoes ID",3045).getInt();
 		
-		retroGen = config.get(Configuration.CATEGORY_GENERAL, "A: Retro Gen Ores", true).getBoolean(true);
+		retroGen = config.get(Configuration.CATEGORY_GENERAL, "A: Retro Gen Ores", false).getBoolean(false);
 		
 		spawnAlgae = config.get(Configuration.CATEGORY_GENERAL, "C: Generate Algae", true).getBoolean(true);
 		spawnHemp = config.get(Configuration.CATEGORY_GENERAL, "C: Generate Hemp", true).getBoolean(true);
@@ -588,7 +585,7 @@ public class EmasherCore
 		FurnaceRecipes.smelting().addSmelting(ore.blockID, 7, new ItemStack(gem, 1, 2), 1.0F);
 		
 		//TC Support
-		if(Loader.isModLoaded("TConstruct"))
+		/*if(Loader.isModLoaded("TConstruct"))
 		{
 			ItemStack al = TConstructRegistry.getItemStack("ingotAluminum");
 			FluidStack l = Smeltery.getSmelteryResult(al);
@@ -600,7 +597,7 @@ public class EmasherCore
 			l = l.copy();
 			l.amount = 144 * 9;
 			Smeltery.addMelting(new ItemStack(metal, 1, 0), 400, l);
-		}
+		}*/
 		
 			
 		if(this.spawnAlgae) GameRegistry.registerWorldGenerator(scumGenerator);

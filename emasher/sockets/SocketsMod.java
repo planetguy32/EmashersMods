@@ -43,8 +43,9 @@ import emasher.sockets.client.ClientPacketHandler;
 import emasher.sockets.items.*;
 import emasher.sockets.modules.*;
 import emasher.sockets.client.ClientProxy;
+import emasher.sockets.pipes.*;
 
-@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.5.0", dependencies = "required-after:emashercore")
+@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.5.1", dependencies = "required-after:emashercore")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false,
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = ClientPacketHandler.class),
@@ -66,6 +67,9 @@ public class SocketsMod
 	public static Block paintedPlanks;
 	public static Block groundLimestone;
 	public static Block blockSlickwater;
+	
+	public static Block blockStartPipe;
+	public static Block blockFluidPipe;
 	
 	//Fluids
 	
@@ -105,6 +109,9 @@ public class SocketsMod
 	public int paintCanID;
 	public int dustsID;
 	public int slickBucketID;
+	
+	public int fluidPipeID;
+	public int startPipeID;
 	
 	
 	public boolean vanillaCircuitRecipe;
@@ -193,6 +200,9 @@ public class SocketsMod
 		groundLimestoneID = config.get(Configuration.CATEGORY_BLOCK, "Ground Limestone ID", 4073).getInt();
 		slickwaterID = config.get(Configuration.CATEGORY_BLOCK, "Slickwater Block ID", 4074).getInt();
 		
+		startPipeID = config.get(Configuration.CATEGORY_BLOCK, "Start Pipe ID", 4075).getInt();
+		fluidPipeID = config.get(Configuration.CATEGORY_BLOCK, "Fluid Pipe ID", 4076).getInt();
+		
 		moduleID = config.get(Configuration.CATEGORY_ITEM, "Module ID", 4170).getInt();
 		remoteID = config.get(Configuration.CATEGORY_ITEM, "Remote ID", 4172).getInt();
 		blankID = config.get(Configuration.CATEGORY_ITEM, "Blank Module ID", 4171).getInt();
@@ -243,6 +253,8 @@ public class SocketsMod
 	@EventHandler
 	public void load(FMLInitializationEvent event) 
 	{
+		System.out.println("TEST3");
+		
 		MinecraftForge.EVENT_BUS.register(new Util());
 		MinecraftForge.EVENT_BUS.register(new BucketEventHandler());
 		
@@ -320,7 +332,7 @@ public class SocketsMod
 			reg.registerModules();
 		}
 		
-		socket = new BlockSocket(socketID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("modular_socket");;
+		socket = new BlockSocket(socketID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("modular_socket");
 		//GameRegistry.registerBlock(socket, "modular_socket");
 		LanguageRegistry.addName(socket, "Modular Socket");
 		GameRegistry.registerTileEntity(TileSocket.class, "modular_socket");
@@ -330,6 +342,18 @@ public class SocketsMod
 		GameRegistry.registerBlock(tempRS, "tempRS");
 		LanguageRegistry.addName(tempRS, "TempRS");
 		GameRegistry.registerTileEntity(TileTempRS.class, "TempRS");
+		
+		blockStartPipe = new BlockStartPipe(startPipeID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("start_pipe");
+		GameRegistry.registerBlock(blockStartPipe, "start_pipe");
+		LanguageRegistry.addName(blockStartPipe, "Acceptor Pipe");
+		GameRegistry.registerTileEntity(TileStartPipe.class, "start_pipe");
+		blockStartPipe.setCreativeTab(tabSockets);
+		
+		blockFluidPipe = new BlockFluidPipe(fluidPipeID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("fluid_pipe");
+		GameRegistry.registerBlock(blockFluidPipe, "fluid_pipe");
+		LanguageRegistry.addName(blockFluidPipe, "Fluid Pipe");
+		GameRegistry.registerTileEntity(TileFluidPipe.class, "fluid_pipe");
+		blockFluidPipe.setCreativeTab(tabSockets);
 		
 		paintedPlanks = (new BlockPaintedWood(paintedPlankID, 0, Material.wood))
 				.setHardness(2.0F).setResistance(5.0F).setStepSound(Block.soundWoodFootstep)
@@ -503,6 +527,8 @@ public class SocketsMod
 		GrinderRecipeRegistry.registerRecipe("oreEmery", new ItemStack(EmasherCore.gem, 4, 0));
 		GrinderRecipeRegistry.registerRecipe("oreRuby", new ItemStack(EmasherCore.gem, 2, 1));
 		GrinderRecipeRegistry.registerRecipe("oreSapphire", new ItemStack(EmasherCore.gem, 2, 2));
+		
+		GrinderRecipeRegistry.registerRecipe(new ItemStack(Block.cobblestone), new ItemStack(Block.sand));
 		
 		//Multi Smelter
 		

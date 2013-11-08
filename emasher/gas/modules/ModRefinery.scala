@@ -33,7 +33,7 @@ class ModRefinery(id: Int) extends SocketModule(id, "gascraft:refinery", "gascra
 	override def addRecipe
 	{
 		CraftingManager.getInstance().getRecipeList().asInstanceOf[List[Object]].add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "dpd", "dud", " b ", Character.valueOf('p'), EmasherCore.psu, Character.valueOf('d'), Item.diamond,
-				Character.valueOf('u'), Item.bucketEmpty, Character.valueOf('f'), Block.glass, Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 5)));
+				Character.valueOf('u'), Item.bucketEmpty, Character.valueOf('f'), Block.glass, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	override def getCurrentTexture(config: SideConfig):

@@ -68,7 +68,7 @@ import java.util.*;
 import tconstruct.library.crafting.Smeltery;*/
 
 
-@Mod(modid="emashercore", name="Emasher Resource", version="1.2.1.4")
+@Mod(modid="emashercore", name="Emasher Resource", version="1.2.1.6")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false)
 public class EmasherCore 
 {
@@ -668,11 +668,11 @@ public class EmasherCore
 		
 		Registry.addItem("hemp", hempPlant);
 		
-		GameRegistry.addRecipe(new ItemStack(Item.silk, 1), new Object[]
+		GameRegistry.addRecipe(new ItemStack(Item.silk, 3), new Object[]
 		{
 			"#  ", " # ", "  #", Character.valueOf('#'), hempPlant
 		});
-		GameRegistry.addRecipe(new ItemStack(Item.paper, 1), new Object[]
+		GameRegistry.addRecipe(new ItemStack(Item.paper, 3), new Object[]
 		{
 			"###", Character.valueOf('#'), hempPlant
 		});

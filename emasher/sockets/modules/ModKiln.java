@@ -90,7 +90,7 @@ public class ModKiln extends SocketModule
 			int zo = ts.zCoord + side.offsetZ;
 			if(ts.worldObj.getBlockId(xo, yo, zo) == SocketsMod.groundLimestone.blockID)
 			{
-				if(ts.powerHandler.getEnergyStored() >= 100.0F)
+				if(ts.getEnergyStored() >= 1000)
 				{
 					ItemStack stack = ts.sideInventory.getStackInSlot(side.ordinal());
 					ts.worldObj.setBlockMetadataWithNotify(xo, yo, zo, 1, 3);
@@ -105,7 +105,7 @@ public class ModKiln extends SocketModule
 						stack.stackSize++;
 					}
 					
-					ts.powerHandler.useEnergy(100.0F, 100.0F, true);
+					ts.useEnergy(1000, false);
 				}
 				else
 				{

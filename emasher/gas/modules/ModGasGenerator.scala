@@ -30,7 +30,7 @@ class ModGasGenerator(id: Int) extends SocketModule(id, "gascraft:gasGenerator",
 	override def getIndicatorKey(l: List[Object])
 	{
 		l.add(SocketsMod.PREF_BLUE + "Fuel Tank");
-		l.add(SocketsMod.PREF_AQUA + "Outputs Variable MJ/t");
+		l.add(SocketsMod.PREF_AQUA + "Outputs Variable f/t");
 	}
 	
 	override def getCurrentTexture(config: SideConfig):
@@ -127,9 +127,9 @@ class ModGasGenerator(id: Int) extends SocketModule(id, "gascraft:gasGenerator",
 				{
 					//Check if the internal capacitor can hold any more energy
 					
-					if(ts.powerHandler.getMaxEnergyStored() - ts.powerHandler.getEnergyStored() >= is.itemID)
+					if(ts.getMaxEnergyStored() - ts.getEnergyStored() >= is.itemID)
 					{
-						ts.powerHandler.addEnergy(is.itemID);
+						ts.addEnergy(is.itemID, false);
 						is.setItemDamage(is.getItemDamage - 1);
 						if(is.getItemDamage() <= 0)
 						{
@@ -151,7 +151,7 @@ class ModGasGenerator(id: Int) extends SocketModule(id, "gascraft:gasGenerator",
                     {
                     	fluidRec = GeneratorFuelRegistry.getFuel(theFluid.getFluid.getName);
                     	if(GeneratorFuelRegistry.isFuel(theFluid.getFluid.getName) && theFluid.amount >= fluidRec.amount 
-                    			&& ts.powerHandler.getMaxEnergyStored() - ts.powerHandler.getEnergyStored() >= GeneratorFuelRegistry.getEnergyPerTick(theFluid.getFluid.getName))
+                    			&& ts.getMaxEnergyStored() - ts.getEnergyStored() >= GeneratorFuelRegistry.getEnergyPerTick(theFluid.getFluid.getName))
                     	{
                     		var newStack = new ItemStack(GeneratorFuelRegistry.getEnergyPerTick(theFluid.getFluid.getName), 1, GeneratorFuelRegistry.getBurnTime(theFluid.getFluid.getName));
                     		ts.sideInventory.setInventorySlotContents(side.ordinal, newStack);
@@ -174,7 +174,7 @@ class ModGasGenerator(id: Int) extends SocketModule(id, "gascraft:gasGenerator",
                     {
                     	fluidRec = GeneratorFuelRegistry.getFuel(theFluid.getFluid.getName);
                     	if(GeneratorFuelRegistry.isFuel(theFluid.getFluid.getName) && theFluid.amount >= fluidRec.amount 
-                    			&& ts.powerHandler.getMaxEnergyStored() - ts.powerHandler.getEnergyStored() >= GeneratorFuelRegistry.getEnergyPerTick(theFluid.getFluid.getName))
+                    			&& ts.getMaxEnergyStored() - ts.getEnergyStored() >= GeneratorFuelRegistry.getEnergyPerTick(theFluid.getFluid.getName))
                     	{
                     		var newStack = new ItemStack(GeneratorFuelRegistry.getEnergyPerTick(theFluid.getFluid.getName), 1, GeneratorFuelRegistry.getBurnTime(theFluid.getFluid.getName));
                     		ts.sideInventory.setInventorySlotContents(side.ordinal, newStack);
@@ -186,7 +186,7 @@ class ModGasGenerator(id: Int) extends SocketModule(id, "gascraft:gasGenerator",
 				}
 				else
 				{
-					if(ts.powerHandler.getMaxEnergyStored() - ts.powerHandler.getEnergyStored() >= is.itemID) newState = true;
+					if(ts.getMaxEnergyStored() - ts.getEnergyStored() >= is.itemID) newState = true;
 				}
 			}
 			

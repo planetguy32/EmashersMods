@@ -12,27 +12,31 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids._;
+import emasher.sockets.client;
 
-class BlockFluidPipe(id: Int) extends BlockContainer(id, Material.iron)
-{
-	@SideOnly(Side.CLIENT)
-	var testIcon:Icon = null;
-	
+class BlockFluidPipe(id: Int) extends BlockPipeBase(id, true)
+{	
 	override def createNewTileEntity(world: World):TileEntity = new TileFluidPipe();
+	
+	var colIcon:Array[Icon] = new Array(16);
+	
+	def getColIcon(i: Int) = colIcon(i);
 	
 	@SideOnly(Side.CLIENT)
 	override def registerIcons(ir: IconRegister)
 	{
-		this.blockIcon = ir.registerIcon("sockets:fluidPipe");
-		testIcon = ir.registerIcon("cobblestone");
+		for(i <- 0 to 16)
+		{
+			textures(i) = ir.registerIcon("sockets:fPipe" + i);
+			
+			if(i < 16)
+			{
+				colIcon(i) = ir.registerIcon("sockets:paint" + i);
+			}
+		}
 		
+		this.blockIcon = textures(0);
 	}
 	
-	@SideOnly(Side.CLIENT)
-	override def getIcon(side: Int, meta:Int)
-	:Icon =
-	{
-		if(meta == 0) return blockIcon;
-		else return testIcon;
-	}
 }

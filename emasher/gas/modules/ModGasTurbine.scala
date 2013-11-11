@@ -25,7 +25,7 @@ class ModGasTurbine(id: Int) extends SocketModule(id, "gascraft:gasTurbine", "ga
 	override def getIndicatorKey(l: List[Object])
 	{
 		l.add(SocketsMod.PREF_BLUE + "Fuel Tank");
-		l.add(SocketsMod.PREF_AQUA + "Outputs 1 MJ/t");
+		l.add(SocketsMod.PREF_AQUA + "Outputs 10 f/t");
 	}
 	
 	override def getCurrentTexture(config: SideConfig):
@@ -102,9 +102,9 @@ class ModGasTurbine(id: Int) extends SocketModule(id, "gascraft:gasTurbine", "ga
 				{
 					//Check if the internal capacitor can hold any more energy
 					
-					if(ts.powerHandler.getMaxEnergyStored() - ts.powerHandler.getEnergyStored() >= is.itemID)
+					if(ts.getMaxEnergyStored() - ts.getEnergyStored() >= 10)
 					{
-						ts.powerHandler.addEnergy(0.25F);
+						ts.addEnergy(10, false);
 						is.setItemDamage(is.getItemDamage - 1);
 						if(is.getItemDamage() <= 0)
 						{
@@ -123,7 +123,7 @@ class ModGasTurbine(id: Int) extends SocketModule(id, "gascraft:gasTurbine", "ga
 					var theFluid = ts.getFluidInTank(config.tank);
                     if(theFluid != null && theFluid.getFluid.isGaseous())
                     {
-                    	if(theFluid.amount >= 1000 && ts.powerHandler.getMaxEnergyStored() - ts.powerHandler.getEnergyStored() >= 0.25)
+                    	if(theFluid.amount >= 1000 && ts.getMaxEnergyStored() - ts.getEnergyStored() >= 10)
                     	{
                     		var newStack = new ItemStack(1, 1, 80);
                     		ts.sideInventory.setInventorySlotContents(side.ordinal, newStack);
@@ -143,7 +143,7 @@ class ModGasTurbine(id: Int) extends SocketModule(id, "gascraft:gasTurbine", "ga
 					var theFluid = ts.getFluidInTank(config.tank);
                     if(theFluid != null && theFluid.getFluid.isGaseous())
                     {
-                    	if(theFluid.amount >= 1000 && ts.powerHandler.getMaxEnergyStored() - ts.powerHandler.getEnergyStored() >= 0.25)
+                    	if(theFluid.amount >= 1000 && ts.getMaxEnergyStored() - ts.getEnergyStored() >= 10)
                     	{
                     		var newStack = new ItemStack(1, 1, 80);
                     		ts.sideInventory.setInventorySlotContents(side.ordinal, newStack);
@@ -155,7 +155,7 @@ class ModGasTurbine(id: Int) extends SocketModule(id, "gascraft:gasTurbine", "ga
                 }
 				else
 				{
-					if(ts.powerHandler.getMaxEnergyStored() - ts.powerHandler.getEnergyStored() >= is.itemID) newState = true;
+					if(ts.getMaxEnergyStored() - ts.getEnergyStored() >= is.itemID) newState = true;
 				}
 			}
 			

@@ -37,7 +37,7 @@ public class ModWaterMill extends SocketModule
 	@Override
 	public void getIndicatorKey(List l)
 	{
-		l.add(SocketsMod.PREF_AQUA + "Generates 1 MJ/t");
+		l.add(SocketsMod.PREF_AQUA + "Generates 10 f/t");
 		l.add("Can only be installed on the sides of a socket");
 		l.add("Only one can be installed per socket");
 		l.add("Only generates power when in some sort of river biome");
@@ -73,7 +73,7 @@ public class ModWaterMill extends SocketModule
 	@Override
 	public void updateSide(SideConfig config, SocketTileAccess ts, ForgeDirection side)
 	{
-			if(ts.powerHandler.getMaxEnergyStored() - ts.powerHandler.getEnergyStored() >= 1.0F)
+			if(ts.getMaxEnergyStored() - ts.getEnergyStored() >= 10)
 			{
 				int xo = ts.xCoord + side.offsetX;
 				int yo = ts.yCoord + side.offsetY;
@@ -86,7 +86,7 @@ public class ModWaterMill extends SocketModule
 					String biomeName = ts.worldObj.getBiomeGenForCoords(xo, zo).biomeName;
 					if(biomeID == BiomeGenBase.river.biomeID || biomeID == BiomeGenBase.frozenRiver.biomeID || biomeName.contains("iver") || biomeName.contains("tream"))
 						if(ts.yCoord <= 64 && ts.yCoord >= 40)
-							if(side != ForgeDirection.UP && side != ForgeDirection.DOWN) ts.powerHandler.getPowerReceiver().receiveEnergy(PowerHandler.Type.PIPE, 1.0F, side);
+							if(side != ForgeDirection.UP && side != ForgeDirection.DOWN) ts.addEnergy(10, false);
 				}
 			}
 	}

@@ -50,9 +50,6 @@ public class ModMultiInput extends SocketModule
 	}
 	
 	@Override
-	public boolean acceptsEnergy(SideConfig config) { return true; }
-	
-	@Override
 	public boolean hasTankIndicator() { return true; }
 	
 	@Override
@@ -68,20 +65,36 @@ public class ModMultiInput extends SocketModule
 	public boolean isEnergyInterface(SideConfig config) { return true; }
 	
 	@Override
-	public int getPowerRequested(SideConfig config, SocketTileAccess ts)
+	public int receiveEnergy(int amount, boolean simulate, SideConfig config, SocketTileAccess ts)
 	{
-		boolean canIntake = true;
+		boolean allOff = true;
 		
-		for(int i = 0; i < 3; i++)
-		{
-			if(config.rsControl[i] && ts.getRSControl(i)) canIntake = false;
-			if(config.rsLatch[i] && ts.getRSLatch(i)) canIntake = false;
-		}
-		
-		if(canIntake)
-		{
-			return 100;
-		}
+			for(int i = 0; i < 3; i++)
+			{
+				if(config.rsControl[i])
+				{
+					if(ts.getRSControl(i))
+					{
+						return ts.addEnergy(amount, simulate);
+					}
+					allOff = false;
+				}
+				
+				if(config.rsLatch[i])
+				{
+					if(ts.getRSLatch(i))
+					{
+						return ts.addEnergy(amount, simulate);
+					}
+					allOff = false;
+				}
+			}
+			
+			if(allOff)
+			{
+				return ts.addEnergy(amount, simulate);
+				
+			}
 		
 		return 0;
 	}
@@ -92,12 +105,6 @@ public class ModMultiInput extends SocketModule
 	@Override
 	public boolean canInsertFluid() { return true; }
 	
-	/*@Override
-	public ILiquidTank getAssociatedTank(SideConfig config, SocketTileAccess ts)
-	{
-		if(config.tank == -1) return null;
-		return ts.tanks[config.tank];
-	}*/
 	
 	@Override
 	public int fluidFill(FluidStack fluid, boolean doFill, SideConfig config, SocketTileAccess ts, ForgeDirection side)
@@ -146,49 +153,6 @@ public class ModMultiInput extends SocketModule
 		return 0;
 	}
 	
-	/*@Override
-	public void updateSide(SideConfig config, SocketTileAccess ts, ForgeDirection side)
-	{
-		int xo = ts.xCoord + side.offsetX;
-		int yo = ts.yCoord + side.offsetY;
-		int zo = ts.zCoord + side.offsetZ;
-		
-		TileEntity t = ts.worldObj.getBlockTileEntity(xo, yo, zo);
-		
-		if(t != null && t instanceof TileEntityHopper)
-		{	
-			TileEntityHopper th = (TileEntityHopper)t;
-			
-			boolean canIntake = true;
-			
-			for(int i = 0; i < 3; i++)
-			{
-				if(config.rsControl[i] && ts.getRSControl(i)) canIntake = false;
-				if(config.rsLatch[i] && ts.getRSLatch(i)) canIntake = false;
-			}
-			
-			int direction = BlockHopper.getDirectionFromMetadata(ts.worldObj.getBlockMetadata(xo, yo, zo));
-			if(ForgeDirection.getOrientation(direction).getOpposite() == side && canIntake)
-			{
-				for (int i = 0; i < th.getSizeInventory(); ++i)
-	            {
-	                if (th.getStackInSlot(i) != null)
-	                {
-	                    ItemStack itemstack = th.getStackInSlot(i).copy();
-	                    itemstack.stackSize = 1;
-	                    if(config.inventory != -1)
-	                    {
-	                    	int added = ts.addItemInternal(itemstack, true, config.inventory);
-	                    	
-	                    	itemstack.stackSize = th.getStackInSlot(i).stackSize - added;
-	                    	if(itemstack.stackSize <= 0) itemstack = null;
-	                    	
-	                    	th.setInventorySlotContents(i, itemstack);
-	                    }
-	                }
-	            }
-			}
-		}
-	}*/
+	
 
 }

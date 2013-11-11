@@ -5,6 +5,7 @@ import java.util.List;
 import ic2.api.energy.tile.IEnergyAcceptor;
 import buildcraft.api.power.IPowerReceptor;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -34,7 +35,7 @@ public class ModEnergyExpansion extends SocketModule
 	@Override
 	public void getToolTip(List l)
 	{
-		l.add("Adds 100 000 MJ");
+		l.add("Adds 1 000 000 f");
 		l.add("of extra energy storage");
 	}
 	
@@ -47,8 +48,8 @@ public class ModEnergyExpansion extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "pdp", "ggg", "pbp", Character.valueOf('g'), Item.ingotGold, Character.valueOf('p'), EmasherCore.psu,
-				Character.valueOf('d'), Item.diamond, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "pgp", "grg", "pgp", Character.valueOf('g'), Item.redstone, Character.valueOf('p'), new ItemStack(SocketsMod.module, 1, 74),
+				Character.valueOf('r'), Block.blockGold);
 	}
 	
 	@Override
@@ -57,20 +58,14 @@ public class ModEnergyExpansion extends SocketModule
 	/*@Override
 	public boolean hasTankIndicator() {return true; }*/
 	
-	/*@Override
+	@Override
 	public boolean hasRSIndicator() { return true; }
 	
 	@Override
-	public boolean hasLatchIndicator() { return true; }*/
+	public boolean hasLatchIndicator() { return true; }
 	
 	@Override
 	public boolean isEnergyInterface(SideConfig config) { return config.meta != 0; }
-	
-	@Override
-	public boolean acceptsEnergy(SideConfig config) { return config.meta == 1; }
-	
-	@Override
-	public boolean outputsEnergy(SideConfig config) { return config.meta == 2; }
 	
 	@Override
 	public void onGenericRemoteSignal(SocketTileAccess ts, SideConfig config, ForgeDirection side)
@@ -78,25 +73,7 @@ public class ModEnergyExpansion extends SocketModule
 		config.meta++;
 		if(config.meta == 3) config.meta = 0;
 		ts.sendClientSideState(side.ordinal());
-	}
-	
-	@Override
-	public int getPowerRequested(SideConfig config, SocketTileAccess ts)
-	{
-		boolean canIntake = true;
-		
-		for(int i = 0; i < 3; i++)
-		{
-			if(config.rsControl[i] && ts.getRSControl(i)) canIntake = false;
-			if(config.rsLatch[i] && ts.getRSLatch(i)) canIntake = false;
-		}
-		
-		if(canIntake && acceptsEnergy(config))
-		{
-			return 100;
-		}
-		
-		return 0;
+		ts.updateAdj(side);
 	}
 	
 	@Override
@@ -104,7 +81,7 @@ public class ModEnergyExpansion extends SocketModule
 	{
 		
 		boolean allOff = true;
-		if(outputsEnergy(config))
+		if(config.meta == 2)
 		{
 			for(int i = 0; i < 3; i++)
 			{
@@ -112,7 +89,7 @@ public class ModEnergyExpansion extends SocketModule
 				{
 					if(ts.getRSControl(i))
 					{
-						outputEnergy(config, ts, side);
+						ts.outputEnergy(1000, side);
 						return;
 					}
 					allOff = false;
@@ -122,8 +99,7 @@ public class ModEnergyExpansion extends SocketModule
 				{
 					if(ts.getRSLatch(i))
 					{
-						outputEnergy(config, ts, side);
-						
+						ts.outputEnergy(1000, side);
 						return;
 					}
 					allOff = false;
@@ -132,35 +108,96 @@ public class ModEnergyExpansion extends SocketModule
 			
 			if(allOff)
 			{
-				outputEnergy(config, ts, side);
+				ts.outputEnergy(1000, side);
 				
 			}
 		}
 			
 	}
 	
-	public void outputEnergy(SideConfig config, SocketTileAccess ts, ForgeDirection side)
+	@Override
+	public int receiveEnergy(int amount, boolean simulate, SideConfig config, SocketTileAccess ts)
 	{
-		int outputs;
-		switch(config.tank)
+		boolean allOff = true;
+		if(config.meta == 1)
 		{
-		case 0: outputs = 32; break;
-		case 1: outputs = 128; break;
-		default: outputs = 512;
+			for(int i = 0; i < 3; i++)
+			{
+				if(config.rsControl[i])
+				{
+					if(ts.getRSControl(i))
+					{
+						return ts.addEnergy(amount, simulate);
+					}
+					allOff = false;
+				}
+				
+				if(config.rsLatch[i])
+				{
+					if(ts.getRSLatch(i))
+					{
+						return ts.addEnergy(amount, simulate);
+					}
+					allOff = false;
+				}
+			}
+			
+			if(allOff)
+			{
+				return ts.addEnergy(amount, simulate);
+				
+			}
 		}
 		
-		ts.outputEnergy(100, outputs, side);
+		return 0;
+	}
+	
+	@Override
+	public int extractEnergy(int amount, boolean simulate, SideConfig config, SocketTileAccess ts)
+	{
+		boolean allOff = true;
+		if(config.meta == 2)
+		{
+			for(int i = 0; i < 3; i++)
+			{
+				if(config.rsControl[i])
+				{
+					if(ts.getRSControl(i))
+					{
+						return ts.useEnergy(amount, simulate);
+					}
+					allOff = false;
+				}
+				
+				if(config.rsLatch[i])
+				{
+					if(ts.getRSLatch(i))
+					{
+						return ts.useEnergy(amount, simulate);
+					}
+					allOff = false;
+				}
+			}
+			
+			if(allOff)
+			{
+				return ts.addEnergy(amount, simulate);
+				
+			}
+		}
+		
+		return 0;
 	}
 	
 	@Override
 	public void init(SocketTileAccess ts, SideConfig config, ForgeDirection side)
 	{
-		ts.setMaxEnergyStored(ts.getMaxEnergyStored() + 100000);
+		ts.setMaxEnergyStored(ts.getMaxEnergyStored() + 1000000);
 	}
 	
 	@Override
 	public void onRemoved(SocketTileAccess ts, SideConfig config, ForgeDirection side)
 	{
-		ts.setMaxEnergyStored(ts.getMaxEnergyStored() - 100000);
+		ts.setMaxEnergyStored(ts.getMaxEnergyStored() - 1000000);
 	}
 }

@@ -15,6 +15,7 @@ import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 import emasher.api.SideConfig;
 import emasher.api.SocketTileAccess;
+import emasher.sockets.pipes.TilePipeBase;
 
 public class PacketHandler implements IPacketHandler
 {
@@ -34,7 +35,7 @@ public class PacketHandler implements IPacketHandler
 					int x = toInteger(packet.data, 1);
 					int y = toInteger(packet.data, 5);
 					int z = toInteger(packet.data, 9);
-					int side = packet.data[13];
+					int side = packet.data[17];
 					dimID = toInteger(packet.data, 13);
 					
 					World world = ((EntityPlayer) player).worldObj;
@@ -51,7 +52,7 @@ public class PacketHandler implements IPacketHandler
 					int x = toInteger(packet.data, 1);
 					int y = toInteger(packet.data, 5);
 					int z = toInteger(packet.data, 9);
-					int inventory = packet.data[13];
+					int inventory = packet.data[17];
 					dimID = toInteger(packet.data, 13);
 					
 					World world = ((EntityPlayer) player).worldObj;
@@ -68,7 +69,7 @@ public class PacketHandler implements IPacketHandler
 					int x = toInteger(packet.data, 1);
 					int y = toInteger(packet.data, 5);
 					int z = toInteger(packet.data, 9);
-					int tank = packet.data[13];
+					int tank = packet.data[17];
 					dimID = toInteger(packet.data, 13);
 					
 					World world = ((EntityPlayer) player).worldObj;
@@ -78,6 +79,21 @@ public class PacketHandler implements IPacketHandler
 						TileSocket ts = (TileSocket)te;
 						
 						SendClientTankSlot(ts, (byte)tank);
+					}
+				}
+				else if(packet.data[0] == 3)
+				{
+					int x = toInteger(packet.data, 1);
+					int y = toInteger(packet.data, 5);
+					int z = toInteger(packet.data, 9);
+					
+					World world = ((EntityPlayer) player).worldObj;
+					TileEntity te = world.getBlockTileEntity(x, y, z);
+					if(te != null && te instanceof TilePipeBase)
+					{
+						TilePipeBase p = (TilePipeBase)te;
+						
+						this.sendClientPipeColour(p);
 					}
 				}
 			}
@@ -177,20 +193,21 @@ public class PacketHandler implements IPacketHandler
 		PacketDispatcher.sendPacketToAllAround(ts.xCoord, ts.yCoord, ts.zCoord, 160, ts.worldObj.provider.dimensionId, new Packet250CustomPayload(networkChannel, out));
 	}
 	
-	public void doClick(SocketTileAccess ts, ForgeDirection side)
+	public void sendClientPipeColour(TilePipeBase p)
 	{
-		byte[] out = new byte[14];
+		byte[] out = new byte[18];
 		
 		out[0] = 3;
-		toByte(out, ts.xCoord, 1);
-		toByte(out, ts.yCoord, 5);
-		toByte(out, ts.zCoord, 9);
-		out[13] = (byte)side.ordinal();
+		toByte(out, p.xCoord, 1);
+		toByte(out, p.yCoord, 5);
+		toByte(out, p.zCoord, 9);
+		toByte(out, p.worldObj.provider.dimensionId, 13);
+		out[17] = (byte)p.colour;
 		
-		//PacketDispatcher.sendPacketToAllInDimension(new Packet250CustomPayload(networkChannel, out), ts.worldObj.provider.dimensionId);
-		PacketDispatcher.sendPacketToAllAround(ts.xCoord, ts.yCoord, ts.zCoord, 160, ts.worldObj.provider.dimensionId, new Packet250CustomPayload(networkChannel, out));
-		
+		PacketDispatcher.sendPacketToAllInDimension(new Packet250CustomPayload(networkChannel, out), p.worldObj.provider.dimensionId);
 	}
+	
+
 	
 	private void toByte(byte[] out, int in, int start)
 	{

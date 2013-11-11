@@ -111,9 +111,9 @@ public class ModCentrifuge extends SocketModule
 					}
 				}
 			}
-			else if(ts.useEnergy(2.0F, false)>= 2.0F && config.meta > 0 && ! config.rsControl[2])
+			else if(ts.useEnergy(20, true)>= 20 && config.meta > 0 && ! config.rsControl[2])
 			{
-				ts.useEnergy(2.0F, true);
+				ts.useEnergy(20, false);
 				config.meta--;
 				if(config.meta == 0) updateClient = true;
 				if(! config.rsControl[0] && config.meta > 0)

@@ -31,7 +31,7 @@ class ModHusher(id: Int) extends SocketModule(id, "sockets:husher")
 	override def getIndicatorKey(l: List[Object])
 	{
 		l.add(SocketsMod.PREF_BLUE + "Fluid Tank");
-		l.add(SocketsMod.PREF_AQUA + "Uses 0 or 24 MJ/t");
+		l.add(SocketsMod.PREF_AQUA + "Uses 0 or 240 f/t");
 		l.add(SocketsMod.PREF_YELLOW + "Outputs to machine output");
 		l.add("See the wiki for further instructions");
 	}
@@ -68,7 +68,7 @@ class ModHusher(id: Int) extends SocketModule(id, "sockets:husher")
 						}
 					}
 					
-					if(ts.powerHandler.getEnergyStored() < 240) pressure = false;
+					if(ts.getEnergyStored() < 240) pressure = false;
 					
 					var tile = getTileToMine(config, ts, side);
 					var canExtractBlock = false;
@@ -107,7 +107,7 @@ class ModHusher(id: Int) extends SocketModule(id, "sockets:husher")
 								}
 							}
 							
-							if(pressure) ts.powerHandler.useEnergy(240, 240, true);
+							if(pressure) ts.useEnergy(240, false);
 							ts.worldObj.removeBlockTileEntity(tile.x, tile.y, tile.z);
 							if(f.fluidID == FluidRegistry.WATER.getID) ts.worldObj.setBlock(tile.x, tile.y, tile.z, Block.waterStill.blockID);
 							else ts.worldObj.setBlock(tile.x, tile.y, tile.z, SocketsMod.blockSlickwater.blockID);

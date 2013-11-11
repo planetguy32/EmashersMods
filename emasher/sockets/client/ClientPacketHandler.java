@@ -16,6 +16,7 @@ import emasher.api.SocketModule;
 import emasher.sockets.SocketsMod;
 import emasher.sockets.TileSocket;
 import emasher.sockets.modules.ModBlockPlacer;
+import emasher.sockets.pipes.TilePipeBase;
 
 public class ClientPacketHandler implements IPacketHandler
 {
@@ -114,19 +115,19 @@ public class ClientPacketHandler implements IPacketHandler
 					int x = toInteger(packet.data, 1);
 					int y = toInteger(packet.data, 5);
 					int z = toInteger(packet.data, 9);
-					int side = (int)packet.data[13];
+					int id = toInteger(packet.data, 13);
+					int colour = packet.data[17];
 					
 					World world = ((EntityPlayer) player).worldObj;
 					TileEntity te = world.getBlockTileEntity(x, y, z);
-					if(te != null && te instanceof TileSocket)
+					if(te != null && te instanceof TilePipeBase)
 					{
-						TileSocket ts = (TileSocket)te;
+						TilePipeBase p = (TilePipeBase)te;
 						
-						SocketModule m = ts.getSide(ForgeDirection.getOrientation(side));
-						if(m instanceof ModBlockPlacer)
-						{
-							((ModBlockPlacer)m).doClick(ts.configs[side], ts, ForgeDirection.getOrientation(side));
-						}
+						p.colour = colour;
+						
+						world.markBlockForUpdate(x, y, z);
+						world.notifyBlockChange(x, y, z, world.getBlockId(x, y, z));
 					}
 				}
 			}
@@ -147,7 +148,7 @@ public class ClientPacketHandler implements IPacketHandler
 		toByte(out, ts.yCoord, 5);
 		toByte(out, ts.zCoord, 9);
 		toByte(out, ts.worldObj.provider.dimensionId, 13);
-		out[13] = side;
+		out[17] = side;
 		
 		PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
 	}
@@ -161,7 +162,7 @@ public class ClientPacketHandler implements IPacketHandler
 		toByte(out, ts.yCoord, 5);
 		toByte(out, ts.zCoord, 9);
 		toByte(out, ts.worldObj.provider.dimensionId, 13);
-		out[13] = inventory;
+		out[17] = inventory;
 		
 		PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
 	}
@@ -175,7 +176,20 @@ public class ClientPacketHandler implements IPacketHandler
 		toByte(out, ts.yCoord, 5);
 		toByte(out, ts.zCoord, 9);
 		toByte(out, ts.worldObj.provider.dimensionId, 13);
-		out[13] = tank;
+		out[17] = tank;
+		
+		PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+	}
+	
+	public void requestPipeColourData(TilePipeBase p)
+	{
+		byte[] out = new byte[17];
+		
+		out[0] = 3;
+		toByte(out, p.xCoord, 1);
+		toByte(out, p.yCoord, 5);
+		toByte(out, p.zCoord, 9);
+		toByte(out, p.worldObj.provider.dimensionId, 13);
 		
 		PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
 	}

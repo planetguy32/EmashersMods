@@ -85,9 +85,9 @@ class ModRefinery(id: Int) extends SocketModule(id, "gascraft:refinery", "gascra
 				
 				if(rec != null)
 				{
-					if(ts.powerHandler.getEnergyStored() > rec.energy && ts.getFluidInTank(config.tank).amount >= rec.ingredient1.amount)
+					if(ts.getEnergyStored() > rec.energy * 10 && ts.getFluidInTank(config.tank).amount >= rec.ingredient1.amount)
 					{
-						ts.powerHandler.useEnergy(rec.energy, rec.energy, true);
+						ts.useEnergy(rec.energy * 10, false);
 						ts.drainInternal(config.tank, rec.ingredient1.amount, true);
 						ts.sideInventory.setInventorySlotContents(side.ordinal, new ItemStack(rec.result.fluidID, 1, rec.result.amount));
 						config.meta = rec.delay;

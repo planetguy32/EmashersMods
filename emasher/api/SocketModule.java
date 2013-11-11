@@ -345,20 +345,22 @@ public abstract class SocketModule
 	public boolean isEnergyInterface(SideConfig config) { return false; }
 	
 	/**
-	 * Returns true iff this module can under certain circumstances output energy to an adjacent tile
+	 * 
+	 * @param from the direction 
+	 * @param maxReceive energy recieved
+	 * @param simulate true iff only a simulation
+	 * @return the amount of energy used
 	 */
-	public boolean outputsEnergy(SideConfig config) { return false; }
+	public int receiveEnergy(int amount, boolean simulate, SideConfig config, SocketTileAccess ts) { return 0; }
 	
 	/**
 	 * 
-	 * Returns true iff this module can under certain circumstances accept energy from an adjacent tile
+	 * @param from the direction
+	 * @param maxExtract energy requested
+	 * @param simulate true iff only a simulation
+	 * @return the amount of energy offered
 	 */
-	public boolean acceptsEnergy(SideConfig config) { return false; }
-	
-	/**
-	 * Returns the amount of power in MJ that this module requests from a connected power network.
-	 */
-	public int getPowerRequested(SideConfig config, SocketTileAccess ts) { return 0; }
+	public int extractEnergy(int maxExtract, boolean simulate, SideConfig config, SocketTileAccess ts) { return 0; }
 	
 	/**
 	 * Returns true iff this module can connect to redstone compatible blocks

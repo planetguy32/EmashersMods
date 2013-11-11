@@ -95,7 +95,7 @@ public class ModStirlingGenerator extends SocketModule {
 		{
 			boolean roomForMoreFuel = ts.sideInventory.getStackInSlot(side.ordinal()) == null;
 			boolean moreFuelAvail = ts.getStackInInventorySlot(config.inventory) != null;
-			boolean canStoreEnergy = ts.powerHandler.getEnergyStored() < ts.powerHandler.getMaxEnergyStored();
+			boolean canStoreEnergy = ts.getEnergyStored() < ts.getMaxEnergyStored();
 
 			if(moreFuelAvail && roomForMoreFuel && canStoreEnergy && config.meta <= 0)
 			{
@@ -116,12 +116,12 @@ public class ModStirlingGenerator extends SocketModule {
 				if((config.tank & HIGH_POWER) != HIGH_POWER)
 				{
 					config.meta--;
-					ts.powerHandler.addEnergy(1.0f);
+					ts.addEnergy(10, false);
 				}
 				else
 				{
 					config.meta -= 2;
-					ts.powerHandler.addEnergy(2.0f);
+					ts.addEnergy(20, false);
 				}
 				if(config.meta == 0)
 				{

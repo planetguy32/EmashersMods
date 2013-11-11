@@ -43,7 +43,7 @@ public class ModMixer extends SocketModule
 		l.add(SocketsMod.PREF_BLUE + "Input Tank");
 		l.add(SocketsMod.PREF_GREEN + "Input Inventory");
 		l.add(SocketsMod.PREF_YELLOW + "Outputs to Machine Output");
-		l.add(SocketsMod.PREF_AQUA + "Requires 1 MJ/tick");
+		l.add(SocketsMod.PREF_AQUA + "Requires 10 f/tick");
 		l.add("Cannot be installed on a socket with other machines");
 	}
 	
@@ -111,9 +111,9 @@ public class ModMixer extends SocketModule
 					}
 				}
 			}
-			else if(ts.useEnergy(1.0F, false)>= 1.0F && config.meta > 0)
+			else if(ts.useEnergy(10, true)>= 10 && config.meta > 0)
 			{
-				ts.useEnergy(1.0F, true);
+				ts.useEnergy(10, false);
 				config.meta--;
 				if(config.meta == 0) updateClient = true;
 				if(! config.rsControl[0] && config.meta > 0)

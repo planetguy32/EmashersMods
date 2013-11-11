@@ -20,4 +20,6 @@ class BlockStartPipe(id: Int) extends BlockContainer(id, Material.iron)
 	{
 		this.blockIcon = ir.registerIcon("sockets:startPipe");
 	}
+	
+	override def canConnectRedstone(world: IBlockAccess, x: Int, y: Int, z: Int, side: Int):Boolean = true;
 }

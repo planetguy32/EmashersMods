@@ -5,7 +5,7 @@ import net.minecraft.nbt._;
 import net.minecraftforge.fluids._;
 import net.minecraftforge.common._;
 
-class TileFluidPipe extends TileEntity
+class TileFluidPipe extends TilePipeBase with IFluidHandler
 {
 	final var CAPACITY:Int = 1000;
 	var tank:FluidTank = new FluidTank(CAPACITY);
@@ -14,6 +14,7 @@ class TileFluidPipe extends TileEntity
 	
 	override def readFromNBT(data: NBTTagCompound)
 	{
+		super.readFromNBT(data);
 		tank.readFromNBT(data);
 		if(data.hasKey("lastFrom"))
 		{
@@ -23,6 +24,7 @@ class TileFluidPipe extends TileEntity
 	
 	override def writeToNBT(data: NBTTagCompound)
 	{
+		super.writeToNBT(data);
 		tank.writeToNBT(data);
 		data.setInteger("lastFrom", lastFrom.ordinal);
 	}
@@ -38,7 +40,7 @@ class TileFluidPipe extends TileEntity
 				
 				var order = randOrd;
 				
-				if(tank.getFluid == null) worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 0, 3);
+				//if(tank.getFluid == null) worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 0, 3);
 				
 				if(tank.getFluid() != null)
 				{
@@ -59,7 +61,7 @@ class TileFluidPipe extends TileEntity
 						yo = yCoord + d.offsetY;
 						zo = zCoord + d.offsetZ;
 						var t:TileEntity = worldObj.getBlockTileEntity(xo, yo, zo);
-						if(t.isInstanceOf[IFluidHandler] && ! t.isInstanceOf[TileStartPipe])
+						if(t.isInstanceOf[IFluidHandler] && ! t.isInstanceOf[TileStartPipe] && ! t.isInstanceOf[TileFluidPipe])
 						{
 							var amnt:Int = t.asInstanceOf[IFluidHandler].fill(d.getOpposite(), tank.drain(CAPACITY, false), true);
 							tank.drain(amnt, true);
@@ -84,7 +86,7 @@ class TileFluidPipe extends TileEntity
 						
 						if(d != lastFrom)
 						{
-							if(t.isInstanceOf[TileFluidPipe])
+							if(t != null && t.isInstanceOf[TileFluidPipe] && (t.asInstanceOf[TileFluidPipe].colour == -1 || colour == -1 || t.asInstanceOf[TileFluidPipe].colour == colour))
 							{
 								var amnt:Int = t.asInstanceOf[TileFluidPipe].fill(d.getOpposite(), tank.drain(CAPACITY, false), true);
 								tank.drain(amnt, true);
@@ -94,51 +96,9 @@ class TileFluidPipe extends TileEntity
 					}
 					
 					lastFrom = ForgeDirection.UNKNOWN;
-					
-					//if(doneDrain || tank.getFluid == null || tank.getFluid.amount <= 0) return;
-					
-					// (3) If adjacent to a start pipe and only one fluid pipe, attempt to place fluid into adjacent fluid pipe
-					
-					/*var fPipes:Int = 0;
-					var sPipe:Boolean = false;
-					var lastFPipe:TileFluidPipe = null;
-					var lastFPipeD: ForgeDirection = ForgeDirection.UNKNOWN;
-					
-					for(i <- 0 to 5)
-					{
-						d = ForgeDirection.getOrientation(i);
-						
-						xo = xCoord + d.offsetX;
-						yo = yCoord + d.offsetY;
-						zo = zCoord + d.offsetZ;
-						var t:TileEntity = worldObj.getBlockTileEntity(xo, yo, zo);
-						
-						if(t.isInstanceOf[TileStartPipe]) sPipe = true;
-						if(t.isInstanceOf[TileFluidPipe])
-						{
-							fPipes += 1;
-							lastFPipe = t.asInstanceOf[TileFluidPipe];
-							lastFPipeD = d;
-						}
-					}
-					
-					if(sPipe && fPipes == 1)
-					{
-						var amnt:Int = lastFPipe.fill(lastFPipeD.getOpposite(), tank.drain(CAPACITY, false), true);
-						tank.drain(amnt, true);
-						//doneDrain = true;
-					}*/
 				}
 			}
 		}
-	}
-	
-	def fill(from: ForgeDirection, resource: FluidStack, doFill: Boolean)
-	:Int =
-	{
-		worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 1, 3);
-		lastFrom = from;
-		tank.fill(resource, doFill);
 	}
 	
 	def randOrd
@@ -162,4 +122,35 @@ class TileFluidPipe extends TileEntity
 		
 		return result;
 	}
+	
+	//IFuludHandler
+	
+	override def fill(from: ForgeDirection, resource: FluidStack, doFill: Boolean)
+	:Int = 
+	{
+		lastFrom = from;
+		tank.fill(resource, doFill);
+	}
+	
+	override def drain(from: ForgeDirection, resource: FluidStack, doDrain: Boolean)
+	:FluidStack = 
+	{
+		if (resource == null || !resource.isFluidEqual(tank.getFluid()))
+        {
+            return null;
+        }
+        return tank.drain(resource.amount, doDrain);
+	}
+	
+	override def drain(from: ForgeDirection, amnt:Int, doDrain: Boolean)
+	:FluidStack = 
+	{
+		tank.drain(amnt, doDrain);
+	}
+	
+	override def canFill(from: ForgeDirection, resource: Fluid):Boolean = true;
+	
+	override def canDrain(from: ForgeDirection, resource: Fluid):Boolean = true;
+	
+	override def getTankInfo(from: ForgeDirection):Array[FluidTankInfo] = Array[FluidTankInfo](tank.getInfo);
 }

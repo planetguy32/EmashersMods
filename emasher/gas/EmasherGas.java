@@ -76,7 +76,7 @@ import emasher.sockets.items.ItemDusts;
 import buildcraft.BuildCraftEnergy;
 
 
-@Mod(modid="gascraft", name="GasCraft", version="2.0.2.1", dependencies = "required-after:eng_toolbox")
+@Mod(modid="gascraft", name="GasCraft", version="2.0.3.0", dependencies = "required-after:eng_toolbox")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false, 
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"GasCraft" }, packetHandler = PacketHandler.class),
@@ -358,7 +358,7 @@ public class EmasherGas
 	
 	private void registerRecipes()
 	{
-		PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.pondScum), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidHydrogen, 500));
+		PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.pondScum), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidHydrogen, 1000));
 		PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.pondScum), new FluidStack(fluidToxicGas, 1000), new FluidStack(fluidNeurotoxin, 500));
 		
 		MixerRecipeRegistry.registerRecipe(new ItemStack(Item.gunpowder), new FluidStack(fluidPropellent, 1000), new FluidStack(fluidToxicGas, 500));
@@ -422,12 +422,12 @@ public class EmasherGas
 		Registry.addItem("gasMask", this.gasMask);
 		Registry.addItem("smokeGrenade", this.smokeGrenade);
 		
-		GeneratorFuelRegistry.registerFuel(new FluidStack(fluidNaturalGas, 1000), 500, 6, true);
-		GeneratorFuelRegistry.registerFuel(new FluidStack(fluidHydrogen, 1000), 500, 6, false);
+		GeneratorFuelRegistry.registerFuel(new FluidStack(fluidNaturalGas, 1000), 500, 60, true);
+		GeneratorFuelRegistry.registerFuel(new FluidStack(fluidHydrogen, 1000), 500, 60, false);
 		
 		if(Loader.isModLoaded("BuildCraft|Core"))
 		{
-			GeneratorFuelRegistry.registerFuel(new FluidStack(BuildCraftEnergy.fluidFuel, 1000), 1000, 6, true);
+			GeneratorFuelRegistry.registerFuel(new FluidStack(BuildCraftEnergy.fluidFuel, 1000), 1000, 60, true);
 		}
 		
 	}

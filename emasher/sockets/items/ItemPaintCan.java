@@ -18,8 +18,11 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.*;
 
+import emasher.sockets.PacketHandler;
 import emasher.core.EmasherCore;
 import emasher.sockets.SocketsMod;
+import emasher.sockets.pipes.BlockPipeBase;
+import emasher.sockets.pipes.TilePipeBase;
 
 public class ItemPaintCan extends Item
 {
@@ -133,7 +136,21 @@ public class ItemPaintCan extends Item
     			par1ItemStack.damageItem(1, par3EntityPlayer);
             }
          
-            
+            if(Block.blocksList[BlockID] != null && Block.blocksList[BlockID] instanceof BlockPipeBase && par2World.getBlockTileEntity(var13, var14, var15) != null && par2World.getBlockTileEntity(var13, var14, var15) instanceof TilePipeBase)
+            {
+            	if(! par2World.isRemote)
+            	{
+	            	((TilePipeBase)par2World.getBlockTileEntity(var13, var14, var15)).colour = this.paintColour;
+	            	PacketHandler.instance.sendClientPipeColour((TilePipeBase)par2World.getBlockTileEntity(var13, var14, var15));
+            	}
+            	par2World.playSoundEffect((double)var13 + 0.5D, (double)var14 + 0.5D, (double)var15 + 0.5D, "step.cloth", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
+            	for(int i = 0; i < 16; i++)
+                {
+                	int met = 15 - this.paintColour;
+                	String id = "" + Block.cloth.blockID;
+                	par2World.spawnParticle("tilecrack_" + id + "_" + met, (double)var13 + rand.nextDouble() - 0.5, var14 + rand.nextDouble() - 0.5, var15 + rand.nextDouble() - 0.5, 0, 0, 0);
+                }
+            }
         }
         
         return par1ItemStack;

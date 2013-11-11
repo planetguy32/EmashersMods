@@ -49,17 +49,15 @@ public class ModEnergyOutput extends SocketModule
 				Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
-	@Override
-	public boolean outputsEnergy(SideConfig config) { return true; }
 	
 	/*@Override
 	public boolean hasTankIndicator() {return true; }*/
 	
-	/*@Override
+	@Override
 	public boolean hasRSIndicator() { return true; }
 	
 	@Override
-	public boolean hasLatchIndicator() { return true; }*/
+	public boolean hasLatchIndicator() { return true; }
 	
 	@Override
 	public boolean isEnergyInterface(SideConfig config) { return true; }
@@ -71,50 +69,69 @@ public class ModEnergyOutput extends SocketModule
 	{
 		
 		boolean allOff = true;
-		
-		for(int i = 0; i < 3; i++)
-		{
-			if(config.rsControl[i])
+			for(int i = 0; i < 3; i++)
 			{
-				if(ts.getRSControl(i))
+				if(config.rsControl[i])
 				{
-					outputEnergy(config, ts, side);
-					return;
+					if(ts.getRSControl(i))
+					{
+						ts.outputEnergy(1000, side);
+						return;
+					}
+					allOff = false;
 				}
-				allOff = false;
+				
+				if(config.rsLatch[i])
+				{
+					if(ts.getRSLatch(i))
+					{
+						ts.outputEnergy(1000, side);
+						return;
+					}
+					allOff = false;
+				}
 			}
 			
-			if(config.rsLatch[i])
+			if(allOff)
 			{
-				if(ts.getRSLatch(i))
-				{
-					outputEnergy(config, ts, side);
-					
-					return;
-				}
-				allOff = false;
+				ts.outputEnergy(1000, side);
+				
 			}
-		}
-		
-		if(allOff)
-		{
-			outputEnergy(config, ts, side);
-			
-		}
 			
 	}
 	
-	public void outputEnergy(SideConfig config, SocketTileAccess ts, ForgeDirection side)
+	@Override
+	public int extractEnergy(int amount, boolean simulate, SideConfig config, SocketTileAccess ts)
 	{
-		int outputs;
-		switch(config.tank)
-		{
-		case 0: outputs = 32; break;
-		case 1: outputs = 128; break;
-		default: outputs = 512;
-		}
+		boolean allOff = true;
+			for(int i = 0; i < 3; i++)
+			{
+				if(config.rsControl[i])
+				{
+					if(ts.getRSControl(i))
+					{
+						return ts.useEnergy(amount, simulate);
+					}
+					allOff = false;
+				}
+				
+				if(config.rsLatch[i])
+				{
+					if(ts.getRSLatch(i))
+					{
+						return ts.useEnergy(amount, simulate);
+					}
+					allOff = false;
+				}
+			}
+			
+			if(allOff)
+			{
+				return ts.addEnergy(amount, simulate);
+				
+			}
 		
-		ts.outputEnergy(100, outputs, side);
+		return 0;
 	}
 
 }

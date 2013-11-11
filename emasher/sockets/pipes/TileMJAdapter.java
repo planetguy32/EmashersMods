@@ -59,9 +59,13 @@ public class TileMJAdapter extends TileEntity implements IPowerReceptor, IEnergy
 				else if(te instanceof IPowerReceptor)
 				{
 					IPowerReceptor ipr = (IPowerReceptor)te;
+					PowerReceiver pr = ipr.getPowerReceiver(d.getOpposite());
 					
-					int amnt = (int)ipr.getPowerReceiver(d.getOpposite()).receiveEnergy(Type.PIPE, capacitor.useEnergy(0, 250, false), d.getOpposite());
-					capacitor.useEnergy(amnt, amnt, true);
+					if(pr != null)
+					{
+						int amnt = (int)pr.receiveEnergy(Type.STORAGE, capacitor.useEnergy(0, 250, false), d.getOpposite());
+						capacitor.useEnergy(amnt, amnt, true);
+					}
 				}
 			}
 		}

@@ -38,6 +38,10 @@ public class ModItemDetector extends RSPulseModule
 		l.add("Creates an internal redstone pulse");
 		l.add("when an item is added to its");
 		l.add("configured inventory");
+		l.add("WARNING:");
+		l.add("This module does not work");
+		l.add("when items are inserted using");
+		l.add("the ISidedInventory interface");
 	}
 	
 	@Override

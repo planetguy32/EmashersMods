@@ -10,6 +10,8 @@ import emasher.api.ModuleRegistry;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
+import emasher.sockets.modules.ModItemInput;
+import emasher.sockets.modules.ModItemOutput;
 import emasher.sockets.modules.ModMachineOutput;
 import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
@@ -41,7 +43,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.IFluidTank;
 
-public class TileSocket extends SocketTileAccess implements ISpecialInventory, IFluidHandler, IEnergyHandler, IGasReceptor
+public class TileSocket extends SocketTileAccess implements ISpecialInventory, ISidedInventory, IFluidHandler, IEnergyHandler, IGasReceptor
 {
 	public FluidTank[] tanks;
 	public EnergyStorage capacitor;
@@ -134,7 +136,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 				m = getSide(d);
 				c = configs[i];
 				
-				if(m.pullsFromHopper())
+				/*if(m.pullsFromHopper())
 				{
 					int xo = xCoord + d.offsetX;
 					int yo = yCoord + d.offsetY;
@@ -162,7 +164,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 			                }
 			            }
 			        }
-				}
+				}*/
 				m.updateSide(c, this, d);
 			}
 		}
@@ -608,7 +610,8 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		return this.sideRS[side.ordinal()];
 	}
 	
-	
+
+	// IInventory
 
 	@Override
 	public int getSizeInventory()
@@ -673,8 +676,83 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) 
 	{
+		return true;
+	}
+	
+	@Override
+	public void onInventoryChanged()
+	{
+		for(int i = 0; i < 6; i++)
+		{
+			for(int j = 0; j < 3; j++)
+			{
+				SocketModule m = getSide(ForgeDirection.getOrientation(i));
+				m.onInventoryChange(configs[i], j, this, ForgeDirection.getOrientation(i), false);
+			}
+		}
+	}
+	
+	// ISidedInventory
+	
+	@Override
+	public int[] getAccessibleSlotsFromSide(int side)
+	{
+		int[] result = new int[1];
+		SocketModule m = getSide(ForgeDirection.getOrientation(side));
+		
+		if(m != null && m instanceof ModItemInput || m instanceof ModItemOutput)
+		{
+			SideConfig config = configs[side];
+			if(config.inventory >= 0 && config.inventory <= 2)
+			{
+				result[0] = config.inventory;
+			}
+			else
+			{
+				result = new int[]{};
+			}
+		}
+		else
+		{
+			result = new int[]{};
+		}
+		
+		return result;
+	}
+
+	@Override
+	public boolean canInsertItem(int slot, ItemStack is, int side)
+	{
+		SocketModule m = getSide(ForgeDirection.getOrientation(side));
+		if(m != null && m instanceof ModItemInput)
+		{
+			int[] slots = getAccessibleSlotsFromSide(side);
+			if(slots.length > 0)
+			{
+				if(slots[0] == slot) return true;
+			}
+		}
+		
 		return false;
 	}
+
+	@Override
+	public boolean canExtractItem(int slot, ItemStack is, int side)
+	{
+		SocketModule m = getSide(ForgeDirection.getOrientation(side));
+		if(m != null && m instanceof ModItemOutput)
+		{
+			int[] slots = getAccessibleSlotsFromSide(side);
+			if(slots.length > 0)
+			{
+				if(slots[0] == slot) return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	// ISpecialInventory
 	
 	@Override
 	public ItemStack pullItem(ForgeDirection side, boolean doPull)

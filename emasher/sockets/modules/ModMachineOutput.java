@@ -18,7 +18,7 @@ public class ModMachineOutput extends SocketModule
 
 	public ModMachineOutput(int id)
 	{
-		super(id, "sockets:machineOutput");
+		super(id, "sockets:machineOutput", "sockets:machineOutputEject");
 	}
 	
 	@Override
@@ -44,7 +44,8 @@ public class ModMachineOutput extends SocketModule
 		l.add("Outputs items and fluids into");
 		l.add("adjacent tanks/inventories/pipes");
 		l.add("as well as ejects items");
-		l.add("into the world when possible");
+		l.add("into the world when configured");
+		l.add("to do so");
 	}
 	
 	@Override
@@ -52,8 +53,12 @@ public class ModMachineOutput extends SocketModule
 	{
 		l.add(SocketsMod.PREF_BLUE + "Output tank");
 		l.add(SocketsMod.PREF_GREEN + "Output inventory");
+		l.add(SocketsMod.PREF_WHITE + "Configure if output ejects into the world");
 		l.add("Only one can be installed per socket");
 	}
+	
+	@Override
+	public int getCurrentTexture(SideConfig config) { return config.meta; }
 	
 	@Override
 	public boolean hasTankIndicator() { return true; }
@@ -74,6 +79,15 @@ public class ModMachineOutput extends SocketModule
 	}
 	
 	@Override
+	public void onGenericRemoteSignal(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+	{
+		config.meta++;
+		if(config.meta == 2) config.meta = 0;
+		ts.sendClientSideState(side.ordinal());
+		ts.updateAdj(side);
+	}
+	
+	@Override
 	public boolean isFluidInterface() { return true; }
 	
 	@Override
@@ -91,15 +105,18 @@ public class ModMachineOutput extends SocketModule
 			FluidInsert(ts, config, side);
 			ItemInsert(ts, config, side);
 			
-			if(config.inventory < 0 || config.inventory > 2) return;
-			if(ts.getStackInInventorySlot(config.inventory) ==  null) return;
-			int xo = ts.xCoord + side.offsetX;
-			int yo = ts.yCoord + side.offsetY;
-			int zo = ts.zCoord + side.offsetZ;
-			int id = ts.worldObj.getBlockId(xo, yo, zo);
-			if(! ts.worldObj.isAirBlock(xo, yo, zo)) return;
-			
-			dropItemsOnSide(ts, config, side, xo, yo, zo, ts.getStackInInventorySlot(config.inventory));
+			if(config.meta == 1)
+			{
+				if(config.inventory < 0 || config.inventory > 2) return;
+				if(ts.getStackInInventorySlot(config.inventory) ==  null) return;
+				int xo = ts.xCoord + side.offsetX;
+				int yo = ts.yCoord + side.offsetY;
+				int zo = ts.zCoord + side.offsetZ;
+				int id = ts.worldObj.getBlockId(xo, yo, zo);
+				if(! ts.worldObj.isAirBlock(xo, yo, zo)) return;
+				
+				dropItemsOnSide(ts, config, side, xo, yo, zo, ts.getStackInInventorySlot(config.inventory));
+			}
 	}
 	
 	private void FluidInsert(SocketTileAccess ts, SideConfig config, ForgeDirection side)

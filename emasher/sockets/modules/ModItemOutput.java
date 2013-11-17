@@ -98,6 +98,37 @@ public class ModItemOutput extends SocketModule
 	public boolean canExtractItems() { return true; }
 	
 	@Override
+	public boolean canDirectlyExtractItems(SideConfig config, SocketTileAccess ts)
+	{
+		if(config.inventory < 0 || config.inventory > 2) return false;
+		
+		boolean allOff = true;
+		
+		for(int i = 0; i < 3; i++)
+		{
+			if(config.rsControl[i])
+			{
+				if(ts.getRSControl(i))
+				{
+					return true;
+				}
+				allOff = false;
+			}
+			
+			if(config.rsLatch[i])
+			{
+				if(ts.getRSLatch(i))
+				{
+					return true;
+				}
+				allOff = false;
+			}
+		}
+		
+		return allOff;
+	}
+	
+	@Override
 	public ItemStack itemExtract(int amount, boolean doExtract, SideConfig config, SocketTileAccess ts)
 	{
 		if(config.inventory != -1) return ts.extractItemInternal(doExtract, config.inventory, amount);

@@ -45,7 +45,7 @@ import emasher.sockets.modules.*;
 import emasher.sockets.client.ClientProxy;
 import emasher.sockets.pipes.*;
 
-@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.6.3", dependencies = "required-after:emashercore")
+@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.6.4", dependencies = "required-after:emashercore")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false,
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = ClientPacketHandler.class),

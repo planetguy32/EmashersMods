@@ -311,12 +311,14 @@ public abstract class SocketModule
 	public boolean canExtractItems() { return true; }
 	
 	/**
-	 * Returns true iff this module should be compatible with hoppers. By default, it uses the behavior from canInsertItems()
-	 * Because vanilla hoppers are not compatible with BuildCraft's ISpecialInventory interface (which sockets use),
-	 * it is necessary for the socket itself to pull from hoppers when they are pointed at a module that should be able
-	 * to accept items from automation.
+	 * Returns true iff given a specific configuration, items can be inserted directly into an internal inventory via automation
 	 */
-	public boolean pullsFromHopper() { return canInsertItems(); }
+	public boolean canDirectlyInsertItems(SideConfig config, SocketTileAccess ts) { return false; }
+	
+	/**
+	 * Returns true iff given a specific configuration, items can be extracted directly from an internal inventory via automation
+	 */
+	public boolean canDirectlyExtractItems(SideConfig config, SocketTileAccess ts) { return false; }
 	
 	/**
 	 * Called when automation attempts to insert items into this module. Returns the number of items accepted.

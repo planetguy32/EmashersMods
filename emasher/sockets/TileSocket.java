@@ -700,7 +700,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		int[] result = new int[1];
 		SocketModule m = getSide(ForgeDirection.getOrientation(side));
 		
-		if(m != null && m instanceof ModItemInput || m instanceof ModItemOutput)
+		if(m != null && (m.canDirectlyExtractItems(configs[side], this) || m.canDirectlyInsertItems(configs[side], this)))
 		{
 			SideConfig config = configs[side];
 			if(config.inventory >= 0 && config.inventory <= 2)
@@ -724,7 +724,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	public boolean canInsertItem(int slot, ItemStack is, int side)
 	{
 		SocketModule m = getSide(ForgeDirection.getOrientation(side));
-		if(m != null && m instanceof ModItemInput)
+		if(m != null && m.canDirectlyInsertItems(configs[side], this))
 		{
 			int[] slots = getAccessibleSlotsFromSide(side);
 			if(slots.length > 0)
@@ -740,7 +740,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	public boolean canExtractItem(int slot, ItemStack is, int side)
 	{
 		SocketModule m = getSide(ForgeDirection.getOrientation(side));
-		if(m != null && m instanceof ModItemOutput)
+		if(m != null && m.canDirectlyExtractItems(configs[side], this))
 		{
 			int[] slots = getAccessibleSlotsFromSide(side);
 			if(slots.length > 0)

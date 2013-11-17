@@ -68,7 +68,20 @@ public class ModItemInput extends SocketModule
 	public boolean canInsertItems() { return true; }
 	
 	@Override
-	public boolean pullsFromHopper() { return true; }
+	public boolean canDirectlyInsertItems(SideConfig config, SocketTileAccess ts)
+	{
+		if(config.inventory < 0 || config.inventory > 2) return false;
+		
+		boolean canIntake = true;
+		
+		for(int i = 0; i < 3; i++)
+		{
+			if(config.rsControl[i] && ts.getRSControl(i)) canIntake = false;
+			if(config.rsLatch[i] && ts.getRSLatch(i)) canIntake = false;
+		}
+		
+		return canIntake;
+	}
 	
 	@Override
 	public int itemFill(ItemStack item, boolean doFill, SideConfig config, SocketTileAccess ts, ForgeDirection side)

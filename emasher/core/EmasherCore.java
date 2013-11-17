@@ -68,7 +68,7 @@ import java.util.*;
 import tconstruct.library.crafting.Smeltery;*/
 
 
-@Mod(modid="emashercore", name="Emasher Resource", version="1.2.1.6")
+@Mod(modid="emashercore", name="Emasher Resource", version="1.2.1.7")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false)
 public class EmasherCore 
 {
@@ -140,6 +140,7 @@ public class EmasherCore
 	
 	public static boolean spawnAlgae;
 	public static boolean spawnHemp;
+	public static int algaeDepth;
 	
 	public static boolean spawnLimestone;
 	public static boolean spawnRedSandstone;
@@ -278,6 +279,7 @@ public class EmasherCore
 		hempShoesID = config.get(Configuration.CATEGORY_ITEM, "Hemp Shoes ID",3045).getInt();
 		
 		retroGen = config.get(Configuration.CATEGORY_GENERAL, "A: Retro Gen Ores", false).getBoolean(false);
+		algaeDepth = config.get(Configuration.CATEGORY_GENERAL, "A: Max Water Depth Alage Can Grow In", 3).getInt();
 		
 		spawnAlgae = config.get(Configuration.CATEGORY_GENERAL, "C: Generate Algae", true).getBoolean(true);
 		spawnHemp = config.get(Configuration.CATEGORY_GENERAL, "C: Generate Hemp", true).getBoolean(true);

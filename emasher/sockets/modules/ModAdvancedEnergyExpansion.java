@@ -35,7 +35,7 @@ public class ModAdvancedEnergyExpansion extends SocketModule
 	@Override
 	public void getToolTip(List l)
 	{
-		l.add("Adds 10 000 000 f");
+		l.add("Adds 10 000 000 RF");
 		l.add("of extra energy storage");
 	}
 	

@@ -39,7 +39,7 @@ public class ModKiln extends SocketModule
 	@Override
 	public void getIndicatorKey(List l)
 	{
-		l.add(SocketsMod.PREF_AQUA + "Requires 10 MJ/t");
+		l.add(SocketsMod.PREF_AQUA + "Requires 100 RF/t");
 		l.add("The multi-block structure is 3x7x3");
 		l.add("See wiki for further instructions...");
 	}

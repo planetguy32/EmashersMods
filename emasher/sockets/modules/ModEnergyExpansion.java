@@ -35,7 +35,7 @@ public class ModEnergyExpansion extends SocketModule
 	@Override
 	public void getToolTip(List l)
 	{
-		l.add("Adds 1 000 000 f");
+		l.add("Adds 1 000 000 RF");
 		l.add("of extra energy storage");
 	}
 	
@@ -48,8 +48,8 @@ public class ModEnergyExpansion extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "pgp", "grg", "pgp", Character.valueOf('g'), Item.redstone, Character.valueOf('p'), new ItemStack(SocketsMod.module, 1, 74),
-				Character.valueOf('r'), Block.blockGold);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "pdp", "ggg", "pbp", Character.valueOf('g'), Item.ingotGold, Character.valueOf('p'), EmasherCore.psu,
+                Character.valueOf('d'), Item.diamond, Character.valueOf('b'), SocketsMod.blankSide);
 	}
 	
 	@Override

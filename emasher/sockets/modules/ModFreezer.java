@@ -43,7 +43,7 @@ public class ModFreezer extends SocketModule
 	{
 		l.add(SocketsMod.PREF_BLUE + "Input tank");
 		l.add(SocketsMod.PREF_GREEN + "Output inventory");
-		l.add(SocketsMod.PREF_AQUA + "Requires 160 f/operation");
+		l.add(SocketsMod.PREF_AQUA + "Requires 160 RF/operation");
 	}
 	
 	@Override

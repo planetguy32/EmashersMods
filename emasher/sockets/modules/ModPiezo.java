@@ -40,7 +40,7 @@ public class ModPiezo extends SocketModule
 	@Override
 	public void getIndicatorKey(List l)
 	{
-		l.add(SocketsMod.PREF_AQUA + "Generates 80 f/step");
+		l.add(SocketsMod.PREF_AQUA + "Generates 80 RF/step");
 		l.add("Can only be placed on the top of a socket");
 	}
 	

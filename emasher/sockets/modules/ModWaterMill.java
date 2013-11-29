@@ -37,7 +37,7 @@ public class ModWaterMill extends SocketModule
 	@Override
 	public void getIndicatorKey(List l)
 	{
-		l.add(SocketsMod.PREF_AQUA + "Generates 10 f/t");
+		l.add(SocketsMod.PREF_AQUA + "Generates 10 RF/t");
 		l.add("Can only be installed on the sides of a socket");
 		l.add("Only one can be installed per socket");
 		l.add("Only generates power when in some sort of river biome");

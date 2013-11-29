@@ -31,7 +31,7 @@ class ModHusher(id: Int) extends SocketModule(id, "sockets:husher")
 	override def getIndicatorKey(l: List[Object])
 	{
 		l.add(SocketsMod.PREF_BLUE + "Fluid Tank");
-		l.add(SocketsMod.PREF_AQUA + "Uses 0 or 240 f/t");
+		l.add(SocketsMod.PREF_AQUA + "Uses 0 or 240 RF/t");
 		l.add(SocketsMod.PREF_YELLOW + "Outputs to machine output");
 		l.add("See the wiki for further instructions");
 	}

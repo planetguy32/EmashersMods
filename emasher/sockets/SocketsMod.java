@@ -45,7 +45,7 @@ import emasher.sockets.modules.*;
 import emasher.sockets.client.ClientProxy;
 import emasher.sockets.pipes.*;
 
-@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.6.4", dependencies = "required-after:emashercore")
+@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.6.5", dependencies = "required-after:emashercore")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false,
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = ClientPacketHandler.class),
@@ -620,11 +620,11 @@ public class SocketsMod
 		CentrifugeRecipeRegistry.registerRecipe("dustImpureAluminum", new ItemStack(dusts, 1, ItemDusts.Const.pureAluminiumDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureIronDust.ordinal()), 5);
 		CentrifugeRecipeRegistry.registerRecipe("dustImpureTin", new ItemStack(dusts, 1, ItemDusts.Const.pureTinDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureTinDust.ordinal()), 33);
 		CentrifugeRecipeRegistry.registerRecipe("dustImpureCopper", new ItemStack(dusts, 1, ItemDusts.Const.pureCopperDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureCopperDust.ordinal()), 33);
-		CentrifugeRecipeRegistry.registerRecipe("dustImpureNickel", new ItemStack(dusts, 1, ItemDusts.Const.pureNickelDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.purePlatinumDust.ordinal()), 5);
-		CentrifugeRecipeRegistry.registerRecipe("dustImpureLead", new ItemStack(dusts, 1, ItemDusts.Const.pureLeadDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureSilverDust.ordinal()), 33);
+		CentrifugeRecipeRegistry.registerRecipe("dustImpureNickel", new ItemStack(dusts, 1, ItemDusts.Const.pureNickelDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.purePlatinumDust.ordinal()), 10);
+		CentrifugeRecipeRegistry.registerRecipe("dustImpureLead", new ItemStack(dusts, 1, ItemDusts.Const.pureLeadDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureSilverDust.ordinal()), 50);
 		CentrifugeRecipeRegistry.registerRecipe("dustImpureSilver", new ItemStack(dusts, 1, ItemDusts.Const.pureSilverDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureLeadDust.ordinal()), 10);
-		CentrifugeRecipeRegistry.registerRecipe("dustImpureCobalt", new ItemStack(dusts, 1, ItemDusts.Const.pureCobaltDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureArditeDust.ordinal()), 33);
-		CentrifugeRecipeRegistry.registerRecipe("dustImpureArdite", new ItemStack(dusts, 1, ItemDusts.Const.pureArditeDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureCobaltDust.ordinal()), 33);
+		CentrifugeRecipeRegistry.registerRecipe("dustImpureCobalt", new ItemStack(dusts, 1, ItemDusts.Const.pureCobaltDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureArditeDust.ordinal()), 10);
+		CentrifugeRecipeRegistry.registerRecipe("dustImpureArdite", new ItemStack(dusts, 1, ItemDusts.Const.pureArditeDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureCobaltDust.ordinal()), 10);
 		
 		//Furnace
 		ItemStack cobalt = null;

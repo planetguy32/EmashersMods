@@ -30,7 +30,7 @@ public class ModEnergyInput extends SocketModule
 	@Override
 	public void getToolTip(List l)
 	{
-		l.add("Accepts both MJ and EU");
+		l.add("Accepts Redstone Flux Energy");
 		l.add("from adjacent cables/generators/etc.");
 	}
 	

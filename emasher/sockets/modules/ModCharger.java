@@ -42,7 +42,8 @@ public class ModCharger extends SocketModule
 	@Override
 	public void getToolTip(List l)
 	{
-		l.add("Used to charge IC^2 compatible items");
+		l.add("Used to charge electric items");
+		l.add("Compatible with RF and EU");
 	}
 	
 	@Override
@@ -98,7 +99,22 @@ public class ModCharger extends SocketModule
 		if(config.inventory != -1 && ts.getStackInInventorySlot(config.inventory) != null)
 		{
 			ItemStack is = ts.getStackInInventorySlot(config.inventory);
-			if(is.getItem() instanceof IElectricItem)
+			
+			if(is.getItem() instanceof IEnergyContainerItem)
+			{
+				IEnergyContainerItem ieci = (IEnergyContainerItem)is.getItem();
+				if(config.tank == -1)
+				{
+					int amnt = ieci.receiveEnergy(is, ts.useEnergy(100, true), false);
+					ts.useEnergy(amnt, false);
+				}
+				else
+				{
+					int amnt = ts.addEnergy(ieci.extractEnergy(is, 100, true), false);
+					ieci.extractEnergy(is, amnt, false);
+				}
+			}
+			else if(is.getItem() instanceof IElectricItem)
 			{
 				IElectricItem iei = (IElectricItem)is.getItem();
 				if(config.tank == -1)
@@ -112,20 +128,6 @@ public class ModCharger extends SocketModule
 					ts.addEnergy(used * 4, false);
 				}
 				updateMeta(ts, config, side);
-			}
-			else if(is.getItem() instanceof IEnergyContainerItem)
-			{
-				IEnergyContainerItem ieci = (IEnergyContainerItem)is.getItem();
-				if(config.tank == -1)
-				{
-					int amnt = ieci.receiveEnergy(is, ts.useEnergy(100, true), false);
-					ts.useEnergy(amnt, false);
-				}
-				else
-				{
-					int amnt = ts.addEnergy(ieci.extractEnergy(is, 100, true), false);
-					ieci.extractEnergy(is, amnt, false);
-				}
 			}
 		}
 	}

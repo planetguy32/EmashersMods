@@ -35,7 +35,7 @@ public class ModEnergyOutput extends SocketModule
 	@Override
 	public void getToolTip(List l)
 	{
-		l.add("Outputs either MJ or EU");
+		l.add("Outputs Redstone Flux Energy");
 		l.add("to adjacent cables/machines/etc.");
 	}
 	

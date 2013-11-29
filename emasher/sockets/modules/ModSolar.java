@@ -37,7 +37,7 @@ public class ModSolar extends SocketModule
 	@Override
 	public void getIndicatorKey(List l)
 	{
-		l.add(SocketsMod.PREF_AQUA + "Generates 0.5 MJ/t");
+		l.add(SocketsMod.PREF_AQUA + "Generates 5 RF/t");
 		l.add("Can only be placed on the top of a socket");
 		l.add("Requires sunlight to operate");
 	}

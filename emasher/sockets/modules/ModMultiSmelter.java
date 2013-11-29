@@ -43,7 +43,7 @@ public class ModMultiSmelter extends SocketModule
 		l.add(SocketsMod.PREF_BLUE + "Input inventory 1");
 		l.add(SocketsMod.PREF_GREEN + "Input inventory 2");
 		l.add(SocketsMod.PREF_YELLOW + "Outputs to Machine Output");
-		l.add(SocketsMod.PREF_AQUA + "Requires 20 f/t");
+		l.add(SocketsMod.PREF_AQUA + "Requires 20 RF/t");
 		l.add("Cannot be installed on a socket with other machines");
 	}
 	

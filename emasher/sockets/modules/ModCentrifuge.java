@@ -55,7 +55,7 @@ public class ModCentrifuge extends SocketModule
 	{
 		l.add(SocketsMod.PREF_GREEN + "Input Inventory");
 		l.add(SocketsMod.PREF_YELLOW + "Outputs to Machine Output");
-		l.add(SocketsMod.PREF_AQUA + "Requires 2 MJ/tick");
+		l.add(SocketsMod.PREF_AQUA + "Requires 20 RF/tick");
 		l.add("Cannot be installed on a socket with other machines");
 	}
 	

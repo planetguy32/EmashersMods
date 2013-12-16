@@ -45,7 +45,7 @@ import emasher.sockets.modules.*;
 import emasher.sockets.client.ClientProxy;
 import emasher.sockets.pipes.*;
 
-@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.6.5", dependencies = "required-after:emashercore")
+@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.6.6", dependencies = "required-after:emashercore")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false,
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = ClientPacketHandler.class),
@@ -135,6 +135,9 @@ public class SocketsMod
 	public boolean enableHusher;
 	public static boolean cbTextures;
 	public static boolean smeltSand;
+	
+	public static int RFperMJ;
+	public static int RFperEU;
 	
 	public static String[] colours = new String[]
 	{
@@ -242,6 +245,8 @@ public class SocketsMod
 		cbTextures = config.get(Configuration.CATEGORY_GENERAL, "Enable Colour Blind Mode", false).getBoolean(false);
 		//EUPerMJ = config.get(Configuration.CATEGORY_GENERAL, "EU Per MJ", 2.44).getDouble(2.44);
 		smeltSand = config.get(Configuration.CATEGORY_GENERAL, "Hand boiler smelts sand", false).getBoolean(false);
+		RFperMJ = config.get(Configuration.CATEGORY_GENERAL, "RF per MJ", 10).getInt();
+		RFperEU = config.get(Configuration.CATEGORY_GENERAL, "RF per EU", 4).getInt();
 		
 		config.save();
 		

@@ -61,7 +61,7 @@ class TileFluidPipe extends TilePipeBase with IFluidHandler
 						yo = yCoord + d.offsetY;
 						zo = zCoord + d.offsetZ;
 						var t:TileEntity = worldObj.getBlockTileEntity(xo, yo, zo);
-						if(t.isInstanceOf[IFluidHandler] && ! t.isInstanceOf[TileStartPipe] && ! t.isInstanceOf[TileFluidPipe])
+						if(t != null && t.isInstanceOf[IFluidHandler] && ! t.isInstanceOf[TileStartPipe] && ! t.isInstanceOf[TileFluidPipe])
 						{
 							var amnt:Int = t.asInstanceOf[IFluidHandler].fill(d.getOpposite(), tank.drain(CAPACITY, false), true);
 							tank.drain(amnt, true);

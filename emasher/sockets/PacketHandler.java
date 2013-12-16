@@ -1,8 +1,15 @@
 package emasher.sockets;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.OutputStream;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -15,6 +22,7 @@ import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 import emasher.api.SideConfig;
 import emasher.api.SocketTileAccess;
+import emasher.sockets.pipes.TileAdapterBase;
 import emasher.sockets.pipes.TilePipeBase;
 
 public class PacketHandler implements IPacketHandler
@@ -96,11 +104,29 @@ public class PacketHandler implements IPacketHandler
 						this.sendClientPipeColour(p);
 					}
 				}
+				else if(packet.data[0] == 4)
+				{
+					int x = toInteger(packet.data, 1);
+					int y = toInteger(packet.data, 5);
+					int z = toInteger(packet.data, 9);
+					
+					World world = ((EntityPlayer) player).worldObj;
+					TileEntity te = world.getBlockTileEntity(x, y, z);
+					if(te != null && te instanceof TileAdapterBase)
+					{
+						TileAdapterBase t = (TileAdapterBase)te;
+						
+						for(int i = 0; i < 6; i++)
+						{
+							this.sendClientAdapterSide(t, i);
+						}
+					}
+				}
 			}
 		}
 		catch (Exception e)
 		{
-			System.err.println("[Sockets] Network Error");
+			System.err.println("[Engineer's Toolbox] Network Error");
 			
 		}
 	}
@@ -135,8 +161,19 @@ public class PacketHandler implements IPacketHandler
 	
 	public void SendClientInventorySlot(TileSocket ts, int inventory)
 	{
-		byte[] out = new byte[27];
 		ItemStack s = ts.inventory.getStackInSlot(inventory);
+		byte[] NBTData = new byte[]{};
+		
+		try
+		{
+			if(s != null && s.getTagCompound() != null) NBTData = CompressedStreamTools.compress(s.getTagCompound());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		byte[] out = new byte[27 + NBTData.length];
 		
 		out[0] = 1;
 		
@@ -155,6 +192,11 @@ public class PacketHandler implements IPacketHandler
 		toByte(out, ts.yCoord, 13);
 		toByte(out, ts.zCoord, 17);
 		out[22] = (byte)inventory;
+		
+		for(int i = 0; i < NBTData.length; i++)
+		{
+			out[27 + i] = NBTData[i];
+		}
 		
 		
 		//PacketDispatcher.sendPacketToAllPlayers(new Packet250CustomPayload(networkChannel, out));
@@ -207,7 +249,21 @@ public class PacketHandler implements IPacketHandler
 		PacketDispatcher.sendPacketToAllInDimension(new Packet250CustomPayload(networkChannel, out), p.worldObj.provider.dimensionId);
 	}
 	
-
+	public void sendClientAdapterSide(TileAdapterBase t, int side)
+	{
+		byte[] out = new byte[19];
+		
+		out[0] = 4;
+		toByte(out, t.xCoord, 1);
+		toByte(out, t.yCoord, 5);
+		toByte(out, t.zCoord, 9);
+		toByte(out, t.worldObj.provider.dimensionId, 13);
+		if(t.outputs[side]) out[17] = 1;
+		else out[17] = 0;
+		out[18] = (byte)side;
+		
+		PacketDispatcher.sendPacketToAllInDimension(new Packet250CustomPayload(networkChannel, out), t.worldObj.provider.dimensionId);
+	}
 	
 	private void toByte(byte[] out, int in, int start)
 	{

@@ -6,10 +6,14 @@ import net.minecraftforge.fluids.Fluid;
 
 public class FluidGas extends Fluid
 {
-
-	public FluidGas(String fluidName, Block theBlock)
+	public int internalID;
+	
+	public static final String[] NAMES = new String[]{"Natural Gas", "Propellent", "Hydrogen", "Smoke", "Toxic Gas", "Deadly Neurotoxin", "Corossive Gas"};
+	
+	public FluidGas(String fluidName, Block theBlock, int iID)
 	{
 		super(fluidName);
+		internalID = iID;
 		this.setBlockID(theBlock);
 		//this.setStillIcon(theBlock.getBlockTextureFromSide(0));
 		//this.setFlowingIcon(theBlock.getBlockTextureFromSide(0));
@@ -17,6 +21,13 @@ public class FluidGas extends Fluid
 		this.setViscosity(100);
 		this.setDensity(-1000);
 		this.setUnlocalizedName(fluidName);
+		
+	}
+	
+	@Override
+	public String getLocalizedName()
+	{
+		return NAMES[internalID];
 	}
 	
 	@Override

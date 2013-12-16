@@ -61,7 +61,7 @@ class TileEnergyPipe extends TilePipeBase with IEnergyHandler
 						yo = yCoord + d.offsetY;
 						zo = zCoord + d.offsetZ;
 						var t:TileEntity = worldObj.getBlockTileEntity(xo, yo, zo);
-						if(t.isInstanceOf[IEnergyHandler] && ! t.isInstanceOf[TileStartPipe] && ! t.isInstanceOf[TileEnergyPipe])
+						if(t != null && t.isInstanceOf[IEnergyHandler] && ! t.isInstanceOf[TileStartPipe] && ! t.isInstanceOf[TileEnergyPipe])
 						{
 							var amnt:Int = t.asInstanceOf[IEnergyHandler].receiveEnergy(d.getOpposite, capacitor.extractEnergy(CAPACITY, true), false)
 							capacitor.extractEnergy(amnt, false);

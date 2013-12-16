@@ -1,6 +1,7 @@
 package emasher.sockets.pipes;
 
 import cofh.api.energy.IEnergyHandler;
+import emasher.sockets.SocketsMod;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
@@ -10,7 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
-public class TileMJAdapter extends TileEntity implements IPowerReceptor, IEnergyHandler
+public class TileMJAdapter extends TileAdapterBase implements IPowerReceptor, IEnergyHandler
 {
 	public PowerHandler capacitor;
 	
@@ -38,7 +39,7 @@ public class TileMJAdapter extends TileEntity implements IPowerReceptor, IEnergy
 	public void updateEntity()
 	{
 		ForgeDirection d;
-		if(! worldObj.isRemote) for(int i = 0; i < 6; i++)
+		if(! worldObj.isRemote) for(int i = 0; i < 6; i++) if(outputs[i])
 		{
 			d = ForgeDirection.getOrientation(i);
 			int xo = xCoord + d.offsetX;
@@ -49,11 +50,15 @@ public class TileMJAdapter extends TileEntity implements IPowerReceptor, IEnergy
 			
 			if(te != null)
 			{
+				int toUse = 250;
+				if(capacitor.getEnergyStored() < 250) toUse = (int)capacitor.getEnergyStored();
+				if(toUse <= 0) return;
+				
 				if(te instanceof IEnergyHandler)
 				{
 					IEnergyHandler ieh = (IEnergyHandler)te;
 					
-					int amnt = ieh.receiveEnergy(d.getOpposite(), 10 * (int)capacitor.useEnergy(0, 250, false), false);
+					int amnt = ieh.receiveEnergy(d.getOpposite(), SocketsMod.RFperMJ * (int)capacitor.useEnergy(0, toUse, false), false);
 					capacitor.useEnergy(amnt, amnt, true);
 				}
 				else if(te instanceof IPowerReceptor)
@@ -63,7 +68,7 @@ public class TileMJAdapter extends TileEntity implements IPowerReceptor, IEnergy
 					
 					if(pr != null)
 					{
-						int amnt = (int)pr.receiveEnergy(Type.STORAGE, capacitor.useEnergy(0, 250, false), d.getOpposite());
+						int amnt = (int)pr.receiveEnergy(Type.STORAGE, capacitor.useEnergy(0, toUse, false), d.getOpposite());
 						capacitor.useEnergy(amnt, amnt, true);
 					}
 				}
@@ -71,23 +76,25 @@ public class TileMJAdapter extends TileEntity implements IPowerReceptor, IEnergy
 		}
 	}
 	
-	// IPowerHandler
+	// IEnergyHandler
 	
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate)
 	{
-		if(! simulate)
+		if(! simulate && ! outputs[from.ordinal()])
 		{
-			capacitor.addEnergy(maxReceive / 10);
+			capacitor.addEnergy(maxReceive / SocketsMod.RFperMJ);
 		}
 		
-		return maxReceive;
+		if(! outputs[from.ordinal()]) return maxReceive;
+		else return 0;
 	}
 
 	@Override
 	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate)
 	{
-		return 10 * (int)capacitor.useEnergy(maxExtract / 10, maxExtract / 10, ! simulate);
+		if(outputs[from.ordinal()]) return SocketsMod.RFperMJ * (int)capacitor.useEnergy(maxExtract / SocketsMod.RFperMJ, maxExtract / SocketsMod.RFperMJ, ! simulate);
+		return 0;
 	}
 
 	@Override
@@ -99,13 +106,13 @@ public class TileMJAdapter extends TileEntity implements IPowerReceptor, IEnergy
 	@Override
 	public int getEnergyStored(ForgeDirection from)
 	{
-		return (int)capacitor.getEnergyStored() * 10;
+		return (int)capacitor.getEnergyStored() * SocketsMod.RFperMJ;
 	}
 
 	@Override
 	public int getMaxEnergyStored(ForgeDirection from)
 	{
-		return (int)capacitor.getMaxEnergyStored() * 10;
+		return (int)capacitor.getMaxEnergyStored() * SocketsMod.RFperMJ;
 	}
 
 	// IPowerReceptor

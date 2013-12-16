@@ -2,6 +2,7 @@ package emasher.sockets.pipes;
 
 import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyHandler;
+import emasher.sockets.SocketsMod;
 import ic2.api.energy.EnergyNet;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
@@ -12,7 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 
-public class TileEUAdapter extends TileEntity implements IEnergySource, IEnergySink, IEnergyHandler
+public class TileEUAdapter extends TileAdapterBase implements IEnergySource, IEnergySink, IEnergyHandler
 {
 	public EnergyStorage capacitor;
 	private boolean init = false;
@@ -56,7 +57,7 @@ public class TileEUAdapter extends TileEntity implements IEnergySource, IEnergyS
 		}
 		
 		ForgeDirection d;
-		if(! worldObj.isRemote) for(int i = 0; i < 6; i++)
+		if(! worldObj.isRemote) for(int i = 0; i < 6; i++) if(outputs[i])
 		{
 			d = ForgeDirection.getOrientation(i);
 			int xo = xCoord + d.offsetX;
@@ -99,13 +100,15 @@ public class TileEUAdapter extends TileEntity implements IEnergySource, IEnergyS
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate)
 	{
-		return capacitor.receiveEnergy(maxReceive, simulate);
+		if(! outputs[from.ordinal()]) return capacitor.receiveEnergy(maxReceive, simulate);
+		return 0;
 	}
 
 	@Override
 	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate)
 	{
-		return capacitor.extractEnergy(maxExtract, simulate);
+		if(outputs[from.ordinal()]) return capacitor.extractEnergy(maxExtract, simulate);
+		return 0;
 	}
 
 	@Override
@@ -143,13 +146,13 @@ public class TileEUAdapter extends TileEntity implements IEnergySource, IEnergyS
 	@Override
 	public double demandedEnergyUnits()
 	{
-		return (capacitor.getMaxEnergyStored() - capacitor.getEnergyStored()) / 4;
+		return (capacitor.getMaxEnergyStored() - capacitor.getEnergyStored()) / SocketsMod.RFperEU;
 	}
 
 	@Override
 	public double injectEnergyUnits(ForgeDirection directionFrom, double amount)
 	{
-		return capacitor.receiveEnergy((int)(amount * 4), false);
+		return capacitor.receiveEnergy((int)(amount * SocketsMod.RFperEU), false);
 	}
 
 	@Override
@@ -161,13 +164,13 @@ public class TileEUAdapter extends TileEntity implements IEnergySource, IEnergyS
 	@Override
 	public double getOfferedEnergy()
 	{
-		return Math.min(capacitor.getEnergyStored()/4, 512);
+		return Math.min(capacitor.getEnergyStored()/SocketsMod.RFperEU, 512);
 	}
 
 	@Override
 	public void drawEnergy(double amount)
 	{
-		capacitor.extractEnergy((int)amount * 4, false);
+		capacitor.extractEnergy((int)amount * SocketsMod.RFperEU, false);
 	}
 
 }

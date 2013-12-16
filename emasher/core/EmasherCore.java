@@ -68,7 +68,7 @@ import java.util.*;
 import tconstruct.library.crafting.Smeltery;*/
 
 
-@Mod(modid="emashercore", name="Emasher Resource", version="1.2.1.7")
+@Mod(modid="emashercore", name="Emasher Resource", version="1.2.1.8")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false)
 public class EmasherCore 
 {

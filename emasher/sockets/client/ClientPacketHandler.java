@@ -2,6 +2,8 @@ package emasher.sockets.client;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
@@ -16,6 +18,7 @@ import emasher.api.SocketModule;
 import emasher.sockets.SocketsMod;
 import emasher.sockets.TileSocket;
 import emasher.sockets.modules.ModBlockPlacer;
+import emasher.sockets.pipes.TileAdapterBase;
 import emasher.sockets.pipes.TilePipeBase;
 
 public class ClientPacketHandler implements IPacketHandler
@@ -75,6 +78,35 @@ public class ClientPacketHandler implements IPacketHandler
 					int inventory = packet.data[22];
 					int size = toInteger(packet.data, 23);
 					
+					ItemStack s = null;
+					
+					if(id != -1)
+					{
+						s = new ItemStack(id, size, damage);
+						if(packet.data.length > 27)
+						{
+							NBTTagCompound NBTData = null;
+							byte[] NBTArray = new byte[packet.data.length - 27];
+							
+							for(int i = 0; i < packet.data.length - 27; i++)
+							{
+								NBTArray[i] = packet.data[i + 27];
+							}
+							
+							try
+							{
+								NBTData = CompressedStreamTools.decompress(NBTArray);
+								if(NBTData != null) s.setTagCompound(NBTData);
+							}
+							catch(Exception e)
+							{
+								e.printStackTrace();
+							}
+						}
+					}
+					
+					
+					
 					World world = ((EntityPlayer) player).worldObj;
 					TileEntity te = world.getBlockTileEntity(x, y, z);
 					if(te != null && te instanceof TileSocket)
@@ -125,6 +157,28 @@ public class ClientPacketHandler implements IPacketHandler
 						TilePipeBase p = (TilePipeBase)te;
 						
 						p.colour = colour;
+						
+						world.markBlockForUpdate(x, y, z);
+						world.notifyBlockChange(x, y, z, world.getBlockId(x, y, z));
+					}
+				}
+				else if(packet.data[0] == 4)
+				{
+					int x = toInteger(packet.data, 1);
+					int y = toInteger(packet.data, 5);
+					int z = toInteger(packet.data, 9);
+					int id = toInteger(packet.data, 13);
+					boolean output = false;
+					if(packet.data[17] != 0) output = true;
+					int side = (int)packet.data[18];
+					
+					World world = ((EntityPlayer) player).worldObj;
+					TileEntity te = world.getBlockTileEntity(x, y, z);
+					if(te != null && te instanceof TileAdapterBase)
+					{
+						TileAdapterBase t = (TileAdapterBase)te;
+						
+						t.outputs[side] = output;
 						
 						world.markBlockForUpdate(x, y, z);
 						world.notifyBlockChange(x, y, z, world.getBlockId(x, y, z));
@@ -190,6 +244,20 @@ public class ClientPacketHandler implements IPacketHandler
 		toByte(out, p.yCoord, 5);
 		toByte(out, p.zCoord, 9);
 		toByte(out, p.worldObj.provider.dimensionId, 13);
+		
+		PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+	}
+	
+	public void requestAdapterOutputData(TileAdapterBase p)
+	{
+		byte[] out = new byte[17];
+		
+		out[0] = 4;
+		toByte(out, p.xCoord, 1);
+		toByte(out, p.yCoord, 5);
+		toByte(out, p.zCoord, 9);
+		toByte(out, p.worldObj.provider.dimensionId, 13);
+		
 		
 		PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
 	}

@@ -71,14 +71,44 @@ public class MultiSmelterRecipeRegistry
 		list.add(new MultiSmelterRecipe(input1, input2, output));
 		list.add(new MultiSmelterRecipe(input2, input1, output));
 	}
-	
+
+	public static boolean registerRecipe(String input1, String input2, String output)
+	{
+		ArrayList<ItemStack> ores = OreDictionary.getOres(output);
+		if(ores.size() <= 0)
+			return false;
+
+		ItemStack output2 = ores.get(0);
+		list.add(new MultiSmelterRecipe(input1, input2, output2));
+		list.add(new MultiSmelterRecipe(input2, input1, output2));
+		return true;
+	}
+
+	public static boolean unregisterRecipe(Object input1, Object input2)
+	{
+		int ndx = getRecipeIndexFor(input1, input2);
+		if(ndx == -1)
+			return false;
+		list.remove(ndx);
+		return true;
+	}
+
 	public static MultiSmelterRecipe getRecipeFor(Object input1, Object input2)
+	{
+		int ndx = getRecipeIndexFor(input1, input2);
+		if(ndx == -1)
+			return null;
+		return list.get(ndx);
+	}
+
+	private static int getRecipeIndexFor(Object input1, Object input2)
 	{
 		int rID1, rID2, id1, id2;
 		boolean firstMatch, secondMatch;
-		
-		for(MultiSmelterRecipe r:list)
+
+		for( int i = 0; i < list.size(); i++ )
 		{
+			MultiSmelterRecipe r = list.get(i);
 			rID1 = -1;
 			rID2 = -1;
 			id1 = -1;
@@ -103,7 +133,7 @@ public class MultiSmelterRecipeRegistry
 					if(id2 == rID2 && id2 != -1) secondMatch = true;
 					else if(r.input2 instanceof ItemStack && ((ItemStack)r.input2).isItemEqual((ItemStack)input2)) secondMatch = true;
 					
-					if(firstMatch && secondMatch) return r;
+					if(firstMatch && secondMatch) return i;
 				}
 				else if(input2 instanceof String)
 				{
@@ -119,7 +149,7 @@ public class MultiSmelterRecipeRegistry
 					else if(r.input1 instanceof ItemStack && ((ItemStack)r.input1).isItemEqual((ItemStack)input1)) firstMatch = true;
 					if(id2 == rID2 && id2 != -1) secondMatch = true;
 					
-					if(firstMatch && secondMatch) return r;
+					if(firstMatch && secondMatch) return i;
 				}
 			}
 			else if(input1 instanceof String)
@@ -138,7 +168,7 @@ public class MultiSmelterRecipeRegistry
 					if(id2 == rID2 && id2 != -1) secondMatch = true;
 					else if(r.input2 instanceof ItemStack && ((ItemStack)r.input2).isItemEqual((ItemStack)input2)) secondMatch = true;
 					
-					if(firstMatch && secondMatch) return r;
+					if(firstMatch && secondMatch) return i;
 				}
 				else if(input2 instanceof String)
 				{
@@ -153,11 +183,11 @@ public class MultiSmelterRecipeRegistry
 					if(id1 == rID1 && id1 != -1) firstMatch = true;
 					if(id2 == rID2 && id2 != -1) secondMatch = true;
 					
-					if(firstMatch && secondMatch) return r;
+					if(firstMatch && secondMatch) return i;
 				}
 			}
 		}
 		
-		return null;
+		return -1;
 	}
 }

@@ -67,15 +67,33 @@ public class PhotobioReactorRecipeRegistry
 	{
 		registerRecipe(new PhotobioReactorRecipe(input, fluidInput, output));
 	}
-	
+
+	public static boolean unregisterRecipe(Object input, FluidStack fluidInput)
+	{
+		int ndx = getRecipeIndex(input, fluidInput);
+		if(ndx == -1)
+			return false;
+		recipes.remove(ndx);
+		return true;
+	}
+
 	public static PhotobioReactorRecipe getRecipe(Object input, FluidStack fluidInput)
+	{
+		int ndx = getRecipeIndex(input, fluidInput);
+		if(ndx == -1)
+			return null;
+		return recipes.get(ndx);
+	}
+	
+	private static int getRecipeIndex(Object input, FluidStack fluidInput)
 	{
 		
 		if(input instanceof ItemStack)
 		{
 			int oreID = OreDictionary.getOreID((ItemStack)input);
-			for(PhotobioReactorRecipe r:recipes)
+			for(int i = 0; i < recipes.size(); i++)
 			{
+				PhotobioReactorRecipe r = recipes.get(i);
 				int otherID = -1;
 				
 				if(r.getInput() instanceof ItemStack)
@@ -89,7 +107,7 @@ public class PhotobioReactorRecipeRegistry
 				
 				if((otherID != -1 && otherID == oreID) || (r.getInput() instanceof ItemStack && ((ItemStack)input).isItemEqual((ItemStack)r.getInput())))
 				{
-					if(fluidInput.isFluidEqual(r.fluidInput)) return r;
+					if(fluidInput.isFluidEqual(r.fluidInput)) return i;
 				}
 				
 			}
@@ -97,8 +115,9 @@ public class PhotobioReactorRecipeRegistry
 		else if(input instanceof String)
 		{
 			int oreID = OreDictionary.getOreID((String)input);
-			for(PhotobioReactorRecipe r:recipes)
+			for(int i = 0; i < recipes.size(); i++)
 			{
+				PhotobioReactorRecipe r = recipes.get(i);
 				int otherID = -1;
 				
 				if(r.getInput() instanceof ItemStack)
@@ -112,11 +131,11 @@ public class PhotobioReactorRecipeRegistry
 				
 				if(otherID != -1 && otherID == oreID)
 				{
-					if(fluidInput.isFluidEqual(r.fluidInput)) return r;
+					if(fluidInput.isFluidEqual(r.fluidInput)) return i;
 				}
 			}
 		}
 		
-		return null;
+		return -1;
 	}
 }

@@ -71,14 +71,32 @@ public class CentrifugeRecipeRegistry
 	
 	public static void registerRecipe(ItemStack input, ItemStack output, ItemStack secondaryOutput, int percent) { registerRecipe(new CentrifugeRecipe(input, output, secondaryOutput, percent)); }
 	public static void registerRecipe(String input, ItemStack output, ItemStack secondaryOutput, int percent) { registerRecipe(new CentrifugeRecipe(input, output, secondaryOutput, percent)); }
-	
+
+	public static boolean unregisterRecipe(Object input)
+	{
+		int ndx = getRecipeIndex(input);
+		if(ndx == -1)
+			return false;
+		recipes.remove(ndx);
+		return true;
+	}
+
 	public static CentrifugeRecipe getRecipe(Object input)
+	{
+		int ndx = getRecipeIndex(input);
+		if(ndx == -1)
+			return null;
+		return recipes.get(ndx);
+	}
+	
+	private static int getRecipeIndex(Object input)
 	{
 		if(input instanceof ItemStack)
 		{
 			int oreID = OreDictionary.getOreID((ItemStack)input);
-			for(CentrifugeRecipe r:recipes)
+			for(int i = 0; i < recipes.size(); i++)
 			{
+				CentrifugeRecipe r = recipes.get(i);
 				int otherID = -1;
 				
 				if(r.getInput() instanceof ItemStack)
@@ -92,7 +110,7 @@ public class CentrifugeRecipeRegistry
 				
 				if((otherID != -1 && otherID == oreID) || (r.getInput() instanceof ItemStack && ((ItemStack)input).isItemEqual((ItemStack)r.getInput())))
 				{
-					return r;
+					return i;
 				}
 				
 			}
@@ -100,8 +118,9 @@ public class CentrifugeRecipeRegistry
 		else if(input instanceof String)
 		{
 			int oreID = OreDictionary.getOreID((String)input);
-			for(CentrifugeRecipe r:recipes)
+			for(int i = 0; i < recipes.size(); i++)
 			{
+				CentrifugeRecipe r = recipes.get(i);
 				int otherID = -1;
 				
 				if(r.getInput() instanceof ItemStack)
@@ -115,12 +134,12 @@ public class CentrifugeRecipeRegistry
 				
 				if(otherID != -1 && otherID == oreID)
 				{
-					return r;
+					return i;
 				}
 			}
 		}
 		
-		return null;
+		return -1;
 	}
 	
 }

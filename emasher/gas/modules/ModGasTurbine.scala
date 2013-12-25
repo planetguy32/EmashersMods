@@ -7,6 +7,7 @@ import java.util._;
 import net.minecraft.item.crafting._;
 import net.minecraftforge.oredict._;
 import net.minecraftforge.common._;
+import net.minecraftforge.fluids._;
 import net.minecraft.item._;
 import net.minecraft.block._;
 import emasher.gas.fluids.FluidGas;
@@ -24,20 +25,20 @@ class ModGasTurbine(id: Int) extends SocketModule(id, "gascraft:gasTurbine", "ga
 	override def getIndicatorKey(l: List[Object])
 	{
 		l.add(SocketsMod.PREF_BLUE + "Fuel Tank");
-		l.add(SocketsMod.PREF_AQUA + "Outputs 1 MJ/t");
+		l.add(SocketsMod.PREF_AQUA + "Outputs 10 f/t");
 	}
 	
 	override def getCurrentTexture(config: SideConfig):
 	Int = 
 	{
-		if(config.meta == 0) 0;
-		else 1;
+		if(config.rsControl(0)) 1;
+		else 0;
 	}
 	
 	override def addRecipe
 	{
 		CraftingManager.getInstance().getRecipeList().asInstanceOf[List[Object]].add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ipi", "ufu", " b ", Character.valueOf('p'), EmasherCore.psu, Character.valueOf('i'), Item.ingotIron,
-				Character.valueOf('u'), Item.bucketEmpty, Character.valueOf('f'), Block.glass, Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 5)));
+				Character.valueOf('u'), Item.bucketEmpty, Character.valueOf('f'), Block.glass, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	override def hasTankIndicator = true;
@@ -61,48 +62,125 @@ class ModGasTurbine(id: Int) extends SocketModule(id, "gascraft:gasTurbine", "ga
 		true;
 	}
 	
+	/*
+	 * Config Dictionary
+	 * 
+	 * rsControl(0) -> Persistent generator is on or off
+	 * 
+	 * Side Inventory
+	 * 
+	 * itemID 		-> Energy per tick
+	 * itemDamage	-> Remaining time
+	*/
+	
 	override def updateSide(config: SideConfig, ts: SocketTileAccess, side: ForgeDirection)
 	{
+		if(!config.rsLatch(2))
+		{
+			//Compatibility
+			//This code block should eventually be removed
+			config.rsLatch(2) = true;
+			
+			config.meta = 0;
+			ts.sideInventory.setInventorySlotContents(side.ordinal, null);
+			config.rsControl(0) = false;
+			config.rsControl(1) = false;
+			config.rsControl(2) = false;
+		}
+		
 		if(config.tank >= 0 && config.tank < 3)
 		{
-			if(config.meta <= 0)
+			var initState = config.rsControl(0);
+			var newState = initState;
+			
+			if(initState) //Generator is on
 			{
-				var fluid = ts.getFluidInTank(config.tank);
-				if(config.rsControl(1)) config.rsControl(1) = false;
+				//Check to see if there's still fuel
+				var is = ts.sideInventory.getStackInSlot(side.ordinal);
 				
-				
-				if(fluid != null && fluid.getFluid.isInstanceOf[FluidGas] && fluid.amount > 250 && ts.powerHandler.getEnergyStored() < ts.powerHandler.getMaxEnergyStored())
+				if(is != null && newState)
 				{
+					//Check if the internal capacitor can hold any more energy
 					
-					config.rsControl(1) = true;
-					config.meta = 20;
-					ts.drainInternal(config.tank, 250, true);
-					
+					if(ts.getMaxEnergyStored() - ts.getEnergyStored() >= 10)
+					{
+						ts.addEnergy(10, false);
+						is.setItemDamage(is.getItemDamage - 1);
+						if(is.getItemDamage() <= 0)
+						{
+							ts.sideInventory.setInventorySlotContents(side.ordinal, null);
+							newState = false;
+						}
+					}
+					else
+					{
+						newState = false;
+					}
 				}
 				
-				ts.sendClientSideState(side.ordinal);
+				if(is == null && ! newState)
+				{
+					var theFluid = ts.getFluidInTank(config.tank);
+                    if(theFluid != null && theFluid.getFluid.isGaseous())
+                    {
+                    	if(theFluid.amount >= 1000 && ts.getMaxEnergyStored() - ts.getEnergyStored() >= 10)
+                    	{
+                    		var newStack = new ItemStack(1, 1, 80);
+                    		ts.sideInventory.setInventorySlotContents(side.ordinal, newStack);
+                    		config.rsControl(2) = GeneratorFuelRegistry.producesSmoke(theFluid.getFluid.getName);
+                    		ts.drainInternal(config.tank, 1000, true);
+                    		newState = true;
+                    	}
+                    }
+                    
+				}
 			}
-			else
-			{				
-				if(ts.powerHandler.getEnergyStored() < ts.powerHandler.getMaxEnergyStored())
+			else //Generator is off
+			{
+				var is = ts.sideInventory.getStackInSlot(side.ordinal);
+				if(is == null)
 				{
-					config.meta -= 1;
-					ts.powerHandler.addEnergy(0.25F);
-					
-				}
+					var theFluid = ts.getFluidInTank(config.tank);
+                    if(theFluid != null && theFluid.getFluid.isGaseous())
+                    {
+                    	if(theFluid.amount >= 1000 && ts.getMaxEnergyStored() - ts.getEnergyStored() >= 10)
+                    	{
+                    		var newStack = new ItemStack(1, 1, 80);
+                    		ts.sideInventory.setInventorySlotContents(side.ordinal, newStack);
+                    		config.rsControl(2) = GeneratorFuelRegistry.producesSmoke(theFluid.getFluid.getName);
+                    		ts.drainInternal(config.tank, 1000, true);
+                    		newState = true;
+                    	}
+                    }
+                }
 				else
 				{
-					config.meta = 0;
-					if(config.rsControl(1)) ts.sendClientSideState(side.ordinal);
-					config.rsControl(1) = false;
+					if(ts.getMaxEnergyStored() - ts.getEnergyStored() >= is.itemID) newState = true;
 				}
+			}
+			
+			if(newState != initState)
+			{
+				config.rsControl(0) = newState;
+				ts.sendClientSideState(side.ordinal);
 			}
 		}
 		else
 		{
 			config.meta = 0;
-			if(config.rsControl(1)) ts.sendClientSideState(side.ordinal);
+			ts.sideInventory.setInventorySlotContents(side.ordinal, null);
+			
 			config.rsControl(1) = false;
+			config.rsControl(2) = false;
+			
+			if(config.rsControl(0))
+			{
+				config.rsControl(0) = false;
+				ts.sendClientSideState(side.ordinal);
+			}
+			
+			
 		}
+		
 	}
 }

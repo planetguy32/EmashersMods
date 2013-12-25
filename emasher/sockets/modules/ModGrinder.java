@@ -50,7 +50,7 @@ public class ModGrinder extends SocketModule
 	{
 		l.add(SocketsMod.PREF_GREEN + "Input inventory");
 		l.add(SocketsMod.PREF_YELLOW + "Outputs to Machine Output");
-		l.add(SocketsMod.PREF_AQUA + "Requires 1 MJ/t");
+		l.add(SocketsMod.PREF_AQUA + "Requires 10 RF/t");
 		l.add("Cannot be installed on a socket with other machines");
 	}
 	
@@ -121,9 +121,9 @@ public class ModGrinder extends SocketModule
 					}
 				}
 			}
-			else if(ts.useEnergy(1.0F, false)>= 1.0F && config.meta > 0)
+			else if(ts.useEnergy(10, true)>= 10 && config.meta > 0)
 			{
-				ts.useEnergy(1.0F, true);
+				ts.useEnergy(10, false);
 				config.meta--;
 				if(config.meta == 0) updateClient = true;
 				if(! config.rsControl[0] && config.meta > 0)

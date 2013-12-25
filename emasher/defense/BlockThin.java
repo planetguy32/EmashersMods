@@ -121,7 +121,7 @@ public class BlockThin extends BlockPane
 	
 	
 	
-	/*@Override
+	@Override
 	public void onEntityCollidedWithBlock(World par1World, int par2, int par3, int par4, Entity par5Entity)
 	{
 		super.onEntityCollidedWithBlock(par1World, par2, par3, par4, par5Entity);
@@ -159,9 +159,9 @@ public class BlockThin extends BlockPane
 		{
 			((EntityLiving)par5Entity).attackEntityFrom(DamageSource.cactus, damage);
 		}
-	}*/
+	}
 	
-	@Override
+	/*@Override
 	public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9)
     {
         //return par1World.isRemote ? true : ItemLeash.func_135066_a(par5EntityPlayer, par1World, par2, par3, par4);
@@ -176,7 +176,7 @@ public class BlockThin extends BlockPane
         }
         
         return true;
-    }
+    }*/
 	
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World par1World, int par2, int par3, int par4)

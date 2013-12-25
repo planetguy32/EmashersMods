@@ -26,7 +26,7 @@ class ModRangeSelector(id: Int) extends SocketModule(id, "sockets:rangeSelector"
 	override def addRecipe
 	{
 		CraftingManager.getInstance().getRecipeList().asInstanceOf[List[Object]].add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ggg", "sls", " b ", Character.valueOf('g'), Block.thinGlass, Character.valueOf('s'), Item.glowstone,
-				Character.valueOf('l'), "dyeLime", Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 5)));
+				Character.valueOf('l'), "dyeLime", Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	override def onGenericRemoteSignal(ts: SocketTileAccess, config: SideConfig, side: ForgeDirection)

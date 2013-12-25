@@ -31,6 +31,7 @@ import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.IItemRenderer.ItemRendererHelper;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.common.FakePlayerFactory;
 import net.minecraftforge.common.ForgeDirection;
 //import net.minecraftforge.liquids.LiquidDictionary;
 //import net.minecraftforge.liquids.LiquidStack;
@@ -263,20 +264,44 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 				else
 				{
 					//bindTextureByName("/gui/items.png");
-					Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/atlas/items.png"));
+					/*Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/atlas/items.png"));
 					
-					if(theItem instanceof ItemBlock) Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/atlas/blocks.png"));//bindTextureByName("/terrain.png");
+					if(theItem instanceof ItemBlock) inecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/atlas/blocks.png"));//bindTextureByName("/terrain.png");*/
 					
-					Icon itemIcon = theItem.getIcon(theStack, 0);
+					Minecraft.getMinecraft().renderEngine.bindTexture(theStack.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
+						
+					if(theItem.requiresMultipleRenderPasses())
+					{
+						int passes = theItem.getRenderPasses(theStack.getItemDamage());
+						
+						for(int i = 0; i < passes; i++)
+						{
+							Minecraft.getMinecraft().renderEngine.bindTexture(theStack.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
+							Icon itemIcon = theItem.getIconFromDamageForRenderPass(theStack.getItemDamage(), i);//, FakePlayerFactory.getMinecraft(ts.worldObj), theStack, 0);
+							tessellator.startDrawingQuads();
+							
+							tessellator.addVertexWithUV(0, 1, 0, itemIcon.getMinU(), itemIcon.getMaxV());
+							tessellator.addVertexWithUV(1, 1, 0, itemIcon.getMaxU(), itemIcon.getMaxV());
+							tessellator.addVertexWithUV(1, 0, 0, itemIcon.getMaxU(), itemIcon.getMinV());
+							tessellator.addVertexWithUV(0, 0, 0, itemIcon.getMinU(), itemIcon.getMinV());
+							
+							tessellator.draw();
+						}
+					}
+					else
+					{
 					
-					tessellator.startDrawingQuads();
-					
-					tessellator.addVertexWithUV(0, 1, 0, itemIcon.getMinU(), itemIcon.getMaxV());
-					tessellator.addVertexWithUV(1, 1, 0, itemIcon.getMaxU(), itemIcon.getMaxV());
-					tessellator.addVertexWithUV(1, 0, 0, itemIcon.getMaxU(), itemIcon.getMinV());
-					tessellator.addVertexWithUV(0, 0, 0, itemIcon.getMinU(), itemIcon.getMinV());
-					
-					tessellator.draw();
+						Icon itemIcon = theItem.getIcon(theStack, 0);
+						
+						tessellator.startDrawingQuads();
+						
+						tessellator.addVertexWithUV(0, 1, 0, itemIcon.getMinU(), itemIcon.getMaxV());
+						tessellator.addVertexWithUV(1, 1, 0, itemIcon.getMaxU(), itemIcon.getMaxV());
+						tessellator.addVertexWithUV(1, 0, 0, itemIcon.getMaxU(), itemIcon.getMinV());
+						tessellator.addVertexWithUV(0, 0, 0, itemIcon.getMinU(), itemIcon.getMinV());
+						
+						tessellator.draw();
+					}
 				}
 			}
 

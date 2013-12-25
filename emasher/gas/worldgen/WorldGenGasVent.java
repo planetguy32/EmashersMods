@@ -46,7 +46,8 @@ public class WorldGenGasVent implements IWorldGenerator
 			    		x = i * 16;
 			    		z = k * 16;
 			    		
-				    	int y = random.nextInt(2) + 3;
+			    		int y = 0;
+				    	if(! EmasherGas.flatBedrock) y = random.nextInt(2) + 3;
 				    	
 				    	x += random.nextInt(16);
 				    	z += random.nextInt(16);

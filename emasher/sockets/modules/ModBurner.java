@@ -96,7 +96,7 @@ public class ModBurner extends SocketModule
 		int blockID = ts.worldObj.getBlockId(xo, yo, zo);
 		
 		if(blockID == Block.fire.blockID && ! canBurn) ts.worldObj.setBlockToAir(xo, yo, zo);
-		else if(blockID == 0 && canBurn) ts.worldObj.setBlock(xo, yo, zo, Block.fire.blockID);
+		else if(ts.worldObj.isAirBlock(xo, yo, zo) && canBurn) ts.worldObj.setBlock(xo, yo, zo, Block.fire.blockID);
 		else if(blockID == Block.portal.blockID && ! canBurn) ts.worldObj.setBlockToAir(xo, yo, zo);
 	}
 	

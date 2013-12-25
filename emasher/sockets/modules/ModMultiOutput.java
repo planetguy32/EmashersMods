@@ -53,9 +53,6 @@ public class ModMultiOutput extends SocketModule
 	}
 	
 	@Override
-	public boolean outputsEnergy(SideConfig config) { return true; }
-	
-	@Override
 	public boolean hasTankIndicator() { return true; }
 	
 	@Override
@@ -93,15 +90,13 @@ public class ModMultiOutput extends SocketModule
 	private void EnergyInsert(SocketTileAccess ts, SideConfig config, ForgeDirection side)
 	{
 		boolean allOff = true;
-		
 		for(int i = 0; i < 3; i++)
 		{
 			if(config.rsControl[i])
 			{
 				if(ts.getRSControl(i))
 				{
-					outputEnergy(config, ts, side);
-					
+					ts.outputEnergy(1000, side);
 					return;
 				}
 				allOff = false;
@@ -111,8 +106,7 @@ public class ModMultiOutput extends SocketModule
 			{
 				if(ts.getRSLatch(i))
 				{
-					outputEnergy(config, ts, side);
-					
+					ts.outputEnergy(1000, side);
 					return;
 				}
 				allOff = false;
@@ -121,7 +115,7 @@ public class ModMultiOutput extends SocketModule
 		
 		if(allOff)
 		{
-			outputEnergy(config, ts, side);
+			ts.outputEnergy(1000, side);
 			
 		}
 	}
@@ -190,13 +184,6 @@ public class ModMultiOutput extends SocketModule
 		if(allOff) if(ts.tryInsertItem(ts.getStackInInventorySlot(config.inventory), side)) ts.extractItemInternal(true, config.inventory, 1);
 	}
 	
-	/*@Override
-	public ILiquidTank getAssociatedTank(SideConfig config, SocketTileAccess ts)
-	{
-		if(config.tank == -1) return null;
-		return ts.tanks[config.tank];
-	}*/
-	
 	@Override
 	public FluidStack fluidExtract(int amount, boolean doExtract, SideConfig config, SocketTileAccess ts)
 	{
@@ -211,10 +198,69 @@ public class ModMultiOutput extends SocketModule
 		return null;
 	}
 	
-	public void outputEnergy(SideConfig config, SocketTileAccess ts, ForgeDirection side)
+	@Override
+	public int extractEnergy(int amount, boolean simulate, SideConfig config, SocketTileAccess ts)
 	{
+		boolean allOff = true;
+			for(int i = 0; i < 3; i++)
+			{
+				if(config.rsControl[i])
+				{
+					if(ts.getRSControl(i))
+					{
+						return ts.useEnergy(amount, simulate);
+					}
+					allOff = false;
+				}
+				
+				if(config.rsLatch[i])
+				{
+					if(ts.getRSLatch(i))
+					{
+						return ts.useEnergy(amount, simulate);
+					}
+					allOff = false;
+				}
+			}
+			
+			if(allOff)
+			{
+				return ts.addEnergy(amount, simulate);
+				
+			}
 		
-		ts.outputEnergy(100, 512, side);
+		return 0;
+	}
+	
+	@Override
+	public boolean canDirectlyExtractItems(SideConfig config, SocketTileAccess ts)
+	{
+		if(config.inventory < 0 || config.inventory > 2) return false;
+		
+		boolean allOff = true;
+		
+		for(int i = 0; i < 3; i++)
+		{
+			if(config.rsControl[i])
+			{
+				if(ts.getRSControl(i))
+				{
+					return true;
+				}
+				allOff = false;
+			}
+			
+			if(config.rsLatch[i])
+			{
+				if(ts.getRSLatch(i))
+				{
+					return true;
+				}
+				allOff = false;
+			}
+		}
+		
+		return allOff;
 	}
 
 }

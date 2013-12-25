@@ -33,7 +33,7 @@ class ModRefinery(id: Int) extends SocketModule(id, "gascraft:refinery", "gascra
 	override def addRecipe
 	{
 		CraftingManager.getInstance().getRecipeList().asInstanceOf[List[Object]].add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "dpd", "dud", " b ", Character.valueOf('p'), EmasherCore.psu, Character.valueOf('d'), Item.diamond,
-				Character.valueOf('u'), Item.bucketEmpty, Character.valueOf('f'), Block.glass, Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 5)));
+				Character.valueOf('u'), Item.bucketEmpty, Character.valueOf('f'), Block.glass, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	override def getCurrentTexture(config: SideConfig):
@@ -85,9 +85,9 @@ class ModRefinery(id: Int) extends SocketModule(id, "gascraft:refinery", "gascra
 				
 				if(rec != null)
 				{
-					if(ts.powerHandler.getEnergyStored() > rec.energy && ts.getFluidInTank(config.tank).amount >= rec.ingredient1.amount)
+					if(ts.getEnergyStored() > rec.energy * 5 && ts.getFluidInTank(config.tank).amount >= rec.ingredient1.amount)
 					{
-						ts.powerHandler.useEnergy(rec.energy, rec.energy, true);
+						ts.useEnergy(rec.energy * 5, false);
 						ts.drainInternal(config.tank, rec.ingredient1.amount, true);
 						ts.sideInventory.setInventorySlotContents(side.ordinal, new ItemStack(rec.result.fluidID, 1, rec.result.amount));
 						config.meta = rec.delay;

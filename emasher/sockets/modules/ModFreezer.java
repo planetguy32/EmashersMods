@@ -43,7 +43,7 @@ public class ModFreezer extends SocketModule
 	{
 		l.add(SocketsMod.PREF_BLUE + "Input tank");
 		l.add(SocketsMod.PREF_GREEN + "Output inventory");
-		l.add(SocketsMod.PREF_AQUA + "Requires 16 MJ/operation");
+		l.add(SocketsMod.PREF_AQUA + "Requires 160 RF/operation");
 	}
 	
 	@Override
@@ -67,7 +67,7 @@ public class ModFreezer extends SocketModule
 		{
 			config.meta = 0;
 			
-			if(ts.getCurrentEnergyStored() > 16)
+			if(ts.getEnergyStored() > 160)
 			{
 				if(config.tank >= 0 && config.tank < 3)
 				{
@@ -81,7 +81,7 @@ public class ModFreezer extends SocketModule
 							{
 								ts.drainInternal(config.tank, 1000, true);
 								ts.addItemInternal(new ItemStack(Block.ice), true, config.inventory);
-								ts.useEnergy(16, true);
+								ts.useEnergy(160, false);
 							}
 						}
 					}

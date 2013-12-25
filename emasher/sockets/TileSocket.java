@@ -1,11 +1,7 @@
 package emasher.sockets;
 
-import ic2.api.Direction;
-import ic2.api.energy.event.EnergyTileLoadEvent;
-import ic2.api.energy.event.EnergyTileUnloadEvent;
-import ic2.api.energy.tile.IEnergyAcceptor;
-import ic2.api.energy.tile.IEnergySink;
-import ic2.api.energy.tile.IEnergySource;
+import cofh.api.energy.EnergyStorage;
+import cofh.api.energy.IEnergyHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -14,13 +10,11 @@ import emasher.api.ModuleRegistry;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
+import emasher.sockets.modules.ModItemInput;
+import emasher.sockets.modules.ModItemOutput;
 import emasher.sockets.modules.ModMachineOutput;
 import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
@@ -49,14 +43,14 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.IFluidTank;
 
-public class TileSocket extends SocketTileAccess implements ISpecialInventory, IPowerReceptor, IGasReceptor, IEnergySink, IEnergySource, IFluidHandler
+public class TileSocket extends SocketTileAccess implements ISpecialInventory, ISidedInventory, IFluidHandler, IEnergyHandler, IGasReceptor
 {
 	public FluidTank[] tanks;
+	public EnergyStorage capacitor;
 	public InventoryBasic inventory;
 	
 	public boolean[] rsControl;
 	public boolean[] rsLatch;
-	public boolean addedToEnergyNet;
 	
 	public int[] sides;
 	public SideConfig[] configs;
@@ -71,6 +65,8 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	public int[] facMeta;
 	
 	public boolean isRSShared;
+	
+	public int updateCoolDown = 0;
 	
 	public TileSocket()
 	{
@@ -92,21 +88,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		inventory = new InventoryBasic("socket", true, 3);
 		sideInventory = new InventoryBasic("socketSide", true, 6);
 		
-		/*if(PowerFramework.currentFramework != null)
-		{
-			powerHandler = (PowerHandler) PowerFramework.currentFramework.createPowerHandler();
-		}*/
-		
-		/*if(powerHandler == null)
-		{
-			powerHandler = new SocketPowerHandler();
-		}*/
-		
-		powerHandler = new PowerHandler(this, PowerHandler.Type.STORAGE);
-		
-		powerHandler.configure(0.0F, 1000.0F, 0.0F, 500.0F);
-		powerHandler.configurePowerPerdition(0,0);
-		powerHandler.useEnergy(powerHandler.getEnergyStored(), powerHandler.getEnergyStored(), true);
+		capacitor = new EnergyStorage(5000);
 		
 		sides = new int[6];
 		configs = new SideConfig[6];
@@ -125,14 +107,26 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	
 	public void updateEntity()
 	{
+		/*if(worldObj.getBlockId(xCoord, yCoord, zCoord) != SocketsMod.socket.blockID && worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) instanceof TileSocket)
+		{
+			worldObj.removeBlockTileEntity(xCoord, yCoord, zCoord);
+			return;
+		}*/
+		
+		if(worldObj.isRemote)
+		{
+			updateCoolDown++;
+			
+			if(updateCoolDown == 600)
+			{
+				this.validate();
+				updateCoolDown = 0;
+			}
+		}
+		
+		
 		if(! worldObj.isRemote)
 		{
-			if(worldObj.getBlockId(xCoord, yCoord, zCoord) != SocketsMod.socket.blockID)
-			{
-				worldObj.removeBlockTileEntity(xCoord, yCoord, zCoord);
-				return;
-			}
-			
 			ForgeDirection d;
 			SocketModule m;
 			SideConfig c;
@@ -142,7 +136,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 				m = getSide(d);
 				c = configs[i];
 				
-				if(m.pullsFromHopper())
+				/*if(m.pullsFromHopper())
 				{
 					int xo = xCoord + d.offsetX;
 					int yo = yCoord + d.offsetY;
@@ -170,7 +164,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 			                }
 			            }
 			        }
-				}
+				}*/
 				m.updateSide(c, this, d);
 			}
 		}
@@ -179,9 +173,9 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		{
 			if (! worldObj.isRemote)
 			{
-				EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
+				/*EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
 				MinecraftForge.EVENT_BUS.post(loadEvent);
-				this.addedToEnergyNet = true;
+				this.addedToEnergyNet = true;*/
 				
 				sideID = new int[6];
 				sideMeta = new int[6];
@@ -200,18 +194,20 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		}
 	}
 	
-	@Override
+	/*@Override
 	public void invalidate()
 	{
+		super.invalidate();
 		MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
 		addedToEnergyNet = false;
-	}
+	}*/
 	
 	@Override
 	public void onChunkUnload()
 	{
-		MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
-		addedToEnergyNet = false;
+		super.onChunkUnload();
+		/*MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+		addedToEnergyNet = false;*/
 	}
 	
 	public void updateAllAdj()
@@ -252,7 +248,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		if(this.worldObj.isRemote)
 		{
 			for(int i = 0; i < 6; i++)
-			emasher.sockets.client.ClientPacketHandler.instance.requestSideData(this, (byte)i);
+				emasher.sockets.client.ClientPacketHandler.instance.requestSideData(this, (byte)i);
 			for(int i = 0; i < 3; i++)
 			{
 				emasher.sockets.client.ClientPacketHandler.instance.requestInventoryData(this, (byte)i);
@@ -334,10 +330,10 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	    	sideInventory.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(itemCompound));
 	    }
 	    
-	    powerHandler.readFromNBT(data);
-	    float power = powerHandler.getEnergyStored();
-	    if(data.hasKey("powerCap")) this.setMaxEnergyStored((int)data.getFloat("powerCap"));
-	    powerHandler.setEnergy(power);
+	    capacitor.readFromNBT(data);
+	    int power = capacitor.getEnergyStored();
+	    if(data.hasKey("powerCap2")) this.setMaxEnergyStored((int)data.getInteger("powerCap2"));
+	    capacitor.setEnergyStored(power);
 	    
 	    
 	}
@@ -402,10 +398,10 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		
 		data.setTag("sideItems", sideItemList);
 		
-		if(powerHandler != null)
+		if(capacitor != null)
 		{
-			powerHandler.writeToNBT(data);
-			data.setFloat("powerCap", powerHandler.getMaxEnergyStored());
+			capacitor.writeToNBT(data);
+			data.setInteger("powerCap2", capacitor.getMaxEnergyStored());
 		}
 		
  	}
@@ -614,7 +610,8 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		return this.sideRS[side.ordinal()];
 	}
 	
-	
+
+	// IInventory
 
 	@Override
 	public int getSizeInventory()
@@ -679,8 +676,83 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) 
 	{
+		return true;
+	}
+	
+	@Override
+	public void onInventoryChanged()
+	{
+		for(int i = 0; i < 6; i++)
+		{
+			for(int j = 0; j < 3; j++)
+			{
+				SocketModule m = getSide(ForgeDirection.getOrientation(i));
+				m.onInventoryChange(configs[i], j, this, ForgeDirection.getOrientation(i), false);
+			}
+		}
+	}
+	
+	// ISidedInventory
+	
+	@Override
+	public int[] getAccessibleSlotsFromSide(int side)
+	{
+		int[] result = new int[1];
+		SocketModule m = getSide(ForgeDirection.getOrientation(side));
+		
+		if(m != null && (m.canDirectlyExtractItems(configs[side], this) || m.canDirectlyInsertItems(configs[side], this)))
+		{
+			SideConfig config = configs[side];
+			if(config.inventory >= 0 && config.inventory <= 2)
+			{
+				result[0] = config.inventory;
+			}
+			else
+			{
+				result = new int[]{};
+			}
+		}
+		else
+		{
+			result = new int[]{};
+		}
+		
+		return result;
+	}
+
+	@Override
+	public boolean canInsertItem(int slot, ItemStack is, int side)
+	{
+		SocketModule m = getSide(ForgeDirection.getOrientation(side));
+		if(m != null && m.canDirectlyInsertItems(configs[side], this))
+		{
+			int[] slots = getAccessibleSlotsFromSide(side);
+			if(slots.length > 0)
+			{
+				if(slots[0] == slot) return true;
+			}
+		}
+		
 		return false;
 	}
+
+	@Override
+	public boolean canExtractItem(int slot, ItemStack is, int side)
+	{
+		SocketModule m = getSide(ForgeDirection.getOrientation(side));
+		if(m != null && m.canDirectlyExtractItems(configs[side], this))
+		{
+			int[] slots = getAccessibleSlotsFromSide(side);
+			if(slots.length > 0)
+			{
+				if(slots[0] == slot) return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	// ISpecialInventory
 	
 	@Override
 	public ItemStack pullItem(ForgeDirection side, boolean doPull)
@@ -709,13 +781,18 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 					ItemStack pulled = isi.getStackInSlot(slots[i]);
 					if(pulled != null && isi.canExtractItem(slots[i], pulled, side.getOpposite().ordinal()))
 					{
-						ItemStack result = pulled.copy().splitStack(1);
+						ItemStack result = null; //pulled.copy().splitStack(1);
+						//pulled.stackSize--;
+						//isi.setInventorySlotContents(slots[i], pulled);
+						//if(pulled.stackSize <= 0) isi.setInventorySlotContents(slots[i], null);
 						if(doPull)
 						{
-							pulled.stackSize--;
-							//isi.setInventorySlotContents(slots[i], pulled);
-							if(pulled.stackSize <= 0) isi.setInventorySlotContents(slots[i], null);
+							result = isi.decrStackSize(slots[i], 1);
 							isi.onInventoryChanged();
+						}
+						else
+						{
+							result = pulled.copy().splitStack(1);
 						}
 						return result;
 					}
@@ -730,13 +807,18 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 					ItemStack pulled = ii.getStackInSlot(i);
 					if(pulled != null)
 					{
-						ItemStack result = pulled.copy().splitStack(1);
+						ItemStack result = null;
+						//pulled.stackSize--;
+						//ii.setInventorySlotContents(i, pulled);
+						//if(pulled.stackSize <= 0)ii.setInventorySlotContents(i, null);
 						if(doPull)
 						{
-							pulled.stackSize--;
-							//ii.setInventorySlotContents(i, pulled);
-							if(pulled.stackSize <= 0)ii.setInventorySlotContents(i, null);
+							result = ii.decrStackSize(i, 1);
 							ii.onInventoryChanged();
+						}
+						else
+						{
+							result = pulled.copy().splitStack(1);
 						}
 						return result;
 					}
@@ -1167,18 +1249,18 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		}
 	}
 
-	@Override
+	/*@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction)
 	{
 		SocketModule m = getSide(direction);
 		return m.isEnergyInterface(configs[direction.ordinal()]) && m.acceptsEnergy(configs[direction.ordinal()]);
 	}
 
-	/*@Override
+	@Override
 	public boolean isAddedToEnergyNet()
 	{
 		return addedToEnergyNet;
-	}*/
+	}
 
 	@Override
 	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction)
@@ -1187,19 +1269,19 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		return m.isEnergyInterface(configs[direction.ordinal()]) && m.outputsEnergy(configs[direction.ordinal()]);
 	}
 
-	/*@Override
+	@Override
 	public int getMaxEnergyOutput()
 	{
 		return 512;
-	}*/
+	}
 
 	/*@Override
 	public int demandsEnergy(ForgeDirection direction)
 	{
 		return Math.min((int)(SocketsMod.EUPerMJ * 100), (int)powerHandler.getMaxEnergyStored() - (int)powerHandler.getEnergyStored());
-	}*/
+	}
 
-	/*@Override
+	@Override
 	public int injectEnergy(ForgeDirection directionFrom, int amount)
 	{
 		SocketModule m = getSide(directionFrom);
@@ -1212,9 +1294,9 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		}
 		
 		return 0;
-	}*/
+	}
 
-	/*@Override
+	@Override
 	public int getMaxSafeInput()
 	{
 		return 100000;
@@ -1239,7 +1321,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	}
 
 	@Override
-	public void outputEnergy(int mjMax, int ic2PacketSize, ForgeDirection side)
+	public void outputEnergy(int amount, ForgeDirection side)
 	{
 		int xo = xCoord + side.offsetX;
 		int yo = yCoord + side.offsetY;
@@ -1247,65 +1329,42 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		
 		TileEntity t = worldObj.getBlockTileEntity(xo, yo, zo);
 		
-		if(t != null && t instanceof IPowerReceptor)
+		if(t != null && t instanceof IEnergyHandler)
 		{
-			PowerReceiver receptor = ((IPowerReceptor)t).getPowerReceiver(side.getOpposite());
-			
-			int amnt = 0;
-			
-			if(receptor != null && powerHandler.getEnergyStored() > receptor.getMinEnergyReceived())
-			{
-				amnt = (int)Math.min(receptor.getMaxEnergyReceived(), receptor.getMaxEnergyStored() - (int)receptor.getEnergyStored());
-				amnt = Math.min((int)powerHandler.getEnergyStored(), amnt);
-				amnt = Math.min(amnt, mjMax);
-				
-				powerHandler.useEnergy(amnt, amnt, true);
-				receptor.receiveEnergy(PowerHandler.Type.STORAGE, amnt, side.getOpposite());
-			}
+			IEnergyHandler ieh = (IEnergyHandler)t;
+			int amnt = ieh.receiveEnergy(side.getOpposite(), capacitor.extractEnergy(1000, true), false);
+			capacitor.extractEnergy(amnt, false);
 		}
-		/*else if(t != null && t instanceof IEnergyAcceptor)
-		{
-
-			int amnt = Math.min((int)powerHandler.getEnergyStored(), (int)(ic2PacketSize/SocketsMod.EUPerMJ));
-			EnergyTileSourceEvent evt = new EnergyTileSourceEvent(this,(int)(SocketsMod.EUPerMJ * amnt));
-			MinecraftForge.EVENT_BUS.post(evt);
-			int use = Math.max(0, amnt - evt.amount);
-			powerHandler.useEnergy(use, use, true);
-		}*/
 	}
 	
 	@Override
 	public int getMaxEnergyStored()
 	{
-		return (int)powerHandler.getMaxEnergyStored();
+		return capacitor.getMaxEnergyStored();
 	}
 	
 	@Override
-	public float getCurrentEnergyStored()
+	public int getEnergyStored()
 	{
-		return powerHandler.getEnergyStored();
+		return capacitor.getEnergyStored();
 	}
 
 	@Override
 	public void setMaxEnergyStored(int newMax)
 	{
-		float used = Math.max(getCurrentEnergyStored() - newMax, 0);
-		powerHandler.useEnergy(used, used, true);
-		//powerHandler.configure(0, 0, 100, 0, newMax);
-		powerHandler.configure(0.0F, 1000.0F, 0.0F, newMax);
+		capacitor.setCapacity(newMax);
 	}
 	
 	@Override
-	public float useEnergy(float toUse, boolean doUse)
+	public int useEnergy(int toUse, boolean simulate)
 	{
-		return powerHandler.useEnergy(toUse, toUse, doUse);
+		return capacitor.extractEnergy(toUse, simulate);
 	}
 
 	@Override
-	public void addEnergy(float energy, ForgeDirection side)
+	public int addEnergy(int energy, boolean simulate)
 	{
-		//receiveEnergy(energy, side);
-		this.getPowerReceiver(ForgeDirection.UP).receiveEnergy(PowerHandler.Type.PIPE, energy, side);
+		return capacitor.receiveEnergy(energy, simulate);
 		
 	}
 
@@ -1337,76 +1396,14 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
         return new FluidTankInfo[] { tanks[0].getInfo(), tanks[1].getInfo(), tanks[2].getInfo() };
     }
 	
-	/*
-	 * IPowerReceptor
-	 * 
-	 */
 
-	@Override
-	public PowerReceiver getPowerReceiver(ForgeDirection side)
-	{
-		return powerHandler.getPowerReceiver();
-	}
-
-	@Override
-	public void doWork(PowerHandler workProvider)
-	{
-		
-	}
-
-	@Override
-	public World getWorld()
-	{
-		return worldObj;
-	}
+	
 
 	@Override
 	public FluidStack getFluidInTank(int tank)
 	{
 		if(tank < 0 || tank >= 3) return null;
 		return tanks[tank].getFluid();
-	}
-
-	@Override
-	public double getOfferedEnergy()
-	{
-		//return Math.min(powerHandler.getEnergyStored(), arg1)
-		return Math.min((int)powerHandler.getEnergyStored() * SocketsMod.EUPerMJ, 512);
-	}
-
-	@Override
-	public void drawEnergy(double amount)
-	{
-		powerHandler.setEnergy((float)Math.max(0, powerHandler.getEnergyStored() - (amount/SocketsMod.EUPerMJ)));
-	}
-
-	@Override
-	public double demandedEnergyUnits()
-	{
-		int euAmnt = (int)(512 / SocketsMod.EUPerMJ);
-		int amnt = (int)Math.min(euAmnt, (int)powerHandler.getMaxEnergyStored() - (int)powerHandler.getEnergyStored());
-		if(amnt <= 10) amnt = 0;
-		return amnt * SocketsMod.EUPerMJ;
-	}
-
-	@Override
-	public double injectEnergyUnits(ForgeDirection directionFrom, double amount)
-	{
-		double amntMJ = amount/SocketsMod.EUPerMJ;
-		double result = amount;
-		if(powerHandler.getEnergyStored() < powerHandler.getMaxEnergyStored() - 10)
-		{
-			this.powerHandler.getPowerReceiver().receiveEnergy(Type.PIPE, (float)amntMJ, ForgeDirection.UP);
-			result = 0.0D;
-		}
-		
-		return result;
-	}
-
-	@Override
-	public int getMaxSafeInput()
-	{
-		return 1000000;
 	}
 
 	@Override
@@ -1464,10 +1461,50 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	{
 		return ((BlockSocket)SocketsMod.socket).textures[moduleID][texture];
 	}
-
+	
+	// IGasReceptor
+	
 	@Override
 	public int recieveGas(FluidStack gas, ForgeDirection direction, boolean doFill)
 	{
 		return this.fill(direction, gas, doFill);
+	}
+	
+	// IEnergyHandler
+
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate)
+	{
+		if(from == ForgeDirection.UNKNOWN) return 0;
+		SocketModule m = getSide(from);
+		return m.receiveEnergy(maxReceive, simulate, configs[from.ordinal()], this);
+	}
+
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate)
+	{
+		if(from == ForgeDirection.UNKNOWN) return 0;
+		SocketModule m = getSide(from);
+		return m.extractEnergy(maxExtract, simulate, configs[from.ordinal()], this);
+	}
+
+	@Override
+	public boolean canInterface(ForgeDirection from)
+	{
+		if(from == ForgeDirection.UNKNOWN) return false;
+		SocketModule m = getSide(from);
+		return m.isEnergyInterface(configs[from.ordinal()]);
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from)
+	{
+		return capacitor.getEnergyStored();
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from)
+	{
+		return capacitor.getMaxEnergyStored();
 	}
 }

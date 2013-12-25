@@ -61,7 +61,7 @@ public class BlockHemp extends Block
         if (!canBlockStay(world, i, j, k))
         {
             dropBlockAsItem_do(world, i, j, k, new ItemStack(EmasherCore.hempPlant, 1));
-            world.setBlock(i, j, k, 0, 0, 2);
+            world.setBlock(i, j, k, 0, 0, 3);
         }
     }
 	

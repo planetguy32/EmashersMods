@@ -31,22 +31,20 @@ public class BlockPondScum extends BlockLilyPad
 		this.blockIcon =  par1IconRegister.registerIcon("emashercore:algae");
     }
 	
-	public Icon getBlockblockIcon(IBlockAccess world, int x, int y, int z, int blockSide)
-	{
-		return blockIcon;
-	}
 	
+	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k)
     {
         return null;
     }
 	
+	@Override
 	public void updateTick(World world, int x, int y, int z, Random random)
 	{
 		int meta = world.getBlockMetadata(x, y, z);
 		if(world.getBlockLightValue(x, y, z) >= 14)
 		{
-			if(meta == GROWTH_TIME)
+			if(meta >= GROWTH_TIME)
 			{
 				int xInc, zInc;
 				boolean canPlace = false;
@@ -68,13 +66,13 @@ public class BlockPondScum extends BlockLilyPad
 				int ty = y - 1;
 				int i = 0;
 				
-				while(world.getBlockId(tx, ty, tz) == Block.waterStill.blockID && i < 4)
+				while(world.getBlockId(tx, ty, tz) == Block.waterStill.blockID && i < EmasherCore.algaeDepth)
 				{
 					ty--;
 					i++;
 				}
 				
-				if(i >= 4)
+				if(i >= EmasherCore.algaeDepth)
 				{
 					canPlace = false;
 				}

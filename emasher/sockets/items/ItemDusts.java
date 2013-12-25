@@ -46,7 +46,13 @@ public class ItemDusts extends Item
 		pureNickelDust,
 		purePlatinumDust,
 		pureSilverDust,
-		pureTinDust
+		pureTinDust,
+		groundCobalt,
+		groundArdite,
+		impureCobaltDust,
+		impureArditeDust,
+		pureCobaltDust,
+		pureArditeDust
 	};
 	
 	public static final String[] NAMES = new String[]
@@ -76,7 +82,13 @@ public class ItemDusts extends Item
 				"pureNickelDust",
 				"purePlatinumDust",
 				"pureSilverDust",
-				"pureTinDust"
+				"pureTinDust",
+				"groundCobalt",
+				"groundArdite",
+				"impureCobaltDust",
+				"impureArditeDust",
+				"pureCobaltDust",
+				"pureArditeDust"
 			};
 	
 	public static final String[] ORE_NAMES = new String[]
@@ -106,7 +118,13 @@ public class ItemDusts extends Item
 				"dustNickel",
 				"dustPlatinum",
 				"dustSilver",
-				"dustTin"
+				"dustTin",
+				"groundCobalt",
+				"groundArdite",
+				"dustImpureCobalt",
+				"dustImpureArdite",
+				"dustPureCobalt",
+				"dustPureArdite"
 			};
 	
 	public static final String[] NAMES_LOC = new String[]
@@ -136,7 +154,13 @@ public class ItemDusts extends Item
 				"Pure Nickel Dust",
 				"Pure Platinum Dust",
 				"Pure Silver Dust",
-				"Pure Tin Dust"
+				"Pure Tin Dust",
+				"Ground Cobalt Ore",
+				"Ground Ardite Ore",
+				"Impure Cobalt Dust",
+				"Impure Ardite Dust",
+				"Pure Cobalt Dust",
+				"Pure Ardite Dust"
 			};
 
 	public ItemDusts(int id)

@@ -23,7 +23,7 @@ class ModPressurizer(id: Int) extends SocketModule(id, "sockets:pressurizer")
 	override def addRecipe
 	{
 		CraftingManager.getInstance().getRecipeList().asInstanceOf[List[Object]].add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "cuc", "cuc", " b ", Character.valueOf('c'), "ingotCopper", Character.valueOf('u'), "blockCopper",
-				Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 5)));
+				Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	override def canBeInstalled(ts: SocketTileAccess, side: ForgeDirection):

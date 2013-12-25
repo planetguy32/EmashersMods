@@ -13,17 +13,16 @@ import net.minecraft.entity.*;
 import net.minecraft.util.*;
 import net.minecraft.potion.*;
 import net.minecraft.nbt.*;
-
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+
 import java.util.*;
 
 import buildcraft.BuildCraftEnergy;
-
 import cpw.mods.fml.common.Loader;
-
 import emasher.gas.EmasherGas;
 
 public class TileShaleResource extends TileEntity
@@ -33,7 +32,7 @@ public class TileShaleResource extends TileEntity
 	
 	public TileShaleResource()
 	{
-		//init = false;
+		init = false;
 	}
 
 	public FluidStack getFluid()
@@ -49,9 +48,11 @@ public class TileShaleResource extends TileEntity
 	@Override
 	public void updateEntity()
 	{
-		if(! init && ! worldObj.isRemote)
+		if(! init && worldObj != null && worldObj.blockExists(xCoord, yCoord, zCoord) && ! worldObj.isRemote)
 		{
 			int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+			
+			init = true;
 			
 			if(meta == 0)
 			{

@@ -37,7 +37,7 @@ public class ModSolar extends SocketModule
 	@Override
 	public void getIndicatorKey(List l)
 	{
-		l.add(SocketsMod.PREF_AQUA + "Generates 0.5 MJ/t");
+		l.add(SocketsMod.PREF_AQUA + "Generates 5 RF/t");
 		l.add("Can only be placed on the top of a socket");
 		l.add("Requires sunlight to operate");
 	}
@@ -59,10 +59,10 @@ public class ModSolar extends SocketModule
 	@Override
 	public void updateSide(SideConfig config, SocketTileAccess ts, ForgeDirection side)
 	{
-		if(ts.worldObj.getBlockLightValue(ts.xCoord, ts.yCoord + 1, ts.zCoord) > 14 && ts.powerHandler.getMaxEnergyStored() - ts.powerHandler.getEnergyStored() >= 0.5F)
+		if(ts.worldObj.getBlockLightValue(ts.xCoord, ts.yCoord + 1, ts.zCoord) > 14 && ts.getMaxEnergyStored() - ts.getEnergyStored() >= 5)
 		{
 				
-			if(side == ForgeDirection.UP) ts.powerHandler.getPowerReceiver().receiveEnergy(PowerHandler.Type.PIPE, 0.5F, ForgeDirection.UP);
+			if(side == ForgeDirection.UP) ts.addEnergy(5, false);
 		}
 	}
 

@@ -5,12 +5,9 @@ import java.awt.event.ItemEvent;
 import net.minecraftforge.liquids.*;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-
 import buildcraft.api.fuels.IronEngineFuel;
 import buildcraft.api.recipes.*;
-
 import mods.railcraft.api.fuel.*;
-
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Init;
@@ -19,6 +16,7 @@ import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
@@ -29,11 +27,9 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.*;
-
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.world.biome.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.*;
@@ -48,15 +44,14 @@ import net.minecraft.creativetab.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.entity.*;
 import net.minecraft.util.*;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.*;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
 import emasher.api.*;
 import emasher.core.*;
 import emasher.core.item.ItemEmasherGeneric;
@@ -72,11 +67,10 @@ import emasher.gas.worldgen.WorldGenerationUpdater;
 import emasher.sockets.items.ItemBlockSocket;
 import emasher.sockets.SocketsMod;
 import emasher.sockets.items.ItemDusts;
-
 import buildcraft.BuildCraftEnergy;
 
 
-@Mod(modid="gascraft", name="GasCraft", version="2.0.2.0", dependencies = "required-after:eng_toolbox")
+@Mod(modid="gascraft", name="GasCraft", version="2.0.3.2", dependencies = "required-after:eng_toolbox")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false, 
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"GasCraft" }, packetHandler = PacketHandler.class),
@@ -127,6 +121,7 @@ public class EmasherGas
 	public static WorldGenGasVent gasVentGenerator = new WorldGenGasVent();
 	public static boolean smeltSand;
 	public static boolean spawnMineGas;
+	public static boolean flatBedrock;
 	
 	public int naturalGasID;
 	public int propellentID;
@@ -198,14 +193,14 @@ public class EmasherGas
 		neurotoxinID = config.get(Configuration.CATEGORY_BLOCK, "Neurotoxin ID", 2100).getInt();
 		corrosiveGasID = config.get(Configuration.CATEGORY_BLOCK, "Corrosive Gas ID", 2101).getInt();
 		
-		vialID = config.get(Configuration.CATEGORY_ITEM, "Vial ID", 2041).getInt();
-		filledVialID = config.get(Configuration.CATEGORY_GENERAL, "Filled Vial ID", 2042).getInt();
+		vialID = config.get(Configuration.CATEGORY_ITEM, "Vial ID", 4341).getInt();
+		filledVialID = config.get(Configuration.CATEGORY_GENERAL, "Filled Vial ID", 4342).getInt();
 		
 		shaleID = config.get(Configuration.CATEGORY_BLOCK, "Shale Resource ID", 2040).getInt();
 		gasPocketID = config.get(Configuration.CATEGORY_BLOCK, "Gas Pocket ID", 2112).getInt();
 		
-		gasMaskID = config.get(Configuration.CATEGORY_ITEM, "Gas Mask ID", 2043).getInt();
-		smokeGrenadeID = config.get(Configuration.CATEGORY_ITEM, "Smoke Grenade ID", 2105).getInt();
+		gasMaskID = config.get(Configuration.CATEGORY_ITEM, "Gas Mask ID", 4243).getInt();
+		smokeGrenadeID = config.get(Configuration.CATEGORY_ITEM, "Smoke Grenade ID", 4205).getInt();
 		
 		chimneyID = config.get(Configuration.CATEGORY_BLOCK, "Chimney ID", 2108).getInt();
 		
@@ -213,6 +208,7 @@ public class EmasherGas
 		minGasInVent = config.get(Configuration.CATEGORY_GENERAL, "Min Fluid In Shale Resources (In Buckets)", 5000).getInt();
 		infiniteGasInVent = config.get(Configuration.CATEGORY_GENERAL, "Infinite Gas In Vents", false).getBoolean(false);
 		spawnMineGas = config.get(Configuration.CATEGORY_GENERAL, "Spawn Gas Pockets in the world", false).getBoolean(false);
+		flatBedrock = config.get(Configuration.CATEGORY_GENERAL, "Flat Bedrock Compatibility Mode", false).getBoolean(false);
 		
 		config.save();
 		
@@ -285,13 +281,13 @@ public class EmasherGas
 	
 	private void registerFluids()
 	{
-		fluidNaturalGas = new FluidGas("gasCraft_naturalGas", naturalGas);
-		fluidPropellent = new FluidGas("gasCraft_propellent", propellent);
-		fluidHydrogen = new FluidGas("gasCraft_hydrogen", hydrogen);
-		fluidSmoke = new FluidGas("gasCraft_smoke", smoke);
-		fluidToxicGas = new FluidGas("gasCraft_toxicGas", toxicGas);
-		fluidNeurotoxin = new FluidGas("gasCraft_neurotoxin", neurotoxin);
-		fluidCorrosiveGas = new FluidGas("gasCraft_corrosiveGas", corrosiveGas);
+		fluidNaturalGas = new FluidGas("gasCraft_naturalGas", naturalGas, 0);
+		fluidPropellent = new FluidGas("gasCraft_propellent", propellent, 1);
+		fluidHydrogen = new FluidGas("gasCraft_hydrogen", hydrogen, 2);
+		fluidSmoke = new FluidGas("gasCraft_smoke", smoke, 3);
+		fluidToxicGas = new FluidGas("gasCraft_toxicGas", toxicGas, 4);
+		fluidNeurotoxin = new FluidGas("gasCraft_neurotoxin", neurotoxin, 5);
+		fluidCorrosiveGas = new FluidGas("gasCraft_corrosiveGas", corrosiveGas, 6);
 		
 		FluidRegistry.registerFluid(fluidNaturalGas);
 		FluidRegistry.registerFluid(fluidPropellent);
@@ -358,7 +354,7 @@ public class EmasherGas
 	
 	private void registerRecipes()
 	{
-		PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.pondScum), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidHydrogen, 500));
+		PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.pondScum), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidHydrogen, 1000));
 		PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.pondScum), new FluidStack(fluidToxicGas, 1000), new FluidStack(fluidNeurotoxin, 500));
 		
 		MixerRecipeRegistry.registerRecipe(new ItemStack(Item.gunpowder), new FluidStack(fluidPropellent, 1000), new FluidStack(fluidToxicGas, 500));
@@ -369,6 +365,26 @@ public class EmasherGas
 		
 		IronEngineFuel.addFuel(fluidNaturalGas, 5, 40000);
 		IronEngineFuel.addFuel(fluidHydrogen, 5, 40000);
+		
+		GeneratorFuelRegistry.registerFuel(new FluidStack(fluidNaturalGas, 1000), 500, 60, true);
+		GeneratorFuelRegistry.registerFuel(new FluidStack(fluidHydrogen, 1000), 500, 60, false);
+		
+		if(Loader.isModLoaded("BuildCraft|Core"))
+		{
+			GeneratorFuelRegistry.registerFuel(new FluidStack(BuildCraftEnergy.fluidFuel, 1000), 1000, 60, true);
+		}
+		
+		//TE
+		//Natural Gas
+		NBTTagCompound toSend = new NBTTagCompound();
+		toSend.setString("fluidName", "gasCraft_naturalGas");
+		toSend.setInteger("energy", 30000);
+		FMLInterModComms.sendMessage("ThermalExpansion", "CompressionFuel", toSend);
+		//Natural Gas
+		toSend = new NBTTagCompound();
+		toSend.setString("fluidName", "gasCraft_hydrogen");
+		toSend.setInteger("energy", 30000);
+		FMLInterModComms.sendMessage("ThermalExpansion", "CompressionFuel", toSend);
 		
 		RefineryRecipes.addRecipe(new FluidStack(fluidNaturalGas, 2), new FluidStack(fluidPropellent, 1), 1, 1);
 		
@@ -404,6 +420,8 @@ public class EmasherGas
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
+		FluidStack ethanol = FluidRegistry.getFluidStack("bioethanol", 1000);
+		if(ethanol != null) GeneratorFuelRegistry.registerFuel(ethanol, 750, 40, false);
 	}
 	
 	private void registerInRegistry()
@@ -422,13 +440,7 @@ public class EmasherGas
 		Registry.addItem("gasMask", this.gasMask);
 		Registry.addItem("smokeGrenade", this.smokeGrenade);
 		
-		GeneratorFuelRegistry.registerFuel(new FluidStack(fluidNaturalGas, 1000), 500, 6, true);
-		GeneratorFuelRegistry.registerFuel(new FluidStack(fluidHydrogen, 1000), 500, 6, false);
 		
-		if(Loader.isModLoaded("BuildCraft|Core"))
-		{
-			GeneratorFuelRegistry.registerFuel(new FluidStack(BuildCraftEnergy.fluidFuel, 1000), 1000, 6, true);
-		}
 		
 	}
 	

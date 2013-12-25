@@ -55,13 +55,15 @@ public class ModEnergyIndicator extends SocketModule
 	@Override
 	public void onSideActivated(SocketTileAccess ts, SideConfig config, ForgeDirection side, EntityPlayer player)
 	{
-		//System.out.println(ts.powerProvider.getEnergyStored());
+		//System.out.println("Stored: " + ts.getEnergyStored());
+		//System.out.println("Capacity: " + ts.getMaxEnergyStored());
 	}
 	
 	@Override
 	public void updateSide(SideConfig config, SocketTileAccess ts, ForgeDirection side)
-	{
-		int d = (int)Math.ceil((ts.getCurrentEnergyStored() * dFull)/ts.getMaxEnergyStored());
+	{	
+		double f = ((ts.getEnergyStored() * dFull)) / (ts.getMaxEnergyStored());
+		int d = (int)Math.ceil(f);
 		d = Math.min(d, 12);
 		if(d != config.meta)
 		{

@@ -1,5 +1,7 @@
 package emasher.sockets;
 
+import java.util.ArrayList;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -19,9 +21,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
@@ -43,8 +43,9 @@ import emasher.sockets.client.ClientPacketHandler;
 import emasher.sockets.items.*;
 import emasher.sockets.modules.*;
 import emasher.sockets.client.ClientProxy;
+import emasher.sockets.pipes.*;
 
-@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.5.0", dependencies = "required-after:emashercore")
+@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.6.6", dependencies = "required-after:emashercore")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false,
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = ClientPacketHandler.class),
@@ -58,14 +59,19 @@ public class SocketsMod
 	@SidedProxy(clientSide="emasher.sockets.client.ClientProxy", serverSide="emasher.sockets.CommonProxy")
 	public static CommonProxy proxy;
 	
-	
-	
 	//Blocks
 	public static Block socket;
 	public static Block tempRS;
 	public static Block paintedPlanks;
 	public static Block groundLimestone;
 	public static Block blockSlickwater;
+	
+	public static Block blockStartPipe;
+	public static Block blockFluidPipe;
+	public static Block blockEnergyPipe;
+	
+	public static Block mjAdapter;
+	public static Block euAdapter;
 	
 	//Fluids
 	
@@ -85,6 +91,7 @@ public class SocketsMod
 	public static ItemPaintCan[] paintCans = new ItemPaintCan[16];
 	public static Item dusts;
 	public static Item slickBucket;
+	public static Item rsIngot;
 	
 	//Ids
 	
@@ -105,6 +112,14 @@ public class SocketsMod
 	public int paintCanID;
 	public int dustsID;
 	public int slickBucketID;
+	public int rsIngotID;
+	
+	public int fluidPipeID;
+	public int startPipeID;
+	public int energyPipeID;
+	
+	public int mjAdapterID;
+	public int euAdapterID;
 	
 	
 	public boolean vanillaCircuitRecipe;
@@ -121,7 +136,8 @@ public class SocketsMod
 	public static boolean cbTextures;
 	public static boolean smeltSand;
 	
-	public static double EUPerMJ;
+	public static int RFperMJ;
+	public static int RFperEU;
 	
 	public static String[] colours = new String[]
 	{
@@ -193,6 +209,12 @@ public class SocketsMod
 		groundLimestoneID = config.get(Configuration.CATEGORY_BLOCK, "Ground Limestone ID", 4073).getInt();
 		slickwaterID = config.get(Configuration.CATEGORY_BLOCK, "Slickwater Block ID", 4074).getInt();
 		
+		startPipeID = config.get(Configuration.CATEGORY_BLOCK, "Start Pipe ID", 4075).getInt();
+		fluidPipeID = config.get(Configuration.CATEGORY_BLOCK, "Fluid Pipe ID", 4076).getInt();
+		energyPipeID = config.get(Configuration.CATEGORY_BLOCK, "Energy Pipe ID", 4077).getInt();
+		mjAdapterID = config.get(Configuration.CATEGORY_BLOCK, "MJ Adapter ID", 4078).getInt();
+		euAdapterID = config.get(Configuration.CATEGORY_BLOCK, "EU Adapter ID", 4079).getInt();
+		
 		moduleID = config.get(Configuration.CATEGORY_ITEM, "Module ID", 4170).getInt();
 		remoteID = config.get(Configuration.CATEGORY_ITEM, "Remote ID", 4172).getInt();
 		blankID = config.get(Configuration.CATEGORY_ITEM, "Blank Module ID", 4171).getInt();
@@ -204,6 +226,7 @@ public class SocketsMod
 		paintCanID = temp.getInt();
 		dustsID = config.get(Configuration.CATEGORY_ITEM, "Dusts ID", 4192).getInt();
 		slickBucketID = config.get(Configuration.CATEGORY_ITEM, "Slickwater Bucket ID", 4193).getInt();
+		rsIngotID = config.get(Configuration.CATEGORY_ITEM, "RS Ingot ID", 4194).getInt();
 		//rsShooterID = config.get(Configuration.CATEGORY_ITEM, "Redstone Shooter ID", 4175).getInt();
 		//handPistonID = config.get(Configuration.CATEGORY_ITEM, "Hand Piston ID", 4176).getInt();
 		//cattleProdID = config.get(Configuration.CATEGORY_ITEM, "Cattle Prod ID", 4177).getInt();
@@ -220,8 +243,10 @@ public class SocketsMod
 		enableWaterIntake = config.get(Configuration.CATEGORY_GENERAL, "Enable Water Intake", true).getBoolean(true);
 		enableHusher = config.get(Configuration.CATEGORY_GENERAL, "Enable Husher", true).getBoolean(true);
 		cbTextures = config.get(Configuration.CATEGORY_GENERAL, "Enable Colour Blind Mode", false).getBoolean(false);
-		EUPerMJ = config.get(Configuration.CATEGORY_GENERAL, "EU Per MJ", 2.44).getDouble(2.44);
+		//EUPerMJ = config.get(Configuration.CATEGORY_GENERAL, "EU Per MJ", 2.44).getDouble(2.44);
 		smeltSand = config.get(Configuration.CATEGORY_GENERAL, "Hand boiler smelts sand", false).getBoolean(false);
+		RFperMJ = config.get(Configuration.CATEGORY_GENERAL, "RF per MJ", 10).getInt();
+		RFperEU = config.get(Configuration.CATEGORY_GENERAL, "RF per EU", 4).getInt();
 		
 		config.save();
 		
@@ -242,11 +267,20 @@ public class SocketsMod
 	
 	@EventHandler
 	public void load(FMLInitializationEvent event) 
-	{
+	{	
 		MinecraftForge.EVENT_BUS.register(new Util());
 		MinecraftForge.EVENT_BUS.register(new BucketEventHandler());
 		
 		LanguageRegistry.instance().addStringLocalization("itemGroup.tabSockets", "en_US", "Engineer's Toolbox");
+		
+		GameRegistry.registerTileEntity(TileStartPipe.class, "emasherstartpipe");
+		GameRegistry.registerTileEntity(TileFluidPipe.class, "emasherfluidpipe");
+		GameRegistry.registerTileEntity(TileEnergyPipe.class, "emasherenergypipe");
+		GameRegistry.registerTileEntity(TileSocket.class, "modular_socket");
+		GameRegistry.registerTileEntity(TileTempRS.class, "TempRS");
+		GameRegistry.registerTileEntity(TilePipeBase.class, "emasherbasepipe");
+		GameRegistry.registerTileEntity(TileMJAdapter.class, "emashermjadapter");
+		GameRegistry.registerTileEntity(TileEUAdapter.class, "emashereuAdapter");
 		
 		ModuleRegistry.registerModule(new ModBlank(0));
 		ModuleRegistry.registerModule(new ModItemInput(1));
@@ -313,6 +347,7 @@ public class SocketsMod
 		ModuleRegistry.registerModule(new ModPressurizer(95));
 		ModuleRegistry.registerModule(new ModRangeSelector(96));
 		if(enableHusher) ModuleRegistry.registerModule(new ModHusher(97));
+		//ModuleRegistry.registerModule(new ModStirlingGenerator(98));
 		
 		//Register 3rd party modules
 		for(IModuleRegistrationManager reg : ModuleRegistry.registers)
@@ -320,16 +355,38 @@ public class SocketsMod
 			reg.registerModules();
 		}
 		
-		socket = new BlockSocket(socketID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("modular_socket");;
+		socket = new BlockSocket(socketID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("modular_socket");
 		//GameRegistry.registerBlock(socket, "modular_socket");
 		LanguageRegistry.addName(socket, "Modular Socket");
-		GameRegistry.registerTileEntity(TileSocket.class, "modular_socket");
+		
 		Item.itemsList[socket.blockID] = new ItemBlockSocket(socket.blockID - 256);
 		
 		tempRS = new BlockTempRS(tempRSID).setBlockUnbreakable();
 		GameRegistry.registerBlock(tempRS, "tempRS");
 		LanguageRegistry.addName(tempRS, "TempRS");
-		GameRegistry.registerTileEntity(TileTempRS.class, "TempRS");
+		
+		blockStartPipe = new BlockStartPipe(startPipeID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("start_pipe");
+		GameRegistry.registerBlock(blockStartPipe, "start_pipe");
+		LanguageRegistry.addName(blockStartPipe, "Universal Extractor");
+		blockStartPipe.setCreativeTab(tabSockets);
+		
+		blockFluidPipe = new BlockFluidPipe(fluidPipeID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("fluid_pipe");
+		GameRegistry.registerBlock(blockFluidPipe, "fluid_pipe");
+		LanguageRegistry.addName(blockFluidPipe, "Fluid Pipe");
+		blockFluidPipe.setCreativeTab(tabSockets);
+		
+		blockEnergyPipe = new BlockEnergyPipe(energyPipeID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("energy_pipe");
+		GameRegistry.registerBlock(blockEnergyPipe, "energy_pipe");
+		LanguageRegistry.addName(blockEnergyPipe, "Flux Pipe");
+		blockEnergyPipe.setCreativeTab(tabSockets);
+		
+		mjAdapter = new BlockMJAdapter(mjAdapterID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("emasher_MJ_adapter");
+		GameRegistry.registerBlock(mjAdapter, "emasher_MJ_adapter");
+		LanguageRegistry.addName(mjAdapter, "MJ Adapter");
+		
+		euAdapter = new BlockEUAdapter(euAdapterID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("emasher_EU_adapter");
+		GameRegistry.registerBlock(euAdapter, "emasher_EU_adapter");
+		LanguageRegistry.addName(euAdapter, "EU Adapter");
 		
 		paintedPlanks = (new BlockPaintedWood(paintedPlankID, 0, Material.wood))
 				.setHardness(2.0F).setResistance(5.0F).setStepSound(Block.soundWoodFootstep)
@@ -350,6 +407,9 @@ public class SocketsMod
 		
 		handboiler = new ItemHandboiler(handboilerID, "", "");
 		LanguageRegistry.addName(handboiler, "Hand Boiler");
+		
+		rsIngot = new ItemRSIngot(rsIngotID);
+		LanguageRegistry.addName(rsIngot, "Sweet Redstone Ingot");
 		
 		for(int i = 0; i<16; i++)
 		{
@@ -441,6 +501,39 @@ public class SocketsMod
 					);
 		}
 		
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockFluidPipe, 16),
+				"sss", "ccc", "sss", Character.valueOf('s'), Block.stone, Character.valueOf('c'), "ingotCopper")
+			);
+		
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockEnergyPipe, 16),
+				"sgs", "rcr", "sgs", Character.valueOf('s'), Block.stone, Character.valueOf('g'), Block.thinGlass, Character.valueOf('c'), "ingotCopper",
+				Character.valueOf('r'), new ItemStack(rsIngot))
+			);
+		
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockEnergyPipe, 16),
+				"sgs", "rcr", "sgs", Character.valueOf('s'), Block.stone, Character.valueOf('g'), Block.thinGlass, Character.valueOf('c'), Item.goldNugget,
+				Character.valueOf('r'), new ItemStack(rsIngot))
+			);
+		
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockStartPipe, 1),
+				"sss", " l ", "sss", Character.valueOf('s'), Block.stoneSingleSlab, Character.valueOf('l'), Block.lever)
+			);
+		
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(mjAdapter, 1),
+				"sss", "wpr", "sss", Character.valueOf('s'), Block.stoneSingleSlab, Character.valueOf('w'), rsIngot,
+				Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), Item.redstone)
+			);
+		
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(euAdapter, 1),
+				"sss", "wpr", "sss", Character.valueOf('s'), Block.stoneSingleSlab, Character.valueOf('w'), rsIngot,
+				Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), "ingotCopper")
+			);
+		
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(euAdapter, 1),
+				"sss", "wpr", "sss", Character.valueOf('s'), Block.stoneSingleSlab, Character.valueOf('w'), rsIngot,
+				Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), Item.goldNugget)
+			);
+		
 		GameRegistry.addRecipe(new ItemStack(handboiler, 1), new Object[]
 				{
 					"bbb", "ici", " n ", Character.valueOf('b'), Item.blazeRod, Character.valueOf('c'), Item.fireballCharge,
@@ -493,6 +586,8 @@ public class SocketsMod
 		GrinderRecipeRegistry.registerRecipe("oreNickel", new ItemStack(dusts, 1, ItemDusts.Const.groundPentlandite.ordinal()));
 		GrinderRecipeRegistry.registerRecipe("oreLead", new ItemStack(dusts, 1, ItemDusts.Const.groundGalena.ordinal()));
 		GrinderRecipeRegistry.registerRecipe("oreSilver", new ItemStack(dusts, 1, ItemDusts.Const.groundSilver.ordinal()));
+		GrinderRecipeRegistry.registerRecipe("oreCobalt", new ItemStack(dusts, 1, ItemDusts.Const.groundCobalt.ordinal()));
+		GrinderRecipeRegistry.registerRecipe("oreArdite", new ItemStack(dusts, 1, ItemDusts.Const.groundArdite.ordinal()));
 		
 		GrinderRecipeRegistry.registerRecipe("oreLapis", new ItemStack(Item.dyePowder, 16, 4));
 		GrinderRecipeRegistry.registerRecipe(new ItemStack(Block.oreCoal), new ItemStack(Item.coal, 2));
@@ -504,6 +599,8 @@ public class SocketsMod
 		GrinderRecipeRegistry.registerRecipe("oreRuby", new ItemStack(EmasherCore.gem, 2, 1));
 		GrinderRecipeRegistry.registerRecipe("oreSapphire", new ItemStack(EmasherCore.gem, 2, 2));
 		
+		GrinderRecipeRegistry.registerRecipe(new ItemStack(Block.cobblestone), new ItemStack(Block.sand));
+		
 		//Multi Smelter
 		
 		MultiSmelterRecipeRegistry.registerRecipe("dustQuicklime", "groundGold", new ItemStack(dusts, 3, ItemDusts.Const.impureGoldDust.ordinal()));
@@ -514,8 +611,11 @@ public class SocketsMod
 		MultiSmelterRecipeRegistry.registerRecipe("dustQuicklime", "groundNickel", new ItemStack(dusts, 3, ItemDusts.Const.impureNickelDust.ordinal()));
 		MultiSmelterRecipeRegistry.registerRecipe("dustQuicklime", "groundLead", new ItemStack(dusts, 3, ItemDusts.Const.impureLeadDust.ordinal()));
 		MultiSmelterRecipeRegistry.registerRecipe("dustQuicklime", "groundSilver", new ItemStack(dusts, 3, ItemDusts.Const.impureSilverDust.ordinal()));
+		MultiSmelterRecipeRegistry.registerRecipe("dustQuicklime", "groundCobalt", new ItemStack(dusts, 3, ItemDusts.Const.impureCobaltDust.ordinal()));
+		MultiSmelterRecipeRegistry.registerRecipe("dustQuicklime", "groundArdite", new ItemStack(dusts, 3, ItemDusts.Const.impureArditeDust.ordinal()));
 		
 		MultiSmelterRecipeRegistry.registerRecipe("ingotCopper", "ingotTin", new ItemStack(EmasherCore.ingot, 1, 1));
+		MultiSmelterRecipeRegistry.registerRecipe(new ItemStack(Item.redstone), new ItemStack(Item.sugar), new ItemStack(rsIngot));
 		
 		
 		//Centrifuge
@@ -525,11 +625,33 @@ public class SocketsMod
 		CentrifugeRecipeRegistry.registerRecipe("dustImpureAluminum", new ItemStack(dusts, 1, ItemDusts.Const.pureAluminiumDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureIronDust.ordinal()), 5);
 		CentrifugeRecipeRegistry.registerRecipe("dustImpureTin", new ItemStack(dusts, 1, ItemDusts.Const.pureTinDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureTinDust.ordinal()), 33);
 		CentrifugeRecipeRegistry.registerRecipe("dustImpureCopper", new ItemStack(dusts, 1, ItemDusts.Const.pureCopperDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureCopperDust.ordinal()), 33);
-		CentrifugeRecipeRegistry.registerRecipe("dustImpureNickel", new ItemStack(dusts, 1, ItemDusts.Const.pureNickelDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.purePlatinumDust.ordinal()), 5);
-		CentrifugeRecipeRegistry.registerRecipe("dustImpureLead", new ItemStack(dusts, 1, ItemDusts.Const.pureLeadDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureSilverDust.ordinal()), 33);
+		CentrifugeRecipeRegistry.registerRecipe("dustImpureNickel", new ItemStack(dusts, 1, ItemDusts.Const.pureNickelDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.purePlatinumDust.ordinal()), 10);
+		CentrifugeRecipeRegistry.registerRecipe("dustImpureLead", new ItemStack(dusts, 1, ItemDusts.Const.pureLeadDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureSilverDust.ordinal()), 50);
 		CentrifugeRecipeRegistry.registerRecipe("dustImpureSilver", new ItemStack(dusts, 1, ItemDusts.Const.pureSilverDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureLeadDust.ordinal()), 10);
+		CentrifugeRecipeRegistry.registerRecipe("dustImpureCobalt", new ItemStack(dusts, 1, ItemDusts.Const.pureCobaltDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureArditeDust.ordinal()), 10);
+		CentrifugeRecipeRegistry.registerRecipe("dustImpureArdite", new ItemStack(dusts, 1, ItemDusts.Const.pureArditeDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureCobaltDust.ordinal()), 10);
 		
 		//Furnace
+		ItemStack cobalt = null;
+		ItemStack ardite = null;
+		ArrayList<ItemStack> list = OreDictionary.getOres("ingotCobalt");
+		if(list.size() > 0) cobalt = list.get(0);
+		list = OreDictionary.getOres("ingotArdite");
+		if(list.size() > 0) ardite = list.get(0);
+		
+		if(cobalt != null)
+		{
+			FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.groundCobalt.ordinal(), new ItemStack(cobalt.getItem(), 2, cobalt.getItemDamage()), 1);
+			FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.impureCobaltDust.ordinal(), new ItemStack(cobalt.getItem(), 1, cobalt.getItemDamage()), 1);
+			FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.pureCobaltDust.ordinal(), new ItemStack(cobalt.getItem(), 1, cobalt.getItemDamage()), 1);
+		}
+		
+		if(ardite != null)
+		{
+			FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.groundArdite.ordinal(), new ItemStack(ardite.getItem(), 2, ardite.getItemDamage()), 1);
+			FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.impureArditeDust.ordinal(), new ItemStack(ardite.getItem(), 1, ardite.getItemDamage()), 1);
+			FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.pureArditeDust.ordinal(), new ItemStack(ardite.getItem(), 1, ardite.getItemDamage()), 1);
+		}
 		
 		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.groundGold.ordinal(), new ItemStack(Item.ingotGold, 2), 1);
 		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.groundIron.ordinal(), new ItemStack(Item.ingotIron, 2), 1);

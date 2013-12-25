@@ -55,7 +55,7 @@ public class ModCentrifuge extends SocketModule
 	{
 		l.add(SocketsMod.PREF_GREEN + "Input Inventory");
 		l.add(SocketsMod.PREF_YELLOW + "Outputs to Machine Output");
-		l.add(SocketsMod.PREF_AQUA + "Requires 2 MJ/tick");
+		l.add(SocketsMod.PREF_AQUA + "Requires 20 RF/tick");
 		l.add("Cannot be installed on a socket with other machines");
 	}
 	
@@ -111,9 +111,9 @@ public class ModCentrifuge extends SocketModule
 					}
 				}
 			}
-			else if(ts.useEnergy(2.0F, false)>= 2.0F && config.meta > 0 && ! config.rsControl[2])
+			else if(ts.useEnergy(20, true)>= 20 && config.meta > 0 && ! config.rsControl[2])
 			{
-				ts.useEnergy(2.0F, true);
+				ts.useEnergy(20, false);
 				config.meta--;
 				if(config.meta == 0) updateClient = true;
 				if(! config.rsControl[0] && config.meta > 0)
@@ -138,7 +138,7 @@ public class ModCentrifuge extends SocketModule
 				if(re != null)
 				{
 					int num = ts.forceOutputItem(re.getOutput().copy());
-					if(num != 0) config.rsControl[2] = true;
+					if(num == 0) config.rsControl[2] = true;
 					else
 					{
 						config.rsControl[2] = false;
@@ -156,7 +156,7 @@ public class ModCentrifuge extends SocketModule
 				if(re != null && (re.shouldOuputSecondary(ts.worldObj.rand) || config.rsControl[2]))
 				{
 					int num = ts.forceOutputItem(re.getSecondaryOutput().copy());
-					if(num != 0) config.rsControl[2] = true;
+					if(num == 0) config.rsControl[2] = true;
 					else config.rsControl[2] = false;
 				}
 			}

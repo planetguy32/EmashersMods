@@ -2,6 +2,7 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
+import cofh.api.energy.IEnergyContainerItem;
 import ic2.api.item.ElectricItem;
 import ic2.api.item.IElectricItem;
 import ic2.api.item.IElectricItemManager;
@@ -41,7 +42,8 @@ public class ModCharger extends SocketModule
 	@Override
 	public void getToolTip(List l)
 	{
-		l.add("Used to charge IC^2 compatible items");
+		l.add("Used to charge electric items");
+		l.add("Compatible with RF and EU");
 	}
 	
 	@Override
@@ -97,19 +99,33 @@ public class ModCharger extends SocketModule
 		if(config.inventory != -1 && ts.getStackInInventorySlot(config.inventory) != null)
 		{
 			ItemStack is = ts.getStackInInventorySlot(config.inventory);
-			if(is.getItem() instanceof IElectricItem)
+			
+			if(is.getItem() instanceof IEnergyContainerItem)
+			{
+				IEnergyContainerItem ieci = (IEnergyContainerItem)is.getItem();
+				if(config.tank == -1)
+				{
+					int amnt = ieci.receiveEnergy(is, ts.useEnergy(100, true), false);
+					ts.useEnergy(amnt, false);
+				}
+				else
+				{
+					int amnt = ts.addEnergy(ieci.extractEnergy(is, 100, true), false);
+					ieci.extractEnergy(is, amnt, false);
+				}
+			}
+			else if(is.getItem() instanceof IElectricItem)
 			{
 				IElectricItem iei = (IElectricItem)is.getItem();
 				if(config.tank == -1)
 				{
-					int used = ElectricItem.manager.charge(is, (int)(ts.getCurrentEnergyStored() * SocketsMod.EUPerMJ), 3, false, false);
-					//ts.powerProvider.useEnergy(used/(float)SocketsMod.EUPerMJ, used/(float)SocketsMod.EUPerMJ, true);
-					ts.useEnergy(used/(float)SocketsMod.EUPerMJ, true);
+					int used = ElectricItem.manager.charge(is, (int)(ts.getEnergyStored() / 4), 3, false, false);
+					ts.useEnergy(used * 4, false);
 				}
 				else
 				{
-					int used = ElectricItem.manager.discharge(is, (int)((ts.getMaxEnergyStored() - ts.getCurrentEnergyStored()) * SocketsMod.EUPerMJ), 3, false, false);
-					ts.addEnergy(used/(float)SocketsMod.EUPerMJ, side);
+					int used = ElectricItem.manager.discharge(is, (int)((ts.getMaxEnergyStored() - ts.getEnergyStored()) / 4), 3, false, false);
+					ts.addEnergy(used * 4, false);
 				}
 				updateMeta(ts, config, side);
 			}
@@ -134,7 +150,7 @@ public class ModCharger extends SocketModule
 		boolean flag = false;
 		if(config.inventory != -1)
 		{
-			if(is != null && is.getItem() instanceof IElectricItem)
+			if(is != null)
 			{
 				added = ts.addItemInternal(is, true, config.inventory);
 				is.stackSize -= added;
@@ -205,6 +221,17 @@ public class ModCharger extends SocketModule
 				int maxCharge = iei.getMaxCharge(is);
 				int currCharge = ElectricItem.manager.getCharge(is);
 				
+				int oldMeta = config.meta;
+				int newMeta = (int)(((float)currCharge/(float)maxCharge) * 12);
+				config.meta = newMeta;
+				if(oldMeta != newMeta) ts.sendClientSideState(side.ordinal());
+				return;
+			}
+			else if(is.getItem() instanceof IEnergyContainerItem)
+			{
+				IEnergyContainerItem ieci = (IEnergyContainerItem)is.getItem();
+				int maxCharge = ieci.getMaxEnergyStored(is);
+				int currCharge = ieci.getEnergyStored(is);
 				int oldMeta = config.meta;
 				int newMeta = (int)(((float)currCharge/(float)maxCharge) * 12);
 				config.meta = newMeta;

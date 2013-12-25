@@ -40,7 +40,7 @@ public class ModPiezo extends SocketModule
 	@Override
 	public void getIndicatorKey(List l)
 	{
-		l.add(SocketsMod.PREF_AQUA + "Generates 8 MJ/step");
+		l.add(SocketsMod.PREF_AQUA + "Generates 80 RF/step");
 		l.add("Can only be placed on the top of a socket");
 	}
 	
@@ -67,10 +67,10 @@ public class ModPiezo extends SocketModule
 	@Override
 	public void onEntityWalkOn(SocketTileAccess ts, SideConfig config, ForgeDirection side, Entity entity)
 	{
-		if(config.meta <= 0 && side == ForgeDirection.UP && ts.getMaxEnergyStored() - ts.getCurrentEnergyStored() >= 8.0F && entity != null && entity instanceof EntityLiving)
+		if(config.meta <= 0 && side == ForgeDirection.UP && ts.getMaxEnergyStored() - ts.getEnergyStored() >= 80 && entity != null && entity instanceof EntityLiving)
 		{
 			EntityLiving el = (EntityLiving)entity;
-			ts.addEnergy(8.0F, ForgeDirection.UP);
+			ts.addEnergy(80, false);
 			config.meta = 10;
 			if(ts.worldObj.rand.nextInt(20) == 0)el.attackEntityFrom(DamageSource.inFire, 4);
 		}

@@ -27,9 +27,6 @@ public abstract class SocketTileAccess extends TileEntity
 	//Use only the slot side.ordinal() or you will create problems
 	public InventoryBasic sideInventory;
 	
-	//The BuildCraft powerHandler for this socket
-	public PowerHandler powerHandler;
-	
 	/**
 	 * Get a texture that was registered for a particular module
 	 * 
@@ -239,10 +236,10 @@ public abstract class SocketTileAccess extends TileEntity
 	
 	//Energy
 	
-	public abstract void outputEnergy(int mjMax, int ic2PacketSize, ForgeDirection side);
+	public abstract void outputEnergy(int maxEnergy, ForgeDirection side);
 	public abstract int getMaxEnergyStored();
-	public abstract float getCurrentEnergyStored();
+	public abstract int getEnergyStored();
 	public abstract void setMaxEnergyStored(int newMax);
-	public abstract float useEnergy(float toUse, boolean doUse);
-	public abstract void addEnergy(float energy, ForgeDirection side);
+	public abstract int useEnergy(int amnt, boolean simulate);
+	public abstract int addEnergy(int amnt, boolean simulate);
 }

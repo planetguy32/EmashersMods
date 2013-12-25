@@ -43,7 +43,7 @@ public class ModMultiSmelter extends SocketModule
 		l.add(SocketsMod.PREF_BLUE + "Input inventory 1");
 		l.add(SocketsMod.PREF_GREEN + "Input inventory 2");
 		l.add(SocketsMod.PREF_YELLOW + "Outputs to Machine Output");
-		l.add(SocketsMod.PREF_AQUA + "Requires 2 MJ/t");
+		l.add(SocketsMod.PREF_AQUA + "Requires 20 RF/t");
 		l.add("Cannot be installed on a socket with other machines");
 	}
 	
@@ -116,9 +116,9 @@ public class ModMultiSmelter extends SocketModule
 					}
 				}
 			}
-			else if(ts.useEnergy(2.0F, false)>= 1.0F && config.meta > 0)
+			else if(ts.useEnergy(20, true)>= 20 && config.meta > 0)
 			{
-				ts.useEnergy(2.0F, true);
+				ts.useEnergy(20, false);
 				config.meta--;
 				if(config.meta == 0) updateClient = true;
 				if(! config.rsControl[0] && config.meta > 0)

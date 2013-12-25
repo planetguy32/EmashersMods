@@ -30,7 +30,7 @@ public class ModEnergyInput extends SocketModule
 	@Override
 	public void getToolTip(List l)
 	{
-		l.add("Accepts both MJ and EU");
+		l.add("Accepts Redstone Flux Energy");
 		l.add("from adjacent cables/generators/etc.");
 	}
 	
@@ -44,35 +44,51 @@ public class ModEnergyInput extends SocketModule
 				Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
-	@Override
-	public boolean acceptsEnergy(SideConfig config) { return true; }
 	
-	/*@Override
+	@Override
 	public boolean hasRSIndicator() { return true; }
 	
 	@Override
-	public boolean hasLatchIndicator() { return true; }*/
+	public boolean hasLatchIndicator() { return true; }
 	
 	@Override
 	public boolean isEnergyInterface(SideConfig config) { return true; }
 	
 	@Override
-	public int getPowerRequested(SideConfig config, SocketTileAccess ts)
+	public int receiveEnergy(int amount, boolean simulate, SideConfig config, SocketTileAccess ts)
 	{
-		boolean canIntake = true;
+		boolean allOff = true;
 		
-		for(int i = 0; i < 3; i++)
-		{
-			if(config.rsControl[i] && ts.getRSControl(i)) canIntake = false;
-			if(config.rsLatch[i] && ts.getRSControl(i)) canIntake = false;
-		}
-		
-		if(canIntake)
-		{
-			return 100;
-		}
+			for(int i = 0; i < 3; i++)
+			{
+				if(config.rsControl[i])
+				{
+					if(ts.getRSControl(i))
+					{
+						return ts.addEnergy(amount, simulate);
+					}
+					allOff = false;
+				}
+				
+				if(config.rsLatch[i])
+				{
+					if(ts.getRSLatch(i))
+					{
+						return ts.addEnergy(amount, simulate);
+					}
+					allOff = false;
+				}
+			}
+			
+			if(allOff)
+			{
+				return ts.addEnergy(amount, simulate);
+				
+			}
 		
 		return 0;
 	}
+	
+	
 
 }

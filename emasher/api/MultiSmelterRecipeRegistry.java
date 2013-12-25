@@ -84,18 +84,18 @@ public class MultiSmelterRecipeRegistry
 		return true;
 	}
 
-	/*
-	Need to handle removal of BOTH indeces!
-
 	public static boolean unregisterRecipe(Object input1, Object input2)
 	{
 		int ndx = getRecipeIndexFor(input1, input2);
 		if(ndx == -1)
 			return false;
 		list.remove(ndx);
+		int ndx = getRecipeIndexFor(input2, input1);
+		if(ndx == -1)
+            return false;
+		list.remove(ndx);
 		return true;
 	}
-	*/
 
 	public static MultiSmelterRecipe getRecipeFor(Object input1, Object input2)
 	{

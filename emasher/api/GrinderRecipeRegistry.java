@@ -51,6 +51,15 @@ public class GrinderRecipeRegistry
 	public static void registerRecipe(ItemStack input, ItemStack output) { registerRecipe(new GrinderRecipe(input, output)); }
 	public static void registerRecipe(String input, ItemStack output) { registerRecipe(new GrinderRecipe(input, output)); }
 
+	public static boolean registerRecipe(ItemStack input, String output)
+	{
+		ArrayList<ItemStack> ores = OreDictionary.getOres(output);
+		if( ores.size() <= 0 )
+			return false;
+		registerRecipe(input, ores.get(0));
+		return true;
+	}
+
 	public static boolean registerRecipe(String input, String output)
 	{
 		ArrayList<ItemStack> ores = OreDictionary.getOres(output);

@@ -16,13 +16,13 @@ public class GrinderRecipeRegistry
 		 */
 		private Object input;
 		private Object output;
-		
+
 		public GrinderRecipe(ItemStack input, ItemStack output)
 		{
 			this.input = input;
 			this.output = output;
 		}
-		
+
 		public GrinderRecipe(String input, ItemStack output)
 		{
 			this.input = input;
@@ -45,7 +45,7 @@ public class GrinderRecipeRegistry
 		{
 			return input;
 		}
-		
+
 		public ItemStack getOutput()
 		{
 			// convert to ItemStack on the first getOutput call
@@ -59,16 +59,16 @@ public class GrinderRecipeRegistry
 			}
 			return (ItemStack)output;
 		}
-		
+
 	}
-	
+
 	private static ArrayList<GrinderRecipe> recipes = new ArrayList<GrinderRecipe>();
-	
+
 	public static void registerRecipe(GrinderRecipe recipe)
 	{
 		recipes.add(recipe);
 	}
-	
+
 	public static void registerRecipe(ItemStack input, ItemStack output) { registerRecipe(new GrinderRecipe(input, output)); }
 	public static void registerRecipe(String input, ItemStack output) { registerRecipe(new GrinderRecipe(input, output)); }
 	public static void registerRecipe(String input, String output) { registerRecipe(new GrinderRecipe(input, output)); }
@@ -93,7 +93,7 @@ public class GrinderRecipeRegistry
 				}
 
 				if( (otherID != -1 && otherID == oreID) ||
-					(r.getInput() instanceof ItemStack && ((ItemStack)input).isItemEqual((ItemStack)r.getInput())))
+						(r.getInput() instanceof ItemStack && ((ItemStack)input).isItemEqual((ItemStack)r.getInput())))
 				{
 					if(r.getOutput() != null)
 						return r;
@@ -107,7 +107,7 @@ public class GrinderRecipeRegistry
 			for(GrinderRecipe r: recipes)
 			{
 				int otherID = -1;
-				
+
 				if(r.getInput() instanceof ItemStack)
 				{
 					otherID = OreDictionary.getOreID((ItemStack)r.getInput());
@@ -116,7 +116,7 @@ public class GrinderRecipeRegistry
 				{
 					otherID = OreDictionary.getOreID((String)r.getInput());
 				}
-				
+
 				if(otherID != -1 && otherID == oreID)
 				{
 					if(r.getOutput() != null)
@@ -124,7 +124,7 @@ public class GrinderRecipeRegistry
 				}
 			}
 		}
-		
+
 		return null;
 	}
 }

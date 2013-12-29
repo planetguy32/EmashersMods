@@ -34,6 +34,12 @@ public class GrinderRecipeRegistry
 			this.input = input;
 			this.output = output;
 		}
+
+		public GrinderRecipe(ItemStack input, String output)
+		{
+			this.input = input;
+			this.output = output;
+		}
 		
 		public Object getInput()
 		{
@@ -66,6 +72,7 @@ public class GrinderRecipeRegistry
 	public static void registerRecipe(ItemStack input, ItemStack output) { registerRecipe(new GrinderRecipe(input, output)); }
 	public static void registerRecipe(String input, ItemStack output) { registerRecipe(new GrinderRecipe(input, output)); }
 	public static void registerRecipe(String input, String output) { registerRecipe(new GrinderRecipe(input, output)); }
+	public static void registerRecipe(ItemStack input, String output) { registerRecipe(new GrinderRecipe(input, output)); }
 
 	public static GrinderRecipe getRecipe(Object input)
 	{

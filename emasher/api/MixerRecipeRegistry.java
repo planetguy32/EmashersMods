@@ -50,7 +50,6 @@ public class MixerRecipeRegistry
 		{
 			return output;
 		}
-		
 	}
 	
 	private static ArrayList<MixerRecipe> recipes = new ArrayList<MixerRecipe>();
@@ -69,31 +68,13 @@ public class MixerRecipeRegistry
 		registerRecipe(new MixerRecipe(input, fluidInput, output));
 	}
 
-	public static boolean unregisterRecipe(String input, FluidStack fluidInput)
-	{
-		int ndx = getRecipeIndex(input, fluidInput);
-		if(ndx == -1)
-			return false;
-		recipes.remove(ndx);
-		return true;
-	}
-
 	public static MixerRecipe getRecipe(Object input, FluidStack fluidInput)
-	{
-		int ndx = getRecipeIndex(input, fluidInput);
-		if(ndx == -1)
-			return null;
-		return recipes.get(ndx);
-	}
-	
-	private static int getRecipeIndex(Object input, FluidStack fluidInput)
 	{
 		if(input instanceof ItemStack)
 		{
 			int oreID = OreDictionary.getOreID((ItemStack)input);
-			for(int i = 0; i < recipes.size(); i++)
+			for(MixerRecipe r: recipes)
 			{
-				MixerRecipe r = recipes.get(i);
 				int otherID = -1;
 				
 				if(r.getInput() instanceof ItemStack)
@@ -107,7 +88,8 @@ public class MixerRecipeRegistry
 				
 				if((otherID != -1 && otherID == oreID) || (r.getInput() instanceof ItemStack && ((ItemStack)input).isItemEqual((ItemStack)r.getInput())))
 				{
-					if(fluidInput.isFluidEqual(r.fluidInput)) return i;
+					if(fluidInput.isFluidEqual(r.fluidInput))
+						return r;
 				}
 				
 			}
@@ -115,9 +97,8 @@ public class MixerRecipeRegistry
 		else if(input instanceof String)
 		{
 			int oreID = OreDictionary.getOreID((String)input);
-			for(int i = 0; i < recipes.size(); i++)
+			for(MixerRecipe r: recipes)
 			{
-				MixerRecipe r = recipes.get(i);
 				int otherID = -1;
 				
 				if(r.getInput() instanceof ItemStack)
@@ -131,11 +112,12 @@ public class MixerRecipeRegistry
 				
 				if(otherID != -1 && otherID == oreID)
 				{
-					if(fluidInput.isFluidEqual(r.fluidInput)) return i;
+					if(fluidInput.isFluidEqual(r.fluidInput))
+						return r;
 				}
 			}
 		}
 		
-		return -1;
+		return null;
 	}
 }

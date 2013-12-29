@@ -12,12 +12,12 @@ public class CentrifugeRecipeRegistry
 	{
 		/*
 		 * input - either an OreDictionary string, or an ItemStack
-		 * output - an ItemStack
-		 * 
+		 * output - either an OreDictionary string, or an ItemStack
+		 * secondaryOutput - either an OreDictionary string, or an ItemStack
 		 */
 		private Object input;
-		private ItemStack output;
-		private ItemStack secondaryOutput;
+		private Object output;
+		private Object secondaryOutput;
 		private int percent;
 		
 		public CentrifugeRecipe(ItemStack input, ItemStack output, ItemStack secondaryOutput, int percent)
@@ -26,8 +26,8 @@ public class CentrifugeRecipeRegistry
 			this.output = output;
 			this.secondaryOutput = secondaryOutput;
 			this.percent = percent;
-			this.output.stackSize = 1;
-			this.secondaryOutput.stackSize = 1;
+			((ItemStack)this.output).stackSize = 1;
+			((ItemStack)this.secondaryOutput).stackSize = 1;
 		}
 		
 		public CentrifugeRecipe(String input, ItemStack output, ItemStack secondaryOutput, int percent)
@@ -36,8 +36,16 @@ public class CentrifugeRecipeRegistry
 			this.output = output;
 			this.secondaryOutput = secondaryOutput;
 			this.percent = percent;
-			this.output.stackSize = 1;
-			this.secondaryOutput.stackSize = 1;
+			((ItemStack)this.output).stackSize = 1;
+			((ItemStack)this.secondaryOutput).stackSize = 1;
+		}
+
+		public CentrifugeRecipe(String input, String output, String secondaryOutput, int percent)
+		{
+			this.input = input;
+			this.output = output;
+			this.secondaryOutput = secondaryOutput;
+			this.percent = percent;
 		}
 		
 		public Object getInput()
@@ -47,19 +55,48 @@ public class CentrifugeRecipeRegistry
 		
 		public ItemStack getOutput()
 		{
-			return output;
+			// convert to ItemStack on the first getOutput call
+			if(this.output instanceof String)
+			{
+				ArrayList<ItemStack> ores = OreDictionary.getOres((String)this.output);
+				if(ores.size() > 0)
+				{
+					ItemStack stack = ores.get(0).copy();
+					stack.stackSize = 1;
+					this.output = stack;
+				}
+				else
+					return null;
+			}
+			return (ItemStack)output;
 		}
 		
 		public ItemStack getSecondaryOutput()
 		{
-			return secondaryOutput;
+			// convert to ItemStack
+			if(secondaryOutput instanceof String)
+			{
+				ArrayList<ItemStack> ores = OreDictionary.getOres((String)this.secondaryOutput);
+				if(ores.size() > 0)
+				{
+					ItemStack stack = ores.get(0).copy();
+					stack.stackSize = 1;
+					this.secondaryOutput = stack;
+				}
+				else
+					return null;
+			}
+			return (ItemStack)secondaryOutput;
 		}
 		
 		public boolean shouldOuputSecondary(Random r)
 		{
+			if(secondaryOutput == null)
+				return false;
+			if(secondaryOutput instanceof String && this.getSecondaryOutput() == null)
+				return false;
 			return (r.nextInt(100) < percent);
 		}
-		
 	}
 	
 	private static ArrayList<CentrifugeRecipe> recipes = new ArrayList<CentrifugeRecipe>();
@@ -71,32 +108,15 @@ public class CentrifugeRecipeRegistry
 	
 	public static void registerRecipe(ItemStack input, ItemStack output, ItemStack secondaryOutput, int percent) { registerRecipe(new CentrifugeRecipe(input, output, secondaryOutput, percent)); }
 	public static void registerRecipe(String input, ItemStack output, ItemStack secondaryOutput, int percent) { registerRecipe(new CentrifugeRecipe(input, output, secondaryOutput, percent)); }
-
-	public static boolean unregisterRecipe(Object input)
-	{
-		int ndx = getRecipeIndex(input);
-		if(ndx == -1)
-			return false;
-		recipes.remove(ndx);
-		return true;
-	}
+	public static void registerRecipe(String input, String output, String secondaryOutput, int percent) { registerRecipe(new CentrifugeRecipe(input, output, secondaryOutput, percent)); }
 
 	public static CentrifugeRecipe getRecipe(Object input)
-	{
-		int ndx = getRecipeIndex(input);
-		if(ndx == -1)
-			return null;
-		return recipes.get(ndx);
-	}
-	
-	private static int getRecipeIndex(Object input)
 	{
 		if(input instanceof ItemStack)
 		{
 			int oreID = OreDictionary.getOreID((ItemStack)input);
-			for(int i = 0; i < recipes.size(); i++)
+			for(CentrifugeRecipe r: recipes)
 			{
-				CentrifugeRecipe r = recipes.get(i);
 				int otherID = -1;
 				
 				if(r.getInput() instanceof ItemStack)
@@ -110,7 +130,8 @@ public class CentrifugeRecipeRegistry
 				
 				if((otherID != -1 && otherID == oreID) || (r.getInput() instanceof ItemStack && ((ItemStack)input).isItemEqual((ItemStack)r.getInput())))
 				{
-					return i;
+					if(r.getOutput() != null)
+						return r;
 				}
 				
 			}
@@ -118,9 +139,8 @@ public class CentrifugeRecipeRegistry
 		else if(input instanceof String)
 		{
 			int oreID = OreDictionary.getOreID((String)input);
-			for(int i = 0; i < recipes.size(); i++)
+			for(CentrifugeRecipe r: recipes)
 			{
-				CentrifugeRecipe r = recipes.get(i);
 				int otherID = -1;
 				
 				if(r.getInput() instanceof ItemStack)
@@ -134,12 +154,13 @@ public class CentrifugeRecipeRegistry
 				
 				if(otherID != -1 && otherID == oreID)
 				{
-					return i;
+					if(r.getOutput() != null)
+						return r;
 				}
 			}
 		}
 		
-		return -1;
+		return null;
 	}
 	
 }

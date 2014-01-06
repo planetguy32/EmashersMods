@@ -91,8 +91,6 @@ public class CentrifugeRecipeRegistry
 		
 		public boolean shouldOuputSecondary(Random r)
 		{
-			if(secondaryOutput == null)
-				return false;
 			if(secondaryOutput instanceof String && this.getSecondaryOutput() == null)
 				return false;
 			return (r.nextInt(100) < percent);

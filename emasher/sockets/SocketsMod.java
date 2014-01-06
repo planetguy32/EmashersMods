@@ -600,14 +600,6 @@ public class SocketsMod
 		GrinderRecipeRegistry.registerRecipe("oreSapphire", new ItemStack(EmasherCore.gem, 2, 2));
 
 		GrinderRecipeRegistry.registerRecipe(new ItemStack(Block.cobblestone), new ItemStack(Block.sand));
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Block.stone), new ItemStack(Block.gravel));
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Item.blazeRod), new ItemStack(Item.blazePowder, 5));
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Item.bone), new ItemStack(Item.dyePowder, 5, 3));
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Block.obsidian), "dustObsidian");
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Block.netherrack), "dustNetherrack");
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Item.coal), "dustCoal");
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Item.coal, 1), "dustCharcoal");
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Item.clay), "dustClay");
 
 		//Multi Smelter
 		

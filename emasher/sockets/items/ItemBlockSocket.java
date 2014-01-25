@@ -20,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 
 public class ItemBlockSocket extends ItemBlock
 {
@@ -153,8 +154,16 @@ public class ItemBlockSocket extends ItemBlock
                 	ts.zCoord = par6;
                 	ts.worldObj = par3World;
                 	
+                	for(int i = 0; i < 6; i++)
+                	{
+                		SocketModule m = ts.getSide(ForgeDirection.getOrientation(i));
+                		m.onSocketPlaced(ts.getConfigForSide(ForgeDirection.getOrientation(i)), ts, ForgeDirection.getOrientation(i));
+                	}
+                	
                 }
             }
+            
+            par3World.notifyBlockChange(par4, par5, par6, SocketsMod.socket.blockID);
 
             return true;
         }

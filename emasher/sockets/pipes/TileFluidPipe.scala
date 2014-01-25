@@ -7,7 +7,7 @@ import net.minecraftforge.common._;
 
 class TileFluidPipe extends TilePipeBase with IFluidHandler
 {
-	final var CAPACITY:Int = 1000;
+	final var CAPACITY:Int = 8000;
 	var tank:FluidTank = new FluidTank(CAPACITY);
 	var lastFrom:ForgeDirection = ForgeDirection.UNKNOWN;
 	var meta:Integer = 0;

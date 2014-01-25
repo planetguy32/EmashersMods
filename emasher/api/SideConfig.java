@@ -9,6 +9,7 @@ public class SideConfig
 	public boolean[] rsControl;
 	public boolean[] rsLatch;
 	public int meta;
+	public NBTTagCompound tags; //NOT sent to client
 	
 	public SideConfig(int t, int i, int m)
 	{
@@ -17,6 +18,7 @@ public class SideConfig
 		rsControl = new boolean[]{false, false, false};
 		rsLatch = new boolean[]{false, false, false};
 		meta = m;
+		tags = new NBTTagCompound();
 	}
 	
 	public SideConfig()
@@ -26,6 +28,7 @@ public class SideConfig
 		rsControl = new boolean[]{false, false, false};
 		rsLatch = new boolean[]{false, false, false};
 		meta = 0;
+		tags = new NBTTagCompound();
 	}
 	
 	public void writeToNBT(NBTTagCompound data)
@@ -38,6 +41,7 @@ public class SideConfig
 			data.setBoolean("rsLatch" + i, rsLatch[i]);
 		}
 		data.setInteger("meta", meta);
+		data.setTag("data", tags);
 	}
 	
 	public void readFromNBT(NBTTagCompound data)
@@ -50,5 +54,7 @@ public class SideConfig
 			rsLatch[i] = data.getBoolean("rsLatch" + i);
 		}
 		meta = data.getInteger("meta");
+		if(data.hasKey("data"))tags = (NBTTagCompound)data.getTag("data");
+		else tags = new NBTTagCompound();
 	}
 }

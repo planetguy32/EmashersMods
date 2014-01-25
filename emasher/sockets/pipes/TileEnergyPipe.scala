@@ -7,7 +7,7 @@ import net.minecraftforge.common._;
 
 class TileEnergyPipe extends TilePipeBase with IEnergyHandler
 {
-	final var CAPACITY:Int = 1000;
+	final var CAPACITY:Int = 8000;
 	var capacitor:EnergyStorage = new EnergyStorage(CAPACITY);
 	var lastFrom:ForgeDirection = ForgeDirection.UNKNOWN;
 	var meta:Integer = 0;

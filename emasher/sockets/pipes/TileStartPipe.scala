@@ -8,7 +8,7 @@ import cofh.api.energy._;
 
 class TileStartPipe extends TileEntity with IFluidHandler with IEnergyHandler
 {
-	final var CAPACITY:Int = 1000;
+	final var CAPACITY:Int = 8000;
 	var tank:FluidTank = new FluidTank(CAPACITY);
 	var capacitor:EnergyStorage = new EnergyStorage(CAPACITY);
 	

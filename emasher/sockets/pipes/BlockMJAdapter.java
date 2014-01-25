@@ -12,7 +12,7 @@ public class BlockMJAdapter extends BlockAdapterBase
 {	
 	public BlockMJAdapter(int id)
 	{
-		super(id);
+		super(id, Material.iron);
 		this.setCreativeTab(SocketsMod.tabSockets);
 	}
 	

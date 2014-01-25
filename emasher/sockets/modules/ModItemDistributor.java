@@ -70,6 +70,12 @@ public class ModItemDistributor extends SocketModule
 	public boolean canInsertItems() { return true; }
 	
 	@Override
+	public void init(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+	{
+		config.meta = 8;
+	}
+	
+	@Override
 	public int itemFill(ItemStack item, boolean doFill, SideConfig config, SocketTileAccess ts, ForgeDirection side)
 	{
 		boolean canIntake = true;
@@ -113,42 +119,54 @@ public class ModItemDistributor extends SocketModule
 	@Override
 	public void updateSide(SideConfig config, SocketTileAccess ts, ForgeDirection side)
 	{
-		int xo = ts.xCoord + side.offsetX;
-		int yo = ts.yCoord + side.offsetY;
-		int zo = ts.zCoord + side.offsetZ;
 		
-		TileEntity t = ts.worldObj.getBlockTileEntity(xo, yo, zo);
-		
-		if(t != null && t instanceof TileEntityHopper)
-		{	
-			TileEntityHopper th = (TileEntityHopper)t;
+		if(config.meta == 0)
+		{
+			config.meta = 16;
 			
-			boolean canIntake = true;
+			int xo = ts.xCoord + side.offsetX;
+			int yo = ts.yCoord + side.offsetY;
+			int zo = ts.zCoord + side.offsetZ;
 			
-			for(int i = 0; i < 3; i++)
-			{
-				if(config.rsControl[i] && ts.getRSControl(i)) canIntake = false;
-				if(config.rsLatch[i] && ts.getRSLatch(i)) canIntake = false;
-			}
+			TileEntity t = ts.worldObj.getBlockTileEntity(xo, yo, zo);
 			
-			int direction = BlockHopper.getDirectionFromMetadata(ts.worldObj.getBlockMetadata(xo, yo, zo));
-			if(ForgeDirection.getOrientation(direction).getOpposite() == side && canIntake)
-			{
-				for (int i = 0; i < th.getSizeInventory(); ++i)
-	            {
-	                if (th.getStackInSlot(i) != null)
-	                {
-	                    ItemStack itemstack = th.getStackInSlot(i).copy();
-	                    itemstack.stackSize = 1;
-	                    int added = ts.addItem(itemstack, true, side);
-	                    
-	                    itemstack.stackSize = th.getStackInSlot(i).stackSize - added;
-	                    if(itemstack.stackSize <= 0) itemstack = null;
-	                    
-	                    th.setInventorySlotContents(i, itemstack);
-	                }
-	            }
+			if(t != null && t instanceof TileEntityHopper)
+			{	
+				TileEntityHopper th = (TileEntityHopper)t;
+				
+				boolean canIntake = true;
+				
+				for(int i = 0; i < 3; i++)
+				{
+					if(config.rsControl[i] && ts.getRSControl(i)) canIntake = false;
+					if(config.rsLatch[i] && ts.getRSLatch(i)) canIntake = false;
+				}
+				
+				int direction = BlockHopper.getDirectionFromMetadata(ts.worldObj.getBlockMetadata(xo, yo, zo));
+				if(ForgeDirection.getOrientation(direction).getOpposite() == side && canIntake)
+				{
+					for (int i = 0; i < th.getSizeInventory(); ++i)
+		            {
+		                if (th.getStackInSlot(i) != null)
+		                {
+		                    ItemStack itemstack = th.getStackInSlot(i).copy();
+		                    itemstack.stackSize = 1;
+		                    int added = ts.addItem(itemstack, true, side);
+		                    
+		                    itemstack.stackSize = th.getStackInSlot(i).stackSize - added;
+		                    if(itemstack.stackSize <= 0) itemstack = null;
+		                    
+		                    th.setInventorySlotContents(i, itemstack);
+		                }
+		            }
+				}
 			}
 		}
+		else
+		{
+			config.meta--;
+		}
+		
 	}
+			
 }

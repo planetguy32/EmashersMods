@@ -44,6 +44,7 @@ public class ModVacuum extends SocketModule
 	{
 		l.add(SocketsMod.PREF_GREEN + "Inventory to input items to");
 		l.add(SocketsMod.PREF_RED + "RS control channel");
+		l.add(SocketsMod.PREF_AQUA + "Uses 10 RF/Operation");
 	}
 	
 	@Override
@@ -62,7 +63,7 @@ public class ModVacuum extends SocketModule
 	@Override
 	public void onRSInterfaceChange(SideConfig config, int index, SocketTileAccess ts, ForgeDirection side, boolean on)
 	{
-		if(on && config.rsControl[index] && config.inventory >= 0 && config.inventory <= 2)
+		if(on && config.rsControl[index] && config.inventory >= 0 && config.inventory <= 2 && ts.getEnergyStored() >= 10)
 		{
 			double x = ts.xCoord + side.offsetX;
 			double y = ts.yCoord + side.offsetY;
@@ -89,6 +90,8 @@ public class ModVacuum extends SocketModule
 				zMin--;
 				z++;
 			}
+			
+			ts.useEnergy(10, false);
 			
 			List l = ts.worldObj.getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getAABBPool().getAABB(xMin, yMin, zMin, x + 1, y + 1, z + 1));
 			for(Object o : l)

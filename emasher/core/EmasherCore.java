@@ -532,12 +532,12 @@ public class EmasherCore
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(circuit, 2), "rrr", "ggg", Character.valueOf('r'), Item.redstone, Character.valueOf('g'), Item.goldNugget));
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(circuit, 2), "rrr", "ggg", Character.valueOf('r'), Item.redstone, Character.valueOf('g'), "ingotCopper"));
 		
-		if(Loader.isModLoaded("BuildCraft|Silicon"))
+		/*if(Loader.isModLoaded("BuildCraft|Silicon"))
 		{
 			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {new ItemStack(Item.redstone, 1), new ItemStack(Item.goldNugget, 1)}, 20000, new ItemStack(circuit, 4)));
 			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {new ItemStack(Item.redstone, 1), copperStack}, 20000, new ItemStack(circuit, 4)));
 
-		}
+		}*/
 		
 		//Stone Recipes
 		

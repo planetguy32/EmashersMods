@@ -37,21 +37,27 @@ public class ModStirlingGenerator extends SocketModule {
 	@Override
 	public void getToolTip(List l)
 	{
-		l.add("Generates power when fueled");
-		l.add("with burnable items");
+		l.add("Generates power using");
+		l.add("furnace fuel");
+		l.add("High power mode uses");
+		l.add("more than double the fuel");
+		l.add("to produce double the power");
+		l.add("per tick");
 	}
 
 	@Override
 	public void getIndicatorKey(List l)
 	{
 		l.add(SocketsMod.PREF_GREEN + "Input inventory");
+		l.add(SocketsMod.PREF_WHITE + "Toggles high power mode");
+		l.add(SocketsMod.PREF_AQUA + "Produces 10 or 20 RF/t");
 	}
 
 	@Override
 	public void addRecipe()
 	{
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID),
-				"g g",
+				"ggg",
 				" F ",
 				" b ",
 				Character.valueOf('g'), Block.stone,
@@ -60,25 +66,7 @@ public class ModStirlingGenerator extends SocketModule {
 	}
 
 	@Override
-	public boolean hasTankIndicator() { return false; }
-
-	@Override
 	public boolean hasInventoryIndicator() { return true; }
-
-	@Override
-	public boolean isMachine() { return false; }
-
-	@Override
-	public boolean canBeInstalled(SocketTileAccess ts, ForgeDirection side)
-	{
-		for(int i = 0; i < 6; i++)
-		{
-			SocketModule m = ts.getSide(ForgeDirection.getOrientation(i));
-			if(m != null && m.isMachine()) return false;
-		}
-
-		return true;
-	}
 
 	@Override
 	public void onGenericRemoteSignal(SocketTileAccess ts, SideConfig config, ForgeDirection side)
@@ -104,8 +92,8 @@ public class ModStirlingGenerator extends SocketModule {
 				int time = TileEntityFurnace.getItemBurnTime(toIntake);
 				if( time > 0 )
 				{
-					// ensure its even
-					time = (time * 2) / 2;
+					// ensure it's even
+					if(time % 2 != 0) time++;
 					ts.extractItemInternal(true, config.inventory, 1);
 					config.meta = time;
 				}
@@ -121,6 +109,7 @@ public class ModStirlingGenerator extends SocketModule {
 				else
 				{
 					config.meta -= 2;
+					if(ts.worldObj.rand.nextBoolean()) config.meta--;
 					ts.addEnergy(20, false);
 				}
 				if(config.meta == 0)
@@ -149,6 +138,7 @@ public class ModStirlingGenerator extends SocketModule {
 	{
 		// not ACTIVE and not HIGH_POWER
 		config.tank = 0;
+		ts.sendClientSideState(side.ordinal());
 	}
 
 	@Override

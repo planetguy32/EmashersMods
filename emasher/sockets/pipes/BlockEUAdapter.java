@@ -16,7 +16,7 @@ public class BlockEUAdapter extends BlockAdapterBase
 {
 	public BlockEUAdapter(int id)
 	{
-		super(id);
+		super(id, Material.iron);
 		this.setCreativeTab(SocketsMod.tabSockets);
 	}
 	

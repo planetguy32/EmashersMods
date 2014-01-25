@@ -45,7 +45,7 @@ import emasher.sockets.modules.*;
 import emasher.sockets.client.ClientProxy;
 import emasher.sockets.pipes.*;
 
-@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.6.6", dependencies = "required-after:emashercore")
+@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.7.0", dependencies = "required-after:emashercore")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false,
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = ClientPacketHandler.class),
@@ -72,6 +72,8 @@ public class SocketsMod
 	
 	public static Block mjAdapter;
 	public static Block euAdapter;
+	
+	public static Block miniPortal;
 	
 	//Fluids
 	
@@ -121,6 +123,8 @@ public class SocketsMod
 	public int mjAdapterID;
 	public int euAdapterID;
 	
+	public int miniPortalID;
+	
 	
 	public boolean vanillaCircuitRecipe;
 	public static boolean ic2First;
@@ -135,6 +139,8 @@ public class SocketsMod
 	public boolean enableHusher;
 	public static boolean cbTextures;
 	public static boolean smeltSand;
+	public static boolean enableMiniPortal;
+	public static boolean miniPortalLava;
 	
 	public static int RFperMJ;
 	public static int RFperEU;
@@ -214,6 +220,7 @@ public class SocketsMod
 		energyPipeID = config.get(Configuration.CATEGORY_BLOCK, "Energy Pipe ID", 4077).getInt();
 		mjAdapterID = config.get(Configuration.CATEGORY_BLOCK, "MJ Adapter ID", 4078).getInt();
 		euAdapterID = config.get(Configuration.CATEGORY_BLOCK, "EU Adapter ID", 4079).getInt();
+		miniPortalID = config.get(Configuration.CATEGORY_BLOCK, "Fluidic Nether Portal", 4080).getInt();
 		
 		moduleID = config.get(Configuration.CATEGORY_ITEM, "Module ID", 4170).getInt();
 		remoteID = config.get(Configuration.CATEGORY_ITEM, "Remote ID", 4172).getInt();
@@ -247,6 +254,8 @@ public class SocketsMod
 		smeltSand = config.get(Configuration.CATEGORY_GENERAL, "Hand boiler smelts sand", false).getBoolean(false);
 		RFperMJ = config.get(Configuration.CATEGORY_GENERAL, "RF per MJ", 10).getInt();
 		RFperEU = config.get(Configuration.CATEGORY_GENERAL, "RF per EU", 4).getInt();
+		enableMiniPortal = config.get(Configuration.CATEGORY_GENERAL, "Enable Fluidic Nether Portal", true).getBoolean(true);
+		miniPortalLava = config.get(Configuration.CATEGORY_GENERAL, "Allow Lava In Fluidic Nether Portal", true).getBoolean(true);
 		
 		config.save();
 		
@@ -281,6 +290,7 @@ public class SocketsMod
 		GameRegistry.registerTileEntity(TilePipeBase.class, "emasherbasepipe");
 		GameRegistry.registerTileEntity(TileMJAdapter.class, "emashermjadapter");
 		GameRegistry.registerTileEntity(TileEUAdapter.class, "emashereuAdapter");
+		GameRegistry.registerTileEntity(TileMiniPortal.class, "emasherminiportal");
 		
 		ModuleRegistry.registerModule(new ModBlank(0));
 		ModuleRegistry.registerModule(new ModItemInput(1));
@@ -347,7 +357,8 @@ public class SocketsMod
 		ModuleRegistry.registerModule(new ModPressurizer(95));
 		ModuleRegistry.registerModule(new ModRangeSelector(96));
 		if(enableHusher) ModuleRegistry.registerModule(new ModHusher(97));
-		//ModuleRegistry.registerModule(new ModStirlingGenerator(98));
+		ModuleRegistry.registerModule(new ModStirlingGenerator(98));
+		ModuleRegistry.registerModule(new ModPump(99));
 		
 		//Register 3rd party modules
 		for(IModuleRegistrationManager reg : ModuleRegistry.registers)
@@ -387,6 +398,13 @@ public class SocketsMod
 		euAdapter = new BlockEUAdapter(euAdapterID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("emasher_EU_adapter");
 		GameRegistry.registerBlock(euAdapter, "emasher_EU_adapter");
 		LanguageRegistry.addName(euAdapter, "EU Adapter");
+		
+		if(enableMiniPortal)
+		{
+			miniPortal = new BlockMiniPortal(miniPortalID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("emasher_mini_portal");
+			GameRegistry.registerBlock(miniPortal, "emasher_mini_portal");
+			LanguageRegistry.addName(miniPortal, "Fluidic Nether Portal");
+		}
 		
 		paintedPlanks = (new BlockPaintedWood(paintedPlankID, 0, Material.wood))
 				.setHardness(2.0F).setResistance(5.0F).setStepSound(Block.soundWoodFootstep)
@@ -625,7 +643,7 @@ public class SocketsMod
 		CentrifugeRecipeRegistry.registerRecipe("dustImpureAluminum", new ItemStack(dusts, 1, ItemDusts.Const.pureAluminiumDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureIronDust.ordinal()), 5);
 		CentrifugeRecipeRegistry.registerRecipe("dustImpureTin", new ItemStack(dusts, 1, ItemDusts.Const.pureTinDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureTinDust.ordinal()), 33);
 		CentrifugeRecipeRegistry.registerRecipe("dustImpureCopper", new ItemStack(dusts, 1, ItemDusts.Const.pureCopperDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureCopperDust.ordinal()), 33);
-		CentrifugeRecipeRegistry.registerRecipe("dustImpureNickel", new ItemStack(dusts, 1, ItemDusts.Const.pureNickelDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.purePlatinumDust.ordinal()), 10);
+		CentrifugeRecipeRegistry.registerRecipe("dustImpureNickel", new ItemStack(dusts, 1, ItemDusts.Const.pureNickelDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.purePlatinumDust.ordinal()), 20);
 		CentrifugeRecipeRegistry.registerRecipe("dustImpureLead", new ItemStack(dusts, 1, ItemDusts.Const.pureLeadDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureSilverDust.ordinal()), 50);
 		CentrifugeRecipeRegistry.registerRecipe("dustImpureSilver", new ItemStack(dusts, 1, ItemDusts.Const.pureSilverDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureLeadDust.ordinal()), 10);
 		CentrifugeRecipeRegistry.registerRecipe("dustImpureCobalt", new ItemStack(dusts, 1, ItemDusts.Const.pureCobaltDust.ordinal()), new ItemStack(dusts, 1, ItemDusts.Const.pureArditeDust.ordinal()), 10);

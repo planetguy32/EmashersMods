@@ -16,9 +16,9 @@ public abstract class BlockAdapterBase extends BlockContainer
 {
 	public Icon outputIcon;
 	
-	public BlockAdapterBase(int id)
+	public BlockAdapterBase(int id, Material m)
 	{
-		super(id, Material.iron);
+		super(id, m);
 	}
 
 	@Override

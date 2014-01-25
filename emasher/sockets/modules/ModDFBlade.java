@@ -78,6 +78,10 @@ public class ModDFBlade extends SocketModule
 			if(config.meta == 20)
 			{
 				config.meta = 0;
+				
+				if(ts.getEnergyStored() < 10) config.tank = 0;
+				ts.useEnergy(10, false);
+				
 				double x = ts.xCoord + side.offsetX;
 				double y = ts.yCoord + side.offsetY;
 				double z = ts.zCoord + side.offsetZ;
@@ -100,7 +104,7 @@ public class ModDFBlade extends SocketModule
 	@Override
 	public void onRSInterfaceChange(SideConfig config, int index, SocketTileAccess ts, ForgeDirection side, boolean on)
 	{
-		if(on && config.rsControl[index])
+		if(on && config.rsControl[index] && ts.getEnergyStored() >= 10)
 		{
 			config.tank = 1;
 			
@@ -128,7 +132,7 @@ public class ModDFBlade extends SocketModule
 	@Override
 	public void onRSLatchChange(SideConfig config, int index, SocketTileAccess ts, ForgeDirection side, boolean on)
 	{
-		if(on && config.rsLatch[index])
+		if(on && config.rsLatch[index] && ts.getEnergyStored() >= 10)
 		{
 			config.tank = 1;
 			

@@ -391,4 +391,9 @@ public abstract class SocketModule
 	 * on is true iff the signal changed from off to on.
 	 */
 	public void onRSLatchChange(SideConfig config, int index, SocketTileAccess ts, ForgeDirection side, boolean on) {}
+	
+	/**
+	 * Called whenever an already configured socket is placed
+	 */
+	public void onSocketPlaced(SideConfig config, SocketTileAccess ts, ForgeDirection side) {}
 }

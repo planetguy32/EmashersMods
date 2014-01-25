@@ -3,6 +3,7 @@ package emasher.api;
 import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.liquids.*;
 import net.minecraftforge.oredict.OreDictionary;
@@ -49,7 +50,6 @@ public class MixerRecipeRegistry
 		{
 			return output;
 		}
-		
 	}
 	
 	private static ArrayList<MixerRecipe> recipes = new ArrayList<MixerRecipe>();
@@ -67,14 +67,13 @@ public class MixerRecipeRegistry
 	{
 		registerRecipe(new MixerRecipe(input, fluidInput, output));
 	}
-	
+
 	public static MixerRecipe getRecipe(Object input, FluidStack fluidInput)
 	{
-		
 		if(input instanceof ItemStack)
 		{
 			int oreID = OreDictionary.getOreID((ItemStack)input);
-			for(MixerRecipe r:recipes)
+			for(MixerRecipe r: recipes)
 			{
 				int otherID = -1;
 				
@@ -89,7 +88,8 @@ public class MixerRecipeRegistry
 				
 				if((otherID != -1 && otherID == oreID) || (r.getInput() instanceof ItemStack && ((ItemStack)input).isItemEqual((ItemStack)r.getInput())))
 				{
-					if(fluidInput.isFluidEqual(r.fluidInput)) return r;
+					if(fluidInput.isFluidEqual(r.fluidInput))
+						return r;
 				}
 				
 			}
@@ -97,7 +97,7 @@ public class MixerRecipeRegistry
 		else if(input instanceof String)
 		{
 			int oreID = OreDictionary.getOreID((String)input);
-			for(MixerRecipe r:recipes)
+			for(MixerRecipe r: recipes)
 			{
 				int otherID = -1;
 				
@@ -112,7 +112,8 @@ public class MixerRecipeRegistry
 				
 				if(otherID != -1 && otherID == oreID)
 				{
-					if(fluidInput.isFluidEqual(r.fluidInput)) return r;
+					if(fluidInput.isFluidEqual(r.fluidInput))
+						return r;
 				}
 			}
 		}

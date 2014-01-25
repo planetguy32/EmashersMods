@@ -49,7 +49,6 @@ public class PhotobioReactorRecipeRegistry
 		{
 			return output;
 		}
-		
 	}
 	
 	private static ArrayList<PhotobioReactorRecipe> recipes = new ArrayList<PhotobioReactorRecipe>();
@@ -67,14 +66,13 @@ public class PhotobioReactorRecipeRegistry
 	{
 		registerRecipe(new PhotobioReactorRecipe(input, fluidInput, output));
 	}
-	
+
 	public static PhotobioReactorRecipe getRecipe(Object input, FluidStack fluidInput)
 	{
-		
 		if(input instanceof ItemStack)
 		{
 			int oreID = OreDictionary.getOreID((ItemStack)input);
-			for(PhotobioReactorRecipe r:recipes)
+			for(PhotobioReactorRecipe r: recipes)
 			{
 				int otherID = -1;
 				
@@ -97,7 +95,7 @@ public class PhotobioReactorRecipeRegistry
 		else if(input instanceof String)
 		{
 			int oreID = OreDictionary.getOreID((String)input);
-			for(PhotobioReactorRecipe r:recipes)
+			for(PhotobioReactorRecipe r: recipes)
 			{
 				int otherID = -1;
 				

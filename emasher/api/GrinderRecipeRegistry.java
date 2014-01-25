@@ -11,19 +11,31 @@ public class GrinderRecipeRegistry
 	{
 		/*
 		 * input - either an OreDictionary string, or an ItemStack
-		 * output - an ItemStack
+		 * output - either an OreDictionary string, or an ItemStack
 		 * 
 		 */
 		private Object input;
-		private ItemStack output;
-		
+		private Object output;
+
 		public GrinderRecipe(ItemStack input, ItemStack output)
 		{
 			this.input = input;
 			this.output = output;
 		}
-		
+
 		public GrinderRecipe(String input, ItemStack output)
+		{
+			this.input = input;
+			this.output = output;
+		}
+
+		public GrinderRecipe(String input, String output)
+		{
+			this.input = input;
+			this.output = output;
+		}
+
+		public GrinderRecipe(ItemStack input, String output)
 		{
 			this.input = input;
 			this.output = output;
@@ -33,33 +45,44 @@ public class GrinderRecipeRegistry
 		{
 			return input;
 		}
-		
+
 		public ItemStack getOutput()
 		{
-			return output;
+			// convert to ItemStack on the first getOutput call
+			if(this.output instanceof String)
+			{
+				ArrayList<ItemStack> ores = OreDictionary.getOres((String)this.output);
+				if(ores.size() > 0)
+					this.output = ores.get(0);
+				else
+					return null;
+			}
+			return (ItemStack)output;
 		}
-		
+
 	}
-	
+
 	private static ArrayList<GrinderRecipe> recipes = new ArrayList<GrinderRecipe>();
-	
+
 	public static void registerRecipe(GrinderRecipe recipe)
 	{
 		recipes.add(recipe);
 	}
-	
+
 	public static void registerRecipe(ItemStack input, ItemStack output) { registerRecipe(new GrinderRecipe(input, output)); }
 	public static void registerRecipe(String input, ItemStack output) { registerRecipe(new GrinderRecipe(input, output)); }
-	
+	public static void registerRecipe(String input, String output) { registerRecipe(new GrinderRecipe(input, output)); }
+	public static void registerRecipe(ItemStack input, String output) { registerRecipe(new GrinderRecipe(input, output)); }
+
 	public static GrinderRecipe getRecipe(Object input)
 	{
 		if(input instanceof ItemStack)
 		{
 			int oreID = OreDictionary.getOreID((ItemStack)input);
-			for(GrinderRecipe r:recipes)
+			for(GrinderRecipe r: recipes)
 			{
 				int otherID = -1;
-				
+
 				if(r.getInput() instanceof ItemStack)
 				{
 					otherID = OreDictionary.getOreID((ItemStack)r.getInput());
@@ -68,21 +91,23 @@ public class GrinderRecipeRegistry
 				{
 					otherID = OreDictionary.getOreID((String)r.getInput());
 				}
-				
-				if((otherID != -1 && otherID == oreID) || (r.getInput() instanceof ItemStack && ((ItemStack)input).isItemEqual((ItemStack)r.getInput())))
+
+				if( (otherID != -1 && otherID == oreID) ||
+						(r.getInput() instanceof ItemStack && ((ItemStack)input).isItemEqual((ItemStack)r.getInput())))
 				{
-					return r;
+					if(r.getOutput() != null)
+						return r;
 				}
-				
+
 			}
 		}
 		else if(input instanceof String)
 		{
 			int oreID = OreDictionary.getOreID((String)input);
-			for(GrinderRecipe r:recipes)
+			for(GrinderRecipe r: recipes)
 			{
 				int otherID = -1;
-				
+
 				if(r.getInput() instanceof ItemStack)
 				{
 					otherID = OreDictionary.getOreID((ItemStack)r.getInput());
@@ -91,14 +116,15 @@ public class GrinderRecipeRegistry
 				{
 					otherID = OreDictionary.getOreID((String)r.getInput());
 				}
-				
+
 				if(otherID != -1 && otherID == oreID)
 				{
-					return r;
+					if(r.getOutput() != null)
+						return r;
 				}
 			}
 		}
-		
+
 		return null;
 	}
 }

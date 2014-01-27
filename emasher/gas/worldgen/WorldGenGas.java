@@ -36,7 +36,15 @@ public class WorldGenGas implements IWorldGenerator
 	    	x += random.nextInt(16);
 	    	z += random.nextInt(16);
 	    	
-	    	if(world.getBlockId(x, y, z) == Block.stone.blockID) world.setBlock(x, y, z, EmasherGas.gasPocket.blockID);
+	    	if(world.provider.dimensionId != -1)
+	    	{
+	    		if(world.getBlockId(x, y, z) == Block.stone.blockID) world.setBlock(x, y, z, EmasherGas.gasPocket.blockID);
+	    	}
+	    	else
+	    	{
+	    		if(world.getBlockId(x, y, z) == Block.netherrack.blockID) world.setBlock(x, y, z, EmasherGas.plasmaPocket.blockID);
+	    	}
+	    		
     	}
         
     }

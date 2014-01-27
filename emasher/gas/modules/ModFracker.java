@@ -115,7 +115,7 @@ public class ModFracker extends SocketModule
 				}
 				
 				
-				if(ts.worldObj.getBlockId(ts.xCoord, ts.yCoord - 1, ts.zCoord) == EmasherGas.shaleResource.blockID)
+				if(ts.worldObj.getBlockId(ts.xCoord, ts.yCoord - 1, ts.zCoord) == EmasherGas.shaleResource.blockID && ts.worldObj.getBlockMetadata(ts.xCoord, ts.yCoord -1, ts.zCoord) != 2)
 				{
 					TileEntity te = ts.worldObj.getBlockTileEntity(ts.xCoord, ts.yCoord - 1, ts.zCoord);
 					if(te != null && te instanceof TileShaleResource)
@@ -141,6 +141,31 @@ public class ModFracker extends SocketModule
 						}
 					}
 				}
+			}
+			else if(f.isFluidEqual(new FluidStack(FluidRegistry.LAVA, 1000)))
+			{
+				int amntToDraw = 1000;
+				
+				if(ts.worldObj.getBlockId(ts.xCoord, ts.yCoord -1, ts.zCoord) == EmasherGas.shaleResource.blockID && ts.worldObj.getBlockMetadata(ts.xCoord, ts.yCoord -1, ts.zCoord) == 2)
+				{
+					TileEntity te = ts.worldObj.getBlockTileEntity(ts.xCoord, ts.yCoord - 1, ts.zCoord);
+					if(te != null && te instanceof TileShaleResource)
+					{
+						TileShaleResource tsr = (TileShaleResource)te;
+						
+						FluidStack fs = ts.getFluidInTank(index);
+						if(fs.amount >= 1000 && ts.fillInternal(config.inventory, tsr.drain(amntToDraw, false), false) == amntToDraw)
+						{
+							ts.drainInternal(index, 1000, true);
+							FluidStack ext;
+							ext = tsr.drain(amntToDraw, true);
+							
+							
+							if(ext != null) ts.fillInternal(config.inventory, ext, true);
+						}
+					}
+				}
+				
 			}
 		}
 	}

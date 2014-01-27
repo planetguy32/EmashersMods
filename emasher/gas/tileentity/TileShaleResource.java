@@ -58,9 +58,13 @@ public class TileShaleResource extends TileEntity
 			{
 				setFluid(EmasherGas.fluidNaturalGas);
 			}
-			else if(Loader.isModLoaded("BuildCraft|Core"))
+			else if(Loader.isModLoaded("BuildCraft|Core") && meta == 1)
 			{
 				setFluid(BuildCraftEnergy.fluidOil);
+			}
+			else if(meta == 2)
+			{
+				setFluid(EmasherGas.fluidPlasma);
 			}
 			else
 			{

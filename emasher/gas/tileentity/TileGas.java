@@ -50,98 +50,101 @@ public class TileGas extends TileEntity
 	{
 		if(! worldObj.isRemote)
 		{
-			if(count == 4)
+			if(Block.blocksList[worldObj.getBlockId(xCoord, yCoord, zCoord)] instanceof BlockGasGeneric)
 			{
-				BlockGasGeneric thisBlock = (BlockGasGeneric)Block.blocksList[worldObj.getBlockId(xCoord, yCoord, zCoord)];
-				for(int i = xCoord - 1; i < xCoord + 2; i++)
-					for(int j = yCoord - 1; j < yCoord + 2; j++)
-						for(int k = zCoord - 1; k < zCoord + 2; k++)
-						{
-							if(worldObj.getBlockId(i, j, k) == Block.fire.blockID || (worldObj.getBlockId(i, j, k) == Block.torchWood.blockID && worldObj.difficultySetting == 3))
+				if(count == 4)
+				{
+					BlockGasGeneric thisBlock = (BlockGasGeneric)Block.blocksList[worldObj.getBlockId(xCoord, yCoord, zCoord)];
+					for(int i = xCoord - 1; i < xCoord + 2; i++)
+						for(int j = yCoord - 1; j < yCoord + 2; j++)
+							for(int k = zCoord - 1; k < zCoord + 2; k++)
 							{
-									thisBlock.contactFire(worldObj, xCoord, yCoord, zCoord);
+								if(worldObj.getBlockId(i, j, k) == Block.fire.blockID || (worldObj.getBlockId(i, j, k) == Block.torchWood.blockID && worldObj.difficultySetting == 3))
+								{
+										thisBlock.contactFire(worldObj, xCoord, yCoord, zCoord);
+								}
 							}
-						}
-			}
-			
-			if(count == 8)
-			{
-				BlockGasGeneric thisBlock = (BlockGasGeneric)Block.blocksList[worldObj.getBlockId(xCoord, yCoord, zCoord)];
-			
+				}
 				
-				if(gas.amount <= 8)
+				if(count == 8)
 				{
-					if(canDis(10))
+					BlockGasGeneric thisBlock = (BlockGasGeneric)Block.blocksList[worldObj.getBlockId(xCoord, yCoord, zCoord)];
+				
+					
+					if(gas.amount <= 8)
 					{
-						worldObj.setBlockToAir(xCoord, yCoord, zCoord);
-					}
-					else if(worldObj.isAirBlock(xCoord, yCoord + 1, zCoord))
-					{
-						moveToOffset(0, 1, 0);
-					}
-					else
-					{
-						int x, z;
-						boolean done = false;
-						int r = rand.nextInt(4);
-						
-						
-						for(int i = 0; i < 4 && ! done; i++)
+						if(canDis(10))
 						{
-							x = pos[r].x();
-							z = pos[r].y();
+							worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+						}
+						else if(worldObj.isAirBlock(xCoord, yCoord + 1, zCoord))
+						{
+							moveToOffset(0, 1, 0);
+						}
+						else
+						{
+							int x, z;
+							boolean done = false;
+							int r = rand.nextInt(4);
 							
-							if(worldObj.isAirBlock(xCoord + x, yCoord, zCoord + z))
+							
+							for(int i = 0; i < 4 && ! done; i++)
 							{
-								moveToOffset(x, 0, z);
-								done = true;
+								x = pos[r].x();
+								z = pos[r].y();
+								
+								if(worldObj.isAirBlock(xCoord + x, yCoord, zCoord + z))
+								{
+									moveToOffset(x, 0, z);
+									done = true;
+								}
+								
+								r++;
+								if(r == 4) r = 0;
+							}
+						}
+					}
+					else if (gas.amount > 8)
+					{
+						if(worldObj.isAirBlock(xCoord, yCoord + 1, zCoord))
+						{
+							splitToOffset(0, 1, 0);
+						}
+						else
+						{
+							int x, z;
+							boolean done = false;
+							int r = rand.nextInt(4);
+							
+							
+							for(int i = 0; i < 4 && ! done; i++)
+							{
+								x = pos[r].x();
+								z = pos[r].y();
+								
+								if(worldObj.isAirBlock(xCoord + x, yCoord, zCoord + z))
+								{
+									splitToOffset(x, 0, z);
+									done = true;
+								}
+								
+								
+								r++;
+								if(r == 4) r = 0;
 							}
 							
-							r++;
-							if(r == 4) r = 0;
-						}
-					}
-				}
-				else if (gas.amount > 8)
-				{
-					if(worldObj.isAirBlock(xCoord, yCoord + 1, zCoord))
-					{
-						splitToOffset(0, 1, 0);
-					}
-					else
-					{
-						int x, z;
-						boolean done = false;
-						int r = rand.nextInt(4);
-						
-						
-						for(int i = 0; i < 4 && ! done; i++)
-						{
-							x = pos[r].x();
-							z = pos[r].y();
-							
-							if(worldObj.isAirBlock(xCoord + x, yCoord, zCoord + z))
+							if(! done && worldObj.isAirBlock(xCoord, yCoord - 1, zCoord))
 							{
-								splitToOffset(x, 0, z);
-								done = true;
+								splitToOffset(0, -1, 0);
 							}
-							
-							
-							r++;
-							if(r == 4) r = 0;
-						}
-						
-						if(! done && worldObj.isAirBlock(xCoord, yCoord - 1, zCoord))
-						{
-							splitToOffset(0, -1, 0);
 						}
 					}
+					count = 0;
 				}
-				count = 0;
-			}
-			else
-			{
-				count++;
+				else
+				{
+					count++;
+				}
 			}
 		}
 		

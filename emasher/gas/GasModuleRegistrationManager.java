@@ -17,5 +17,6 @@ public class GasModuleRegistrationManager implements IModuleRegistrationManager
 		ModuleRegistry.registerModule(new ModGasGenerator((Integer)105));
 		ModuleRegistry.registerModule(new ModGasTurbine((Integer)106));
 		ModuleRegistry.registerModule(new ModRefinery((Integer)107));
+		ModuleRegistry.registerModule(new ModPlasmaReactor((Integer)108));
 	}
 }

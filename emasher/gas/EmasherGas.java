@@ -70,7 +70,7 @@ import emasher.sockets.items.ItemDusts;
 import buildcraft.BuildCraftEnergy;
 
 
-@Mod(modid="gascraft", name="GasCraft", version="2.0.3.2", dependencies = "required-after:eng_toolbox")
+@Mod(modid="gascraft", name="GasCraft", version="2.0.4.0", dependencies = "required-after:eng_toolbox")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false, 
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"GasCraft" }, packetHandler = PacketHandler.class),
@@ -94,11 +94,13 @@ public class EmasherGas
 	public static BlockGasGeneric toxicGas;
 	public static BlockGasGeneric neurotoxin;
 	public static BlockGasGeneric corrosiveGas;
+	public static BlockGasGeneric plasma;
 	
 	public static Block shaleResource;
 	public static Block chimney;
 	
 	public static Block gasPocket;
+	public static Block plasmaPocket;
 	
 	//Items
 	
@@ -106,6 +108,7 @@ public class EmasherGas
 	public static Item vialFilled;
 	public static Item gasMask;
 	public static Item smokeGrenade;
+	public static Item ash;
 	
 	//Fluids
 	
@@ -116,12 +119,14 @@ public class EmasherGas
 	public static Fluid fluidToxicGas;
 	public static Fluid fluidNeurotoxin;
 	public static Fluid fluidCorrosiveGas;
+	public static Fluid fluidPlasma;
 	
 	public static WorldGenGas gasGenerator = new WorldGenGas();
 	public static WorldGenGasVent gasVentGenerator = new WorldGenGasVent();
 	public static boolean smeltSand;
 	public static boolean spawnMineGas;
 	public static boolean flatBedrock;
+	public static int flatBedrockTop;
 	
 	public int naturalGasID;
 	public int propellentID;
@@ -130,6 +135,7 @@ public class EmasherGas
 	public int toxicGasID;
 	public int neurotoxinID;
 	public int corrosiveGasID;
+	public int plasmaID;
 	
 	public int vialID;
 	public int filledVialID;
@@ -137,9 +143,11 @@ public class EmasherGas
 	
 	public int shaleID;
 	public int gasPocketID;
+	public int plasmaPocketID;
 	
 	public int gasMaskID;
 	public int smokeGrenadeID;
+	public int ashID;
 	
 	public int chimneyID;
 	
@@ -192,15 +200,18 @@ public class EmasherGas
 		toxicGasID = config.get(Configuration.CATEGORY_BLOCK, "Weaponized Gas Block ID", 2099).getInt();
 		neurotoxinID = config.get(Configuration.CATEGORY_BLOCK, "Neurotoxin ID", 2100).getInt();
 		corrosiveGasID = config.get(Configuration.CATEGORY_BLOCK, "Corrosive Gas ID", 2101).getInt();
+		plasmaID = config.get(Configuration.CATEGORY_BLOCK, "Plasma ID", 2102).getInt();
 		
 		vialID = config.get(Configuration.CATEGORY_ITEM, "Vial ID", 4341).getInt();
 		filledVialID = config.get(Configuration.CATEGORY_GENERAL, "Filled Vial ID", 4342).getInt();
 		
 		shaleID = config.get(Configuration.CATEGORY_BLOCK, "Shale Resource ID", 2040).getInt();
 		gasPocketID = config.get(Configuration.CATEGORY_BLOCK, "Gas Pocket ID", 2112).getInt();
+		plasmaPocketID = config.get(Configuration.CATEGORY_BLOCK, "Plasma Pocket ID", 2113).getInt();
 		
 		gasMaskID = config.get(Configuration.CATEGORY_ITEM, "Gas Mask ID", 4243).getInt();
 		smokeGrenadeID = config.get(Configuration.CATEGORY_ITEM, "Smoke Grenade ID", 4205).getInt();
+		ashID = config.get(Configuration.CATEGORY_ITEM, "Ash ID", 4206).getInt();
 		
 		chimneyID = config.get(Configuration.CATEGORY_BLOCK, "Chimney ID", 2108).getInt();
 		
@@ -209,6 +220,7 @@ public class EmasherGas
 		infiniteGasInVent = config.get(Configuration.CATEGORY_GENERAL, "Infinite Gas In Vents", false).getBoolean(false);
 		spawnMineGas = config.get(Configuration.CATEGORY_GENERAL, "Spawn Gas Pockets in the world", false).getBoolean(false);
 		flatBedrock = config.get(Configuration.CATEGORY_GENERAL, "Flat Bedrock Compatibility Mode", false).getBoolean(false);
+		flatBedrockTop = config.get(Configuration.CATEGORY_GENERAL, "Flat Bedrock Top Layer", 0).getInt();
 		
 		config.save();
 		
@@ -248,6 +260,7 @@ public class EmasherGas
 	private void registerBlocks()
 	{
 		gasPocket = (new BlockMineGas(gasPocketID)).setHardness(1.5F).setResistance(10.0F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("gasPocket");
+		plasmaPocket = (new BlockNetherGas(plasmaPocketID)).setHardness(0.4F).setResistance(10.0F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("plasmaPocket");
 		
 		naturalGas = (BlockGasGeneric)new BlockNaturalGas(naturalGasID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("naturalGas").setResistance(0.0F);
 		propellent = (BlockGasGeneric)new BlockPropellent(propellentID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("propellent").setResistance(0.0F);
@@ -256,11 +269,13 @@ public class EmasherGas
 		toxicGas = (BlockGasGeneric)new BlockWeaponizedGas(toxicGasID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("toxicGas").setResistance(0.0F);
 		neurotoxin = (BlockGasGeneric)new BlockNeurotoxin(neurotoxinID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("neurotoxin").setResistance(0.0F);
 		corrosiveGas = (BlockGasGeneric) new BlockCorrosiveGas(corrosiveGasID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("corrosiveGas").setResistance(0.0F);
+		plasma = (BlockGasGeneric) new BlockPlasma(plasmaID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("plasma").setResistance(0.0F);
 		
 		shaleResource = new BlockShaleResource(shaleID);
 		Item.itemsList[shaleResource.blockID] = new ItemBlockShaleResource(shaleResource.blockID - 256);
 		LanguageRegistry.instance().addStringLocalization("tile.shaleResource.gas.name", "Shale Gas");
 		LanguageRegistry.instance().addStringLocalization("tile.shaleResource.oil.name", "Shale Oil");
+		LanguageRegistry.instance().addStringLocalization("tile.shaleResource.plasma.name", "Shale Plasma");
 		
 		chimney = new BlockDuct(chimneyID).setResistance(5.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("chimney");
 		GameRegistry.registerBlock(chimney, "chimney");
@@ -274,6 +289,7 @@ public class EmasherGas
 		GameRegistry.registerBlock(neurotoxin, "neurotoxin");
 		GameRegistry.registerBlock(corrosiveGas, "corrosiveGas");
 		GameRegistry.registerBlock(gasPocket, "gasPocket");
+		GameRegistry.registerBlock(plasma, "plasma");
 		
 		
 		
@@ -288,6 +304,7 @@ public class EmasherGas
 		fluidToxicGas = new FluidGas("gasCraft_toxicGas", toxicGas, 4);
 		fluidNeurotoxin = new FluidGas("gasCraft_neurotoxin", neurotoxin, 5);
 		fluidCorrosiveGas = new FluidGas("gasCraft_corrosiveGas", corrosiveGas, 6);
+		fluidPlasma = new FluidGas("gasCraft_plasma", plasma, 7);
 		
 		FluidRegistry.registerFluid(fluidNaturalGas);
 		FluidRegistry.registerFluid(fluidPropellent);
@@ -296,6 +313,7 @@ public class EmasherGas
 		FluidRegistry.registerFluid(fluidToxicGas);
 		FluidRegistry.registerFluid(fluidNeurotoxin);
 		FluidRegistry.registerFluid(fluidCorrosiveGas);
+		FluidRegistry.registerFluid(fluidPlasma);
 
 		naturalGas.blocksFluid = fluidNaturalGas;
 		propellent.blocksFluid = fluidPropellent;
@@ -304,6 +322,7 @@ public class EmasherGas
 		toxicGas.blocksFluid = fluidToxicGas;
 		neurotoxin.blocksFluid = fluidNeurotoxin;
 		corrosiveGas.blocksFluid = fluidCorrosiveGas;
+		plasma.blocksFluid = fluidPlasma;
 		
 		registerFluidContainers();
 	}
@@ -320,6 +339,7 @@ public class EmasherGas
 		FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidToxicGas, 4000), new ItemStack(vialFilled, 1, 4), new ItemStack(vial));
 		FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidNeurotoxin, 4000), new ItemStack(vialFilled, 1, 5), new ItemStack(vial));
 		FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidCorrosiveGas, 4000), new ItemStack(vialFilled, 1, 6), new ItemStack(vial));
+		FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidPlasma, 4000), new ItemStack(vialFilled, 1, 7), new ItemStack(vial));
 		
 		LanguageRegistry.instance().addStringLocalization("item.gasVialFilled.naturalGas.name", "Natural Gas Vial");
 		LanguageRegistry.instance().addStringLocalization("item.gasVialFilled.propellent.name", "Propellent Vial");
@@ -328,12 +348,15 @@ public class EmasherGas
 		LanguageRegistry.instance().addStringLocalization("item.gasVialFilled.toxicGas.name", "Toxic Gas Vial");
 		LanguageRegistry.instance().addStringLocalization("item.gasVialFilled.neurotoxin.name", "Neurotoxin Vial");
 		LanguageRegistry.instance().addStringLocalization("item.gasVialFilled.corrosiveGas.name", "Corrosive Gas Vial");
+		LanguageRegistry.instance().addStringLocalization("item.gasVialFilled.plasma.name", "Nether Plasma Vial");
 	}
 	
 	private void registerItems()
 	{
 		gasMask = new ItemGasMask(gasMaskID, enumArmorMaterialGas, CommonProxy.ARMOR_GAS, 0);
 		smokeGrenade = new ItemSmokeGrenade(smokeGrenadeID);
+		ash = new ItemEmasherGeneric(ashID, "gascraft:ash", "ash");
+		OreDictionary.registerOre("dustAsh", ash);
 	}
 	
 	private void registerNames()
@@ -350,6 +373,8 @@ public class EmasherGas
 		LanguageRegistry.addName(chimney, "Chimney");
 		LanguageRegistry.addName(smokeGrenade, "Smoke Grenade");
 		LanguageRegistry.addName(gasPocket, "Gas Pocket");
+		LanguageRegistry.addName(plasmaPocket, "Nether Plasma Pocket");
+		LanguageRegistry.addName(ash, "Ash");
 	}
 	
 	private void registerRecipes()
@@ -362,6 +387,7 @@ public class EmasherGas
 		
 		FuelManager.addBoilerFuel(fluidNaturalGas, 20000);
 		FuelManager.addBoilerFuel(fluidHydrogen, 20000);
+		FuelManager.addBoilerFuel(fluidPlasma, 100000);
 		
 		IronEngineFuel.addFuel(fluidNaturalGas, 5, 40000);
 		IronEngineFuel.addFuel(fluidHydrogen, 5, 40000);
@@ -434,11 +460,13 @@ public class EmasherGas
 		Registry.addBlock("smoke", this.smoke);
 		Registry.addBlock("toxicGas", this.toxicGas);
 		Registry.addBlock("neurotoxin", this.neurotoxin);
+		Registry.addBlock("plasma", this.plasma);
 		
 		Registry.addItem("vialEmpty", this.vial);
 		Registry.addItem("vialFilled", this.vialFilled);
 		Registry.addItem("gasMask", this.gasMask);
 		Registry.addItem("smokeGrenade", this.smokeGrenade);
+		Registry.addItem("ash", this.ash);
 		
 		
 		

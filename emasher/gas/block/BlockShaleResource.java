@@ -54,10 +54,11 @@ public class BlockShaleResource extends BlockContainer
 	@Override
     public void registerIcons(IconRegister par1IconRegister)
     {
-		textures = new Icon[2];
+		textures = new Icon[3];
 		this.blockIcon = par1IconRegister.registerIcon("gascraft:shalegas");
 		textures[0] = this.blockIcon;
 		textures[1] = par1IconRegister.registerIcon("gascraft:shaleoil");
+		textures[2] = par1IconRegister.registerIcon("gascraft:shaleplasma");
     }
 	
 	@Override
@@ -76,7 +77,7 @@ public class BlockShaleResource extends BlockContainer
 	@SideOnly(Side.CLIENT)
     public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List)
     {
-        for (int var4 = 0; var4 < 2; ++var4)
+        for (int var4 = 0; var4 < 3; ++var4)
         {
             par3List.add(new ItemStack(par1, 1, var4));
         }

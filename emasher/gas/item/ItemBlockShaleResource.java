@@ -34,6 +34,7 @@ public class ItemBlockShaleResource extends ItemBlock
 		{
 		case 0: name = "gas"; break;
 		case 1: name = "oil"; break;
+		case 2: name = "plasma"; break;
 		}
 		return getUnlocalizedName() + "." + name;
 	}

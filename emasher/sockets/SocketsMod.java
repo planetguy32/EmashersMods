@@ -45,7 +45,7 @@ import emasher.sockets.modules.*;
 import emasher.sockets.client.ClientProxy;
 import emasher.sockets.pipes.*;
 
-@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.7.0", dependencies = "required-after:emashercore")
+@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.7.1", dependencies = "required-after:emashercore")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false,
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = ClientPacketHandler.class),
@@ -400,11 +400,20 @@ public class SocketsMod
 		GameRegistry.registerBlock(euAdapter, "emasher_EU_adapter");
 		LanguageRegistry.addName(euAdapter, "EU Adapter");
 		
+		rsIngot = new ItemRSIngot(rsIngotID);
+		LanguageRegistry.addName(rsIngot, "Sweet Redstone Ingot");
+		
 		if(enableMiniPortal)
 		{
 			miniPortal = new BlockMiniPortal(miniPortalID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("emasher_mini_portal");
 			GameRegistry.registerBlock(miniPortal, "emasher_mini_portal");
 			LanguageRegistry.addName(miniPortal, "Fluidic Nether Portal");
+			
+			GameRegistry.addRecipe(new ItemStack(miniPortal), new Object[]
+					{
+						"ooo", "oso", "ooo", Character.valueOf('o'), Block.obsidian, Character.valueOf('s'), rsIngot
+					});
+			
 		}
 		
 		paintedPlanks = (new BlockPaintedWood(paintedPlankID, 0, Material.wood))
@@ -427,8 +436,7 @@ public class SocketsMod
 		handboiler = new ItemHandboiler(handboilerID, "", "");
 		LanguageRegistry.addName(handboiler, "Hand Boiler");
 		
-		rsIngot = new ItemRSIngot(rsIngotID);
-		LanguageRegistry.addName(rsIngot, "Sweet Redstone Ingot");
+		
 		
 		for(int i = 0; i<16; i++)
 		{

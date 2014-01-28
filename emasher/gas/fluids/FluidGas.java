@@ -8,7 +8,7 @@ public class FluidGas extends Fluid
 {
 	public int internalID;
 	
-	public static final String[] NAMES = new String[]{"Natural Gas", "Propellent", "Hydrogen", "Smoke", "Toxic Gas", "Deadly Neurotoxin", "Corossive Gas"};
+	public static final String[] NAMES = new String[]{"Natural Gas", "Propellent", "Hydrogen", "Smoke", "Toxic Gas", "Deadly Neurotoxin", "Corossive Gas", "Nether Plasma"};
 	
 	public FluidGas(String fluidName, Block theBlock, int iID)
 	{

@@ -70,7 +70,7 @@ import emasher.sockets.items.ItemDusts;
 import buildcraft.BuildCraftEnergy;
 
 
-@Mod(modid="gascraft", name="GasCraft", version="2.0.4.0", dependencies = "required-after:eng_toolbox")
+@Mod(modid="gascraft", name="GasCraft", version="2.0.4.1", dependencies = "required-after:eng_toolbox")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false, 
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"GasCraft" }, packetHandler = PacketHandler.class),
@@ -260,7 +260,7 @@ public class EmasherGas
 	private void registerBlocks()
 	{
 		gasPocket = (new BlockMineGas(gasPocketID)).setHardness(1.5F).setResistance(10.0F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("gasPocket");
-		plasmaPocket = (new BlockNetherGas(plasmaPocketID)).setHardness(0.4F).setResistance(10.0F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("plasmaPocket");
+		plasmaPocket = new BlockNetherGas(plasmaPocketID).setHardness(0.4F).setResistance(10.0F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("plasmaPocket");
 		
 		naturalGas = (BlockGasGeneric)new BlockNaturalGas(naturalGasID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("naturalGas").setResistance(0.0F);
 		propellent = (BlockGasGeneric)new BlockPropellent(propellentID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("propellent").setResistance(0.0F);

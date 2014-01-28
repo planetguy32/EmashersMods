@@ -349,8 +349,9 @@ public class EmasherCore
 		pentlanditeBiomes = config.get(Configuration.CATEGORY_GENERAL, "I: Pentlandite Ore Biomes", "HILLS,MOUNTAIN,FOREST").getString();
 		rubyBiomes = config.get(Configuration.CATEGORY_GENERAL, "I: Ruby Ore Biomes", "JUNGLE").getString();
 		sapphireBiomes = config.get(Configuration.CATEGORY_GENERAL, "I: Sapphire Ore Biomes", "DESERT").getString();
-		
-		config.save();
+
+		if(config.hasChanged())
+			config.save();
 	}
 	
 	@EventHandler

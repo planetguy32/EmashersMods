@@ -221,8 +221,9 @@ public class EmasherGas
 		spawnMineGas = config.get(Configuration.CATEGORY_GENERAL, "Spawn Gas Pockets in the world", false).getBoolean(false);
 		flatBedrock = config.get(Configuration.CATEGORY_GENERAL, "Flat Bedrock Compatibility Mode", false).getBoolean(false);
 		flatBedrockTop = config.get(Configuration.CATEGORY_GENERAL, "Flat Bedrock Top Layer", 0).getInt();
-		
-		config.save();
+
+		if(config.hasChanged())
+			config.save();
 		
 		ModuleRegistry.addModuleRegistrationManager(new GasModuleRegistrationManager());
 	}

@@ -124,7 +124,8 @@ public class SocketsMod
 	public int euAdapterID;
 	
 	public int miniPortalID;
-	
+
+	public int slickwaterAmount;
 	
 	public boolean vanillaCircuitRecipe;
 	public static boolean ic2First;
@@ -141,7 +142,7 @@ public class SocketsMod
 	public static boolean smeltSand;
 	public static boolean enableMiniPortal;
 	public static boolean miniPortalLava;
-	
+
 	public static int RFperMJ;
 	public static int RFperEU;
 	
@@ -256,6 +257,12 @@ public class SocketsMod
 		RFperEU = config.get(Configuration.CATEGORY_GENERAL, "RF per EU", 4).getInt();
 		enableMiniPortal = config.get(Configuration.CATEGORY_GENERAL, "Enable Fluidic Nether Portal", true).getBoolean(true);
 		miniPortalLava = config.get(Configuration.CATEGORY_GENERAL, "Allow Lava In Fluidic Nether Portal", true).getBoolean(true);
+		slickwaterAmount = config.get(Configuration.CATEGORY_GENERAL, "Amount of slickwater produced per operation (mb)", 1000).getInt();
+
+		if(slickwaterAmount > 32000 || slickwaterAmount <= 0) {
+			System.err.println("[Engineer's Toolbox] slickwaterAmount is not between (0..32000]");
+			slickwaterAmount = 1000;
+		}
 
 		if(config.hasChanged())
 			config.save();
@@ -719,10 +726,10 @@ public class SocketsMod
 		
 		//Mixer
 		
-		MixerRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.mixedDirt), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, 1000));
-		MixerRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.mixedSand), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, 1000));
-		MixerRecipeRegistry.registerRecipe(new ItemStack(Block.sand), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, 1000));
-		MixerRecipeRegistry.registerRecipe(new ItemStack(groundLimestone), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, 1000));
+		MixerRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.mixedDirt), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, slickwaterAmount));
+		MixerRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.mixedSand), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, slickwaterAmount));
+		MixerRecipeRegistry.registerRecipe(new ItemStack(Block.sand), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, slickwaterAmount));
+		MixerRecipeRegistry.registerRecipe(new ItemStack(groundLimestone), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, slickwaterAmount));
 		
 	}
 	

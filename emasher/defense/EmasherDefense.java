@@ -80,8 +80,9 @@ public class EmasherDefense
 		emeryTileID = config.get(Configuration.CATEGORY_BLOCK, "Emery Tile ID", 2046).getInt();
 		deflectorBaseID = config.get(Configuration.CATEGORY_BLOCK, "Deflector Generator ID", 3170).getInt();
 		deflectorID = config.get(Configuration.CATEGORY_BLOCK, "Deflector ID", 3171).getInt();
-		
-		config.save();
+
+		if(config.hasChanged())
+			config.save();
 	}
 	
 	@EventHandler

@@ -256,8 +256,9 @@ public class SocketsMod
 		RFperEU = config.get(Configuration.CATEGORY_GENERAL, "RF per EU", 4).getInt();
 		enableMiniPortal = config.get(Configuration.CATEGORY_GENERAL, "Enable Fluidic Nether Portal", true).getBoolean(true);
 		miniPortalLava = config.get(Configuration.CATEGORY_GENERAL, "Allow Lava In Fluidic Nether Portal", true).getBoolean(true);
-		
-		config.save();
+
+		if(config.hasChanged())
+			config.save();
 		
 		if(cbTextures)
 		{

@@ -40,7 +40,6 @@ public abstract class RSGateModule extends SocketModule
 	@Override
 	public boolean isOutputingRedstone(SideConfig config, SocketTileAccess ts)
 	{
-		//System.out.println(config.meta);
 		return config.meta == 1; 
 	}
 	

@@ -48,9 +48,9 @@ public class BlockMiniPortal extends BlockAdapterBase
 				if(MinecraftServer.getServer().getAllowNether())
 				{
 					World nether = MinecraftServer.getServer().worldServerForDimension(-1);
-					if(nether.getBlockTileEntity(x / 16, y, z / 16) == null)
+					if(nether.getBlockTileEntity(x / 8, y, z / 8) == null)
 					{
-						nether.setBlock(x / 16, y, z / 16, this.blockID);
+						nether.setBlock(x / 8, y, z / 8, this.blockID);
 						setTEPartners(world, x, y, z);
 					}
 					else
@@ -70,7 +70,7 @@ public class BlockMiniPortal extends BlockAdapterBase
 		if(world.provider.dimensionId == 0)
 		{
 			World nether = MinecraftServer.getServer().worldServerForDimension(-1);
-			if(nether.getBlockTileEntity(x / 16, y, z / 16) == null)
+			if(nether.getBlockTileEntity(x / 8, y, z / 8) == null)
 			{
 				if(super.canPlaceBlockAt(world, x, y, z)) return true;
 			}
@@ -86,7 +86,7 @@ public class BlockMiniPortal extends BlockAdapterBase
 			if(MinecraftServer.getServer().getAllowNether())
 			{
 				World nether = MinecraftServer.getServer().worldServerForDimension(-1);
-				TileEntity partner = nether.getBlockTileEntity(x/16, y, z/16);
+				TileEntity partner = nether.getBlockTileEntity(x/8, y, z/8);
 				if(partner != null && partner instanceof TileMiniPortal)
 				{
 					((TileMiniPortal)partner).setPartner(x, y, z);
@@ -94,7 +94,7 @@ public class BlockMiniPortal extends BlockAdapterBase
 					TileEntity te = world.getBlockTileEntity(x, y, z);
 					if(te != null && te instanceof TileMiniPortal)
 					{
-						((TileMiniPortal)te).setPartner(x / 16, y, z / 16);
+						((TileMiniPortal)te).setPartner(x / 8, y, z / 8);
 					}
 				}
 			}
@@ -109,10 +109,10 @@ public class BlockMiniPortal extends BlockAdapterBase
 			if(MinecraftServer.getServer().getAllowNether())
 			{
 				World nether = MinecraftServer.getServer().worldServerForDimension(-1);
-				if(nether.getBlockId(x / 16, y, z / 16) == this.blockID)
+				if(nether.getBlockId(x / 8, y, z / 8) == this.blockID)
 				{
-					nether.setBlock(x / 16, y, z / 16, 0);
-					nether.removeBlockTileEntity(x / 16, y, z / 16);
+					nether.setBlock(x / 8, y, z / 8, 0);
+					nether.removeBlockTileEntity(x / 8, y, z / 8);
 				}
 			}
 		}

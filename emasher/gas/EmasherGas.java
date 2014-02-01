@@ -305,7 +305,7 @@ public class EmasherGas
 		fluidToxicGas = new FluidGas("gasCraft_toxicGas", toxicGas, 4);
 		fluidNeurotoxin = new FluidGas("gasCraft_neurotoxin", neurotoxin, 5);
 		fluidCorrosiveGas = new FluidGas("gasCraft_corrosiveGas", corrosiveGas, 6);
-		fluidPlasma = new FluidGas("gasCraft_plasma", plasma, 7);
+		fluidPlasma = new FluidGas("gasCraft_plasma", plasma, 7).setLuminosity(15).setTemperature(2600);
 		
 		FluidRegistry.registerFluid(fluidNaturalGas);
 		FluidRegistry.registerFluid(fluidPropellent);

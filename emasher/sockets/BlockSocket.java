@@ -447,6 +447,8 @@ public class BlockSocket extends BlockContainer
 		return false;
 	}
 	
+	
+	
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int nId)
 	{
@@ -469,13 +471,7 @@ public class BlockSocket extends BlockContainer
 					ts.checkSideForChange(i);
 				}
 				
-				int rsNum = world.isBlockProvidingPowerTo(x + opposite.offsetX, y + opposite.offsetY, z + opposite.offsetZ, opposite.ordinal());
-				boolean rs = rsNum != 0;
-				
-				if(! rs)
-				{
-					rs = world.isBlockIndirectlyGettingPowered(x + opposite.offsetX, y + opposite.offsetY, z + opposite. offsetZ);
-				}
+				boolean rs = world.getIndirectPowerOutput(x + opposite.offsetX, y + opposite.offsetY, z + opposite.offsetZ, opposite.ordinal());
 				
 				boolean oldRS = ts.sideRS[opposite.ordinal()];
 				if(rs != oldRS)

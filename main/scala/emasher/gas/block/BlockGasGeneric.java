@@ -217,6 +217,11 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
 		return false;
 	}
 
+    public boolean canDestroyBlock(int blockID, int x, int y, int z, World world)
+    {
+        return false;
+    }
+
 	
 	
 }

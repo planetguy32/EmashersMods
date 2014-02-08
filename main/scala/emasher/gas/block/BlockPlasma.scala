@@ -17,6 +17,8 @@ import emasher.core.EmasherCore
 import net.minecraft.block.Block
 import net.minecraftforge.common.ForgeDirection
 import scala.util.control.Breaks._
+import net.minecraft.block.material.Material
+import net.minecraft.item.crafting.FurnaceRecipes
 
 class BlockPlasma(id: Int) extends BlockGasGeneric(id, 0, false)
 {
@@ -33,7 +35,7 @@ class BlockPlasma(id: Int) extends BlockGasGeneric(id, 0, false)
 			var ya: Int = y - 1
 			while(world.isAirBlock(x, ya - 1, z)) ya -= 1
 			
-			world.setBlock(x, ya, z, Block.fire.blockID)
+			if(y - ya < 24) world.setBlock(x, ya, z, Block.fire.blockID)
 			
 		}
 		
@@ -84,4 +86,26 @@ class BlockPlasma(id: Int) extends BlockGasGeneric(id, 0, false)
 				
 		}
 	}
+
+  override def canDestroyBlock(blockID: Int, x: Int, y: Int, z: Int, world: World): Boolean = {
+    val is: ItemStack = new ItemStack(blockID, 1, world.getBlockMetadata(x, y, z))
+    var product: ItemStack = null
+    if(is != null) {
+      product = FurnaceRecipes.smelting.getSmeltingResult(is)
+    }
+    if(world.getBlockTileEntity(x, y, z) != null) {
+      false
+    }else if(product != null){
+      false
+    } else {
+      val mat = world.getBlockMaterial(x, y, z)
+
+      if( mat != Material.lava && mat != Material.fire && blockID != Block.blockDiamond.blockID && blockID != Block.blockEmerald.blockID
+        && blockID != Block.blockIron.blockID && blockID != EmasherCore.metal.blockID && mat != Material.iron) {
+        true
+      } else {
+        false
+      }
+    }
+  }
 }

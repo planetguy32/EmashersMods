@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -670,6 +671,7 @@ public class SocketsMod
 		
 		MultiSmelterRecipeRegistry.registerRecipe("ingotCopper", "ingotTin", new ItemStack(EmasherCore.ingot, 1, 1));
 		MultiSmelterRecipeRegistry.registerRecipe(new ItemStack(Item.redstone), new ItemStack(Item.sugar), new ItemStack(rsIngot));
+        MultiSmelterRecipeRegistry.registerRecipe("ingotCopper", new ItemStack(Item.gunpowder), new ItemStack(EmasherCore.bluestone, 2));
 		
 		
 		//Centrifuge
@@ -741,6 +743,7 @@ public class SocketsMod
 		MixerRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.mixedSand), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, slickwaterAmount));
 		MixerRecipeRegistry.registerRecipe(new ItemStack(Block.sand), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, slickwaterAmount));
 		MixerRecipeRegistry.registerRecipe(new ItemStack(groundLimestone), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, slickwaterAmount));
+        MixerRecipeRegistry.registerRecipe(new ItemStack(Item.dyePowder, 1, 15), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(EmasherCore.nutrientWaterFluid, 1000));
 		
 	}
 	

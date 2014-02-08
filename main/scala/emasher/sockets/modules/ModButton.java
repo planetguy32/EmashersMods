@@ -145,4 +145,10 @@ public class ModButton extends RSPulseModule
 		}
 	}
 
+    @Override
+    public boolean canModuleBeDyed()
+    {
+        return true;
+    }
+
 }

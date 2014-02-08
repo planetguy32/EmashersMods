@@ -10,7 +10,11 @@ import net.minecraft.entity.passive._;
 import net.minecraft.entity.monster._;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
-import net.minecraft.item._;
+import net.minecraft.item._
+import net.minecraft.block.material.Material
+import net.minecraft.block.Block
+import emasher.core.EmasherCore
+;
 
 class BlockCorrosiveGas(id: Int) extends BlockGasGeneric(id, 0, false)
 {
@@ -76,4 +80,20 @@ class BlockCorrosiveGas(id: Int) extends BlockGasGeneric(id, 0, false)
 			
 		}
 	}
+
+  override def canDestroyBlock(blockID: Int, x: Int, y: Int, z: Int, world: World): Boolean = {
+    if(world.getBlockTileEntity(x, y, z) != null) {
+      false
+    } else {
+      val mat = world.getBlockMaterial(x, y, z)
+
+      if(mat == Material.cactus || mat == Material.cake || mat == Material.circuits || mat == Material.cloth || mat == Material.grass ||
+          mat == Material.leaves || mat == Material.materialCarpet || mat == Material.plants || mat == Material.pumpkin || mat == Material.vine ||
+          mat == Material.web || mat == Material.wood) {
+        true
+      } else {
+        false
+      }
+    }
+  }
 }

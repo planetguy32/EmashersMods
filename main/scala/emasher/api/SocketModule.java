@@ -396,4 +396,6 @@ public abstract class SocketModule
 	 * Called whenever an already configured socket is placed
 	 */
 	public void onSocketPlaced(SideConfig config, SocketTileAccess ts, ForgeDirection side) {}
+
+    public boolean canModuleBeDyed() { return false; }
 }

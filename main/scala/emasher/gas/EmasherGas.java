@@ -359,7 +359,8 @@ public class EmasherGas
 	private void registerRecipes()
 	{
 		PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.algae), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidHydrogen, 1000));
-		PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.algae), new FluidStack(fluidToxicGas, 1000), new FluidStack(fluidNeurotoxin, 500));
+        PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.superAlgae), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidHydrogen, 3000));
+		PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.superAlgae), new FluidStack(fluidToxicGas, 1000), new FluidStack(fluidNeurotoxin, 500));
 		
 		MixerRecipeRegistry.registerRecipe(new ItemStack(Item.gunpowder), new FluidStack(fluidPropellent, 1000), new FluidStack(fluidToxicGas, 500));
 		MixerRecipeRegistry.registerRecipe(new ItemStack(SocketsMod.dusts, 1, ItemDusts.Const.lime.ordinal()), new FluidStack(fluidPropellent, 100), new FluidStack(fluidCorrosiveGas, 100));

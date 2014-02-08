@@ -264,21 +264,25 @@ public class BlockSocket extends BlockContainer
 			{
 				SocketModule m = ts.getSide(ForgeDirection.getOrientation(side));
 				boolean wasDye = false;
+
+                if(m.canModuleBeDyed())
+                {
 						
-				if(player.getCurrentEquippedItem() != null)
-				{
-					int oreId = OreDictionary.getOreID(player.getCurrentEquippedItem());
-					for(int i = 0; i < dyes.length; i++)
-					{
-						if(oreId == OreDictionary.getOreID(dyes[i]))
-						{
-							wasDye = true;
-							m.changeColour(i, ts.configs[side], ts, ForgeDirection.getOrientation(side));
-							player.getCurrentEquippedItem().stackSize--;
-							break;
-						}
-					}
-				}
+                    if(player.getCurrentEquippedItem() != null)
+                    {
+                        int oreId = OreDictionary.getOreID(player.getCurrentEquippedItem());
+                        for(int i = 0; i < dyes.length; i++)
+                        {
+                            if(oreId == OreDictionary.getOreID(dyes[i]))
+                            {
+                                wasDye = true;
+                                m.changeColour(i, ts.configs[side], ts, ForgeDirection.getOrientation(side));
+                                player.getCurrentEquippedItem().stackSize--;
+                                break;
+                            }
+                        }
+                    }
+                }
 				
 				if(! wasDye) m.onSideActivated(ts, ts.configs[side], ForgeDirection.getOrientation(side), player, subX, subY, subZ);
 			}

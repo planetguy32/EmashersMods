@@ -1,6 +1,5 @@
 package emasher.core;
 
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -11,64 +10,36 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import emasher.core.block.*;
+import emasher.core.item.*;
+import emasher.sockets.BlockSlickwater;
+import emasher.sockets.FluidSlickwater;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.SpawnListEntry;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.*;
 
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
-import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import cpw.mods.fml.common.Mod;
-
 import emasher.api.Registry;
-import emasher.core.block.BlockLimestone;
-import emasher.core.block.BlockMachine;
-import emasher.core.block.BlockMetal;
-import emasher.core.block.BlockMixedDirt;
-import emasher.core.block.BlockMixedSand;
-import emasher.core.block.BlockNormalCube;
-import emasher.core.block.BlockOre;
-import emasher.core.block.BlockPondScum;
-import emasher.core.block.BlockRedSandstone;
 import emasher.core.hemp.*;
-import emasher.core.item.ItemBlockMetal;
-import emasher.core.item.ItemBlockNormalCube;
-import emasher.core.item.ItemBlockOre;
-import emasher.core.item.ItemCircuit;
-import emasher.core.item.ItemEmasherGeneric;
-import emasher.core.item.ItemGem;
-import emasher.core.item.ItemIngot;
-import emasher.core.item.ItemPondScum;
-
-import buildcraft.api.recipes.*;
 
 import java.util.*;
 
-/*import tconstruct.library.TConstructRegistry;
-import tconstruct.library.crafting.Smeltery;*/
-
-
-@Mod(modid="emashercore", name="Emasher Resource", version="1.2.2.0")
+@Mod(modid="emashercore", name="Emasher Resource", version="1.2.3.0")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false)
 public class EmasherCore 
 {
@@ -80,11 +51,14 @@ public class EmasherCore
 	
 	public static Block mixedDirt;
 	public static Block mixedSand;
-	public static Block pondScum;
+	public static Block algae;
+    public static Block deadAlgae;
+    public static Block superAlgae;
 	public static Block machine;
 	public static Block normalCube;
 	public static Block redSandStone;
 	public static Block limestone;
+    public static Block nutrientWater;
 	
 	public static Block metal;
 	public static Block ore;
@@ -93,6 +67,9 @@ public class EmasherCore
 	public static Item psu;
 	public static Item ingot;
 	public static Item gem;
+    public static Item bluestone;
+
+    public static Fluid nutrientWaterFluid;
 	
 	int mixedDirtID;
 	int mixedSandID;
@@ -105,10 +82,14 @@ public class EmasherCore
 	int oreID;
 	int gemID;
 	int ingotID;
+    int bluestoneID;
 	
 	int normalCubeID;
 	int redSandStoneID;
 	int limestoneID;
+    int superAlgaeID;
+    int deadAlgaeID;
+    int nutrientWaterID;
 	
 	int hempBlockID;
 	
@@ -258,6 +239,9 @@ public class EmasherCore
 		normalCubeID = config.get(Configuration.CATEGORY_BLOCK, "Normal Cube ID", 199).getInt();
 		redSandStoneID = config.get(Configuration.CATEGORY_BLOCK, "Red Sandstone ID", 196).getInt();
 		limestoneID = config.get(Configuration.CATEGORY_BLOCK, "Limestone ID", 195).getInt();
+        superAlgaeID = config.get(Configuration.CATEGORY_BLOCK, "Super Algae ID", 3291).getInt();
+        deadAlgaeID = config.get(Configuration.CATEGORY_BLOCK, "Dead Algae ID", 3292).getInt();
+        nutrientWaterID = config.get(Configuration.CATEGORY_BLOCK, "Nutrient Water ID", 3293).getInt();
 		
 		pondScumID = config.get(Configuration.CATEGORY_BLOCK, "Pond Scum ID", 3290).getInt();
 		machineID = config.get(Configuration.CATEGORY_BLOCK, "Machine Chassis ID", 3172).getInt();
@@ -267,16 +251,17 @@ public class EmasherCore
 		metalID = config.get(Configuration.CATEGORY_BLOCK, "Metal Block ID", 3174).getInt();
 		gemID = config.get(Configuration.CATEGORY_ITEM, "Gem ID", 13175).getInt();
 		ingotID = config.get(Configuration.CATEGORY_ITEM, "Ingot ID", 3176).getInt();
+        bluestoneID = config.get(Configuration.CATEGORY_ITEM, "Bluestone ID", 13176).getInt();
 		
 		
 		hempBlockID = config.get(Configuration.CATEGORY_BLOCK,  "Hemp Block ID", 2055).getInt();
-		hempPlantID = config.get(Configuration.CATEGORY_ITEM, "Hemp Plant ID", 3035).getInt();
-		hempSeedsID = config.get(Configuration.CATEGORY_ITEM, "Hemp Seeds ID", 3036).getInt();
-		hempOilID = config.get(Configuration.CATEGORY_ITEM, "Hemp Oil ID", 3039).getInt();
-		hempCapID = config.get(Configuration.CATEGORY_ITEM, "Hemp Cap ID",3042).getInt();
-		hempTunicID = config.get(Configuration.CATEGORY_ITEM, "Hemp Tunic ID",3043).getInt();
-		hempPantsID = config.get(Configuration.CATEGORY_ITEM, "Hemp Pants ID",3044).getInt();
-		hempShoesID = config.get(Configuration.CATEGORY_ITEM, "Hemp Shoes ID",3045).getInt();
+		hempPlantID = config.get(Configuration.CATEGORY_ITEM, "Hemp Plant ID", 9035).getInt();
+		hempSeedsID = config.get(Configuration.CATEGORY_ITEM, "Hemp Seeds ID", 9036).getInt();
+		hempOilID = config.get(Configuration.CATEGORY_ITEM, "Hemp Oil ID", 9039).getInt();
+		hempCapID = config.get(Configuration.CATEGORY_ITEM, "Hemp Cap ID", 9042).getInt();
+		hempTunicID = config.get(Configuration.CATEGORY_ITEM, "Hemp Tunic ID", 9043).getInt();
+		hempPantsID = config.get(Configuration.CATEGORY_ITEM, "Hemp Pants ID", 9044).getInt();
+		hempShoesID = config.get(Configuration.CATEGORY_ITEM, "Hemp Shoes ID", 9045).getInt();
 		
 		retroGen = config.get(Configuration.CATEGORY_GENERAL, "A: Retro Gen Ores", false).getBoolean(false);
 		algaeDepth = config.get(Configuration.CATEGORY_GENERAL, "A: Max Water Depth Alage Can Grow In", 3).getInt();
@@ -445,6 +430,13 @@ public class EmasherCore
 		OreDictionary.registerOre("oreSapphire", new ItemStack(ore, 1, 7));
 		
 		MinecraftForge.setBlockHarvestLevel(ore, "pickaxe", 2);
+
+        nutrientWaterFluid = new FluidNutrientWater();
+        FluidRegistry.registerFluid(nutrientWaterFluid);
+
+        nutrientWater = new BlockNutrientWater(nutrientWaterID, nutrientWaterFluid);
+        GameRegistry.registerBlock(nutrientWater, "nutrientWater");
+        LanguageRegistry.addName(nutrientWater, "Nutrient Water");
 		
 		ingot = new ItemIngot(ingotID);
 		ingot.setUnlocalizedName("e_ingot");
@@ -506,9 +498,22 @@ public class EmasherCore
 		MinecraftForge.setBlockHarvestLevel(mixedDirt, "shovel", 2);
 		MinecraftForge.setBlockHarvestLevel(mixedSand, "shovel", 2);
 		
-		pondScum = new BlockPondScum(pondScumID).setHardness(0.0F).setStepSound(Block.soundGrassFootstep).setUnlocalizedName("pondScum");
-		Item.itemsList[pondScum.blockID] = new ItemPondScum(pondScum.blockID - 256);
-		LanguageRegistry.addName(pondScum, "Algae");
+		algae = new BlockPondScum(pondScumID).setHardness(0.0F).setStepSound(Block.soundGrassFootstep).setUnlocalizedName("algae");
+		Item.itemsList[algae.blockID] = new ItemPondScum(algae.blockID - 256, "emashercore:algae", algae);
+		LanguageRegistry.addName(algae, "Algae");
+
+        superAlgae = new BlockSuperAlgae(superAlgaeID).setHardness(0.0F).setStepSound(Block.soundGrassFootstep).setUnlocalizedName("superAlgae");
+        Item.itemsList[superAlgae.blockID] = new ItemPondScum(superAlgae.blockID - 256, "emashercore:superAlgae", superAlgae);
+        LanguageRegistry.addName(superAlgae, "Super Algae");
+
+        deadAlgae = new BlockDeadAlgae(deadAlgaeID).setHardness(0.0F).setStepSound(Block.soundGrassFootstep).setUnlocalizedName("deadAlgae");
+        Item.itemsList[deadAlgae.blockID] = new ItemPondScum(deadAlgae.blockID - 256, "emashercore:deadAlgae", deadAlgae);
+        LanguageRegistry.addName(deadAlgae, "Dead Algae");
+
+        bluestone = new ItemBluestone(bluestoneID);
+        LanguageRegistry.addName(bluestone, "Bluestone");
+
+
 		LanguageRegistry.addName(machine, "Machine Chasis");
 		LanguageRegistry.addName(circuit, "Control Circuit");
 		LanguageRegistry.addName(psu, "PSU");
@@ -829,7 +834,7 @@ public class EmasherCore
 		Registry.addBlock("machine", machine);
 		Registry.addBlock("ore", ore);
 		Registry.addBlock("metal", metal);
-		Registry.addBlock("algae", pondScum);
+		Registry.addBlock("algae", algae);
 		
 		Registry.addItem("ingot", ingot);
 		Registry.addItem("circuit", circuit);

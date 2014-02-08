@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 
 public class BlockPondScum extends BlockLilyPad
 {
-	private static final int GROWTH_TIME = 6;
+	public static final int GROWTH_TIME = 6;
 	
 	
 	public BlockPondScum(int par1)
@@ -30,21 +30,39 @@ public class BlockPondScum extends BlockLilyPad
     {
 		this.blockIcon =  par1IconRegister.registerIcon("emashercore:algae");
     }
-	
+
+    @Override
+    public int getBlockColor()
+    {
+        return 16777215;
+    }
+
+    @Override
+    public int getRenderColor(int i)
+    {
+        return 16777215;
+    }
 	
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k)
     {
         return null;
     }
+
+    @Override
+    protected boolean canThisPlantGrowOnThisBlockID(int id)
+    {
+        return (id == Block.waterStill.blockID || id == EmasherCore.nutrientWater.blockID);
+    }
 	
 	@Override
 	public void updateTick(World world, int x, int y, int z, Random random)
 	{
 		int meta = world.getBlockMetadata(x, y, z);
+        int underID = world.getBlockId(x, y - 1, z);
 		if(world.getBlockLightValue(x, y, z) >= 14)
 		{
-			if(meta >= GROWTH_TIME)
+			if(meta >= GROWTH_TIME || (underID == EmasherCore.nutrientWater.blockID && meta >= GROWTH_TIME / 2))
 			{
 				int xInc, zInc;
 				boolean canPlace = false;
@@ -54,7 +72,7 @@ public class BlockPondScum extends BlockLilyPad
 				{
 					xInc = random.nextInt(3) - 1;
 					zInc = random.nextInt(3) - 1;
-					canPlace = world.isAirBlock(x + xInc, y, z + zInc) && world.getBlockId(x + xInc, y - 1, z + zInc) == Block.waterStill.blockID;
+					canPlace = world.isAirBlock(x + xInc, y, z + zInc) && canThisPlantGrowOnThisBlockID(world.getBlockId(x + xInc, y - 1, z + zInc));
 					
 					tries++;
 				}
@@ -66,7 +84,7 @@ public class BlockPondScum extends BlockLilyPad
 				int ty = y - 1;
 				int i = 0;
 				
-				while(world.getBlockId(tx, ty, tz) == Block.waterStill.blockID && i < EmasherCore.algaeDepth)
+				while(canThisPlantGrowOnThisBlockID(world.getBlockId(tx, ty, tz)) && i < EmasherCore.algaeDepth)
 				{
 					ty--;
 					i++;
@@ -79,7 +97,16 @@ public class BlockPondScum extends BlockLilyPad
 				
 				if(canPlace)
 				{
-					world.setBlock(x + xInc, y, z + zInc, this.blockID, 0, 3);
+                    int toPlaceId = world.getBlockId(x + xInc, y, z + zInc);
+                    if(toPlaceId == EmasherCore.nutrientWater.blockID)
+                    {
+                        if(world.rand.nextInt(100) < 5) world.setBlock(x + xInc, y, z + zInc, EmasherCore.superAlgae.blockID, 0, 3);
+                        else world.setBlock(x + xInc, y, z + zInc, this.blockID, 0, 3);
+                    }
+                    else
+                    {
+                        world.setBlock(x + xInc, y, z + zInc, this.blockID, 0, 3);
+                    }
 					world.setBlockMetadataWithNotify(x, y, z, 0, 2);
 				}
 			}

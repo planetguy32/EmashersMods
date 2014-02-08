@@ -45,7 +45,7 @@ import emasher.sockets.modules.*;
 import emasher.sockets.client.ClientProxy;
 import emasher.sockets.pipes.*;
 
-@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.7.2", dependencies = "required-after:emashercore")
+@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.7.3", dependencies = "required-after:emashercore")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false,
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = ClientPacketHandler.class),
@@ -94,6 +94,7 @@ public class SocketsMod
 	public static Item dusts;
 	public static Item slickBucket;
 	public static Item rsIngot;
+    public static Item nutBucket;
 	
 	//Ids
 	
@@ -115,6 +116,7 @@ public class SocketsMod
 	public int dustsID;
 	public int slickBucketID;
 	public int rsIngotID;
+    public int nutBucketID;
 	
 	public int fluidPipeID;
 	public int startPipeID;
@@ -235,6 +237,7 @@ public class SocketsMod
 		dustsID = config.get(Configuration.CATEGORY_ITEM, "Dusts ID", 4192).getInt();
 		slickBucketID = config.get(Configuration.CATEGORY_ITEM, "Slickwater Bucket ID", 4193).getInt();
 		rsIngotID = config.get(Configuration.CATEGORY_ITEM, "RS Ingot ID", 4194).getInt();
+        nutBucketID = config.get(Configuration.CATEGORY_ITEM, "Nutrient Water Bucket ID", 4195).getInt();
 		//rsShooterID = config.get(Configuration.CATEGORY_ITEM, "Redstone Shooter ID", 4175).getInt();
 		//handPistonID = config.get(Configuration.CATEGORY_ITEM, "Hand Piston ID", 4176).getInt();
 		//cattleProdID = config.get(Configuration.CATEGORY_ITEM, "Cattle Prod ID", 4177).getInt();
@@ -464,14 +467,22 @@ public class SocketsMod
 		
 		blockSlickwater = new BlockSlickwater(slickwaterID, fluidSlickwater);
 		GameRegistry.registerBlock(blockSlickwater, "slickwater");
+
 		slickBucket = new ItemSlickBucket(slickBucketID);
 		slickBucket.setMaxStackSize(1);
 		slickBucket.setCreativeTab(this.tabSockets);
+
+        FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidSlickwater, FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(slickBucket), new ItemStack(Item.bucketEmpty));
 		
 		LanguageRegistry.addName(slickBucket, "Slickwater Bucket");
 		LanguageRegistry.addName(blockSlickwater, "Slickwater");
-		
-		FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidSlickwater, FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(slickBucket), new ItemStack(Item.bucketEmpty));
+
+        nutBucket = new ItemNutrientBucket(nutBucketID);
+        nutBucket.setMaxStackSize(1);
+        nutBucket.setCreativeTab(this.tabSockets);
+        LanguageRegistry.addName(nutBucket, "Nutrient Water Bucket");
+
+        FluidContainerRegistry.registerFluidContainer(new FluidStack(EmasherCore.nutrientWaterFluid, FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(nutBucket), new ItemStack(Item.bucketEmpty));
 		
 		//cattleProd = new ItemCattleProd(cattleProdID);
 		//LanguageRegistry.addName(cattleProd, "Cattle Prod");

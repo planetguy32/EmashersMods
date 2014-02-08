@@ -1,30 +1,34 @@
 package emasher.core.item;
 
 import emasher.core.EmasherCore;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.src.*;
 import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
 
 public class ItemPondScum extends ItemBlock
 {
-	public ItemPondScum(int par1)
+    public String texture;
+    public Block blockForm;
+
+	public ItemPondScum(int par1, String texture, Block blockForm)
     {
 		super(par1);
 		maxStackSize = 64;
 		setUnlocalizedName("pondScumItem");
+        this.texture = texture;
+        this.blockForm = blockForm;
 	}
 	
 	@Override
 	public void registerIcons(IconRegister iconRegister)
 	{
-		itemIcon = iconRegister.registerIcon("emashercore:algae");
+		itemIcon = iconRegister.registerIcon(texture);
 	}
 
 	
@@ -58,8 +62,8 @@ public class ItemPondScum extends ItemBlock
 
                 if (par2World.getBlockMaterial(var5, var6, var7) == Material.water && par2World.getBlockMetadata(var5, var6, var7) == 0 && par2World.isAirBlock(var5, var6 + 1, var7))
                 {
-                    par2World.setBlock(var5, var6 + 1, var7, EmasherCore.pondScum.blockID, 0, 3);
-                    par2World.notifyBlocksOfNeighborChange(var5, var6, var7, EmasherCore.pondScum.blockID);
+                    par2World.setBlock(var5, var6 + 1, var7, blockForm.blockID, 0, 3);
+                    par2World.notifyBlocksOfNeighborChange(var5, var6, var7, blockForm.blockID);
 
                     if (!par3EntityPlayer.capabilities.isCreativeMode)
                     {

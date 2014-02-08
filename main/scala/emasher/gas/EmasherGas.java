@@ -1,8 +1,5 @@
 package emasher.gas;
 
-import java.awt.event.ItemEvent;
-
-import net.minecraftforge.liquids.*;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import buildcraft.api.fuels.IronEngineFuel;
@@ -18,33 +15,18 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
-import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.*;
 import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.world.biome.*;
-import net.minecraft.world.*;
-import net.minecraft.world.chunk.*;
 import net.minecraft.block.*;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.tileentity.*;
-import net.minecraft.block.material.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.entity.*;
-import net.minecraft.util.*;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.*;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -61,7 +43,6 @@ import emasher.gas.tileentity.TileShaleResource;
 import emasher.gas.worldgen.WorldGenGas;
 import emasher.gas.worldgen.WorldGenGasVent;
 import emasher.gas.worldgen.WorldGenerationUpdater;
-import emasher.sockets.items.ItemBlockSocket;
 import emasher.sockets.SocketsMod;
 import emasher.sockets.items.ItemDusts;
 import buildcraft.BuildCraftEnergy;
@@ -377,8 +358,8 @@ public class EmasherGas
 	
 	private void registerRecipes()
 	{
-		PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.pondScum), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidHydrogen, 1000));
-		PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.pondScum), new FluidStack(fluidToxicGas, 1000), new FluidStack(fluidNeurotoxin, 500));
+		PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.algae), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidHydrogen, 1000));
+		PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.algae), new FluidStack(fluidToxicGas, 1000), new FluidStack(fluidNeurotoxin, 500));
 		
 		MixerRecipeRegistry.registerRecipe(new ItemStack(Item.gunpowder), new FluidStack(fluidPropellent, 1000), new FluidStack(fluidToxicGas, 500));
 		MixerRecipeRegistry.registerRecipe(new ItemStack(SocketsMod.dusts, 1, ItemDusts.Const.lime.ordinal()), new FluidStack(fluidPropellent, 100), new FluidStack(fluidCorrosiveGas, 100));

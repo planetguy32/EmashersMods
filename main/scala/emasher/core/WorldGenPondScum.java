@@ -50,7 +50,7 @@ public class WorldGenPondScum implements IWorldGenerator
 		if(depth < 500 && startId == Block.waterStill.blockID && world.isAirBlock(x, y + 1, z))
 		{
 
-			world.setBlock(x, y + 1, z, EmasherCore.pondScum.blockID, 0, 2);
+			world.setBlock(x, y + 1, z, EmasherCore.algae.blockID, 0, 2);
 				
 			
 			if(gen.nextInt(4) != 0)for(int i = 0; i<3; i++)

@@ -9,6 +9,12 @@ public class FluidSlickwater extends Fluid
 		super("Slickwater");
 		this.setUnlocalizedName("slickwater");
 	}
+
+    @Override
+    public String getLocalizedName()
+    {
+        return "Slickwater";
+    }
 	
 	
 

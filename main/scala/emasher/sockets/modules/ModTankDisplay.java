@@ -105,7 +105,17 @@ public class ModTankDisplay extends SocketModule
 				if(amnt == inContainer.amount)
 				{
 					ts.fillInternal(config.tank, inContainer, true);
-					is.stackSize--;
+                    if(FluidContainerRegistry.isBucket(is))
+                    {
+                        is.itemID = Item.bucketEmpty.itemID;
+                        is.setItemDamage(0);
+                        is.stackSize = 1;
+                        is.setTagCompound(null);
+                    }
+                    else
+                    {
+					    is.stackSize--;
+                    }
 				}
 			}
 			else

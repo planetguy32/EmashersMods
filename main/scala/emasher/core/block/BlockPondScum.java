@@ -97,7 +97,7 @@ public class BlockPondScum extends BlockLilyPad
 				
 				if(canPlace)
 				{
-                    int toPlaceId = world.getBlockId(x + xInc, y, z + zInc);
+                    int toPlaceId = world.getBlockId(x + xInc, y - 1, z + zInc);
                     if(toPlaceId == EmasherCore.nutrientWater.blockID)
                     {
                         if(world.rand.nextInt(100) < 5) world.setBlock(x + xInc, y, z + zInc, EmasherCore.superAlgae.blockID, 0, 3);

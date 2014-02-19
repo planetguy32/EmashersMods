@@ -48,7 +48,7 @@ import emasher.sockets.items.ItemDusts;
 import buildcraft.BuildCraftEnergy;
 
 
-@Mod(modid="gascraft", name="GasCraft", version="2.0.4.2", dependencies = "required-after:eng_toolbox")
+@Mod(modid="gascraft", name="GasCraft", version="2.0.4.3", dependencies = "required-after:eng_toolbox")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false, 
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"GasCraft" }, packetHandler = PacketHandler.class),

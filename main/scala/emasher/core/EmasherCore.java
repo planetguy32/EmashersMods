@@ -39,7 +39,7 @@ import emasher.core.hemp.*;
 
 import java.util.*;
 
-@Mod(modid="emashercore", name="Emasher Resource", version="1.2.3.0")
+@Mod(modid="emashercore", name="Emasher Resource", version="1.2.3.1")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false)
 public class EmasherCore 
 {
@@ -591,7 +591,9 @@ public class EmasherCore
 		FurnaceRecipes.smelting().addSmelting(ore.blockID, 5, new ItemStack(ingot, 1, 4), 1.0F);
 		FurnaceRecipes.smelting().addSmelting(ore.blockID, 6, new ItemStack(gem, 1, 1), 1.0F);
 		FurnaceRecipes.smelting().addSmelting(ore.blockID, 7, new ItemStack(gem, 1, 2), 1.0F);
-		
+
+        OreDictionary.registerOre("limestone", limestone);
+
 		//TC Support
 		/*if(Loader.isModLoaded("TConstruct"))
 		{

@@ -277,14 +277,22 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 						{
 							Minecraft.getMinecraft().renderEngine.bindTexture(theStack.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
 							Icon itemIcon = theItem.getIconFromDamageForRenderPass(theStack.getItemDamage(), i);//, FakePlayerFactory.getMinecraft(ts.worldObj), theStack, 0);
-							tessellator.startDrawingQuads();
+							if (itemIcon != null) {
+								
+								tessellator.startDrawingQuads();
 							
-							tessellator.addVertexWithUV(0, 1, 0, itemIcon.getMinU(), itemIcon.getMaxV());
-							tessellator.addVertexWithUV(1, 1, 0, itemIcon.getMaxU(), itemIcon.getMaxV());
-							tessellator.addVertexWithUV(1, 0, 0, itemIcon.getMaxU(), itemIcon.getMinV());
-							tessellator.addVertexWithUV(0, 0, 0, itemIcon.getMinU(), itemIcon.getMinV());
+								tessellator.addVertexWithUV(0, 1, 0, itemIcon.getMinU(), itemIcon.getMaxV());
+								tessellator.addVertexWithUV(1, 1, 0, itemIcon.getMaxU(), itemIcon.getMaxV());
+								tessellator.addVertexWithUV(1, 0, 0, itemIcon.getMaxU(), itemIcon.getMinV());
+								tessellator.addVertexWithUV(0, 0, 0, itemIcon.getMinU(), itemIcon.getMinV());
 							
-							tessellator.draw();
+								tessellator.draw();
+							
+							}
+							else
+							{
+								// Log an error, But don't crash the game... Hopefully...
+							}
 						}
 					}
 					else

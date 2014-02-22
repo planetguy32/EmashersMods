@@ -337,7 +337,9 @@ public class SocketsMod
 		ModuleRegistry.registerModule(new ModStateCell(37));
 		ModuleRegistry.registerModule(new ModPressurePlate(38));
 		ModuleRegistry.registerModule(new ModSpinningWheel(39));
-        ModuleRegistry.registerModule(new ModHinge((40)));
+        ModuleRegistry.registerModule(new ModHinge(40));
+        ModuleRegistry.registerModule(new ModEnderHinge(41));
+        ModuleRegistry.registerModule(new ModLazySusan(42));
 		ModuleRegistry.registerModule(new ModBurner(64));
 		ModuleRegistry.registerModule(new ModBreaker(65));
 		if(enableWaterIntake) ModuleRegistry.registerModule(new ModOsPump(66));

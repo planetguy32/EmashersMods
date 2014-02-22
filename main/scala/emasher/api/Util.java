@@ -60,11 +60,14 @@ public class Util
         TileEntity te1 = world.getBlockTileEntity(x, y, z);
         NBTTagCompound nbt1 = new NBTTagCompound();
         if(te1 != null) te1.writeToNBT(nbt1);
+        world.setBlockToAir(x, y, z);
         world.removeBlockTileEntity(x, y, z);
+
 
         TileEntity te2 = world.getBlockTileEntity(nx, ny, nz);
         NBTTagCompound nbt2 = new NBTTagCompound();
         if(te2 != null) te2.writeToNBT(nbt2);
+        world.setBlockToAir(nx, ny, nz);
         world.removeBlockTileEntity(nx, ny, nz);
 
         world.setBlock(x, y, z, id2, meta2, 3);

@@ -1,10 +1,12 @@
 package emasher.api;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
@@ -56,33 +58,52 @@ public class Util
         if(b2 != null && b2.blockHardness < 0) return;
 
         TileEntity te1 = world.getBlockTileEntity(x, y, z);
-        if(te1 != null) world.removeBlockTileEntity(x, y, z);
+        NBTTagCompound nbt1 = new NBTTagCompound();
+        if(te1 != null) te1.writeToNBT(nbt1);
+        world.removeBlockTileEntity(x, y, z);
+
         TileEntity te2 = world.getBlockTileEntity(nx, ny, nz);
-        if(te2 != null) world.removeBlockTileEntity(x, y, z);
+        NBTTagCompound nbt2 = new NBTTagCompound();
+        if(te2 != null) te2.writeToNBT(nbt2);
+        world.removeBlockTileEntity(nx, ny, nz);
 
         world.setBlock(x, y, z, id2, meta2, 3);
-        if(te2 != null) world.setBlockTileEntity(x, y, z, te2);
-
-        world.setBlock(nx, ny, nz, id1, meta1, 3);
-        if(te1 != null) world.setBlockTileEntity(nx, ny, nz, te1);
-
-        if(te1 != null && te1 instanceof SocketTileAccess)
+        if(b2 instanceof BlockContainer)
         {
-            for(int i = 0; i < 6; i++)
+            TileEntity te = world.getBlockTileEntity(x, y, z);
+            if(te != null)
             {
-                ForgeDirection d = ForgeDirection.getOrientation(i);
-                SocketModule m = ((SocketTileAccess) te1).getSide(d);
-                m.onSocketPlaced(((SocketTileAccess) te1).getConfigForSide(d), (SocketTileAccess)te1, d);
+                te.readFromNBT(nbt2);
+                te.xCoord = x;
+                te.yCoord = y;
+                te.zCoord = z;
+
+                if(te instanceof SocketTileAccess) for(int i = 0; i < 6; i++)
+                {
+                    ForgeDirection d = ForgeDirection.getOrientation(i);
+                    SocketModule m = ((SocketTileAccess) te).getSide(d);
+                    m.onSocketPlaced(((SocketTileAccess) te).getConfigForSide(d), (SocketTileAccess)te, d);
+                }
             }
         }
 
-        if(te2 != null && te2 instanceof SocketTileAccess)
+        world.setBlock(nx, ny, nz, id1, meta1, 3);
+        if(b1 instanceof BlockContainer)
         {
-            for(int i = 0; i < 6; i++)
+            TileEntity te = world.getBlockTileEntity(nx, ny, nz);
+            if(te != null)
             {
-                ForgeDirection d = ForgeDirection.getOrientation(i);
-                SocketModule m = ((SocketTileAccess) te2).getSide(d);
-                m.onSocketPlaced(((SocketTileAccess) te2).getConfigForSide(d), (SocketTileAccess)te2, d);
+                te.readFromNBT(nbt1);
+                te.xCoord = nx;
+                te.yCoord = ny;
+                te.zCoord = nz;
+
+                if(te instanceof SocketTileAccess) for(int i = 0; i < 6; i++)
+                {
+                    ForgeDirection d = ForgeDirection.getOrientation(i);
+                    SocketModule m = ((SocketTileAccess) te).getSide(d);
+                    m.onSocketPlaced(((SocketTileAccess) te).getConfigForSide(d), (SocketTileAccess)te, d);
+                }
             }
         }
     }
@@ -94,14 +115,28 @@ public class Util
         Block b = Block.blocksList[id];
         if(b != null && b.blockHardness < 0) return;
         int meta = world.getBlockMetadata(x, y, z);
-        TileEntity te = world.getBlockTileEntity(x, y, z);
-        if(te != null) world.removeBlockTileEntity(x, y, z);
-        world.setBlock(nx, ny, nz, id, meta, 3);
-        if(te != null) world.setBlockTileEntity(nx, ny, nz, te);
 
-        if(te != null && te instanceof SocketTileAccess)
+        TileEntity te = world.getBlockTileEntity(x, y, z);
+        NBTTagCompound nbt = new NBTTagCompound();
+        if(te != null)
         {
-            for(int i = 0; i < 6; i++)
+            te.writeToNBT(nbt);
+            world.removeBlockTileEntity(x, y, z);
+        }
+
+        world.setBlockToAir(x, y, z);
+
+        world.setBlock(nx, ny, nz, id, meta, 3);
+
+        te = world.getBlockTileEntity(nx, ny, nz);
+        if(te != null)
+        {
+            te.readFromNBT(nbt);
+            te.xCoord = nx;
+            te.yCoord = ny;
+            te.zCoord = nz;
+
+            if(te instanceof SocketTileAccess) for(int i = 0; i < 6; i++)
             {
                 ForgeDirection d = ForgeDirection.getOrientation(i);
                 SocketModule m = ((SocketTileAccess) te).getSide(d);

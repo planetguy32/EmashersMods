@@ -111,6 +111,15 @@ public class Util
         }
     }
 
+    public static boolean canMoveBlock(World world, int x, int y, int z, int nx, int ny, int nz)
+    {
+        if(ny >= 255 || ny <= 0) return false;
+        if(! world.isAirBlock(nx, ny, nz)) return false;
+        int id = world.getBlockId(x, y, z);
+        Block b = Block.blocksList[id];
+        return ! (b != null && b.blockHardness < 0);
+    }
+
     public static boolean moveBlock(World world, int x, int y, int z, int nx, int ny, int nz)
     {
         if(ny >= 255 || ny <= 0) return false;

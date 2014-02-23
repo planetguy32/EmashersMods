@@ -346,6 +346,8 @@ public class SocketsMod
         ModuleRegistry.registerModule(new ModLazySusan(42));
         ModuleRegistry.registerModule(new ModElevator(43));
         ModuleRegistry.registerModule(new ModInternalClock(44));
+        ModuleRegistry.registerModule(new ModTrack(45));
+        ModuleRegistry.registerModule(new ModAccelerometer(46));
 		ModuleRegistry.registerModule(new ModBurner(64));
 		ModuleRegistry.registerModule(new ModBreaker(65));
 		if(enableWaterIntake) ModuleRegistry.registerModule(new ModOsPump(66));

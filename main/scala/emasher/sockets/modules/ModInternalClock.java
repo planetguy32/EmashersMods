@@ -177,6 +177,8 @@ public class ModInternalClock extends SocketModule
         }
     }
 
+
+
     @Override
     public void onGenericRemoteSignal(SocketTileAccess ts, SideConfig config, ForgeDirection side)
     {

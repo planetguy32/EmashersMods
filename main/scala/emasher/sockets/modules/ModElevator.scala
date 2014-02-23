@@ -32,7 +32,7 @@ class ModElevator(id: Int) extends SocketModule(id, "sockets:elevatorUp", "socke
 
   override def getToolTip(l: java.util.List[Object]): Unit = {
     l.add("Makes the socket move up or down when activated")
-    l.add("with an internal redstone pulse")
+    l.add("on an internal redstone pulse")
     l.add("Also allows a track to move a socket through the air")
   }
 

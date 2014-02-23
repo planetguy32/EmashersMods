@@ -5,6 +5,7 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.OutputStream;
 
+import emasher.sockets.pipes.TileDirectionChanger;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -122,6 +123,24 @@ public class PacketHandler implements IPacketHandler
 						}
 					}
 				}
+                else if(packet.data[0] == 5)
+                {
+                    int x = toInteger(packet.data, 1);
+                    int y = toInteger(packet.data, 5);
+                    int z = toInteger(packet.data, 9);
+
+                    World world = ((EntityPlayer) player).worldObj;
+                    TileEntity te = world.getBlockTileEntity(x, y, z);
+                    if(te != null && te instanceof TileDirectionChanger)
+                    {
+                        TileDirectionChanger t = (TileDirectionChanger)te;
+
+                        for(int i = 0; i < 6; i++)
+                        {
+                            this.sendClientChangerSide(t, i);
+                        }
+                    }
+                }
 			}
 		}
 		catch (Exception e)
@@ -264,6 +283,21 @@ public class PacketHandler implements IPacketHandler
 		
 		PacketDispatcher.sendPacketToAllInDimension(new Packet250CustomPayload(networkChannel, out), t.worldObj.provider.dimensionId);
 	}
+
+    public void sendClientChangerSide(TileDirectionChanger t, int side)
+    {
+        byte[] out = new byte[19];
+
+        out[0] = 5;
+        toByte(out, t.xCoord, 1);
+        toByte(out, t.yCoord, 5);
+        toByte(out, t.zCoord, 9);
+        toByte(out, t.worldObj.provider.dimensionId, 13);
+        out[17] = (byte)t.directions[side].ordinal();
+        out[18] = (byte)side;
+
+        PacketDispatcher.sendPacketToAllInDimension(new Packet250CustomPayload(networkChannel, out), t.worldObj.provider.dimensionId);
+    }
 	
 	private void toByte(byte[] out, int in, int start)
 	{

@@ -1,5 +1,6 @@
 package emasher.sockets.client;
 
+import emasher.sockets.pipes.TileDirectionChanger;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -184,6 +185,27 @@ public class ClientPacketHandler implements IPacketHandler
 						world.notifyBlockChange(x, y, z, world.getBlockId(x, y, z));
 					}
 				}
+                else if(packet.data[0] == 5)
+                {
+                    int x = toInteger(packet.data, 1);
+                    int y = toInteger(packet.data, 5);
+                    int z = toInteger(packet.data, 9);
+                    int id = toInteger(packet.data, 13);
+                    ForgeDirection dir = ForgeDirection.getOrientation(packet.data[17]);
+                    int side = (int)packet.data[18];
+
+                    World world = ((EntityPlayer) player).worldObj;
+                    TileEntity te = world.getBlockTileEntity(x, y, z);
+                    if(te != null && te instanceof TileDirectionChanger)
+                    {
+                        TileDirectionChanger t = (TileDirectionChanger)te;
+
+                        t.directions[side] = dir;
+
+                        world.markBlockForUpdate(x, y, z);
+                        world.notifyBlockChange(x, y, z, world.getBlockId(x, y, z));
+                    }
+                }
 			}
 		}				
 		catch (Exception e)
@@ -261,6 +283,19 @@ public class ClientPacketHandler implements IPacketHandler
 		
 		PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
 	}
+
+    public void requestDirectionData(TileDirectionChanger p)
+    {
+        byte[] out = new byte[17];
+
+        out[0] = 5;
+        toByte(out, p.xCoord, 1);
+        toByte(out, p.yCoord, 5);
+        toByte(out, p.zCoord, 9);
+        toByte(out, p.worldObj.provider.dimensionId, 13);
+
+        PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+    }
 	
 	private void toByte(byte[] out, int in, int start)
 	{

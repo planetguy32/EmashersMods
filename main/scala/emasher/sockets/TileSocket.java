@@ -573,6 +573,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 			{
 				SocketModule m = getSide(ForgeDirection.getOrientation(i));
 				m.onRSInterfaceChange(configs[i], cell, this, ForgeDirection.getOrientation(i), on);
+                if(dead) return;
 			}
 		}
 	}

@@ -111,12 +111,13 @@ public class Util
         }
     }
 
-    public static void moveBlock(World world, int x, int y, int z, int nx, int ny, int nz)
+    public static boolean moveBlock(World world, int x, int y, int z, int nx, int ny, int nz)
     {
-        if(! world.isAirBlock(nx, ny, nz)) return;
+        if(ny >= 255 || ny <= 0) return false;
+        if(! world.isAirBlock(nx, ny, nz)) return false;
         int id = world.getBlockId(x, y, z);
         Block b = Block.blocksList[id];
-        if(b != null && b.blockHardness < 0) return;
+        if(b != null && b.blockHardness < 0) return false;
         int meta = world.getBlockMetadata(x, y, z);
 
         TileEntity te = world.getBlockTileEntity(x, y, z);
@@ -146,6 +147,8 @@ public class Util
                 m.onSocketPlaced(((SocketTileAccess) te).getConfigForSide(d), (SocketTileAccess)te, d);
             }
         }
+
+        return true;
     }
 	
 

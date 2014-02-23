@@ -75,6 +75,7 @@ public class SocketsMod
 	public static Block euAdapter;
 	
 	public static Block miniPortal;
+    public static Block directionChanger;
 	
 	//Fluids
 	
@@ -127,6 +128,7 @@ public class SocketsMod
 	public int euAdapterID;
 	
 	public int miniPortalID;
+    public int directionChangerID;
 
 	public int slickwaterAmount;
 	
@@ -225,6 +227,7 @@ public class SocketsMod
 		mjAdapterID = config.get(Configuration.CATEGORY_BLOCK, "MJ Adapter ID", 4078).getInt();
 		euAdapterID = config.get(Configuration.CATEGORY_BLOCK, "EU Adapter ID", 4079).getInt();
 		miniPortalID = config.get(Configuration.CATEGORY_BLOCK, "Fluidic Nether Portal", 4080).getInt();
+        directionChangerID = config.get(Configuration.CATEGORY_BLOCK, "Direction Changer ID", 4081).getInt();
 		
 		moduleID = config.get(Configuration.CATEGORY_ITEM, "Module ID", 4170).getInt();
 		remoteID = config.get(Configuration.CATEGORY_ITEM, "Remote ID", 4172).getInt();
@@ -303,6 +306,7 @@ public class SocketsMod
 		GameRegistry.registerTileEntity(TileMJAdapter.class, "emashermjadapter");
 		GameRegistry.registerTileEntity(TileEUAdapter.class, "emashereuAdapter");
 		GameRegistry.registerTileEntity(TileMiniPortal.class, "emasherminiportal");
+        GameRegistry.registerTileEntity(TileDirectionChanger.class, "emasherdirectionchanger");
 		
 		ModuleRegistry.registerModule(new ModBlank(0));
 		ModuleRegistry.registerModule(new ModItemInput(1));
@@ -340,6 +344,8 @@ public class SocketsMod
         ModuleRegistry.registerModule(new ModHinge(40));
         ModuleRegistry.registerModule(new ModEnderHinge(41));
         ModuleRegistry.registerModule(new ModLazySusan(42));
+        ModuleRegistry.registerModule(new ModElevator(43));
+        ModuleRegistry.registerModule(new ModInternalClock(44));
 		ModuleRegistry.registerModule(new ModBurner(64));
 		ModuleRegistry.registerModule(new ModBreaker(65));
 		if(enableWaterIntake) ModuleRegistry.registerModule(new ModOsPump(66));
@@ -430,7 +436,16 @@ public class SocketsMod
 					});
 			
 		}
-		
+
+        directionChanger = new BlockDirectionChanger(directionChangerID).setResistance(8.0F).setHardness(2.0F).setLightValue(7.0F).setStepSound(Block.soundGlassFootstep).setUnlocalizedName("emasher_direction_changer");
+		GameRegistry.registerBlock(directionChanger, "emasher_direction_changer");
+        LanguageRegistry.addName(directionChanger, "Direction Changer");
+
+        GameRegistry.addShapelessRecipe(new ItemStack(directionChanger, 4), new Object[]
+                {
+                        EmasherCore.machine, Item.glowstone, new ItemStack(EmasherCore.gem, 1, 0)
+                });
+
 		paintedPlanks = (new BlockPaintedWood(paintedPlankID, 0, Material.wood))
 				.setHardness(2.0F).setResistance(5.0F).setStepSound(Block.soundWoodFootstep)
 				.setUnlocalizedName("paintedPlanks");

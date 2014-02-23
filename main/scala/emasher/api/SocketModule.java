@@ -347,17 +347,14 @@ public abstract class SocketModule
 	public boolean isEnergyInterface(SideConfig config) { return false; }
 	
 	/**
-	 * 
-	 * @param from the direction 
-	 * @param maxReceive energy recieved
+	 *
 	 * @param simulate true iff only a simulation
 	 * @return the amount of energy used
 	 */
 	public int receiveEnergy(int amount, boolean simulate, SideConfig config, SocketTileAccess ts) { return 0; }
 	
 	/**
-	 * 
-	 * @param from the direction
+	 *
 	 * @param maxExtract energy requested
 	 * @param simulate true iff only a simulation
 	 * @return the amount of energy offered

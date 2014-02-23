@@ -68,13 +68,18 @@ class ModHinge(id: Int) extends SocketModule(id, "sockets:hinge") {
     val nz = ts.zCoord + otherHinge.offsetZ
 
     if(! ts.worldObj.isAirBlock(x, y, z)) {
-      Util.moveBlock(ts.worldObj, x, y, z, nx, ny, nz)
-      ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F);
-      ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F);
+      val done = Util.moveBlock(ts.worldObj, x, y, z, nx, ny, nz)
+      if(done) {
+        ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F);
+        ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F);
+      }
+
     } else if(! ts.worldObj.isAirBlock(nx, ny, nz)) {
-      Util.moveBlock(ts.worldObj, nx, ny, nz, x, y, z)
-      ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F);
-      ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F);
+      val done = Util.moveBlock(ts.worldObj, nx, ny, nz, x, y, z)
+      if(done) {
+        ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F);
+        ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F);
+      }
     }
   }
 

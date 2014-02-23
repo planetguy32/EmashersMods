@@ -26,6 +26,8 @@ public abstract class SocketTileAccess extends TileEntity
 	//Used for machines to hold an ItemStack temporarily
 	//Use only the slot side.ordinal() or you will create problems
 	public InventoryBasic sideInventory;
+
+    public boolean dead = false;
 	
 	/**
 	 * Get a texture that was registered for a particular module

@@ -120,8 +120,7 @@ class ModHusher(id: Int) extends SocketModule(id, "sockets:husher")
 		
 	}
 	
-	def getTileToMine(config: SideConfig, ts: SocketTileAccess, side: ForgeDirection)
-	:Tuple = 
+	def getTileToMine(config: SideConfig, ts: SocketTileAccess, side: ForgeDirection): Coords =
 	{
 		var range = 1;
 		for(i <- 0 to 5)
@@ -145,7 +144,7 @@ class ModHusher(id: Int) extends SocketModule(id, "sockets:husher")
 			curY -= 1;
 		}
 		
-		new Tuple(x, curY, z);
+		new Coords(x, curY, z);
 	}
 	
 	def dropItemsOnSide(ts: SocketTileAccess, side: ForgeDirection, stack: ItemStack)

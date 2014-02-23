@@ -1,6 +1,6 @@
 package emasher.sockets.modules
 
-import emasher.api.{Util, SideConfig, SocketTileAccess, SocketModule}
+import emasher.api._
 import net.minecraft.item.crafting.CraftingManager
 import net.minecraftforge.oredict.ShapedOreRecipe
 import net.minecraft.item.{Item, ItemStack}
@@ -56,26 +56,27 @@ class ModElevator(id: Int) extends SocketModule(id, "sockets:elevatorUp", "socke
     if(! on) return
     if(! config.rsControl(index)) return
 
-    val ny = config.rsLatch(0) match {
+    /*val ny = config.rsLatch(0) match {
       case true => ts.yCoord - 1
       case false => ts.yCoord + 1
+    }*/
+
+    val dir = config.rsLatch(0) match {
+      case true => ForgeDirection.DOWN
+      case false => ForgeDirection.UP
     }
 
-    val done = Util.moveBlock(ts.worldObj, ts.xCoord, ts.yCoord, ts.zCoord, ts.xCoord, ny, ts.zCoord)
+    //val done = Util.moveBlock(ts.worldObj, ts.xCoord, ts.yCoord, ts.zCoord, ts.xCoord, ny, ts.zCoord)
     val world = ts.worldObj
     val x = ts.xCoord
     val y = ts.yCoord
     val z = ts.zCoord
 
+    val done = UtilScala.moveGroup(world, Coords(x, y, z), dir)
+
     if(done) {
       ts.dead = true
-      val ents = world.getEntitiesWithinAABBExcludingEntity(null.asInstanceOf[Entity], AxisAlignedBB.getAABBPool.getAABB(x, y + 1, z, x + 1, y + 3, z + 1))
-      for(e <- ents.asScala) {
-        config.rsLatch(0) match {
-          case true => e.asInstanceOf[Entity].posY -= 1
-          case false => e.asInstanceOf[Entity].posY += 1
-        }
-      }
+
       ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
       ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
     }

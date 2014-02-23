@@ -1,6 +1,6 @@
 package emasher.sockets.modules
 
-import emasher.api.{Util, SideConfig, SocketTileAccess, SocketModule}
+import emasher.api._
 import net.minecraft.item.crafting.CraftingManager
 import net.minecraftforge.oredict.ShapedOreRecipe
 import net.minecraft.item.{Item, ItemStack}
@@ -67,24 +67,23 @@ class ModTrack(id: Int) extends SocketModule(id, "sockets:trackUp", "sockets:tra
       case 3 => ts.zCoord
     }
 
+    val dir = ForgeDirection.getOrientation(config.meta + 2)
+
     val bId = ts.worldObj.getBlockId(nx, ts.yCoord - 1, nz)
     val b = Block.blocksList(bId)
     val canMove = hasElevator(ts) || (b != null && b.isOpaqueCube)
 
     if(canMove) {
-      val done = Util.moveBlock(ts.worldObj, ts.xCoord, ts.yCoord, ts.zCoord, nx, ts.yCoord, nz)
       val world = ts.worldObj
       val x = ts.xCoord
       val y = ts.yCoord
       val z = ts.zCoord
+      val done = UtilScala.moveGroup(world, Coords(x, y, z), dir)
+
 
       if(done) {
         ts.dead = true
-        val ents = world.getEntitiesWithinAABBExcludingEntity(null.asInstanceOf[Entity], AxisAlignedBB.getAABBPool.getAABB(x, y + 1, z, x + 1, y + 3, z + 1))
-        for(e <- ents.asScala) {
-            e.asInstanceOf[Entity].posX += (nx - x)
-            e.asInstanceOf[Entity].posZ += (nz - z)
-        }
+
         ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
         ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
       }

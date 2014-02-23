@@ -153,11 +153,11 @@ class ModLazySusan(id: Int) extends SocketModule(id, "sockets:lazySusan") {
         four = new Tuple(ts.xCoord + ForgeDirection.DOWN.offsetX, ts.yCoord + ForgeDirection.DOWN.offsetY, ts.zCoord + ForgeDirection.DOWN.offsetZ)
     }
 
-    Util.swapBlocks(ts.worldObj, one.x, one.y, one.z, two.x, two.y, two.z)
-    Util.swapBlocks(ts.worldObj, one.x, one.y, one.z, three.x, three.y, three.z)
-    Util.swapBlocks(ts.worldObj, one.x, one.y, one.z, four.x, four.y, four.z)
-
-    ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
-    ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
-  }
+    if(Util.swapBlocks(ts.worldObj, one.x, one.y, one.z, two.x, two.y, two.z))
+      if(Util.swapBlocks(ts.worldObj, one.x, one.y, one.z, three.x, three.y, three.z))
+        if(Util.swapBlocks(ts.worldObj, one.x, one.y, one.z, four.x, four.y, four.z)) {
+          ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
+          ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
+        }
+    }
 }

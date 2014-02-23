@@ -76,6 +76,7 @@ public class SocketsMod
 	
 	public static Block miniPortal;
     public static Block directionChanger;
+    public static Block frame;
 	
 	//Fluids
 	
@@ -129,6 +130,7 @@ public class SocketsMod
 	
 	public int miniPortalID;
     public int directionChangerID;
+    public int frameID;
 
 	public int slickwaterAmount;
 	
@@ -228,6 +230,7 @@ public class SocketsMod
 		euAdapterID = config.get(Configuration.CATEGORY_BLOCK, "EU Adapter ID", 4079).getInt();
 		miniPortalID = config.get(Configuration.CATEGORY_BLOCK, "Fluidic Nether Portal", 4080).getInt();
         directionChangerID = config.get(Configuration.CATEGORY_BLOCK, "Direction Changer ID", 4081).getInt();
+        frameID = config.get(Configuration.CATEGORY_BLOCK, "Frame ID", 4082).getInt();
 		
 		moduleID = config.get(Configuration.CATEGORY_ITEM, "Module ID", 4170).getInt();
 		remoteID = config.get(Configuration.CATEGORY_ITEM, "Remote ID", 4172).getInt();
@@ -307,6 +310,7 @@ public class SocketsMod
 		GameRegistry.registerTileEntity(TileEUAdapter.class, "emashereuAdapter");
 		GameRegistry.registerTileEntity(TileMiniPortal.class, "emasherminiportal");
         GameRegistry.registerTileEntity(TileDirectionChanger.class, "emasherdirectionchanger");
+        GameRegistry.registerTileEntity(TileFrame.class, "emasherframe");
 		
 		ModuleRegistry.registerModule(new ModBlank(0));
 		ModuleRegistry.registerModule(new ModItemInput(1));
@@ -348,6 +352,7 @@ public class SocketsMod
         ModuleRegistry.registerModule(new ModInternalClock(44));
         ModuleRegistry.registerModule(new ModTrack(45));
         ModuleRegistry.registerModule(new ModAccelerometer(46));
+        ModuleRegistry.registerModule(new ModMagnet(47));
 		ModuleRegistry.registerModule(new ModBurner(64));
 		ModuleRegistry.registerModule(new ModBreaker(65));
 		if(enableWaterIntake) ModuleRegistry.registerModule(new ModOsPump(66));
@@ -447,6 +452,16 @@ public class SocketsMod
                 {
                         EmasherCore.machine, Item.glowstone, new ItemStack(EmasherCore.gem, 1, 0)
                 });
+
+        frame = new BlockFrame(frameID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("emasher_frame");
+        GameRegistry.registerBlock(frame, "emasher_frame");
+        LanguageRegistry.addName(frame, "Socket Frame");
+
+        GameRegistry.addShapelessRecipe(new ItemStack(frame, 2), new Object[]
+                {
+                       new ItemStack(EmasherCore.ingot, 1, 7)
+                });
+
 
 		paintedPlanks = (new BlockPaintedWood(paintedPlankID, 0, Material.wood))
 				.setHardness(2.0F).setResistance(5.0F).setStepSound(Block.soundWoodFootstep)

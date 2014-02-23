@@ -62,9 +62,10 @@ class ModEnderHinge(id: Int) extends SocketModule(id, "sockets:enderHinge") {
     val ny = ts.yCoord + otherHinge.offsetY
     val nz = ts.zCoord + otherHinge.offsetZ
 
-    Util.swapBlocks(ts.worldObj, x, y, z, nx, ny, nz)
-    ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
-    ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
+    if(Util.swapBlocks(ts.worldObj, x, y, z, nx, ny, nz)) {
+      ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
+      ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
+    }
   }
 
   def getOtherHinge(side: ForgeDirection, ts: SocketTileAccess): ForgeDirection = {

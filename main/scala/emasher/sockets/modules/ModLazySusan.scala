@@ -153,6 +153,11 @@ class ModLazySusan(id: Int) extends SocketModule(id, "sockets:lazySusan") {
         four = new Tuple(ts.xCoord + ForgeDirection.DOWN.offsetX, ts.yCoord + ForgeDirection.DOWN.offsetY, ts.zCoord + ForgeDirection.DOWN.offsetZ)
     }
 
+    if(ts.worldObj.getBlockId(one.x, one.y, one.z) == SocketsMod.miniPortal.blockID) return
+    if(ts.worldObj.getBlockId(two.x, two.y, two.z) == SocketsMod.miniPortal.blockID) return
+    if(ts.worldObj.getBlockId(three.x, three.y, three.z) == SocketsMod.miniPortal.blockID) return
+    if(ts.worldObj.getBlockId(four.x, four.y, four.z) == SocketsMod.miniPortal.blockID) return
+
     if(Util.swapBlocks(ts.worldObj, one.x, one.y, one.z, two.x, two.y, two.z))
       if(Util.swapBlocks(ts.worldObj, one.x, one.y, one.z, three.x, three.y, three.z))
         if(Util.swapBlocks(ts.worldObj, one.x, one.y, one.z, four.x, four.y, four.z)) {

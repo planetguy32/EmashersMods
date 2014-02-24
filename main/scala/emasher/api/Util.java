@@ -152,14 +152,13 @@ public class Util
 
         world.setBlock(nx, ny, nz, id, meta, 3);
 
-        List ents = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getAABBPool().getAABB(x, y + 1, z, x + 1, y + 3, z + 1));
+        List ents = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getAABBPool().getAABB(x - 1, y, z - 1, x, y + 2, z));
         for(Object e: ents) {
             if(e instanceof Entity)
             {
                 Entity ent = (Entity)e;
-                ent.posX += nx - x;
-                ent.posY += ny - y;
-                ent.posZ += nz - z;
+                System.out.println("Test"); //TODO
+                ent.setPosition(ent.posX + (nx - x), ent.posY + (ny - y), ent.posZ + (nz - z));
             }
         }
 

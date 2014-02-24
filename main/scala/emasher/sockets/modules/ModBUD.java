@@ -94,6 +94,8 @@ public class ModBUD extends RSPulseModule
 			ts.sendClientSideState(side.ordinal());
 		}
 	}
+
+
 	
 	@Override
 	public void onAdjChangeSide(SocketTileAccess ts, SideConfig config, ForgeDirection side)

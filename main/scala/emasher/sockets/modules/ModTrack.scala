@@ -67,7 +67,14 @@ class ModTrack(id: Int) extends SocketModule(id, "sockets:trackUp", "sockets:tra
       case 3 => ts.zCoord
     }
 
-    val dir = ForgeDirection.getOrientation(config.meta + 2)
+    val dir = config.meta match {
+      case 0 => ForgeDirection.NORTH
+      case 1 => ForgeDirection.WEST
+      case 2 => ForgeDirection.SOUTH
+      case 3 => ForgeDirection.EAST
+    }
+
+    //val dir = ForgeDirection.getOrientation(config.meta + 2)
 
     val bId = ts.worldObj.getBlockId(nx, ts.yCoord - 1, nz)
     val b = Block.blocksList(bId)
@@ -103,6 +110,10 @@ class ModTrack(id: Int) extends SocketModule(id, "sockets:trackUp", "sockets:tra
           case _ =>
         }
       }
+  }
+
+  override def onAdjChange(ts: SocketTileAccess, config: SideConfig, side: ForgeDirection) {
+    onSocketPlaced(config, ts, side)
   }
 
   def hasElevator(ts: SocketTileAccess): Boolean = {

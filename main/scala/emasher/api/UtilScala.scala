@@ -8,6 +8,8 @@ import emasher.sockets.modules.ModMagnet
 import scala.collection.mutable
 import net.minecraft.block.Block
 import emasher.sockets.pipes.TileFrame
+import net.minecraft.nbt.NBTTagCompound
+import scala.util.control.Breaks._
 
 object UtilScala {
   def moveGroup(world: World, root: Coords, dir: ForgeDirection): Boolean = {
@@ -26,6 +28,7 @@ object UtilScala {
             Util.moveBlock(world, root.x, root.y, root.z, nx, ny, nz)
           } else {
             val moveSet = new mutable.ListBuffer[Coords]()
+            val nonNormalSet = new mutable.ListBuffer[NonNormalBlock]()
             val checkQueue = new mutable.Queue[Coords]()
 
             moveSet += root
@@ -35,12 +38,25 @@ object UtilScala {
               val curr = checkQueue.dequeue()
               if(shouldBlockBeMovable(world, curr.x, curr.y, curr.z)) {
                 moveSet += curr
+                val bId = world.getBlockId(curr.x, curr.y, curr.z)
+                val theBlock = Block.blocksList(bId)
+                if(theBlock != null) {
+                  if(! theBlock.isOpaqueCube) {
+                    val t = world.getBlockTileEntity(curr.x, curr.y, curr.z)
+                    val data = new NBTTagCompound()
+                    if(t != null) t.writeToNBT(data)
+                    val theBlockId = world.getBlockId(curr.x, curr.y, curr.z)
+                    val theBlockMeta = world.getBlockMetadata(curr.x, curr.y, curr.z)
+                    nonNormalSet += NonNormalBlock(curr, theBlockId, theBlockMeta, data)
+                    world.setBlockToAir(curr.x, curr.y, curr.z)
+                  }
+                }
                 addToQueueForBlock(checkQueue, moveSet, curr, world)
               }
             }
 
             var failure = false
-            moveSet.map { el =>
+            breakable { for(el <- moveSet) {
               if(! world.isAirBlock(el.x + dir.offsetX, el.y + dir.offsetY, el.z + dir.offsetZ)) {
                 var found = false
                 moveSet.map { u =>
@@ -49,9 +65,12 @@ object UtilScala {
                   }
                 }
 
-                if(! found) failure = true
+                if(! found) {
+                  failure = true
+                  break()
+                }
               }
-            }
+            }}
 
             if(! failure) {
               val ordering = getOrdering(dir)
@@ -59,6 +78,24 @@ object UtilScala {
 
               sorted.map { u =>
                 Util.moveBlock(world, u.x, u.y, u.z, u.x + dir.offsetX, u.y + dir.offsetY, u.z + dir.offsetZ)
+              }
+
+              for(n <- nonNormalSet) { {
+                  world.setBlock(n.t.x + dir.offsetX, n.t.y + dir.offsetY, n.t.z + dir.offsetZ, n.id, n.meta, 3)
+                  val tileEntity = world.getBlockTileEntity(n.t.x + dir.offsetX, n.t.y + dir.offsetY, n.t.z + dir.offsetZ)
+                  if(tileEntity != null && n.data != null) {
+                    tileEntity.readFromNBT(n.data)
+                  }
+                }
+              }
+            } else {
+              for(n <- nonNormalSet) { {
+                world.setBlock(n.t.x, n.t.y, n.t.z, n.id, n.meta, 3)
+                val tileEntity = world.getBlockTileEntity(n.t.x, n.t.y, n.t.z)
+                if(tileEntity != null && n.data != null) {
+                  tileEntity.readFromNBT(n.data)
+                }
+              }
               }
             }
 
@@ -199,3 +236,5 @@ object UtilScala {
 }
 
 case class Coords(x: Int, y: Int, z: Int)
+
+case class NonNormalBlock(t: Coords, id: Int, meta: Int, data: NBTTagCompound)

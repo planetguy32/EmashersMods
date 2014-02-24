@@ -100,4 +100,8 @@ class ModElevator(id: Int) extends SocketModule(id, "sockets:elevatorUp", "socke
       }
     }
   }
+
+  override def onAdjChange(ts: SocketTileAccess, config: SideConfig, side: ForgeDirection) {
+    onSocketPlaced(config, ts, side)
+  }
 }

@@ -39,7 +39,7 @@ import emasher.core.hemp.*;
 
 import java.util.*;
 
-@Mod(modid="emashercore", name="Emasher Resource", version="1.2.3.1")
+@Mod(modid="emashercore", name="Emasher Resource", version="1.2.3.4")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false)
 public class EmasherCore 
 {

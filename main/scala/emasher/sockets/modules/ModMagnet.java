@@ -1,19 +1,48 @@
 package emasher.sockets.modules;
 
 import emasher.api.SocketModule;
+import emasher.sockets.SocketsMod;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+
+import java.util.List;
 
 public class ModMagnet extends SocketModule
 {
 
-    public ModMagnet(int id)
+    public ModMagnet(int id, String texture)
     {
-        super(id, "sockets:magnet");
+        super(id, texture);
     }
 
     @Override
     public String getLocalizedName()
     {
         return "Magnet";
+    }
+
+    @Override
+    public void getToolTip(List l)
+    {
+        l.add("Pushes or pulls adjacent blocks when the socket moves");
+    }
+
+    @Override
+    public void getIndicatorKey(List l)
+    {
+        l.add(SocketsMod.PREF_RED + "Enabled");
+        l.add(SocketsMod.PREF_DARK_PURPLE + "Enabled");
+    }
+
+    @Override
+    public void addRecipe()
+    {
+        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "i", "b",
+                Character.valueOf('i'), Block.blockIron,
+                Character.valueOf('b'), SocketsMod.blankSide));
     }
 
     @Override

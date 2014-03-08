@@ -1,6 +1,9 @@
 package emasher.api;
 
+import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
+import emasher.sockets.pipes.TileAdapterBase;
+import emasher.sockets.pipes.TileDirectionChanger;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.entity.Entity;
@@ -15,6 +18,7 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.fluids.BlockFluidBase;
 
 import java.util.List;
 
@@ -67,15 +71,14 @@ public class Util
         TileEntity te1 = world.getBlockTileEntity(x, y, z);
         NBTTagCompound nbt1 = new NBTTagCompound();
         if(te1 != null) te1.writeToNBT(nbt1);
-        world.setBlockToAir(x, y, z);
         world.removeBlockTileEntity(x, y, z);
-
+        world.setBlockToAir(x, y, z);
 
         TileEntity te2 = world.getBlockTileEntity(nx, ny, nz);
         NBTTagCompound nbt2 = new NBTTagCompound();
         if(te2 != null) te2.writeToNBT(nbt2);
-        world.setBlockToAir(nx, ny, nz);
         world.removeBlockTileEntity(nx, ny, nz);
+        world.setBlockToAir(nx, ny, nz);
 
         world.setBlock(x, y, z, id2, meta2, 3);
         if(b2 instanceof BlockContainer)
@@ -117,13 +120,83 @@ public class Util
             }
         }
 
+        TileEntity te = world.getBlockTileEntity(x, y, z);
+        if(te != null)
+        {
+            if(te instanceof SocketTileAccess)
+            {
+                SocketTileAccess ts = (SocketTileAccess)te;
+                for(int i = 0; i < 6; i++)
+                {
+                    ForgeDirection side = ForgeDirection.getOrientation(i);
+                    SocketModule m = ts.getSide(side);
+                    m.onSocketPlaced(ts.getConfigForSide(side), ts, side);
+                    ts.sendClientSideState(i);
+                }
+            }
+
+            if(te instanceof TileAdapterBase)
+            {
+                TileAdapterBase ta = (TileAdapterBase)te;
+                for(int i = 0; i < 6; i++)
+                {
+                    PacketHandler.instance.sendClientAdapterSide(ta, i);
+                }
+            }
+
+            if(te instanceof TileDirectionChanger)
+            {
+                TileDirectionChanger td = (TileDirectionChanger)te;
+                for(int i = 0; i < 6; i++)
+                {
+                    PacketHandler.instance.sendClientChangerSide(td, i);
+                }
+            }
+        }
+
+
+        te = world.getBlockTileEntity(nx, ny, nz);
+
+        if(te != null)
+        {
+            if(te instanceof SocketTileAccess)
+            {
+                SocketTileAccess ts = (SocketTileAccess)te;
+                for(int i = 0; i < 6; i++)
+                {
+                    ForgeDirection side = ForgeDirection.getOrientation(i);
+                    SocketModule m = ts.getSide(side);
+                    m.onSocketPlaced(ts.getConfigForSide(side), ts, side);
+                    ts.sendClientSideState(i);
+                }
+            }
+
+            if(te instanceof TileAdapterBase)
+            {
+                TileAdapterBase ta = (TileAdapterBase)te;
+                for(int i = 0; i < 6; i++)
+                {
+                    PacketHandler.instance.sendClientAdapterSide(ta, i);
+                }
+            }
+
+            if(te instanceof TileDirectionChanger)
+            {
+                TileDirectionChanger td = (TileDirectionChanger)te;
+                for(int i = 0; i < 6; i++)
+                {
+                    PacketHandler.instance.sendClientChangerSide(td, i);
+                }
+            }
+        }
+
         return true;
     }
 
     public static boolean canMoveBlock(World world, int x, int y, int z, int nx, int ny, int nz)
     {
         if(ny >= 255 || ny <= 0) return false;
-        if(! world.isAirBlock(nx, ny, nz)) return false;
+        if(! isBlockReplaceable(world, nx, ny, nz)) return false;
         int id = world.getBlockId(x, y, z);
         if(id == SocketsMod.miniPortal.blockID) return false;
         Block b = Block.blocksList[id];
@@ -132,8 +205,13 @@ public class Util
 
     public static boolean moveBlock(World world, int x, int y, int z, int nx, int ny, int nz)
     {
+        return moveBlock(world, x, y, z, nx, ny, nz, true);
+    }
+
+    public static boolean moveBlock(World world, int x, int y, int z, int nx, int ny, int nz, boolean updateSocket)
+    {
         if(ny >= 255 || ny <= 0) return false;
-        if(! world.isAirBlock(nx, ny, nz)) return false;
+        if(! isBlockReplaceable(world, nx, ny, nz)) return false;
         int id = world.getBlockId(x, y, z);
         if(id == SocketsMod.miniPortal.blockID) return false;
         Block b = Block.blocksList[id];
@@ -152,12 +230,11 @@ public class Util
 
         world.setBlock(nx, ny, nz, id, meta, 3);
 
-        List ents = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getAABBPool().getAABB(x - 1, y, z - 1, x, y + 2, z));
+        List ents = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getAABBPool().getAABB(x, y, z, x + 1, y + 3, z + 1));
         for(Object e: ents) {
             if(e instanceof Entity)
             {
                 Entity ent = (Entity)e;
-                System.out.println("Test"); //TODO
                 ent.setPosition(ent.posX + (nx - x), ent.posY + (ny - y), ent.posZ + (nz - z));
             }
         }
@@ -170,7 +247,7 @@ public class Util
             te.yCoord = ny;
             te.zCoord = nz;
 
-            if(te instanceof SocketTileAccess) for(int i = 0; i < 6; i++)
+            if(updateSocket && te instanceof SocketTileAccess) for(int i = 0; i < 6; i++)
             {
                 ForgeDirection d = ForgeDirection.getOrientation(i);
                 SocketModule m = ((SocketTileAccess) te).getSide(d);
@@ -179,6 +256,23 @@ public class Util
         }
 
         return true;
+    }
+
+    public static boolean isBlockReplaceable(World world, int x, int y, int z)
+    {
+        int id = world.getBlockId(x, y, z);
+        return world.isAirBlock(x, y, z) ||
+                id == Block.vine.blockID ||
+                id == Block.tallGrass.blockID ||
+                id == Block.deadBush.blockID ||
+                id == Block.fire.blockID ||
+                id == Block.waterMoving.blockID ||
+                id == Block.waterStill.blockID ||
+                id == Block.lavaMoving.blockID ||
+                id == Block.lavaStill.blockID ||
+                (Block.blocksList[id] != null &&
+                        (Block.blocksList[id].isBlockReplaceable(world, x, y, z) ||
+                        Block.blocksList[id] instanceof BlockFluidBase));
     }
 	
 

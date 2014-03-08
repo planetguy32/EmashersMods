@@ -46,7 +46,7 @@ import emasher.sockets.modules.*;
 import emasher.sockets.client.ClientProxy;
 import emasher.sockets.pipes.*;
 
-@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.7.3", dependencies = "required-after:emashercore")
+@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.8.2", dependencies = "required-after:emashercore")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false,
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = ClientPacketHandler.class),
@@ -352,7 +352,9 @@ public class SocketsMod
         ModuleRegistry.registerModule(new ModInternalClock(44));
         ModuleRegistry.registerModule(new ModTrack(45));
         ModuleRegistry.registerModule(new ModAccelerometer(46));
-        ModuleRegistry.registerModule(new ModMagnet(47));
+        ModuleRegistry.registerModule(new ModMagnet(47, "sockets:magnet"));
+        ModuleRegistry.registerModule(new ModMagnetInput(48));
+        ModuleRegistry.registerModule(new ModMagnetOutput(49));
 		ModuleRegistry.registerModule(new ModBurner(64));
 		ModuleRegistry.registerModule(new ModBreaker(65));
 		if(enableWaterIntake) ModuleRegistry.registerModule(new ModOsPump(66));
@@ -457,10 +459,30 @@ public class SocketsMod
         GameRegistry.registerBlock(frame, "emasher_frame");
         LanguageRegistry.addName(frame, "Socket Frame");
 
-        GameRegistry.addShapelessRecipe(new ItemStack(frame, 2), new Object[]
-                {
-                       new ItemStack(EmasherCore.ingot, 1, 7)
-                });
+
+        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(frame, 4),
+                "s s",
+                " s ",
+                "s  ",
+                Character.valueOf('s'), "ingotSteel"));
+
+        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(frame, 4),
+                "s s",
+                " s ",
+                "s  ",
+                Character.valueOf('s'), "ingotAluminum"));
+
+        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(frame, 4),
+                "s s",
+                " s ",
+                "s  ",
+                Character.valueOf('s'), "ingotAluminium"));
+
+        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(frame, 4),
+                "s s",
+                " s ",
+                "s  ",
+                Character.valueOf('s'), "ingotBronze"));
 
 
 		paintedPlanks = (new BlockPaintedWood(paintedPlankID, 0, Material.wood))
@@ -663,6 +685,7 @@ public class SocketsMod
 		GrinderRecipeRegistry.registerRecipe("oreGold", new ItemStack(dusts, 1, ItemDusts.Const.groundGold.ordinal()));
 		GrinderRecipeRegistry.registerRecipe("oreIron", new ItemStack(dusts, 1, ItemDusts.Const.groundIron.ordinal()));
 		GrinderRecipeRegistry.registerRecipe("oreAluminum", new ItemStack(dusts, 1, ItemDusts.Const.groundBauxite.ordinal()));
+        GrinderRecipeRegistry.registerRecipe("oreAluminium", new ItemStack(dusts, 1, ItemDusts.Const.groundBauxite.ordinal()));
 		GrinderRecipeRegistry.registerRecipe("oreTin", new ItemStack(dusts, 1, ItemDusts.Const.groundCassiterite.ordinal()));
 		GrinderRecipeRegistry.registerRecipe("oreCopper", new ItemStack(dusts, 1, ItemDusts.Const.groundNativeCopper.ordinal()));
 		GrinderRecipeRegistry.registerRecipe("oreNickel", new ItemStack(dusts, 1, ItemDusts.Const.groundPentlandite.ordinal()));

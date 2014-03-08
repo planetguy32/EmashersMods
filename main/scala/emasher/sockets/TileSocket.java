@@ -107,12 +107,6 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	
 	public void updateEntity()
 	{
-		/*if(worldObj.getBlockId(xCoord, yCoord, zCoord) != SocketsMod.socket.blockID && worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) instanceof TileSocket)
-		{
-			worldObj.removeBlockTileEntity(xCoord, yCoord, zCoord);
-			return;
-		}*/
-		
 		if(worldObj.isRemote)
 		{
 			updateCoolDown++;
@@ -333,6 +327,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	    capacitor.readFromNBT(data);
 	    int power = capacitor.getEnergyStored();
 	    if(data.hasKey("powerCap2")) this.setMaxEnergyStored((int)data.getInteger("powerCap2"));
+        //if(data.hasKey("realPower")) power = data.getInteger("realPower");
 	    capacitor.setEnergyStored(power);
 	    
 	    
@@ -400,6 +395,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		
 		if(capacitor != null)
 		{
+            //data.setInteger("realPower", capacitor.getEnergyStored());
 			capacitor.writeToNBT(data);
 			data.setInteger("powerCap2", capacitor.getMaxEnergyStored());
 		}

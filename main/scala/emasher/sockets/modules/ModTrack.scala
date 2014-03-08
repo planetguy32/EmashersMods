@@ -4,7 +4,7 @@ import emasher.api._
 import net.minecraft.item.crafting.CraftingManager
 import net.minecraftforge.oredict.ShapedOreRecipe
 import net.minecraft.item.{Item, ItemStack}
-import emasher.sockets.SocketsMod
+import emasher.sockets.{Coords, UtilScala, SocketsMod}
 import net.minecraftforge.common.ForgeDirection
 import net.minecraft.entity.Entity
 import net.minecraft.util.AxisAlignedBB
@@ -18,8 +18,9 @@ class ModTrack(id: Int) extends SocketModule(id, "sockets:trackUp", "sockets:tra
 
   override def addRecipe(): Unit = {
     CraftingManager.getInstance().getRecipeList.asInstanceOf[java.util.List[Object]]
-      .add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 2, moduleID), " m ", "iii",
+      .add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 2, moduleID), "pmp", "iii",
       Character.valueOf('i'), Item.ingotIron,
+      Character.valueOf('p'), Block.pistonBase,
       Character.valueOf('m'), new ItemStack(SocketsMod.blankSide)))
   }
 
@@ -52,6 +53,13 @@ class ModTrack(id: Int) extends SocketModule(id, "sockets:trackUp", "sockets:tra
   override def onRSInterfaceChange(config: SideConfig, index: Int, ts: SocketTileAccess, side: ForgeDirection, on: Boolean): Unit = {
     if(! on) return
     if(! config.rsControl(index)) return
+
+    for(i <- 0 to 5) {
+      val d = ForgeDirection.getOrientation(i)
+      val m = ts.getSide(d)
+      val c = ts.getConfigForSide(d)
+      if(m.isInstanceOf[ModAccelerometer] && c.rsControl(index)) return
+    }
 
     val nx = config.meta match {
       case 0 => ts.xCoord

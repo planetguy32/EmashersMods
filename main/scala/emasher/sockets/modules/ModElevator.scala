@@ -4,7 +4,7 @@ import emasher.api._
 import net.minecraft.item.crafting.CraftingManager
 import net.minecraftforge.oredict.ShapedOreRecipe
 import net.minecraft.item.{Item, ItemStack}
-import emasher.sockets.SocketsMod
+import emasher.sockets.{Coords, UtilScala, SocketsMod}
 import net.minecraftforge.common.ForgeDirection
 import net.minecraft.entity.Entity
 import net.minecraft.util.AxisAlignedBB
@@ -56,17 +56,18 @@ class ModElevator(id: Int) extends SocketModule(id, "sockets:elevatorUp", "socke
     if(! on) return
     if(! config.rsControl(index)) return
 
-    /*val ny = config.rsLatch(0) match {
-      case true => ts.yCoord - 1
-      case false => ts.yCoord + 1
-    }*/
+    for(i <- 0 to 5) {
+      val d = ForgeDirection.getOrientation(i)
+      val m = ts.getSide(d)
+      val c = ts.getConfigForSide(d)
+      if(m.isInstanceOf[ModAccelerometer] && c.rsControl(index)) return
+    }
 
     val dir = config.rsLatch(0) match {
       case true => ForgeDirection.DOWN
       case false => ForgeDirection.UP
     }
 
-    //val done = Util.moveBlock(ts.worldObj, ts.xCoord, ts.yCoord, ts.zCoord, ts.xCoord, ny, ts.zCoord)
     val world = ts.worldObj
     val x = ts.xCoord
     val y = ts.yCoord

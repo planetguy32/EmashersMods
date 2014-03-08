@@ -22,7 +22,7 @@ class ModAccelerometer(id: Int) extends RSPulseModule(id, "sockets:accelerometer
   override def addRecipe(): Unit = {
     CraftingManager.getInstance().getRecipeList.asInstanceOf[java.util.List[Object]]
       .add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "rbr", " m ",
-      Character.valueOf('b'), SocketsMod.slickBucket,
+      Character.valueOf('b'), Item.netherQuartz,
       Character.valueOf('r'), Item.redstone,
       Character.valueOf('m'), new ItemStack(SocketsMod.blankSide)))
   }

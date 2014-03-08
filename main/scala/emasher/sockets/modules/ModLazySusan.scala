@@ -21,7 +21,7 @@ class ModLazySusan(id: Int) extends SocketModule(id, "sockets:lazySusan") {
 
   override def addRecipe(): Unit = {
     CraftingManager.getInstance().getRecipeList.asInstanceOf[java.util.List[Object]]
-      .add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 2, moduleID), " m ", "mpm", " m ",
+      .add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 4, moduleID), " m ", "mpm", " m ",
       Character.valueOf('p'), Item.ingotIron,
       Character.valueOf('m'), new ItemStack(SocketsMod.module, 1, 40)))
   }

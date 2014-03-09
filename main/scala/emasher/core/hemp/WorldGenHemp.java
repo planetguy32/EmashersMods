@@ -36,7 +36,7 @@ public class WorldGenHemp implements IWorldGenerator
     		{
     			if (EmasherCore.hemp.canBlockStay(world, i, world.getHeightValue(i, k), k) && random.nextInt(100) == 0)
     			{
-    				world.setBlock(i, world.getHeightValue(i, k), k, EmasherCore.hemp.blockID, 0, 2);
+    				world.setBlock(i, world.getHeightValue(i, k), k, EmasherCore.hemp, 0, 2);
     			}
     		}
     	}

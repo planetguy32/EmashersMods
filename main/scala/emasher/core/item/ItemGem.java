@@ -5,20 +5,20 @@ import java.util.List;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import emasher.core.EmasherCore;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 
 public class ItemGem extends Item
 {
 	@SideOnly(Side.CLIENT)
-	public Icon[] textures;
+	public IIcon[] textures;
 
-	public ItemGem(int id)
+	public ItemGem()
 	{
-		super(id);
+		super();
 		this.setCreativeTab(EmasherCore.tabEmasher);
 		setHasSubtypes(true);
 	}
@@ -26,16 +26,17 @@ public class ItemGem extends Item
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIconFromDamage(int damage)
+	public IIcon getIconFromDamage(int damage)
 	{
+        if(textures == null)System.out.println("textures are null");
+        System.out.println(damage);
 		return textures[damage];
 	}
 	
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister ir)
+	public void registerIcons(IIconRegister ir)
 	{
-		textures = new Icon[3];
+		textures = new IIcon[3];
 		
 		textures[0] = ir.registerIcon("emashercore:gemEmery");
 		textures[1] = ir.registerIcon("emashercore:gemRuby");
@@ -65,7 +66,7 @@ public class ItemGem extends Item
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-    public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
+    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List)
 	{	
 		for(int i = 0; i < 3; i++) par3List.add(new ItemStack(par1, 1, i));
     }

@@ -2,15 +2,16 @@ package emasher.core;
 
 import java.util.Random;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraft.world.*;
 
 public class CoreWorldGenUpdater
 {
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void Load(ChunkEvent event)
 	{
 		Chunk chunk = event.getChunk();
@@ -23,7 +24,7 @@ public class CoreWorldGenUpdater
 			
 			try
 			{
-				if(world.getBlockId(x + 14, 0, z + 14) == Block.bedrock.blockID)
+				if(world.getBlock(x + 14, 0, z + 14) == Blocks.bedrock)
 		    	{
 		    		if(world.getBlockMetadata(x + 14, 0, z + 14) == 0)
 		    		{

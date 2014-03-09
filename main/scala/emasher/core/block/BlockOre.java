@@ -6,13 +6,13 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.*;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -26,25 +26,25 @@ import emasher.core.EmasherCore;
 public class BlockOre extends Block
 {
 	
-	private static Icon[] textures;
+	private static IIcon[] textures;
 	private int numBlocks;
 
 	public BlockOre(int par1, int par2, Material par4Material) 
 	{
-		super(par1, par4Material);
+		super(par4Material);
 		this.setCreativeTab(EmasherCore.tabEmasher);
 		numBlocks = 8;
-		textures = new Icon[numBlocks];
+		textures = new IIcon[numBlocks];
 	}
 	
 	@Override
-	public Icon getIcon(int side, int meta)
+	public IIcon getIcon(int side, int meta)
 	{
 		return textures[meta];
 	}
 	
 	@Override
-    public void registerIcons(IconRegister ir)
+    public void registerBlockIcons(IIconRegister ir)
     {
 		this.blockIcon = ir.registerIcon("emashercore:oreBauxite");
 		textures[0] = blockIcon;
@@ -58,7 +58,7 @@ public class BlockOre extends Block
     }
 	
 	@Override
-	public ArrayList<ItemStack> getBlockDropped(World world, int x, int y, int z, int meta, int f)
+	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int meta, int f)
     {
 		ArrayList<ItemStack> result = new ArrayList<ItemStack>();
 		
@@ -103,9 +103,9 @@ public class BlockOre extends Block
 	
 	 
 
-	
+	@Override
 	@SideOnly(Side.CLIENT)
-    public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List)
+    public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List par3List)
 	{	
 		for(int i = 0; i < 8; i++) par3List.add(new ItemStack(par1, 1, i));
     }
@@ -114,6 +114,6 @@ public class BlockOre extends Block
 	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z)
 	{
 		int meta = world.getBlockMetadata(x, y, z);
-		return new ItemStack(this.blockID, 1, meta);
+		return new ItemStack(this, 1, meta);
 	}
 }

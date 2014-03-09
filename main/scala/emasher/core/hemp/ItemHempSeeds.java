@@ -5,10 +5,11 @@ import java.util.Random;
 import emasher.core.EmasherCore;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.*;
@@ -16,12 +17,12 @@ import net.minecraft.world.World;
 
 public class ItemHempSeeds extends Item
 {
-	private int spawnID;
+	private Block spawnID;
 
-	public ItemHempSeeds(int i, Block block)
+	public ItemHempSeeds(Block block)
 	{
-		super(i);
-		spawnID = block.blockID;
+		super();
+		spawnID = block;
 		
 		this.setCreativeTab(EmasherCore.tabEmasher);
 		//setIconIndex(4);
@@ -30,13 +31,13 @@ public class ItemHempSeeds extends Item
 	
 	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
-        int var11 = par3World.getBlockId(par4, par5, par6);
+        Block var11 = par3World.getBlock(par4, par5, par6);
 
-        if (var11 == Block.snow.blockID)
+        if (var11 == Blocks.snow)
         {
             par7 = 1;
         }
-        else if (var11 != Block.vine.blockID && var11 != Block.tallGrass.blockID && var11 != Block.deadBush.blockID)
+        else if (var11 != Blocks.vine && var11 != Blocks.tallgrass && var11 != Blocks.deadbush)
         {
             if (par7 == 0)
             {
@@ -81,18 +82,18 @@ public class ItemHempSeeds extends Item
         {
             if (par3World.canPlaceEntityOnSide(this.spawnID, par4, par5, par6, false, par7, (Entity)null, par1ItemStack))
             {
-                Block var12 = Block.blocksList[this.spawnID];
+                Block var12 = spawnID;
                 int var13 = var12.onBlockPlaced(par3World, par4, par5, par6, par7, par8, par9, par10, 0);
 
                 if (par3World.setBlock(par4, par5, par6, this.spawnID, var13, 2))
                 {
-                    if (par3World.getBlockId(par4, par5, par6) == this.spawnID)
+                    if (par3World.getBlock(par4, par5, par6) == this.spawnID)
                     {
-                        Block.blocksList[this.spawnID].onBlockPlacedBy(par3World, par4, par5, par6, par2EntityPlayer, par1ItemStack);
-                        Block.blocksList[this.spawnID].onPostBlockPlaced(par3World, par4, par5, par6, var13);
+                        spawnID.onBlockPlacedBy(par3World, par4, par5, par6, par2EntityPlayer, par1ItemStack);
+                        spawnID.onPostBlockPlaced(par3World, par4, par5, par6, var13);
                     }
 
-                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getPlaceSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
+                    par3World.playSoundEffect((double)((float)par4 + 0.5F), (double)((float)par5 + 0.5F), (double)((float)par6 + 0.5F), var12.stepSound.getBreakSound(), (var12.stepSound.getVolume() + 1.0F) / 2.0F, var12.stepSound.getPitch() * 0.8F);
                     --par1ItemStack.stackSize;
                 }
             }
@@ -102,7 +103,7 @@ public class ItemHempSeeds extends Item
     }
 	
 	@Override
-	public void registerIcons(IconRegister iconRegister)
+	public void registerIcons(IIconRegister iconRegister)
 	{
 		itemIcon = iconRegister.registerIcon("emashercore:hempSeeds");
 	}

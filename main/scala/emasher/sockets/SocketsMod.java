@@ -46,7 +46,7 @@ import emasher.sockets.modules.*;
 import emasher.sockets.client.ClientProxy;
 import emasher.sockets.pipes.*;
 
-@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.8.2", dependencies = "required-after:emashercore")
+@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.8.3", dependencies = "required-after:emashercore")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false,
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = ClientPacketHandler.class),
@@ -446,7 +446,7 @@ public class SocketsMod
 			
 		}
 
-        directionChanger = new BlockDirectionChanger(directionChangerID).setResistance(8.0F).setHardness(2.0F).setLightValue(7.0F).setStepSound(Block.soundGlassFootstep).setUnlocalizedName("emasher_direction_changer");
+        directionChanger = new BlockDirectionChanger(directionChangerID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundGlassFootstep).setUnlocalizedName("emasher_direction_changer");
 		GameRegistry.registerBlock(directionChanger, "emasher_direction_changer");
         LanguageRegistry.addName(directionChanger, "Direction Changer");
 

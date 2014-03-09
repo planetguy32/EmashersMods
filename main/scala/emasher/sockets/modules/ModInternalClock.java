@@ -17,8 +17,7 @@ import emasher.sockets.*;
 
 public class ModInternalClock extends SocketModule
 {
-
-    public static final int[] settings = new int[] { 10, 20, 40, 80, 160, 200, 600, 1200 };
+    public static final int[] settings = new int[] { 20, 40, 80, 160, 200, 600, 1200, 2400 };
 
     public ModInternalClock(int id)
     {

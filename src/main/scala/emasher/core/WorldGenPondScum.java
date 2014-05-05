@@ -1,0 +1,65 @@
+package emasher.core;
+
+import java.util.Random;
+
+import net.minecraftforge.common.*;
+
+import net.minecraft.block.Block;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.IChunkProvider;
+import static net.minecraftforge.common.BiomeDictionary.Type;
+
+import cpw.mods.fml.common.IWorldGenerator;
+
+public class WorldGenPondScum implements IWorldGenerator
+{
+	public void generate(Random var2, int var3, int var5, World var1,  IChunkProvider provider, IChunkProvider provider2) 
+	{
+		var3 *= 16;
+		var5 *= 16;
+		
+		int startX, startY, startZ;
+		startX = var3 + var2.nextInt(16);
+		startZ = var5 + var2.nextInt(16);
+		BiomeGenBase biome = var1.getWorldChunkManager().getBiomeGenAt(startX, startZ);
+		
+		boolean generate = false;
+		
+		generate = EmasherCore.spawnAlgae && (BiomeDictionary.isBiomeOfType(biome, Type.SWAMP) || BiomeDictionary.isBiomeOfType(biome, Type.JUNGLE));
+		
+		if(generate)
+		{
+			for(int i = 0; i<20; i++)
+			{
+				
+				startY = var1.getHeightValue(startX, startZ) - 1;
+				
+				genScum(var1, var2, startX, startY, startZ, 0);
+			}
+		}
+		
+		
+	}
+	
+	private void genScum(World world, Random gen, int x, int y, int z, int depth)
+	{
+		int startId = world.getBlockId(x, y, z);
+		
+		
+		if(depth < 500 && startId == Block.waterStill.blockID && world.isAirBlock(x, y + 1, z))
+		{
+
+			world.setBlock(x, y + 1, z, EmasherCore.algae.blockID, 0, 2);
+				
+			
+			if(gen.nextInt(4) != 0)for(int i = 0; i<3; i++)
+			{
+				int incX = gen.nextInt(3) - 1;
+				int incZ = gen.nextInt(3) - 1; 
+				
+				genScum(world, gen, x + incX, y, z + incZ, depth + 1);
+			}
+		}
+	}
+}

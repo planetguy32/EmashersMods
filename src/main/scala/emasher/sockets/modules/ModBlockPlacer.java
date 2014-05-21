@@ -4,8 +4,6 @@ import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 
-import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtil;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;

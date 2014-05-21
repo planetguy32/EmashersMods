@@ -21,7 +21,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.*;
 
-import buildcraft.BuildCraftEnergy;
 import cpw.mods.fml.common.Loader;
 import emasher.gas.EmasherGas;
 
@@ -58,9 +57,10 @@ public class TileShaleResource extends TileEntity
 			{
 				setFluid(EmasherGas.fluidNaturalGas);
 			}
-			else if(Loader.isModLoaded("BuildCraft|Core") && meta == 1)
+			else if(Loader.isModLoaded("BuildCraft|Core") && FluidRegistry.getFluid("oil") != null && meta == 1)
 			{
-				setFluid(BuildCraftEnergy.fluidOil);
+                Fluid oil = FluidRegistry.getFluid("oil");
+				setFluid(oil);
 			}
 			else if(meta == 2)
 			{

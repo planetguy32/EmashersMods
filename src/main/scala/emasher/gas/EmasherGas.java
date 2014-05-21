@@ -45,7 +45,6 @@ import emasher.gas.worldgen.WorldGenGasVent;
 import emasher.gas.worldgen.WorldGenerationUpdater;
 import emasher.sockets.SocketsMod;
 import emasher.sockets.items.ItemDusts;
-import buildcraft.BuildCraftEnergy;
 
 
 @Mod(modid="gascraft", name="GasCraft", version="2.0.4.3", dependencies = "required-after:eng_toolbox")
@@ -375,9 +374,10 @@ public class EmasherGas
 		GeneratorFuelRegistry.registerFuel(new FluidStack(fluidNaturalGas, 1000), 500, 60, true);
 		GeneratorFuelRegistry.registerFuel(new FluidStack(fluidHydrogen, 1000), 500, 60, false);
 		
-		if(Loader.isModLoaded("BuildCraft|Core"))
+		if(Loader.isModLoaded("BuildCraft|Core") && FluidRegistry.getFluid("fuel") != null)
 		{
-			GeneratorFuelRegistry.registerFuel(new FluidStack(BuildCraftEnergy.fluidFuel, 1000), 1000, 60, true);
+            Fluid fuel = FluidRegistry.getFluid("fuel");
+			GeneratorFuelRegistry.registerFuel(new FluidStack(fuel, 1000), 1000, 60, true);
 		}
 		
 		//TE

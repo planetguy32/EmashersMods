@@ -25,7 +25,6 @@ import emasher.api.SocketModule;
 import emasher.core.EmasherCore;
 import emasher.sockets.items.*;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.transport.ItemFacade;
 
 public class BlockSocket extends BlockContainer
 {
@@ -248,7 +247,7 @@ public class BlockSocket extends BlockContainer
 					}
 				}
 			}
-			else if(Loader.isModLoaded("BuildCraft|Core") && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemFacade)
+			/*else if(Loader.isModLoaded("BuildCraft|Core") && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemFacade)
 			{
 				int bId = ItemFacade.getBlockId(player.getCurrentEquippedItem());
 				
@@ -259,7 +258,7 @@ public class BlockSocket extends BlockContainer
 					PacketHandler.instance.SendClientSideState(ts, (byte)side);
 					player.getCurrentEquippedItem().stackSize--;
 				}
-			}
+			}*/
 			else
 			{
 				SocketModule m = ts.getSide(ForgeDirection.getOrientation(side));

@@ -18,8 +18,6 @@ import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
-import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.Transactor;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;

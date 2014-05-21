@@ -1,5 +1,7 @@
 package emasher.gas.fluids;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraft.util.Icon;
 import net.minecraftforge.fluids.Fluid;
@@ -33,13 +35,27 @@ public class FluidGas extends Fluid
 	@Override
 	public Icon getStillIcon()
     {
-        return Block.blocksList[this.blockID].getBlockTextureFromSide(0);
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+        {
+            return Block.blocksList[this.blockID].getBlockTextureFromSide(0);
+        }
+        else
+        {
+            return null;
+        }
     }
 	
 	@Override
     public Icon getFlowingIcon()
     {
-        return Block.blocksList[this.blockID].getBlockTextureFromSide(0);
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+        {
+            return Block.blocksList[this.blockID].getBlockTextureFromSide(0);
+        }
+        else
+        {
+            return null;
+        }
     }
 
 }

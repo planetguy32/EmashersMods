@@ -199,7 +199,7 @@ object UtilScala {
 
   def shouldBlockBeMovable(world: World, x: Int, y: Int, z: Int): Boolean = {
     val id: Int = world.getBlockId(x, y, z)
-    if(id == SocketsMod.miniPortal.blockID) return false
+    if(SocketsMod.miniPortal != null && id == SocketsMod.miniPortal.blockID) return false
     val b: Block = Block.blocksList(id)
     !(b != null && b.blockHardness < 0)
   }

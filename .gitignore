@@ -1,3 +1,14 @@
+eclipse
+.gradle
+gradle
+out
+EmashersMods.iml
+EmashersMods.ipr
+EmashersMods.iws
+gradlew
+gradlew.bat
+makearchives.bat
+
 #################
 ## Eclipse
 #################

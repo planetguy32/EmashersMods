@@ -65,8 +65,8 @@ public class BlockMiniPortal extends BlockAdapterBase
 	
 	@Override
 	public boolean canPlaceBlockAt(World world, int x, int y, int z)
-	{
-		if(! MinecraftServer.getServer().getAllowNether()) return false;
+    {
+		if(MinecraftServer.getServer() == null || ! MinecraftServer.getServer().getAllowNether()) return false;
 		if(world.provider.dimensionId == 0)
 		{
 			World nether = MinecraftServer.getServer().worldServerForDimension(-1);

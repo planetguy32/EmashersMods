@@ -17,8 +17,8 @@ public class FluidGas extends Fluid
 		super(fluidName);
 		internalID = iID;
 		this.setBlockID(theBlock);
-		//this.setStillIcon(theBlock.getBlockTextureFromSide(0));
-		//this.setFlowingIcon(theBlock.getBlockTextureFromSide(0));
+		this.setStillIcon(theBlock.getBlockTextureFromSide(0));
+		this.setFlowingIcon(theBlock.getBlockTextureFromSide(0));
 		this.setGaseous(true);
 		this.setViscosity(100);
 		this.setDensity(-1000);

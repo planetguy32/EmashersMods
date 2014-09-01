@@ -1,7 +1,7 @@
 package emasher.sockets.modules;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.sockets.TileSocket;

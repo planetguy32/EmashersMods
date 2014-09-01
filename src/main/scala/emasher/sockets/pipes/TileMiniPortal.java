@@ -5,7 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.*;
 
 public class TileMiniPortal extends TileAdapterBase implements IFluidHandler
@@ -48,7 +48,7 @@ public class TileMiniPortal extends TileAdapterBase implements IFluidHandler
 				int xo = xCoord + d.offsetX;
 				int yo = yCoord + d.offsetY;
 				int zo = zCoord + d.offsetZ;
-				TileEntity te = worldObj.getBlockTileEntity(xo, yo, zo);
+				TileEntity te = worldObj.getTileEntity(xo, yo, zo);
 				if(te != null && te instanceof IFluidHandler)
 				{
 					int amnt = ((IFluidHandler)te).fill(d.getOpposite(), drain(d, 16000, false), true);
@@ -90,7 +90,7 @@ public class TileMiniPortal extends TileAdapterBase implements IFluidHandler
 			World other = getOtherWorld();
 			if(other != null)
 			{
-				TileEntity te = other.getBlockTileEntity(partnerX, partnerY, partnerZ);
+				TileEntity te = other.getTileEntity(partnerX, partnerY, partnerZ);
 				
 				if(te != null && te instanceof TileMiniPortal)
 				{
@@ -121,7 +121,7 @@ public class TileMiniPortal extends TileAdapterBase implements IFluidHandler
         	World other = getOtherWorld();
 			if(other != null)
 			{
-				TileEntity te = other.getBlockTileEntity(partnerX, partnerY, partnerZ);
+				TileEntity te = other.getTileEntity(partnerX, partnerY, partnerZ);
 				
 				if(te != null && te instanceof TileMiniPortal)
 				{
@@ -154,7 +154,7 @@ public class TileMiniPortal extends TileAdapterBase implements IFluidHandler
         	World other = getOtherWorld();
 			if(other != null)
 			{
-				TileEntity te = other.getBlockTileEntity(partnerX, partnerY, partnerZ);
+				TileEntity te = other.getTileEntity(partnerX, partnerY, partnerZ);
 				
 				if(te != null && te instanceof TileMiniPortal)
 				{

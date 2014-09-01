@@ -1,12 +1,15 @@
 package emasher.sockets.modules
 
-import emasher.api._;
+import emasher.api
+import emasher.api.{SideConfig, SocketTileAccess, SocketModule};
 import emasher.core._;
 import java.util._;
-import emasher.sockets._;
+import emasher.sockets._
+import net.minecraft.init.{Blocks, Items}
+;
 import net.minecraft.item.crafting._;
 import net.minecraftforge.oredict._;
-import net.minecraftforge.common._;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraft.item._;
 import net.minecraft.entity.item._;
 import net.minecraft.block._;
@@ -18,7 +21,7 @@ class ModHusher(id: Int) extends SocketModule(id, "sockets:husher")
 	
 	override def addRecipe
 	{
-		CraftingManager.getInstance().getRecipeList().asInstanceOf[List[Object]].add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "dad", "nbn", "dad", Character.valueOf('d'), Item.diamond, Character.valueOf('a'), "ingotAluminum",
+		CraftingManager.getInstance().getRecipeList().asInstanceOf[List[Object]].add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "dad", "nbn", "dad", Character.valueOf('d'), Items.diamond, Character.valueOf('a'), "ingotAluminum",
 				Character.valueOf('n'), "ingotNickel", Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 5)));
 	}
 	
@@ -72,28 +75,28 @@ class ModHusher(id: Int) extends SocketModule(id, "sockets:husher")
 					
 					var tile = getTileToMine(config, ts, side);
 					var canExtractBlock = false;
-					var block = Block.blocksList(ts.worldObj.getBlockId(tile.x, tile.y, tile.z));
+					var block = ts.getWorldObj().getBlock(tile.x, tile.y, tile.z);
 					
 					if(block != null)
 					{
 						if(f.fluidID == FluidRegistry.WATER.getID)
 						{
-							if(block.getBlockHardness(ts.worldObj, tile.x, tile.y, tile.z) < Block.stone.blockHardness) canExtractBlock = true;
+							if(block.getBlockHardness(ts.getWorldObj(), tile.x, tile.y, tile.z) < Blocks.stone.getBlockHardness(ts.getWorldObj(), tile.x, tile.y, tile.z)) canExtractBlock = true;
 							else if(pressure && tile.y > 32) canExtractBlock = true;
 							
-							if(block.getBlockHardness(ts.worldObj, tile.x, tile.y, tile.z) >= Block.obsidian.blockHardness) canExtractBlock = false;
+							if(block.getBlockHardness(ts.getWorldObj(), tile.x, tile.y, tile.z) >= Blocks.obsidian.getBlockHardness(ts.getWorldObj(), tile.x, tile.y, tile.z)) canExtractBlock = false;
 						}
 						else if(f.fluidID == SocketsMod.fluidSlickwater.getID)
 						{
-							if(block.getBlockHardness(ts.worldObj, tile.x, tile.y, tile.z) < Block.obsidian.blockHardness) canExtractBlock = true;
+							if(block.getBlockHardness(ts.getWorldObj(), tile.x, tile.y, tile.z) < Blocks.obsidian.getBlockHardness(ts.getWorldObj(), tile.x, tile.y, tile.z)) canExtractBlock = true;
 							else if(pressure) canExtractBlock = true;
 						}
 						
-						if(block.blockHardness < 0) canExtractBlock = false;
+						if(block.getBlockHardness(ts.getWorldObj(), tile.x, tile.y, tile.z) < 0) canExtractBlock = false;
 						
 						if(canExtractBlock)
 						{
-							var items = block.getBlockDropped(ts.worldObj, tile.x, tile.y, tile.z, ts.worldObj.getBlockMetadata(tile.x, tile.y, tile.z), 0);
+							var items = block.getDrops(ts.getWorldObj(), tile.x, tile.y, tile.z, ts.getWorldObj().getBlockMetadata(tile.x, tile.y, tile.z), 0);
 							for(i <- 0 to items.size - 1)
 							{
 								var item = items.get(i).copy;
@@ -108,9 +111,9 @@ class ModHusher(id: Int) extends SocketModule(id, "sockets:husher")
 							}
 							
 							if(pressure) ts.useEnergy(240, false);
-							ts.worldObj.removeBlockTileEntity(tile.x, tile.y, tile.z);
-							if(f.fluidID == FluidRegistry.WATER.getID) ts.worldObj.setBlock(tile.x, tile.y, tile.z, Block.waterStill.blockID);
-							else ts.worldObj.setBlock(tile.x, tile.y, tile.z, SocketsMod.blockSlickwater.blockID);
+							ts.getWorldObj().removeTileEntity(tile.x, tile.y, tile.z);
+							if(f.fluidID == FluidRegistry.WATER.getID) ts.getWorldObj().setBlock(tile.x, tile.y, tile.z, Blocks.water);
+							else ts.getWorldObj().setBlock(tile.x, tile.y, tile.z, SocketsMod.blockSlickwater);
 							ts.drainInternal(config.tank, 1000, true);
 						}
 					}
@@ -132,13 +135,13 @@ class ModHusher(id: Int) extends SocketModule(id, "sockets:husher")
 			}
 		}
 		
-		var x = ts.xCoord + ts.worldObj.rand.nextInt(range * 2 + 1) - range;
-		var z = ts.zCoord + ts.worldObj.rand.nextInt(range * 2 + 1) - range;
+		var x = ts.xCoord + ts.getWorldObj().rand.nextInt(range * 2 + 1) - range;
+		var z = ts.zCoord + ts.getWorldObj().rand.nextInt(range * 2 + 1) - range;
 		
 		var curY = ts.yCoord - 1;
 		
-		while((ts.worldObj.isAirBlock(x, curY, z) || ts.worldObj.getBlockId(x, curY, z) == Block.waterStill.blockID 
-				|| ts.worldObj.getBlockId(x, curY, z) == SocketsMod.blockSlickwater.blockID) && curY > 0)
+		while((ts.getWorldObj().isAirBlock(x, curY, z) || ts.getWorldObj().getBlock(x, curY, z) == Blocks.water
+				|| ts.getWorldObj().getBlock(x, curY, z) == SocketsMod.blockSlickwater) && curY > 0)
 			
 		{
 			curY -= 1;
@@ -149,18 +152,18 @@ class ModHusher(id: Int) extends SocketModule(id, "sockets:husher")
 	
 	def dropItemsOnSide(ts: SocketTileAccess, side: ForgeDirection, stack: ItemStack)
 	{
-		if (! ts.worldObj.isRemote)
+		if (! ts.getWorldObj().isRemote)
         {
 			var xo = ts.xCoord + side.offsetX;
 			var yo = ts.yCoord + side.offsetY;
 			var zo = ts.zCoord + side.offsetZ;
             var f = 0.7F;
-            var d0 = (ts.worldObj.rand.nextFloat() * f).asInstanceOf[Double] + (1.0F - f).asInstanceOf[Double] * 0.5D;
-            var d1 = (ts.worldObj.rand.nextFloat() * f).asInstanceOf[Double] + (1.0F - f).asInstanceOf[Double] * 0.5D;
-            var d2 = (ts.worldObj.rand.nextFloat() * f).asInstanceOf[Double] + (1.0F - f).asInstanceOf[Double] * 0.5D;
-            var entityitem = new EntityItem(ts.worldObj, xo.asInstanceOf[Double] + d0, yo.asInstanceOf[Double] + d1, zo.asInstanceOf[Double] + d2, stack.copy());
+            var d0 = (ts.getWorldObj().rand.nextFloat() * f).asInstanceOf[Double] + (1.0F - f).asInstanceOf[Double] * 0.5D;
+            var d1 = (ts.getWorldObj().rand.nextFloat() * f).asInstanceOf[Double] + (1.0F - f).asInstanceOf[Double] * 0.5D;
+            var d2 = (ts.getWorldObj().rand.nextFloat() * f).asInstanceOf[Double] + (1.0F - f).asInstanceOf[Double] * 0.5D;
+            var entityitem = new EntityItem(ts.getWorldObj(), xo.asInstanceOf[Double] + d0, yo.asInstanceOf[Double] + d1, zo.asInstanceOf[Double] + d2, stack.copy());
             entityitem.delayBeforeCanPickup = 1;
-            ts.worldObj.spawnEntityInWorld(entityitem);
+            ts.getWorldObj().spawnEntityInWorld(entityitem);
         }
 	}
 	

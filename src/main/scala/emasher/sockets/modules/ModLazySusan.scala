@@ -1,12 +1,13 @@
 package emasher.sockets.modules
 
 import emasher.api.{Util, SideConfig, SocketTileAccess, SocketModule}
+import net.minecraft.init.Items
 import net.minecraft.item.crafting.CraftingManager
 import java.util.List
 import net.minecraftforge.oredict.ShapedOreRecipe
 import net.minecraft.item.{Item, ItemStack}
 import emasher.sockets.SocketsMod
-import net.minecraftforge.common.ForgeDirection
+import net.minecraftforge.common.util.ForgeDirection
 import emasher.sockets.modules.Orientation.Orientation
 import emasher.core.Tuple
 
@@ -22,7 +23,7 @@ class ModLazySusan(id: Int) extends SocketModule(id, "sockets:lazySusan") {
   override def addRecipe(): Unit = {
     CraftingManager.getInstance().getRecipeList.asInstanceOf[java.util.List[Object]]
       .add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 4, moduleID), " m ", "mpm", " m ",
-      Character.valueOf('p'), Item.ingotIron,
+      Character.valueOf('p'), Items.iron_ingot,
       Character.valueOf('m'), new ItemStack(SocketsMod.module, 1, 40)))
   }
 
@@ -153,16 +154,16 @@ class ModLazySusan(id: Int) extends SocketModule(id, "sockets:lazySusan") {
         four = new Tuple(ts.xCoord + ForgeDirection.DOWN.offsetX, ts.yCoord + ForgeDirection.DOWN.offsetY, ts.zCoord + ForgeDirection.DOWN.offsetZ)
     }
 
-    if(ts.worldObj.getBlockId(one.x, one.y, one.z) == SocketsMod.miniPortal.blockID) return
-    if(ts.worldObj.getBlockId(two.x, two.y, two.z) == SocketsMod.miniPortal.blockID) return
-    if(ts.worldObj.getBlockId(three.x, three.y, three.z) == SocketsMod.miniPortal.blockID) return
-    if(ts.worldObj.getBlockId(four.x, four.y, four.z) == SocketsMod.miniPortal.blockID) return
+    if(ts.getWorldObj().getBlock(one.x, one.y, one.z) == SocketsMod.miniPortal) return
+    if(ts.getWorldObj().getBlock(two.x, two.y, two.z) == SocketsMod.miniPortal) return
+    if(ts.getWorldObj().getBlock(three.x, three.y, three.z) == SocketsMod.miniPortal) return
+    if(ts.getWorldObj().getBlock(four.x, four.y, four.z) == SocketsMod.miniPortal) return
 
-    if(Util.swapBlocks(ts.worldObj, one.x, one.y, one.z, two.x, two.y, two.z))
-      if(Util.swapBlocks(ts.worldObj, one.x, one.y, one.z, three.x, three.y, three.z))
-        if(Util.swapBlocks(ts.worldObj, one.x, one.y, one.z, four.x, four.y, four.z)) {
-          ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
-          ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
+    if(Util.swapBlocks(ts.getWorldObj(), one.x, one.y, one.z, two.x, two.y, two.z))
+      if(Util.swapBlocks(ts.getWorldObj(), one.x, one.y, one.z, three.x, three.y, three.z))
+        if(Util.swapBlocks(ts.getWorldObj(), one.x, one.y, one.z, four.x, four.y, four.z)) {
+          ts.getWorldObj().playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.getWorldObj().rand.nextFloat() * 0.25F + 0.6F)
+          ts.getWorldObj().playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.getWorldObj().rand.nextFloat() * 0.25F + 0.6F)
         }
     }
 }

@@ -5,7 +5,7 @@ import emasher.api.SideConfig;
 import emasher.api.SocketTileAccess;
 import emasher.sockets.SocketsMod;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.List;

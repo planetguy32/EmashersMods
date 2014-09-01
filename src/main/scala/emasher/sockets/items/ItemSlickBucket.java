@@ -3,14 +3,14 @@ package emasher.sockets.items;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumMovingObjectType;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -26,18 +26,18 @@ public class ItemSlickBucket extends ItemBucket
 	
 	public ItemSlickBucket(int id) 
 	{
-		super(id, SocketsMod.fluidSlickwater.getBlockID());
+		super(SocketsMod.blockSlickwater);
 		
 		setCreativeTab(SocketsMod.tabSockets);
 		setMaxStackSize(1);
 		setUnlocalizedName("slickwaterBucket");
-		this.setContainerItem(Item.bucketEmpty);
+		this.setContainerItem(Items.bucket);
 	}
 	
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister ir)
+	public void registerIcons(IIconRegister ir)
 	{
 		itemIcon = ir.registerIcon("sockets:slickbucket");
 	}

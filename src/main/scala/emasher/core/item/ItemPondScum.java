@@ -3,11 +3,11 @@ package emasher.core.item;
 import emasher.core.EmasherCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumMovingObjectType;
+//import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
@@ -16,24 +16,24 @@ public class ItemPondScum extends ItemBlock
     public String texture;
     public Block blockForm;
 
-	public ItemPondScum(int par1, String texture, Block blockForm)
+	public ItemPondScum(Block b, String texture)
     {
-		super(par1);
+		super(b);
 		maxStackSize = 64;
 		setUnlocalizedName("pondScumItem");
         this.texture = texture;
-        this.blockForm = blockForm;
+        this.blockForm = b;
 	}
 	
 	@Override
-	public void registerIcons(IconRegister iconRegister)
+	public void registerIcons(IIconRegister iconRegister)
 	{
 		itemIcon = iconRegister.registerIcon(texture);
 	}
 
 	
 
-	
+	@Override
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
     {
         MovingObjectPosition var4 = this.getMovingObjectPositionFromPlayer(par2World, par3EntityPlayer, true);
@@ -44,7 +44,7 @@ public class ItemPondScum extends ItemBlock
         }
         else
         {
-            if (var4.typeOfHit == EnumMovingObjectType.TILE)
+            if (var4.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
             {
                 int var5 = var4.blockX;
                 int var6 = var4.blockY;
@@ -60,10 +60,10 @@ public class ItemPondScum extends ItemBlock
                     return par1ItemStack;
                 }
 
-                if (par2World.getBlockMaterial(var5, var6, var7) == Material.water && par2World.getBlockMetadata(var5, var6, var7) == 0 && par2World.isAirBlock(var5, var6 + 1, var7))
+                if (par2World.getBlock(var5, var6, var7).getMaterial() == Material.water && par2World.getBlockMetadata(var5, var6, var7) == 0 && par2World.isAirBlock(var5, var6 + 1, var7))
                 {
-                    par2World.setBlock(var5, var6 + 1, var7, blockForm.blockID, 0, 3);
-                    par2World.notifyBlocksOfNeighborChange(var5, var6, var7, blockForm.blockID);
+                    par2World.setBlock(var5, var6 + 1, var7, blockForm, 0, 3);
+                    par2World.notifyBlocksOfNeighborChange(var5, var6, var7, blockForm);
 
                     if (!par3EntityPlayer.capabilities.isCreativeMode)
                     {

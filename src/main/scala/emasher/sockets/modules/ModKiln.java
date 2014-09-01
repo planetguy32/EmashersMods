@@ -3,12 +3,14 @@ package emasher.sockets.modules;
 import java.util.List;
 
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
@@ -48,7 +50,7 @@ public class ModKiln extends SocketModule
 	public void addRecipe()
 	{	
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "nln", "rrr", "pbp", Character.valueOf('n'), "ingotNickel", Character.valueOf('l'), "blockNickel",
-				Character.valueOf('r'), Item.blazeRod, Character.valueOf('p'), EmasherCore.psu, Character.valueOf('b'), SocketsMod.blankSide));
+				Character.valueOf('r'), Items.blaze_rod, Character.valueOf('p'), EmasherCore.psu, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	@Override
@@ -62,7 +64,9 @@ public class ModKiln extends SocketModule
 	public void init(SocketTileAccess ts, SideConfig config, ForgeDirection side)
 	{
 		config.meta = 0;
-		ts.sideInventory.setInventorySlotContents(side.ordinal(), new ItemStack(1, 1, 0));
+		//TODO Check if ItemStack first 1 is ID of item or ID of block(i.e Stone)
+		// ts.sideInventory.setInventorySlotContents(side.ordinal(), new ItemStack(1, 1, 0));
+        ts.sideInventory.setInventorySlotContents(side.ordinal(), new ItemStack(Blocks.stone, 1, 0));
 	}
 	
 	@Override
@@ -72,9 +76,9 @@ public class ModKiln extends SocketModule
 		int xo = ts.xCoord + side.offsetX;
 		int yo = ts.yCoord;
 		int zo = ts.zCoord + side.offsetZ;
-		if(ts.worldObj.getBlockId(xo, yo, zo) == SocketsMod.groundLimestone.blockID)
+		if(ts.getWorldObj().getBlock(xo, yo, zo) == SocketsMod.groundLimestone)
 		{
-			ts.worldObj.setBlockMetadataWithNotify(xo, yo, zo, 0, 3);
+			ts.getWorldObj().setBlockMetadataWithNotify(xo, yo, zo, 0, 3);
 		}
 	}
 	
@@ -88,16 +92,16 @@ public class ModKiln extends SocketModule
 			int xo = ts.xCoord + side.offsetX;
 			int yo = ts.yCoord;
 			int zo = ts.zCoord + side.offsetZ;
-			if(ts.worldObj.getBlockId(xo, yo, zo) == SocketsMod.groundLimestone.blockID)
+			if(ts.getWorldObj().getBlock(xo, yo, zo) == SocketsMod.groundLimestone)
 			{
 				if(ts.getEnergyStored() >= 1000)
 				{
 					ItemStack stack = ts.sideInventory.getStackInSlot(side.ordinal());
-					ts.worldObj.setBlockMetadataWithNotify(xo, yo, zo, 1, 3);
+					ts.getWorldObj().setBlockMetadataWithNotify(xo, yo, zo, 1, 3);
 					if(stack.stackSize >= 32)
 					{
-						ts.worldObj.setBlockToAir(xo, yo, zo);
-						this.dropItemsOnSide(ts, side, xo, yo, zo, new ItemStack(SocketsMod.dusts, ts.worldObj.rand.nextInt(3) + 1, 0));
+						ts.getWorldObj().setBlockToAir(xo, yo, zo);
+						this.dropItemsOnSide(ts, side, xo, yo, zo, new ItemStack(SocketsMod.dusts, ts.getWorldObj().rand.nextInt(3) + 1, 0));
 						stack.stackSize = 1;
 					}
 					else
@@ -109,7 +113,7 @@ public class ModKiln extends SocketModule
 				}
 				else
 				{
-					ts.worldObj.setBlockMetadataWithNotify(xo, yo, zo, 0, 3);
+					ts.getWorldObj().setBlockMetadataWithNotify(xo, yo, zo, 0, 3);
 				}
 			}
 		}
@@ -123,13 +127,13 @@ public class ModKiln extends SocketModule
 			
 			if(checkMultiBlock(config, ts, side))
 			{
-				this.setMeta(ts.worldObj, ts, side, 5);
+				this.setMeta(ts.getWorldObj(), ts, side, 5);
 				ItemStack stack = ts.sideInventory.getStackInSlot(side.ordinal());
 				stack.setItemDamage(1);
 			}
 			else
 			{
-				this.setMeta(ts.worldObj, ts, side, 2);
+				this.setMeta(ts.getWorldObj(), ts, side, 2);
 				ItemStack stack = ts.sideInventory.getStackInSlot(side.ordinal());
 				stack.setItemDamage(0);
 			}
@@ -142,7 +146,7 @@ public class ModKiln extends SocketModule
 		int y = ts.yCoord;
 		int x = ts.xCoord;
 		int z = ts.zCoord;
-		World w = ts.worldObj;
+		World w = ts.getWorldObj();
 		
 		if(! checkLayer(config, ts, side, y - 1)) return false;
 		
@@ -176,7 +180,7 @@ public class ModKiln extends SocketModule
 	{
 		int x = ts.xCoord;
 		int z = ts.zCoord;
-		World w = ts.worldObj;
+		World w = ts.getWorldObj();
 		int meta;
 		
 		if(side.offsetX == 0)
@@ -185,22 +189,22 @@ public class ModKiln extends SocketModule
 			for(int i = x - 1; i <= x + 1; i++)
 			{
 				meta = w.getBlockMetadata(i, y, zo);
-				if(w.getBlockId(i, y, zo) != EmasherCore.normalCube.blockID || (meta != 2 && meta != 5)) return false;
+				if(w.getBlock(i, y, zo) != EmasherCore.normalCube || (meta != 2 && meta != 5)) return false;
 			}
 			
 			zo = z + side.offsetZ;
 			
 			meta = w.getBlockMetadata(x - 1, y, zo);
-			if(w.getBlockId(x - 1, y, zo) != EmasherCore.normalCube.blockID || (meta != 2 && meta != 5)) return false;
+			if(w.getBlock(x - 1, y, zo) != EmasherCore.normalCube || (meta != 2 && meta != 5)) return false;
 			meta = w.getBlockMetadata(x + 1, y, zo);
-			if(w.getBlockId(x + 1, y, zo) != EmasherCore.normalCube.blockID || (meta != 2 && meta != 5)) return false;
+			if(w.getBlock(x + 1, y, zo) != EmasherCore.normalCube || (meta != 2 && meta != 5)) return false;
 			
 			zo += side.offsetZ;
 			
 			for(int i = x - 1; i <= x + 1; i++)
 			{
 				meta = w.getBlockMetadata(i, y, zo);
-				if(w.getBlockId(i, y, zo) != EmasherCore.normalCube.blockID || (meta != 2 && meta != 5)) return false;
+				if(w.getBlock(i, y, zo) != EmasherCore.normalCube || (meta != 2 && meta != 5)) return false;
 			}
 		}
 		else
@@ -209,22 +213,22 @@ public class ModKiln extends SocketModule
 			for(int i = z - 1; i <= z + 1; i++)
 			{
 				meta = w.getBlockMetadata(xo, y, i);
-				if(w.getBlockId(xo, y, i) != EmasherCore.normalCube.blockID || (meta != 2 && meta != 5)) return false;
+				if(w.getBlock(xo, y, i) != EmasherCore.normalCube || (meta != 2 && meta != 5)) return false;
 			}
 			
 			xo = x + side.offsetX;
 			
 			meta = w.getBlockMetadata(xo, y, z - 1);
-			if(w.getBlockId(xo, y, z - 1) != EmasherCore.normalCube.blockID || (meta != 2 && meta != 5)) return false;
+			if(w.getBlock(xo, y, z - 1) != EmasherCore.normalCube || (meta != 2 && meta != 5)) return false;
 			meta = w.getBlockMetadata(xo, y, z + 1);
-			if(w.getBlockId(xo, y, z + 1) != EmasherCore.normalCube.blockID || (meta != 2 && meta != 5)) return false;
+			if(w.getBlock(xo, y, z + 1) != EmasherCore.normalCube || (meta != 2 && meta != 5)) return false;
 			
 			xo += side.offsetX;
 			
 			for(int i = z - 1; i <= z + 1; i++)
 			{
 				meta = w.getBlockMetadata(xo, y, i);
-				if(w.getBlockId(xo, y, i) != EmasherCore.normalCube.blockID || (meta != 2 && meta != 5)) return false;
+				if(w.getBlock(xo, y, i) != EmasherCore.normalCube || (meta != 2 && meta != 5)) return false;
 			}
 		}
 		
@@ -234,7 +238,7 @@ public class ModKiln extends SocketModule
 	private boolean checkBlock(World w, int x, int y, int z)
 	{
 		int meta = w.getBlockMetadata(x, y, z);
-		if(w.getBlockId(x, y, z) != EmasherCore.normalCube.blockID || (meta != 2 && meta != 5)) return false;
+		if(w.getBlock(x, y, z) != EmasherCore.normalCube || (meta != 2 && meta != 5)) return false;
 		
 		return true;
 	}
@@ -255,22 +259,22 @@ public class ModKiln extends SocketModule
 			for(int i = x - 1; i <= x + 1; i++)
 			{
 				meta = w.getBlockMetadata(i, y, zo);
-				if(w.getBlockId(i, y, zo) == EmasherCore.normalCube.blockID && meta == oldMeta) w.setBlockMetadataWithNotify(i, y, zo, newMeta, 3);
+				if(w.getBlock(i, y, zo) == EmasherCore.normalCube && meta == oldMeta) w.setBlockMetadataWithNotify(i, y, zo, newMeta, 3);
 			}
 			
 			zo = z + side.offsetZ;
 			
 			meta = w.getBlockMetadata(x - 1, y, zo);
-			if(w.getBlockId(x - 1, y, zo) == EmasherCore.normalCube.blockID && meta == oldMeta) w.setBlockMetadataWithNotify(x - 1, y, zo, newMeta, 3);
+			if(w.getBlock(x - 1, y, zo) == EmasherCore.normalCube && meta == oldMeta) w.setBlockMetadataWithNotify(x - 1, y, zo, newMeta, 3);
 			meta = w.getBlockMetadata(x + 1, y, zo);
-			if(w.getBlockId(x + 1, y, zo) == EmasherCore.normalCube.blockID && meta == oldMeta) w.setBlockMetadataWithNotify(x + 1, y, zo, newMeta, 3);
+			if(w.getBlock(x + 1, y, zo) == EmasherCore.normalCube && meta == oldMeta) w.setBlockMetadataWithNotify(x + 1, y, zo, newMeta, 3);
 			
 			zo += side.offsetZ;
 			
 			for(int i = x - 1; i <= x + 1; i++)
 			{
 				meta = w.getBlockMetadata(i, y, zo);
-				if(w.getBlockId(i, y, zo) == EmasherCore.normalCube.blockID && meta == oldMeta) w.setBlockMetadataWithNotify(i, y, zo, newMeta, 3);
+				if(w.getBlock(i, y, zo) == EmasherCore.normalCube && meta == oldMeta) w.setBlockMetadataWithNotify(i, y, zo, newMeta, 3);
 			}
 		}
 		else
@@ -279,22 +283,22 @@ public class ModKiln extends SocketModule
 			for(int i = z - 1; i <= z + 1; i++)
 			{
 				meta = w.getBlockMetadata(xo, y, i);
-				if(w.getBlockId(xo, y, i) == EmasherCore.normalCube.blockID && meta == oldMeta) w.setBlockMetadataWithNotify(xo, y, i, newMeta, 3);
+				if(w.getBlock(xo, y, i) == EmasherCore.normalCube && meta == oldMeta) w.setBlockMetadataWithNotify(xo, y, i, newMeta, 3);
 			}
 			
 			xo = x + side.offsetX;
 			
 			meta = w.getBlockMetadata(xo, y, z - 1);
-			if(w.getBlockId(xo, y, z - 1) == EmasherCore.normalCube.blockID && meta == oldMeta) w.setBlockMetadataWithNotify(xo, y, z - 1, newMeta, 3);
+			if(w.getBlock(xo, y, z - 1) == EmasherCore.normalCube && meta == oldMeta) w.setBlockMetadataWithNotify(xo, y, z - 1, newMeta, 3);
 			meta = w.getBlockMetadata(xo, y, z + 1);
-			if(w.getBlockId(xo, y, z + 1) == EmasherCore.normalCube.blockID && meta == oldMeta) w.setBlockMetadataWithNotify(xo, y, z + 1, newMeta, 3);
+			if(w.getBlock(xo, y, z + 1) == EmasherCore.normalCube && meta == oldMeta) w.setBlockMetadataWithNotify(xo, y, z + 1, newMeta, 3);
 			
 			xo += side.offsetX;
 			
 			for(int i = z - 1; i <= z + 1; i++)
 			{
 				meta = w.getBlockMetadata(xo, y, i);
-				if(w.getBlockId(xo, y, i) == EmasherCore.normalCube.blockID && meta == oldMeta) w.setBlockMetadataWithNotify(xo, y, i, newMeta, 3);
+				if(w.getBlock(xo, y, i) == EmasherCore.normalCube && meta == oldMeta) w.setBlockMetadataWithNotify(xo, y, i, newMeta, 3);
 			}
 		}
 	}
@@ -302,13 +306,14 @@ public class ModKiln extends SocketModule
 	private boolean isValidKiln(SocketTileAccess ts, ForgeDirection side)
 	{
 		ItemStack stack = ts.sideInventory.getStackInSlot(side.ordinal());
+        if(stack == null) return false;
 		if(stack.getItemDamage() == 0) return false;
 		return true;
 	}
 	
 	public void dropItemsOnSide(SocketTileAccess ts, ForgeDirection side, int xo, int yo, int zo, ItemStack stack)
 	{
-		World worldObj = ts.worldObj;
+		World worldObj = ts.getWorldObj();
 		
 		if (! worldObj.isRemote)
         {

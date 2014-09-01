@@ -5,11 +5,12 @@ import java.util.List;
 import ic2.api.energy.tile.IEnergyAcceptor;
 import cpw.mods.fml.common.registry.GameRegistry;
 import buildcraft.api.power.IPowerReceptor;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import emasher.api.SideConfig;
@@ -42,7 +43,7 @@ public class ModEnergyOutput extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " g ", " b ", Character.valueOf('g'), Item.goldNugget, Character.valueOf('p'), EmasherCore.psu,
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " g ", " b ", Character.valueOf('g'), Items.gold_nugget, Character.valueOf('p'), EmasherCore.psu,
 				Character.valueOf('b'), SocketsMod.blankSide);
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " g ", " b ", Character.valueOf('g'), "ingotCopper", Character.valueOf('p'), EmasherCore.psu,

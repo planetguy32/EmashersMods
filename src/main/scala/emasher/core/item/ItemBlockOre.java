@@ -8,17 +8,19 @@ import net.minecraft.src.*;
 
 public class ItemBlockOre extends ItemBlock
 {
-	public ItemBlockOre(int par1)
+	public ItemBlockOre(Block b)
 	{
-		super(par1);
+		super(b);
 		setHasSubtypes(true);
 	}
-	
+
+    @Override
 	public int getMetadata(int par1)
     {
         return par1;
     }
-	
+
+    @Override
 	 public String getUnlocalizedName(ItemStack itemstack)
 	 {
 		String name = "";

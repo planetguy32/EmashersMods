@@ -5,43 +5,43 @@ import java.util.Random;
 import emasher.core.EmasherCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.src.*;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.item.*;
 
 public class BlockHemp extends Block
 {
 	private static final int GROWTH_TIME = 15;
 	
-	public BlockHemp(int i, int j)
+	public BlockHemp()
 	{
-		super(i, Material.plants);
+		super(Material.plants);
         float f = 0.375F;
         setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, 1.0F, 0.5F + f);
         setTickRandomly(true);
 	}
 	
 	@Override
-    public void registerIcons(IconRegister par1IconRegister)
+    public void registerBlockIcons(IIconRegister par1IconRegister)
     {
 		this.blockIcon = par1IconRegister.registerIcon("emashercore:hemp");
     }
 	
 	@Override
-	public Icon getIcon(int side, int meta)
+	public IIcon getIcon(int side, int meta)
 	{
 		return this.blockIcon;
 	}
 	
 	@Override
-	public int idDropped(int i, Random random, int j)
+	public Item getItemDropped(int i, Random random, int j)
 	{
-		return EmasherCore.hempPlant.itemID;
+		return EmasherCore.hempPlant;
 	}
 	
 	@Override
@@ -51,7 +51,7 @@ public class BlockHemp extends Block
 	}
 	
 	@Override
-	public void onNeighborBlockChange(World world, int i, int j, int k, int l)
+	public void onNeighborBlockChange(World world, int i, int j, int k, Block l)
     {
         checkBlockCoordValid(world, i, j, k);
     }
@@ -60,8 +60,8 @@ public class BlockHemp extends Block
     {
         if (!canBlockStay(world, i, j, k))
         {
-            dropBlockAsItem_do(world, i, j, k, new ItemStack(EmasherCore.hempPlant, 1));
-            world.setBlock(i, j, k, 0, 0, 3);
+            dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
+            world.setBlockToAir(i, j, k);
         }
     }
 	
@@ -81,9 +81,9 @@ public class BlockHemp extends Block
 	public boolean canPlaceBlockAt(World world, int i, int j, int k)
     {
 		boolean toReturn = false;
-        int l = world.getBlockId(i, j - 1, k);
+        Block l = world.getBlock(i, j - 1, k);
 		
-		if(l == Block.grass.blockID || l == Block.dirt.blockID || l == Block.gravel.blockID || l == Block.sand.blockID || l == EmasherCore.mixedDirt.blockID || l == EmasherCore.mixedSand.blockID || l == blockID)
+		if(l == Blocks.grass || l == Blocks.dirt || l == Blocks.gravel || l == Blocks.sand || l == EmasherCore.mixedDirt || l == EmasherCore.mixedSand || l == this)
 		{
 			toReturn = true;
 		}
@@ -97,13 +97,13 @@ public class BlockHemp extends Block
         if (world.isAirBlock(i, j + 1, k))
         {
             int l;
-            for (l = 1; world.getBlockId(i, j - l, k) == blockID; l++) { }
+            for (l = 1; world.getBlock(i, j - l, k) == this; l++) { }
             if (l < 3)
             {
                 int i1 = world.getBlockMetadata(i, j, k);
                 if (i1 == GROWTH_TIME)
                 {
-                    world.setBlock(i, j + 1, k, blockID, 0, 2);
+                    world.setBlock(i, j + 1, k, this, 0, 2);
                     world.setBlockMetadataWithNotify(i, j, k, 0, 2);
                 }
                 else if(world.getBlockLightValue(i, j + 1, k) >= 9 && nearWater(world, i, j, k))
@@ -118,23 +118,23 @@ public class BlockHemp extends Block
 	{
 		boolean toReturn = false;
 		
-		if(world.getBlockId(i, j - 1, k) == blockID && nearWater(world, i, j - 1, k))
+		if(world.getBlock(i, j - 1, k) == this && nearWater(world, i, j - 1, k))
 		{
 			toReturn = true;
 		}
-		else if (world.getBlockMaterial(i - 1, j - 1, k) == Material.water)
+		else if (world.getBlock(i - 1, j - 1, k).getMaterial() == Material.water)
         {
             toReturn = true;
         }
-        else if (world.getBlockMaterial(i + 1, j - 1, k) == Material.water)
+        else if (world.getBlock(i + 1, j - 1, k).getMaterial() == Material.water)
         {
             toReturn = true;
         }
-        else if (world.getBlockMaterial(i, j - 1, k - 1) == Material.water)
+        else if (world.getBlock(i, j - 1, k - 1).getMaterial() == Material.water)
         {
             toReturn = true;
         }
-        else if (world.getBlockMaterial(i, j - 1, k + 1) == Material.water)
+        else if (world.getBlock(i, j - 1, k + 1).getMaterial() == Material.water)
 		{
 			toReturn = true;
 		}

@@ -1,19 +1,15 @@
 package emasher.sockets.client;
 
+import emasher.sockets.packethandling.PacketTileEntity;
 import emasher.sockets.pipes.TileDirectionChanger;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.sockets.SocketsMod;
@@ -22,12 +18,12 @@ import emasher.sockets.modules.ModBlockPlacer;
 import emasher.sockets.pipes.TileAdapterBase;
 import emasher.sockets.pipes.TilePipeBase;
 
-public class ClientPacketHandler implements IPacketHandler
+public class ClientPacketHandler// implements IPacketHandler
 {
 	public static ClientPacketHandler instance = new ClientPacketHandler();
 	public final static String networkChannel = "Emasher_Sockets";
 	
-	@Override
+	/*@Override
 	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player)
 	{
 		try
@@ -213,7 +209,7 @@ public class ClientPacketHandler implements IPacketHandler
 			System.err.println("[Engineer's Toolbox] Network Error");
 			
 		}
-	}
+	}*/
 	
 	public void requestSideData(TileSocket ts, byte side)
 	{
@@ -223,10 +219,11 @@ public class ClientPacketHandler implements IPacketHandler
 		toByte(out, ts.xCoord, 1);
 		toByte(out, ts.yCoord, 5);
 		toByte(out, ts.zCoord, 9);
-		toByte(out, ts.worldObj.provider.dimensionId, 13);
+		toByte(out, ts.getWorldObj().provider.dimensionId, 13);
 		out[17] = side;
 		
-		PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+		//PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+        SocketsMod.packetPipeline.sendToServer(new PacketTileEntity(ts, out));
 	}
 	
 	public void requestInventoryData(TileSocket ts, byte inventory)
@@ -237,10 +234,11 @@ public class ClientPacketHandler implements IPacketHandler
 		toByte(out, ts.xCoord, 1);
 		toByte(out, ts.yCoord, 5);
 		toByte(out, ts.zCoord, 9);
-		toByte(out, ts.worldObj.provider.dimensionId, 13);
+		toByte(out, ts.getWorldObj().provider.dimensionId, 13);
 		out[17] = inventory;
 		
-		PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+		//PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+        SocketsMod.packetPipeline.sendToServer(new PacketTileEntity(ts, out));
 	}
 	
 	public void requestTankData(TileSocket ts, byte tank)
@@ -251,10 +249,11 @@ public class ClientPacketHandler implements IPacketHandler
 		toByte(out, ts.xCoord, 1);
 		toByte(out, ts.yCoord, 5);
 		toByte(out, ts.zCoord, 9);
-		toByte(out, ts.worldObj.provider.dimensionId, 13);
+		toByte(out, ts.getWorldObj().provider.dimensionId, 13);
 		out[17] = tank;
 		
-		PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+		//PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+        SocketsMod.packetPipeline.sendToServer(new PacketTileEntity(ts, out));
 	}
 	
 	public void requestPipeColourData(TilePipeBase p)
@@ -265,9 +264,10 @@ public class ClientPacketHandler implements IPacketHandler
 		toByte(out, p.xCoord, 1);
 		toByte(out, p.yCoord, 5);
 		toByte(out, p.zCoord, 9);
-		toByte(out, p.worldObj.provider.dimensionId, 13);
+		toByte(out, p.getWorldObj().provider.dimensionId, 13);
 		
-		PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+		//PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+        SocketsMod.packetPipeline.sendToServer(new PacketTileEntity(p, out));
 	}
 	
 	public void requestAdapterOutputData(TileAdapterBase p)
@@ -278,10 +278,11 @@ public class ClientPacketHandler implements IPacketHandler
 		toByte(out, p.xCoord, 1);
 		toByte(out, p.yCoord, 5);
 		toByte(out, p.zCoord, 9);
-		toByte(out, p.worldObj.provider.dimensionId, 13);
+		toByte(out, p.getWorldObj().provider.dimensionId, 13);
 		
 		
-		PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+		//PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+        SocketsMod.packetPipeline.sendToServer(new PacketTileEntity(p, out));
 	}
 
     public void requestDirectionData(TileDirectionChanger p)
@@ -292,9 +293,10 @@ public class ClientPacketHandler implements IPacketHandler
         toByte(out, p.xCoord, 1);
         toByte(out, p.yCoord, 5);
         toByte(out, p.zCoord, 9);
-        toByte(out, p.worldObj.provider.dimensionId, 13);
+        toByte(out, p.getWorldObj().provider.dimensionId, 13);
 
-        PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+        //PacketDispatcher.sendPacketToServer(new Packet250CustomPayload(networkChannel, out));
+        SocketsMod.packetPipeline.sendToServer(new PacketTileEntity(p, out));
     }
 	
 	private void toByte(byte[] out, int in, int start)

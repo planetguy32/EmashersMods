@@ -1,11 +1,12 @@
 package emasher.sockets.modules
 
-import emasher.api._;
+import emasher.api;
 import java.util._;
+import emasher.api.{SideConfig, SocketTileAccess, SocketModule}
 import emasher.sockets._;
 import net.minecraft.item.crafting._;
 import net.minecraftforge.oredict._;
-import net.minecraftforge.common._;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraft.item._;
 import net.minecraft.block._;
 import net.minecraftforge.fluids._;

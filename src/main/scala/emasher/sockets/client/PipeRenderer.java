@@ -25,13 +25,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.IItemRenderer.ItemRendererHelper;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 //import net.minecraftforge.liquids.LiquidDictionary;
 //import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -104,7 +104,7 @@ public class PipeRenderer extends TileEntitySpecialRenderer
 			//Minecraft.getMinecraft().renderEngine.bindTexture(par1ResourceLocation)
 			//bindTextureByName("/terrain.png");
 			
-			Icon icon = bfp.getColIcon(p.colour);
+			IIcon icon = bfp.getColIcon(p.colour);
 			
 			tessellator.startDrawingQuads();
 			

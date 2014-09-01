@@ -8,16 +8,18 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.core.EmasherCore;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 
 public class ModEnergyIndicator extends SocketModule
@@ -48,8 +50,8 @@ public class ModEnergyIndicator extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ggg", "slr", " b ", Character.valueOf('g'), Block.thinGlass, Character.valueOf('s'), Item.glowstone,
-				Character.valueOf('l'), "dyeCyan", Character.valueOf('r'), Item.redstone, Character.valueOf('b'), SocketsMod.blankSide));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ggg", "slr", " b ", Character.valueOf('g'), Blocks.glass_pane, Character.valueOf('s'), Items.glowstone_dust,
+				Character.valueOf('l'), "dyeCyan", Character.valueOf('r'), Items.redstone, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	@Override

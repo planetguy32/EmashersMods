@@ -2,6 +2,7 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -37,7 +38,7 @@ public class ModEnergyInput extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "g g", " b ", Character.valueOf('g'), Item.goldNugget, Character.valueOf('p'), EmasherCore.psu,
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "g g", " b ", Character.valueOf('g'), Items.gold_nugget, Character.valueOf('p'), EmasherCore.psu,
 				Character.valueOf('b'), SocketsMod.blankSide);
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "g g", " b ", Character.valueOf('g'), "ingotCopper", Character.valueOf('p'), EmasherCore.psu,

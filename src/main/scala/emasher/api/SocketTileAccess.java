@@ -6,8 +6,8 @@ import buildcraft.api.power.PowerHandler;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
 public abstract class SocketTileAccess extends TileEntity
@@ -32,12 +32,12 @@ public abstract class SocketTileAccess extends TileEntity
 	/**
 	 * Get a texture that was registered for a particular module
 	 * 
-	 * @param the texture index
-	 * @param the ID of the module
+	 * @param texture the texture index
+	 * @param moduleID ID of the module
 	 * @return Returns an Icon from the standard block texture sheet representing the texture you requested
 	 */
 	@SideOnly(Side.CLIENT)
-	public abstract Icon getTexture(int texture, int moduleID);
+	public abstract IIcon getTexture(int texture, int moduleID);
 	
 	/**
 	 * Notify the client that fields in a SideConfig have changed
@@ -194,7 +194,7 @@ public abstract class SocketTileAccess extends TileEntity
 	 * Try to extract an item from an adjacent inventory if one exists
 	 * Supports IInventory, ISidedInventory, and ISpecialInventory
 	 * 
-	 * @param the side to attempt to extract from
+	 * @param side the side to attempt to extract from
 	 * @param doPull true iff you actually want to extract the item
 	 * @return an ItemStack representing the item extracted, null if none was found
 	 */

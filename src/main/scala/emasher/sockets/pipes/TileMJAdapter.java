@@ -9,7 +9,7 @@ import buildcraft.api.power.PowerHandler.Type;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileMJAdapter extends TileAdapterBase implements IPowerReceptor, IEnergyHandler
 {
@@ -46,7 +46,7 @@ public class TileMJAdapter extends TileAdapterBase implements IPowerReceptor, IE
 			int yo = yCoord + d.offsetY;
 			int zo = zCoord + d.offsetZ;
 			
-			TileEntity te = worldObj.getBlockTileEntity(xo, yo, zo);
+			TileEntity te = worldObj.getTileEntity(xo, yo, zo);
 			
 			if(te != null)
 			{
@@ -98,7 +98,7 @@ public class TileMJAdapter extends TileAdapterBase implements IPowerReceptor, IE
 	}
 
 	@Override
-	public boolean canInterface(ForgeDirection from)
+	public boolean canConnectEnergy(ForgeDirection from)
 	{
 		return true;
 	}

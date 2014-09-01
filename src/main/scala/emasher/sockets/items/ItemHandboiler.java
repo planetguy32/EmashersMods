@@ -12,15 +12,15 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.Event;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import emasher.core.*;
 import emasher.core.item.ItemEmasherGeneric;
@@ -33,7 +33,7 @@ public class ItemHandboiler extends ItemEmasherGeneric
 	
 	public ItemHandboiler(int id, String texture, String name)
 	{
-		super(id, "sockets:handboiler", "handboiler");
+		super("sockets:handboiler", "handboiler");
 		this.setMaxDamage(64);
 		this.setCreativeTab(SocketsMod.tabSockets);
 		this.setMaxStackSize(1);
@@ -55,7 +55,7 @@ public class ItemHandboiler extends ItemEmasherGeneric
         else
         {
 
-            if (movingobjectposition.typeOfHit == EnumMovingObjectType.TILE)
+            if (movingobjectposition.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
             {
                 int par4 = movingobjectposition.blockX;
                 int par5 = movingobjectposition.blockY;
@@ -68,41 +68,42 @@ public class ItemHandboiler extends ItemEmasherGeneric
                 	{
                 		for(int k = par6 - 2; k < par6 + 3; k++)
                 		{
-                			int id = par3World.getBlockId(i, j, k);
+                			//int id = par3World.getBlockId(i, j, k);
+                            Block block = par3World.getBlock(i, j, k);
                 			
-                			if(id == Block.waterStill.blockID)
+                			if(block == Blocks.water)
                 			{
-                				par3World.setBlock(i, j, k, 0);
+                				par3World.setBlock(i, j, k, Blocks.air);
                 				ItemHandboiler.fizz(par3World, i, j, k);
                                 doDamage = true;
                 			}
                 			
-                			if(id == Block.waterMoving.blockID || id == Block.snow.blockID)
+                			if(block == Blocks.flowing_water || block == Blocks.snow_layer)
                 			{
-                				par3World.setBlock(i, j, k, 0);
+                				par3World.setBlock(i, j, k, Blocks.air);
                 				ItemHandboiler.fizz(par3World, i, j, k);
                                 doDamage = true;
                 			}
                 			
-                			if(id == Block.ice.blockID || id == Block.blockSnow.blockID)
+                			if(block == Blocks.ice || block == Blocks.snow)
                 			{
-                				par3World.setBlock(i, j, k, Block.waterStill.blockID);
+                				par3World.setBlock(i, j, k, Blocks.water);
                 				ItemHandboiler.fizz(par3World, i, j, k);
                                 doDamage = true;
 
                 			}
                 			
                 			//The hand boiler should only smelt stuff when the player is sneaking, and should never smelt stone (red power)
-                			if(id != 0 && id != Block.stone.blockID && par3EntityPlayer.isSneaking()) 
+                			if(block != Blocks.air && block != Blocks.stone && par3EntityPlayer.isSneaking())
                 			{
-                				ItemStack is = new ItemStack(id, 1, par3World.getBlockMetadata(i, j, k));
+                				ItemStack is = new ItemStack(block, 1, par3World.getBlockMetadata(i, j, k));
                 				
                 				ItemStack product = FurnaceRecipes.smelting().getSmeltingResult(is);
-                				
+
                 				if(product != null)
                 				{
-                					
-                					if(Item.itemsList[product.itemID] != null && ! (product.getItem() instanceof ItemBlock))
+                                    int itemID = Item.getIdFromItem(product.getItem());
+                					if(Item.itemRegistry.containsId(itemID) && ! (product.getItem() instanceof ItemBlock))
                 					{
 	                					product = ItemStack.copyItemStack(product);
 	                						
@@ -118,11 +119,13 @@ public class ItemHandboiler extends ItemEmasherGeneric
 	                					doDamage = true;
                 						par3World.setBlockToAir(i, j, k);
                 					}
-                					else if(product.itemID < Block.blocksList.length && Block.blocksList[product.itemID] != null && Block.blocksList[product.itemID] instanceof Block)
+                                    //TODO Check this else if
+                					//else if(product.itemID < Block.blocksList.length && Block.blocksList[product.itemID] != null && Block.blocksList[product.itemID] instanceof Block)
+                                    else if(Block.blockRegistry.containsId(itemID) && Block.blockRegistry.getObjectById(itemID) instanceof Block)
                 					{
-                						if(id != Block.sand.blockID || SocketsMod.smeltSand)
+                						if(block != Blocks.sand || SocketsMod.smeltSand)
                 						{
-                							par3World.setBlock(i, j, k, product.itemID, product.getItemDamage(), 2);
+                							par3World.setBlock(i, j, k, (Block)Block.blockRegistry.getObjectById(itemID), product.getItemDamage(), 2);
                 							ItemHandboiler.fizz(par3World, i, j, k);
                         					doDamage = true;
                 						}

@@ -6,17 +6,18 @@ import ic2.api.energy.tile.IEnergyAcceptor;
 import buildcraft.api.power.IPowerReceptor;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.core.EmasherCore;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 
 public class ModEnergyExpansion extends SocketModule
@@ -48,8 +49,8 @@ public class ModEnergyExpansion extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "pdp", "ggg", "pbp", Character.valueOf('g'), Item.ingotGold, Character.valueOf('p'), EmasherCore.psu,
-                Character.valueOf('d'), Item.diamond, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "pdp", "ggg", "pbp", Character.valueOf('g'), Items.gold_ingot, Character.valueOf('p'), EmasherCore.psu,
+                Character.valueOf('d'), Items.diamond, Character.valueOf('b'), SocketsMod.blankSide);
 	}
 	
 	@Override

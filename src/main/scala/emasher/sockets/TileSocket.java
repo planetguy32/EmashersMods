@@ -10,6 +10,7 @@ import emasher.api.ModuleRegistry;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
+import emasher.sockets.client.ClientPacketHandler;
 import emasher.sockets.modules.ModItemInput;
 import emasher.sockets.modules.ModItemOutput;
 import emasher.sockets.modules.ModMachineOutput;
@@ -29,9 +30,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityHopper;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -193,7 +194,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
 		addedToEnergyNet = false;
 	}*/
-	
+
 	@Override
 	public void onChunkUnload()
 	{
@@ -214,14 +215,16 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	
 	public void updateAdj(ForgeDirection d)
 	{
-		int id = worldObj.getBlockId(xCoord, yCoord, zCoord);
+		//int id = worldObj.getBlockId(xCoord, yCoord, zCoord);
+        Block nblock = worldObj.getBlock(xCoord, yCoord, zCoord);
 		int xo = xCoord + d.offsetX;
 		int yo = yCoord + d.offsetY;
 		int zo = zCoord + d.offsetZ;
-		Block b = Block.blocksList[worldObj.getBlockId(xo, yo, zo)];
+		//Block b = Block.blocksList[worldObj.getBlockId(xo, yo, zo)];
+        Block b = worldObj.getBlock(xo, yo, zo);
 		if(b != null)
 		{
-			b.onNeighborBlockChange(worldObj, xo, yo, zo, id);
+			b.onNeighborBlockChange(worldObj, xo, yo, zo, nblock);
 		}
 	}
 	
@@ -230,7 +233,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		configs[side] = new SideConfig();
 		sideLocked[side] = false;
 		sideInventory.setInventorySlotContents(side, null);
-		PacketHandler.instance.SendClientSideState(this, (byte)side);
+        PacketHandler.instance.SendClientSideState(this, (byte)side);
 	}
 	
 	@Override
@@ -239,12 +242,13 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		super.validate();
 		if(this.worldObj.isRemote)
 		{
-			for(int i = 0; i < 6; i++)
-				emasher.sockets.client.ClientPacketHandler.instance.requestSideData(this, (byte)i);
+			for(int i = 0; i < 6; i++) {
+                ClientPacketHandler.instance.requestSideData(this, (byte)i);
+            }
 			for(int i = 0; i < 3; i++)
 			{
-				emasher.sockets.client.ClientPacketHandler.instance.requestInventoryData(this, (byte)i);
-				emasher.sockets.client.ClientPacketHandler.instance.requestTankData(this, (byte)i);
+                ClientPacketHandler.instance.requestInventoryData(this, (byte)i);
+				ClientPacketHandler.instance.requestTankData(this, (byte)i);
 			}
 		}
 	}
@@ -275,11 +279,11 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	    	if(data.hasKey("rsLatch" + i)) rsLatch[i] = data.getBoolean("rsLatch" + i);
 	    }
 	    
-	    NBTTagList itemList = data.getTagList("items");
+	    NBTTagList itemList = data.getTagList("items", 10);
 	    
 	    for(int i = 0; i < itemList.tagCount(); i++)
 	    {
-	    	NBTTagCompound itemCompound = (NBTTagCompound) itemList.tagAt(i);
+	    	NBTTagCompound itemCompound = (NBTTagCompound) itemList.getCompoundTagAt(i);
 	    	int slot = itemCompound.getInteger("slot");
 	    	inventory.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(itemCompound));
 	    }
@@ -313,11 +317,11 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	    	}
 	    }
 	    
-	    itemList = data.getTagList("sideItems");
+	    itemList = data.getTagList("sideItems", 10);
 	    
 	    for(int i = 0; i < itemList.tagCount(); i++)
 	    {
-	    	NBTTagCompound itemCompound = (NBTTagCompound) itemList.tagAt(i);
+	    	NBTTagCompound itemCompound = (NBTTagCompound) itemList.getCompoundTagAt(i);
 	    	int slot = itemCompound.getInteger("slot");
 	    	sideInventory.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(itemCompound));
 	    }
@@ -372,7 +376,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 			data.setInteger("side" + i, sides[i]);
 			configData = new NBTTagCompound();
 			configs[i].writeToNBT(configData);
-			data.setCompoundTag("config" + i, configData);
+			data.setTag("config" + i, configData);
 			data.setBoolean("rs" + i, sideRS[i]);
 			data.setBoolean("lock" + i, sideLocked[i]);
 			data.setInteger("facID" + i, facID[i]);
@@ -419,7 +423,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	public void lockSide(int side)
 	{
 		sideLocked[side] = ! sideLocked[side];
-		PacketHandler.instance.SendClientSideState(this, (byte)side);
+        PacketHandler.instance.SendClientSideState(this, (byte)side);
 	}
 	
 	public void checkSideForChange(int side)
@@ -430,8 +434,11 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		int yo = yCoord + d.offsetY;
 		int zo = zCoord + d.offsetZ;
 		boolean result = false;
-			
-		int id = worldObj.getBlockId(xo, yo, zo);
+
+        //TODO Check if this ID implementation is ok
+		Block block = worldObj.getBlock(xo, yo, zo);
+        int id = Block.getIdFromBlock(block);
+
 		int meta = worldObj.getBlockMetadata(xo, yo, zo);
 		if((id != sideID[side] && sideID[side] != 1) || (meta != sideMeta[side] && sideMeta[side] != -1))
 		{
@@ -488,7 +495,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		configs[side].tank++;
 		if(configs[side].tank == 3) configs[side].tank = -1;
 		getSide(ForgeDirection.getOrientation(side)).indicatorUpdated(this, configs[side], ForgeDirection.getOrientation(side));
-		PacketHandler.instance.SendClientSideState(this, (byte)side);
+        PacketHandler.instance.SendClientSideState(this, (byte)side);
 	}
 	
 	public void nextInventory(int side)
@@ -496,7 +503,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		configs[side].inventory++;
 		if(configs[side].inventory == 3) configs[side].inventory = -1;
 		getSide(ForgeDirection.getOrientation(side)).indicatorUpdated(this, configs[side], ForgeDirection.getOrientation(side));
-		PacketHandler.instance.SendClientSideState(this, (byte)side);
+        PacketHandler.instance.SendClientSideState(this, (byte)side);
 	}
 	
 	public void nextRS(int side)
@@ -525,7 +532,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		
 		if(! reset) configs[side].rsControl[0] = ! configs[side].rsControl[0];
 		getSide(ForgeDirection.getOrientation(side)).indicatorUpdated(this, configs[side], ForgeDirection.getOrientation(side));
-		PacketHandler.instance.SendClientSideState(this, (byte)side);
+        PacketHandler.instance.SendClientSideState(this, (byte)side);
 	}
 	
 	public void nextLatch(int side)
@@ -554,7 +561,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		
 		if(! reset) configs[side].rsLatch[0] = ! configs[side].rsLatch[0];
 		getSide(ForgeDirection.getOrientation(side)).indicatorUpdated(this, configs[side], ForgeDirection.getOrientation(side));
-		PacketHandler.instance.SendClientSideState(this, (byte)side);
+        PacketHandler.instance.SendClientSideState(this, (byte)side);
 	}
 	
 	public void modifyRS(int cell, boolean on)
@@ -638,17 +645,33 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		inventory.setInventorySlotContents(slot, item);
 	}
 
-	@Override
-	public String getInvName()
+    @Override
+    public void openInventory()
+    {
+        //TODO
+    }
+
+    @Override
+    public void closeInventory() {
+
+    }
+
+    @Override
+	public String getInventoryName()
 	{
 		return "socket";
 	}
 
-	@Override
+    @Override
+    public boolean hasCustomInventoryName() {
+        return false;
+    }
+
+	/*@Override
 	public boolean isInvNameLocalized()
 	{
 		return false;
-	}
+	}*/
 
 	@Override
 	public int getInventoryStackLimit()
@@ -662,11 +685,11 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		return true;
 	}
 
-	@Override
+	/*@Override
 	public void openChest() {}
 
 	@Override
-	public void closeChest() {}
+	public void closeChest() {}*/
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) 
@@ -674,7 +697,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		return true;
 	}
 	
-	@Override
+	/*@Override
 	public void onInventoryChanged()
 	{
 		for(int i = 0; i < 6; i++)
@@ -685,7 +708,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 				m.onInventoryChange(configs[i], j, this, ForgeDirection.getOrientation(i), false);
 			}
 		}
-	}
+	}*/
 	
 	// ISidedInventory
 	
@@ -756,7 +779,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		int yo = yCoord + side.offsetY;
 		int zo = zCoord + side.offsetZ;
 		
-		TileEntity t = worldObj.getBlockTileEntity(xo, yo, zo);
+		TileEntity t = worldObj.getTileEntity(xo, yo, zo);
 		
 		if(t instanceof IInventory)
 		{		
@@ -783,7 +806,8 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 						if(doPull)
 						{
 							result = isi.decrStackSize(slots[i], 1);
-							isi.onInventoryChanged();
+                            //TODO Check if it was needed
+                            // isi.onInventoryChanged();
 						}
 						else
 						{
@@ -809,7 +833,8 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 						if(doPull)
 						{
 							result = ii.decrStackSize(i, 1);
-							ii.onInventoryChanged();
+                            //TODO Check if it was needed
+                            //ii.onInventoryChanged();
 						}
 						else
 						{
@@ -953,14 +978,14 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		}
 		return new ItemStack[]{};
 	}
-	
-	public boolean tryInsertItem(ItemStack stack, ForgeDirection side)
+
+    public boolean tryInsertItem(ItemStack stack, ForgeDirection side)
 	{
 		int xo = xCoord + side.offsetX;
 		int yo = yCoord + side.offsetY;
 		int zo = zCoord + side.offsetZ;
 		
-		TileEntity t = worldObj.getBlockTileEntity(xo, yo, zo);
+		TileEntity t = worldObj.getTileEntity(xo, yo, zo);
 		
 		if(stack == null) return false;
 		
@@ -988,7 +1013,8 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 						if(inSlot != null && inSlot.isItemEqual(ghost) && inSlot.stackSize < inSlot.getMaxStackSize() && inSlot.stackSize < isi.getInventoryStackLimit())
 						{
 							inSlot.stackSize++;
-							isi.onInventoryChanged();
+							//TODO Check if it was needed
+							// isi.onInventoryChanged();
 							return true;
 						}
 					}
@@ -1002,7 +1028,8 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 						if(inSlot == null)
 						{
 							isi.setInventorySlotContents(slots[i], ghost);
-							isi.onInventoryChanged();
+                            //TODO Check if it was needed
+                            // isi.onInventoryChanged();
 							return true;
 						}
 					}
@@ -1023,7 +1050,8 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 						if(inSlot != null && inSlot.isItemEqual(ghost) && inSlot.stackSize < inSlot.getMaxStackSize() && inSlot.stackSize < ii.getInventoryStackLimit())
 						{
 							inSlot.stackSize++;
-							ii.onInventoryChanged();
+                            //TODO Check if it was needed
+                            //ii.onInventoryChanged();
 							return true;
 						}
 					}
@@ -1037,7 +1065,8 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 						if(inSlot == null)
 						{
 							ii.setInventorySlotContents(i, ghost);
-							ii.onInventoryChanged();
+                            //TODO Check if it was needed
+                            //ii.onInventoryChanged();
 							return true;
 						}
 					}
@@ -1214,7 +1243,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		int yo = yCoord + side.offsetY;
 		int zo = zCoord + side.offsetZ;
 		
-		TileEntity t = worldObj.getBlockTileEntity(xo, yo, zo);
+		TileEntity t = worldObj.getTileEntity(xo, yo, zo);
 		
 		if(tanks[tank].getFluid() != null && t != null && t instanceof IFluidHandler)
 		{
@@ -1231,7 +1260,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		int yo = yCoord + side.offsetY;
 		int zo = zCoord + side.offsetZ;
 		
-		TileEntity t = worldObj.getBlockTileEntity(xo, yo, zo);
+		TileEntity t = worldObj.getTileEntity(xo, yo, zo);
 		
 		if(t != null && t instanceof IFluidHandler)
 		{
@@ -1300,19 +1329,19 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	@Override
 	public void sendClientSideState(int side)
 	{
-		PacketHandler.instance.SendClientSideState(this, (byte)side);
+        PacketHandler.instance.SendClientSideState(this, (byte)side);
 	}
 	
 	@Override
 	public void sendClientInventorySlot(int inv)
 	{
-		PacketHandler.instance.SendClientInventorySlot(this, inv);
+        PacketHandler.instance.SendClientInventorySlot(this, inv);
 	}
 	
 	@Override
 	public void sendClientTankSlot(int tank)
 	{
-		PacketHandler.instance.SendClientTankSlot(this, tank);
+        PacketHandler.instance.SendClientTankSlot(this, tank);
 	}
 
 	@Override
@@ -1322,7 +1351,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		int yo = yCoord + side.offsetY;
 		int zo = zCoord + side.offsetZ;
 		
-		TileEntity t = worldObj.getBlockTileEntity(xo, yo, zo);
+		TileEntity t = worldObj.getTileEntity(xo, yo, zo);
 		
 		if(t != null && t instanceof IEnergyHandler)
 		{
@@ -1452,7 +1481,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getTexture(int texture, int moduleID)
+	public IIcon getTexture(int texture, int moduleID)
 	{
 		return ((BlockSocket)SocketsMod.socket).textures[moduleID][texture];
 	}
@@ -1484,7 +1513,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	}
 
 	@Override
-	public boolean canInterface(ForgeDirection from)
+	public boolean canConnectEnergy(ForgeDirection from)
 	{
 		if(from == ForgeDirection.UNKNOWN) return false;
 		SocketModule m = getSide(from);

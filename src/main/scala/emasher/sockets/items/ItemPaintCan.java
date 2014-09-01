@@ -1,5 +1,7 @@
 package emasher.sockets.items;
 
+import emasher.sockets.PacketHandler;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.*;
@@ -7,18 +9,18 @@ import net.minecraft.block.*;
 import net.minecraft.item.*;
 import net.minecraft.tileentity.*;
 import net.minecraft.block.material.*;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.entity.*;
 import net.minecraft.util.*;
 import net.minecraft.potion.*;
-import net.minecraftforge.liquids.ITankContainer;
+import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.*;
 
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.core.EmasherCore;
 import emasher.sockets.SocketsMod;
 import emasher.sockets.pipes.*;
@@ -31,7 +33,7 @@ public class ItemPaintCan extends Item
 	
 	public ItemPaintCan(int par1, int paintColour)
 	{
-		super(par1);
+		super();
 		this.paintColour = paintColour;
 		this.setMaxDamage(64);
 		//this.setIconIndex(32 + paintColour);
@@ -41,7 +43,7 @@ public class ItemPaintCan extends Item
 		this.setMaxStackSize(1);
 	}
 	
-	public void registerIcons(IconRegister registry)
+	public void registerIcons(IIconRegister registry)
 	{
 		this.itemIcon = registry.registerIcon("sockets:item" + (32 + paintColour));
 	}
@@ -66,7 +68,7 @@ public class ItemPaintCan extends Item
         {
             return par1ItemStack;
         }
-        else if (var12.typeOfHit == EnumMovingObjectType.TILE)
+        else if (var12.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
         {
         	
         	int var13 = var12.blockX;
@@ -75,38 +77,39 @@ public class ItemPaintCan extends Item
             
             //System.out.println(var12.blockX + ", " + var12.blockY + ", " + var12.blockZ);
             
-            int BlockID = par2World.getBlockId(var13, var14, var15);
-            ItemStack stack = new ItemStack(Block.blocksList[BlockID], par2World.getBlockMetadata(var12.blockX, var12.blockY, var12.blockZ));
+            //int BlockID = par2World.getBlockId(var13, var14, var15);
+            Block b = par2World.getBlock(var13, var14, var15);
+            ItemStack stack = new ItemStack(b, par2World.getBlockMetadata(var12.blockX, var12.blockY, var12.blockZ));
             
             int oreIDReq = OreDictionary.getOreID("plankWood");
             int oreIDThis = OreDictionary.getOreID(stack);
 
             if (oreIDReq == oreIDThis)
             {
-            	if(BlockID != SocketsMod.paintedPlanks.blockID || (BlockID == SocketsMod.paintedPlanks.blockID && par2World.getBlockMetadata(var13, var14, var15) != this.paintColour))
+            	if(b != SocketsMod.paintedPlanks || (b == SocketsMod.paintedPlanks && par2World.getBlockMetadata(var13, var14, var15) != this.paintColour))
             	{
 	            	par2World.playSoundEffect((double)var13 + 0.5D, (double)var14 + 0.5D, (double)var15 + 0.5D, "step.cloth", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
 	                
 	                for(int i = 0; i < 16; i++)
 	                {
 	                	int met = 15 - this.paintColour;
-	                	String id = "" + Block.cloth.blockID;
+	                	String id = "" + Block.getIdFromBlock(Blocks.wool);
 	                	par2World.spawnParticle("tilecrack_" + id + "_" + met, (double)var13 + rand.nextDouble() - 0.5, var14 + rand.nextDouble() - 0.5, var15 + rand.nextDouble() - 0.5, 0, 0, 0);
 	                }
 	                
-	    			par2World.setBlock(var13, var14, var15, SocketsMod.paintedPlanks.blockID, paintColour, 2);
+	    			par2World.setBlock(var13, var14, var15, SocketsMod.paintedPlanks, paintColour, 2);
 	    			par1ItemStack.damageItem(1, par3EntityPlayer);
             	}
                 
             }
             
-            if(BlockID == Block.cloth.blockID && par2World.getBlockMetadata(var13, var14, var15) != 15 - this.paintColour)
+            if(b == Blocks.wool && par2World.getBlockMetadata(var13, var14, var15) != 15 - this.paintColour)
             {
             	par2World.playSoundEffect((double)var13 + 0.5D, (double)var14 + 0.5D, (double)var15 + 0.5D, "step.cloth", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
             	for(int i = 0; i < 16; i++)
                 {
                 	int met = 15 - this.paintColour;
-                	String id = "" + Block.cloth.blockID;
+                	String id = "" + Block.getIdFromBlock(Blocks.wool);
                 	par2World.spawnParticle("tilecrack_" + id + "_" + met, (double)var13 + rand.nextDouble() - 0.5, var14 + rand.nextDouble() - 0.5, var15 + rand.nextDouble() - 0.5, 0, 0, 0);
                 }
             	//par2World.setBlock(var13, var14, var15, SocketsMod.paintedPlanks.blockID, paintColour, 2);
@@ -114,19 +117,19 @@ public class ItemPaintCan extends Item
     			par1ItemStack.damageItem(1, par3EntityPlayer);
             }
             
-            if(BlockID == Block.hardenedClay.blockID || (BlockID == Block.stainedClay.blockID && par2World.getBlockMetadata(var13, var14, var15) != 15 - this.paintColour))
+            if(b == Blocks.hardened_clay || (b == Blocks.stained_hardened_clay && par2World.getBlockMetadata(var13, var14, var15) != 15 - this.paintColour))
             {
             	par2World.playSoundEffect((double)var13 + 0.5D, (double)var14 + 0.5D, (double)var15 + 0.5D, "step.cloth", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
             	for(int i = 0; i < 16; i++)
                 {
                 	int met = 15 - this.paintColour;
-                	String id = "" + Block.cloth.blockID;
+                	String id = "" + Block.getIdFromBlock(Blocks.wool);
                 	par2World.spawnParticle("tilecrack_" + id + "_" + met, (double)var13 + rand.nextDouble() - 0.5, var14 + rand.nextDouble() - 0.5, var15 + rand.nextDouble() - 0.5, 0, 0, 0);
                 }
             	//par2World.setBlock(var13, var14, var15, SocketsMod.paintedPlanks.blockID, paintColour, 2);
-            	if(BlockID == Block.hardenedClay.blockID)
+            	if(b == Blocks.hardened_clay)
             	{
-            		par2World.setBlock(var13, var14, var15, Block.stainedClay.blockID, 15 - this.paintColour, 2);
+            		par2World.setBlock(var13, var14, var15, Blocks.stained_hardened_clay, 15 - this.paintColour, 2);
             	}
             	else
             	{
@@ -134,19 +137,21 @@ public class ItemPaintCan extends Item
             	}
     			par1ItemStack.damageItem(1, par3EntityPlayer);
             }
-         
-            if(Block.blocksList[BlockID] != null && Block.blocksList[BlockID] instanceof BlockPipeBase && par2World.getBlockTileEntity(var13, var14, var15) != null && par2World.getBlockTileEntity(var13, var14, var15) instanceof TilePipeBase)
+
+            //TODO Check
+            //if(Block.blocksList[BlockID] != null && Block.blocksList[BlockID] instanceof BlockPipeBase && par2World.getBlockTileEntity(var13, var14, var15) != null && par2World.getBlockTileEntity(var13, var14, var15) instanceof TilePipeBase)
+            if(b instanceof BlockPipeBase && par2World.getTileEntity(var13, var14, var15) != null && par2World.getTileEntity(var13, var14, var15) instanceof TilePipeBase)
             {
             	if(! par2World.isRemote)
             	{
-	            	((TilePipeBase)par2World.getBlockTileEntity(var13, var14, var15)).colour = this.paintColour;
-	            	PacketHandler.instance.sendClientPipeColour((TilePipeBase)par2World.getBlockTileEntity(var13, var14, var15));
+	            	((TilePipeBase)par2World.getTileEntity(var13, var14, var15)).colour = this.paintColour;
+                    PacketHandler.instance.sendClientPipeColour((TilePipeBase)par2World.getTileEntity(var13, var14, var15));
             	}
             	par2World.playSoundEffect((double)var13 + 0.5D, (double)var14 + 0.5D, (double)var15 + 0.5D, "step.cloth", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
             	for(int i = 0; i < 16; i++)
                 {
                 	int met = 15 - this.paintColour;
-                	String id = "" + Block.cloth.blockID;
+                	String id = "" + Block.getIdFromBlock(Blocks.wool);
                 	par2World.spawnParticle("tilecrack_" + id + "_" + met, (double)var13 + rand.nextDouble() - 0.5, var14 + rand.nextDouble() - 0.5, var15 + rand.nextDouble() - 0.5, 0, 0, 0);
                 }
             }

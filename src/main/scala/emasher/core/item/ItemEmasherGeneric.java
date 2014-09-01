@@ -1,16 +1,16 @@
 package emasher.core.item;
 
 import emasher.core.EmasherCore;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.Item;
 
 public class ItemEmasherGeneric extends Item
 {
 	String textureString;
 	
-	public ItemEmasherGeneric(int id, String texture, String name)
+	public ItemEmasherGeneric(String texture, String name)
 	{
-		super(id);
+		super();
 		
 		textureString = texture;
 		
@@ -20,7 +20,7 @@ public class ItemEmasherGeneric extends Item
 	}
 	
 	@Override
-	public void registerIcons(IconRegister register)
+	public void registerIcons(IIconRegister register)
 	{
 		itemIcon = register.registerIcon(textureString);
 	}

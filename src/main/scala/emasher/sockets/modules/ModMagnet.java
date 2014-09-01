@@ -3,6 +3,7 @@ package emasher.sockets.modules;
 import emasher.api.SocketModule;
 import emasher.sockets.SocketsMod;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -41,7 +42,7 @@ public class ModMagnet extends SocketModule
     public void addRecipe()
     {
         CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "i", "b",
-                Character.valueOf('i'), Block.blockIron,
+                Character.valueOf('i'), Blocks.iron_block,
                 Character.valueOf('b'), SocketsMod.blankSide));
     }
 

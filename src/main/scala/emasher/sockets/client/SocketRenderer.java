@@ -24,14 +24,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.IItemRenderer.ItemRendererHelper;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.FakePlayerFactory;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.common.util.ForgeDirection;
 //import net.minecraftforge.liquids.LiquidDictionary;
 //import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -104,7 +104,7 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 			//Minecraft.getMinecraft().renderEngine.bindTexture(par1ResourceLocation)
 			//bindTextureByName("/terrain.png");
 			
-			Icon[] icons = new Icon[4];
+			IIcon[] icons = new IIcon[4];
 			
 			if(m.hasIndicator(0))icons[0] = b.tankIndicator[ts.tankIndicatorIndex(side)];
 			if(m.hasIndicator(1))icons[1] = b.inventoryIndicator[ts.inventoryIndicatorIndex(side)];
@@ -151,7 +151,7 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 						//bindTextureByName(ls.getTextureSheet());
 						if(ls.getFluid() != null && ls.getFluid().getIcon() != null)
 						{
-							Icon fluidIcon = ls.getFluid().getIcon();//ls.getRenderingIcon();
+							IIcon fluidIcon = ls.getFluid().getIcon();//ls.getRenderingIcon();
 							
 							GL11.glTranslatef(0.25F, 0.25F, 0.0005F);
 							GL11.glScalef(0.5F, 0.5F, 0.5F);
@@ -176,7 +176,7 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 				
 			}
 			
-			Icon[] additional = m.getAdditionalOverlays(ts, ts.configs[side], ForgeDirection.getOrientation(side));
+			IIcon[] additional = m.getAdditionalOverlays(ts, ts.configs[side], ForgeDirection.getOrientation(side));
 			//bindTextureByName("/terrain.png");
 			Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
 			
@@ -209,8 +209,8 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 			
 			GL11.glScalef(0.01F, 0.01F, 1);
 			
-			if(s != null) this.getFontRenderer().drawString(s, -this.getFontRenderer().getStringWidth(s) / 2, 2, -1);
-			
+			if(s != null) Minecraft.getMinecraft().fontRenderer.drawString(s, -Minecraft.getMinecraft().fontRenderer.getStringWidth(s) / 2, 2, -1);
+
 			GL11.glScalef(100, 100, 1);
 			
 			ItemStack theStack= m.getItemToRender(ts, ts.configs[side], ForgeDirection.getOrientation(side));
@@ -225,9 +225,9 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 				
 				boolean isBlock = false;
 				
-				if(theStack.itemID < 4096 && Block.blocksList[theStack.itemID] != null && ! Block.blocksList[theStack.itemID].getUnlocalizedName().equals("tile.ForgeFiller")) isBlock = true;
+				if(Item.getIdFromItem(theStack.getItem()) < 4096 && Block.getBlockFromItem(theStack.getItem()) != null && ! Block.getBlockFromItem(theStack.getItem()).getUnlocalizedName().equals("tile.ForgeFiller")) isBlock = true;
 				
-				if(isBlock && RenderBlocks.renderItemIn3d(Block.blocksList[theItem.itemID].getRenderType()) || customRenderer != null)
+				if(isBlock && RenderBlocks.renderItemIn3d(Block.getBlockFromItem(theItem).getRenderType()) || customRenderer != null)
 				{
 					//bindTextureByName("/terrain.png");
 					Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
@@ -257,7 +257,7 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 					if (customRenderer != null){
 						customRenderer.renderItem(ItemRenderType.INVENTORY, theStack, blockRender);
 					}else{
-						blockRender.renderBlockAsItem(Block.blocksList[theStack.itemID], theStack.getItemDamage(), 1);
+						blockRender.renderBlockAsItem(Block.getBlockFromItem(theStack.getItem()), theStack.getItemDamage(), 1);
 					}
 				}
 				else
@@ -276,7 +276,7 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 						for(int i = 0; i < passes; i++)
 						{
 							Minecraft.getMinecraft().renderEngine.bindTexture(theStack.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
-							Icon itemIcon = theItem.getIconFromDamageForRenderPass(theStack.getItemDamage(), i);//, FakePlayerFactory.getMinecraft(ts.worldObj), theStack, 0);
+							IIcon itemIcon = theItem.getIconFromDamageForRenderPass(theStack.getItemDamage(), i);//, FakePlayerFactory.getMinecraft(ts.worldObj), theStack, 0);
 							if (itemIcon != null) {
 								
 								tessellator.startDrawingQuads();
@@ -298,7 +298,7 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 					else
 					{
 					
-						Icon itemIcon = theItem.getIcon(theStack, 0);
+						IIcon itemIcon = theItem.getIcon(theStack, 0);
 						
 						tessellator.startDrawingQuads();
 						

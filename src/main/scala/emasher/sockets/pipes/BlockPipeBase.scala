@@ -4,28 +4,28 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import emasher.api.SocketModule;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.block.material.Material
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids._;
 import cofh.api.energy._;
 
-abstract class BlockPipeBase(id: Int, fluid:Boolean) extends BlockContainer(id, Material.iron)
+abstract class BlockPipeBase(id: Int, fluid:Boolean) extends BlockContainer(Material.iron)
 {
-	var textures:Array[Icon] = new Array(17);
+	var textures:Array[IIcon] = new Array(17);
 	
 	override def hasTileEntity():Boolean = true;
 	
 	@SideOnly(Side.CLIENT)
-	override def getBlockTexture(world: IBlockAccess, x: Int, y: Int, z: Int, side: Int):Icon =
+  override def getIcon(world: IBlockAccess, x: Int, y: Int, z: Int, side: Int):IIcon =
 	{
 		var d:ForgeDirection = ForgeDirection.getOrientation(side);
-		var ent:TileEntity = world.getBlockTileEntity(x + d.offsetX, y + d.offsetY, z + d.offsetZ);
+		var ent:TileEntity = world.getTileEntity(x + d.offsetX, y + d.offsetY, z + d.offsetZ);
 		
 		if(fluid)
 		{
@@ -49,46 +49,46 @@ abstract class BlockPipeBase(id: Int, fluid:Boolean) extends BlockContainer(id, 
 		{
 			case 0 =>
 				{
-					ents(0) = world.getBlockTileEntity(x, y, z - 1);
-					ents(1) = world.getBlockTileEntity(x + 1, y, z);
-					ents(2) = world.getBlockTileEntity(x, y, z + 1);
-					ents(3) = world.getBlockTileEntity(x - 1, y, z);					
+					ents(0) = world.getTileEntity(x, y, z - 1);
+					ents(1) = world.getTileEntity(x + 1, y, z);
+					ents(2) = world.getTileEntity(x, y, z + 1);
+					ents(3) = world.getTileEntity(x - 1, y, z);
 				}
 				
 			case 1 =>
 				{
-					ents(0) = world.getBlockTileEntity(x, y, z - 1);
-					ents(1) = world.getBlockTileEntity(x + 1, y, z);
-					ents(2) = world.getBlockTileEntity(x, y, z + 1);
-					ents(3) = world.getBlockTileEntity(x - 1, y, z);					
+					ents(0) = world.getTileEntity(x, y, z - 1);
+					ents(1) = world.getTileEntity(x + 1, y, z);
+					ents(2) = world.getTileEntity(x, y, z + 1);
+					ents(3) = world.getTileEntity(x - 1, y, z);
 				}
 			case 2 =>
 				{
-					ents(0) = world.getBlockTileEntity(x, y + 1, z);
-					ents(1) = world.getBlockTileEntity(x - 1, y, z);
-					ents(2) = world.getBlockTileEntity(x, y - 1, z);
-					ents(3) = world.getBlockTileEntity(x + 1, y, z);	
+					ents(0) = world.getTileEntity(x, y + 1, z);
+					ents(1) = world.getTileEntity(x - 1, y, z);
+					ents(2) = world.getTileEntity(x, y - 1, z);
+					ents(3) = world.getTileEntity(x + 1, y, z);
 				}
 			case 3 =>
 				{
-					ents(0) = world.getBlockTileEntity(x, y + 1, z);
-					ents(1) = world.getBlockTileEntity(x + 1, y, z);
-					ents(2) = world.getBlockTileEntity(x, y - 1, z);
-					ents(3) = world.getBlockTileEntity(x - 1, y, z);	
+					ents(0) = world.getTileEntity(x, y + 1, z);
+					ents(1) = world.getTileEntity(x + 1, y, z);
+					ents(2) = world.getTileEntity(x, y - 1, z);
+					ents(3) = world.getTileEntity(x - 1, y, z);
 				}
 			case 4 =>
 				{
-					ents(0) = world.getBlockTileEntity(x, y + 1, z);
-					ents(1) = world.getBlockTileEntity(x, y, z + 1);
-					ents(2) = world.getBlockTileEntity(x, y - 1, z);
-					ents(3) = world.getBlockTileEntity(x, y, z - 1);
+					ents(0) = world.getTileEntity(x, y + 1, z);
+					ents(1) = world.getTileEntity(x, y, z + 1);
+					ents(2) = world.getTileEntity(x, y - 1, z);
+					ents(3) = world.getTileEntity(x, y, z - 1);
 				}
 			case 5 =>
 				{
-					ents(0) = world.getBlockTileEntity(x, y + 1, z);
-					ents(1) = world.getBlockTileEntity(x, y, z - 1);
-					ents(2) = world.getBlockTileEntity(x, y - 1, z);
-					ents(3) = world.getBlockTileEntity(x, y, z + 1);
+					ents(0) = world.getTileEntity(x, y + 1, z);
+					ents(1) = world.getTileEntity(x, y, z - 1);
+					ents(2) = world.getTileEntity(x, y - 1, z);
+					ents(3) = world.getTileEntity(x, y, z + 1);
 				}
 			case _ =>
 				{
@@ -106,7 +106,7 @@ abstract class BlockPipeBase(id: Int, fluid:Boolean) extends BlockContainer(id, 
 	{
 		var cons:Array[Boolean] = new Array(4);
 		
-		var te:TileEntity = world.getBlockTileEntity(x, y, z);
+		var te:TileEntity = world.getTileEntity(x, y, z);
 		var col:Int = -1;
 		
 		if(te.isInstanceOf[TilePipeBase])
@@ -144,7 +144,7 @@ abstract class BlockPipeBase(id: Int, fluid:Boolean) extends BlockContainer(id, 
 	}
 	
 	@SideOnly(Side.CLIENT)
-	def selectTexture(cons: Array[Boolean]):Icon = 
+	def selectTexture(cons: Array[Boolean]):IIcon =
 	{
 		var result:Int = 0;
 		var allFalse:Boolean = true;

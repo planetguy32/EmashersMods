@@ -1,13 +1,16 @@
 package emasher.sockets.modules
 
-import emasher.api._;
+import emasher.api
+import emasher.api.{SideConfig, SocketTileAccess, SocketModule}
+;
 import emasher.sockets._;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util._;
+import net.minecraft.init.{Items, Blocks}
 import net.minecraft.item.crafting._;
 import net.minecraftforge.oredict._;
-import net.minecraftforge.common._;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraft.item._;
 import net.minecraft.block._;
 import net.minecraft.util._;
@@ -18,14 +21,14 @@ class ModRangeSelector(id: Int) extends SocketModule(id, "sockets:rangeSelector"
 	
 	@SideOnly(Side.CLIENT)
 	override def getAdditionalOverlays(ts: SocketTileAccess, config: SideConfig, side: ForgeDirection)
-	:Array[Icon] = 
+	:Array[IIcon] =
 	{
 		Array(SocketsMod.socket.asInstanceOf[BlockSocket].bar1(config.meta));
 	}
 	
 	override def addRecipe
 	{
-		CraftingManager.getInstance().getRecipeList().asInstanceOf[List[Object]].add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ggg", "sls", " b ", Character.valueOf('g'), Block.thinGlass, Character.valueOf('s'), Item.glowstone,
+		CraftingManager.getInstance().getRecipeList().asInstanceOf[List[Object]].add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ggg", "sls", " b ", Character.valueOf('g'), Blocks.glass_pane, Character.valueOf('s'), Items.glowstone_dust,
 				Character.valueOf('l'), "dyeLime", Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	

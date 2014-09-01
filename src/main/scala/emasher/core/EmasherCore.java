@@ -7,27 +7,27 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import emasher.core.block.*;
 import emasher.core.item.*;
-import emasher.sockets.BlockSlickwater;
-import emasher.sockets.FluidSlickwater;
+//import emasher.sockets.BlockSlickwater;
+//import emasher.sockets.FluidSlickwater;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.EnumArmorMaterial;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraftforge.common.*;
 
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
@@ -39,8 +39,8 @@ import emasher.core.hemp.*;
 
 import java.util.*;
 
-@Mod(modid="emashercore", name="Emasher Resource", version="1.2.3.4")
-@NetworkMod(clientSideRequired=true, serverSideRequired=false)
+@Mod(modid="emashercore", name="Emasher Resource", version="1.3.0.0")
+//@NetworkMod(clientSideRequired=true, serverSideRequired=false)
 public class EmasherCore 
 {
 	// The instance of your mod that Forge uses.
@@ -115,7 +115,7 @@ public class EmasherCore
 	public static Item hempPants;
 	public static Item hempShoes;
 	
-	static EnumArmorMaterial enumArmorMaterialHemp = EnumHelper.addArmorMaterial("Hemp", 5, new int[]{1, 3, 2, 1}, 15);
+	static ItemArmor.ArmorMaterial enumArmorMaterialHemp = EnumHelper.addArmorMaterial("Hemp", 5, new int[]{1, 3, 2, 1}, 15);
 	
 	public static boolean retroGen;
 	
@@ -207,12 +207,17 @@ public class EmasherCore
 	public static WorldGenHemp generateHemp = new WorldGenHemp();
 	
 	public static CreativeTabs tabEmasher = new CreativeTabs("tabEmasher")
-	{
-		public ItemStack getIconItemStack()
-		{
-			return new ItemStack(gem, 1, 0);
-		}
-	};
+    {
+        @Override
+        public Item getTabIconItem() {
+            return new ItemCircuit();
+        }
+
+        public ItemStack getIconItemStack()
+        {
+            return new ItemStack(psu);
+        }
+    };
 	
 	// Says where the client and server 'proxy' code is loaded.
 	@SidedProxy(clientSide="emasher.core.client.ClientProxy", serverSide="emasher.core.CommonProxy")
@@ -225,44 +230,44 @@ public class EmasherCore
 		
 		config.load();
 		
-		Property test = config.get(Configuration.CATEGORY_GENERAL, "A:", false);
-		test.comment = "Red Sandstone, Limestone, Mixed Dirt, and Mixed Sand Must have IDs below 256!";
+		//Property test = config.get(Configuration.CATEGORY_GENERAL, "A:", false);
+		//test.comment = "Red Sandstone, Limestone, Mixed Dirt, and Mixed Sand Must have IDs below 256!";
 		
-		Property prop = config.get(Configuration.CATEGORY_BLOCK,  "Mixed Dirt ID", 198);
+//		Property prop = config.get(Configuration.CATEGORY_BLOCK,  "Mixed Dirt ID", 198);
 		//prop.comment = "Must be 255 or lower!";
-		mixedDirtID = prop.getInt();
+		//mixedDirtID = prop.getInt();
 		
-		prop = config.get(Configuration.CATEGORY_BLOCK,  "Mixed Sand ID", 197);
+//		prop = config.get(Configuration.CATEGORY_BLOCK,  "Mixed Sand ID", 197);
 		//prop.comment = "Must be 255 or lower!";
-		mixedSandID = prop.getInt();
+		//mixedSandID = prop.getInt();
 		
-		normalCubeID = config.get(Configuration.CATEGORY_BLOCK, "Normal Cube ID", 199).getInt();
-		redSandStoneID = config.get(Configuration.CATEGORY_BLOCK, "Red Sandstone ID", 196).getInt();
-		limestoneID = config.get(Configuration.CATEGORY_BLOCK, "Limestone ID", 195).getInt();
-        superAlgaeID = config.get(Configuration.CATEGORY_BLOCK, "Super Algae ID", 3291).getInt();
-        deadAlgaeID = config.get(Configuration.CATEGORY_BLOCK, "Dead Algae ID", 3292).getInt();
-        nutrientWaterID = config.get(Configuration.CATEGORY_BLOCK, "Nutrient Water ID", 3293).getInt();
-		
-		pondScumID = config.get(Configuration.CATEGORY_BLOCK, "Pond Scum ID", 3290).getInt();
-		machineID = config.get(Configuration.CATEGORY_BLOCK, "Machine Chassis ID", 3172).getInt();
-		circuitID = config.get(Configuration.CATEGORY_ITEM, "Control Circuit ID", 13173).getInt();
-		psuID = config.get(Configuration.CATEGORY_ITEM, "PSU ID", 13174).getInt();
-		oreID = config.get(Configuration.CATEGORY_BLOCK, "Ore Block ID", 3173).getInt();
-		metalID = config.get(Configuration.CATEGORY_BLOCK, "Metal Block ID", 3174).getInt();
-		gemID = config.get(Configuration.CATEGORY_ITEM, "Gem ID", 13175).getInt();
-		ingotID = config.get(Configuration.CATEGORY_ITEM, "Ingot ID", 3176).getInt();
-        bluestoneID = config.get(Configuration.CATEGORY_ITEM, "Bluestone ID", 13176).getInt();
-		
-		
-		hempBlockID = config.get(Configuration.CATEGORY_BLOCK,  "Hemp Block ID", 2055).getInt();
-		hempPlantID = config.get(Configuration.CATEGORY_ITEM, "Hemp Plant ID", 9035).getInt();
-		hempSeedsID = config.get(Configuration.CATEGORY_ITEM, "Hemp Seeds ID", 9036).getInt();
-		hempOilID = config.get(Configuration.CATEGORY_ITEM, "Hemp Oil ID", 9039).getInt();
-		hempCapID = config.get(Configuration.CATEGORY_ITEM, "Hemp Cap ID", 9042).getInt();
-		hempTunicID = config.get(Configuration.CATEGORY_ITEM, "Hemp Tunic ID", 9043).getInt();
-		hempPantsID = config.get(Configuration.CATEGORY_ITEM, "Hemp Pants ID", 9044).getInt();
-		hempShoesID = config.get(Configuration.CATEGORY_ITEM, "Hemp Shoes ID", 9045).getInt();
-		
+//		normalCubeID = config.get(Configuration.CATEGORY_BLOCK, "Normal Cube ID", 199).getInt();
+//		redSandStoneID = config.get(Configuration.CATEGORY_BLOCK, "Red Sandstone ID", 196).getInt();
+//		limestoneID = config.get(Configuration.CATEGORY_BLOCK, "Limestone ID", 195).getInt();
+//        superAlgaeID = config.get(Configuration.CATEGORY_BLOCK, "Super Algae ID", 3291).getInt();
+//        deadAlgaeID = config.get(Configuration.CATEGORY_BLOCK, "Dead Algae ID", 3292).getInt();
+//        nutrientWaterID = config.get(Configuration.CATEGORY_BLOCK, "Nutrient Water ID", 3293).getInt();
+//
+//		pondScumID = config.get(Configuration.CATEGORY_BLOCK, "Pond Scum ID", 3290).getInt();
+//		machineID = config.get(Configuration.CATEGORY_BLOCK, "Machine Chassis ID", 3172).getInt();
+//		circuitID = config.get(Configuration.CATEGORY_ITEM, "Control Circuit ID", 13173).getInt();
+//		psuID = config.get(Configuration.CATEGORY_ITEM, "PSU ID", 13174).getInt();
+//		oreID = config.get(Configuration.CATEGORY_BLOCK, "Ore Block ID", 3173).getInt();
+//		metalID = config.get(Configuration.CATEGORY_BLOCK, "Metal Block ID", 3174).getInt();
+//		gemID = config.get(Configuration.CATEGORY_ITEM, "Gem ID", 13175).getInt();
+//		ingotID = config.get(Configuration.CATEGORY_ITEM, "Ingot ID", 3176).getInt();
+//        bluestoneID = config.get(Configuration.CATEGORY_ITEM, "Bluestone ID", 13176).getInt();
+//
+//
+//		hempBlockID = config.get(Configuration.CATEGORY_BLOCK,  "Hemp Block ID", 2055).getInt();
+//		hempPlantID = config.get(Configuration.CATEGORY_ITEM, "Hemp Plant ID", 9035).getInt();
+//		hempSeedsID = config.get(Configuration.CATEGORY_ITEM, "Hemp Seeds ID", 9036).getInt();
+//		hempOilID = config.get(Configuration.CATEGORY_ITEM, "Hemp Oil ID", 9039).getInt();
+//		hempCapID = config.get(Configuration.CATEGORY_ITEM, "Hemp Cap ID", 9042).getInt();
+//		hempTunicID = config.get(Configuration.CATEGORY_ITEM, "Hemp Tunic ID", 9043).getInt();
+//		hempPantsID = config.get(Configuration.CATEGORY_ITEM, "Hemp Pants ID", 9044).getInt();
+//		hempShoesID = config.get(Configuration.CATEGORY_ITEM, "Hemp Shoes ID", 9045).getInt();
+//
 		retroGen = config.get(Configuration.CATEGORY_GENERAL, "A: Retro Gen Ores", false).getBoolean(false);
 		algaeDepth = config.get(Configuration.CATEGORY_GENERAL, "A: Max Water Depth Alage Can Grow In", 3).getInt();
 		
@@ -342,53 +347,57 @@ public class EmasherCore
 	@EventHandler
 	public void load(FMLInitializationEvent event) 
 	{
-		mixedDirt = (new BlockMixedDirt(mixedDirtID, Material.ground))
-				.setHardness(0.5F).setStepSound(Block.soundSandFootstep).setUnlocalizedName("mixedDirt");
-		mixedSand = (new BlockMixedSand(mixedSandID, Material.sand))
-				.setHardness(0.5F).setStepSound(Block.soundSandFootstep).setUnlocalizedName("mixedsand");
-		machine = new BlockMachine(machineID).setHardness(1.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("machine");
+		mixedDirt = (new BlockMixedDirt(Material.ground)
+				.setHardness(0.5F).setStepSound(Block.soundTypeSand).setBlockName("mixedDirt"));
+		mixedSand = (new BlockMixedSand(Material.sand))
+				.setHardness(0.5F).setStepSound(Block.soundTypeSand).setBlockName("mixedsand");
+		machine = new BlockMachine(machineID).setHardness(1.0F).setStepSound(Block.soundTypeMetal).setBlockName("machine");
 		
-		redSandStone = (new BlockRedSandstone(redSandStoneID, Material.rock))
-				.setHardness(1.5F).setStepSound(Block.soundStoneFootstep)
-				.setUnlocalizedName("redSandstone");
-		
+		redSandStone = (new BlockRedSandstone(Material.rock))
+				.setHardness(1.5F).setStepSound(Block.soundTypeStone)
+				.setBlockName("redSandstone");
 		GameRegistry.registerBlock(redSandStone, "redSandstone");
-		LanguageRegistry.addName(redSandStone, "Red Sandstone");
+		//LanguageRegistry.addName(redSandStone, "Red Sandstone");
 		
 		limestone = (new BlockLimestone(limestoneID))
-				.setHardness(1.5F).setStepSound(Block.soundStoneFootstep)
-				.setUnlocalizedName("limestone");
+				.setHardness(1.5F).setStepSound(Block.soundTypeStone)
+				.setBlockName("limestone");
 		
 		GameRegistry.registerBlock(limestone, "limestone");
-		LanguageRegistry.addName(limestone, "Limestone");
+		//LanguageRegistry.addName(limestone, "Limestone");
 		
-		normalCube = (new BlockNormalCube(normalCubeID, 0, Material.rock))
-				.setHardness(1.5F).setStepSound(Block.soundStoneFootstep)
-				.setUnlocalizedName("normalCube");
+		normalCube = new BlockNormalCube(normalCubeID, 0, Material.rock)
+				.setHardness(1.5F).setStepSound(Block.soundTypeStone)
+				.setBlockName("normalCube");
+
+        GameRegistry.registerBlock(normalCube, ItemBlockNormalCube.class, "normalCube", "emashercore");
+
 		
 		
-		Item.itemsList[normalCube.blockID] = new ItemBlockNormalCube(normalCube.blockID - 256);
-		LanguageRegistry.instance().addStringLocalization("tile.normalCube.litchenStone.name", "Lichen Stone");
-		LanguageRegistry.instance().addStringLocalization("tile.normalCube.redSandstoneBricks.name", "Red Sandstone Bricks");
-		LanguageRegistry.instance().addStringLocalization("tile.normalCube.limestoneBricks.name", "Limestone Bricks");
-		LanguageRegistry.instance().addStringLocalization("tile.normalCube.roadWay.name", "Roadway");
-		LanguageRegistry.instance().addStringLocalization("tile.normalCube.dirtyCobblestone.name", "Dirty Cobblestone");
+//		Item.itemsList[normalCube] = new ItemBlockNormalCube(normalCube - 256);
+//		LanguageRegistry.instance().addStringLocalization("tile.normalCube.litchenStone.name", "Lichen Stone");
+//		LanguageRegistry.instance().addStringLocalization("tile.normalCube.redSandstoneBricks.name", "Red Sandstone Bricks");
+//		LanguageRegistry.instance().addStringLocalization("tile.normalCube.limestoneBricks.name", "Limestone Bricks");
+//		LanguageRegistry.instance().addStringLocalization("tile.normalCube.roadWay.name", "Roadway");
+//		LanguageRegistry.instance().addStringLocalization("tile.normalCube.dirtyCobblestone.name", "Dirty Cobblestone");
+
+		metal = (new BlockMetal(Material.iron))
+				.setHardness(2.0F).setStepSound(Block.soundTypeMetal)
+				.setBlockName("e_metal");
 		
-		metal = (new BlockMetal(metalID, 0, Material.iron))
-				.setHardness(2.0F).setStepSound(Block.soundMetalFootstep)
-				.setUnlocalizedName("e_metal");
-		
-		Item.itemsList[metal.blockID] = new ItemBlockMetal(metal.blockID - 256);
-		
-		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockAluminium.name", "Aluminium Block");
-		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockBronze.name", 	"Bronze Block");
-		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockCopper.name", 	"Copper Block");
-		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockLead.name", "Lead Block");
-		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockNickel.name", "Nickel Block");
-		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockPlatinum.name", "Platinum Block");
-		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockSilver.name", "Silver Block");
-		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockSteel.name", "Steel Block");
-		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockTin.name", "Tin Block");
+//		Item.itemsList[metal] = new ItemBlockMetal(metal - 256);
+//
+//		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockAluminium.name", "Aluminium Block");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockBronze.name", 	"Bronze Block");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockCopper.name", 	"Copper Block");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockLead.name", "Lead Block");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockNickel.name", "Nickel Block");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockPlatinum.name", "Platinum Block");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockSilver.name", "Silver Block");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockSteel.name", "Steel Block");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_metal.e_blockTin.name", "Tin Block");
+
+        GameRegistry.registerBlock(metal, ItemBlockMetal.class, "metal", "emashercore");
 		
 		OreDictionary.registerOre("blockAluminum", new ItemStack(metal, 1, 0));
 		//OreDictionary.registerOre("blockAluminium", new ItemStack(metal, 1, 0));
@@ -402,22 +411,34 @@ public class EmasherCore
 		OreDictionary.registerOre("blockSteel", new ItemStack(metal, 1, 7));
 		OreDictionary.registerOre("blockTin", new ItemStack(metal, 1, 8));
 		
-		MinecraftForge.setBlockHarvestLevel(metal, "pickaxe", 2);
+		//MinecraftForge.setBlockHarvestLevel(metal, "pickaxe", 2);
+
+        metal.setHarvestLevel("pickaxe", 2, 0);
+        metal.setHarvestLevel("pickaxe", 2, 1);
+        metal.setHarvestLevel("pickaxe", 2, 2);
+        metal.setHarvestLevel("pickaxe", 2, 3);
+        metal.setHarvestLevel("pickaxe", 2, 4);
+        metal.setHarvestLevel("pickaxe", 2, 5);
+        metal.setHarvestLevel("pickaxe", 2, 6);
+        metal.setHarvestLevel("pickaxe", 3, 7);
+        metal.setHarvestLevel("pickaxe", 2, 8);
 		
 		ore = (new BlockOre(oreID, 0, Material.rock))
-				.setHardness(1.8F).setStepSound(Block.soundStoneFootstep)
-				.setUnlocalizedName("e_ore");
+				.setHardness(1.8F).setStepSound(Block.soundTypeStone)
+				.setBlockName("e_ore");
+
+        GameRegistry.registerBlock(ore, ItemBlockOre.class, "ore", "emashercore");
 		
-		Item.itemsList[ore.blockID] = new ItemBlockOre(ore.blockID - 256);
-		
-		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_oreBauxite.name", "Bauxite Ore");
-		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_oreCassiterite.name", "Cassiterite Ore");
-		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_oreEmery.name", "Emery Ore");
-		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_oreGalena.name", "Galena Ore");
-		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_oreNativeCopper.name", "Native Copper Ore");
-		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_orePentlandite.name", "Pentlandite Ore");
-		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_oreRuby.name", "Ruby Ore");
-		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_oreSapphire.name", "Sapphire Ore");
+//		Item.itemsList[ore] = new ItemBlockOre(ore - 256);
+//
+//		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_oreBauxite.name", "Bauxite Ore");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_oreCassiterite.name", "Cassiterite Ore");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_oreEmery.name", "Emery Ore");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_oreGalena.name", "Galena Ore");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_oreNativeCopper.name", "Native Copper Ore");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_orePentlandite.name", "Pentlandite Ore");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_oreRuby.name", "Ruby Ore");
+//		LanguageRegistry.instance().addStringLocalization("tile.e_ore.e_oreSapphire.name", "Sapphire Ore");
 		
 		OreDictionary.registerOre("oreAluminum", new ItemStack(ore, 1, 0));
 		//OreDictionary.registerOre("oreAluminium", new ItemStack(ore, 1, 0));
@@ -429,27 +450,38 @@ public class EmasherCore
 		OreDictionary.registerOre("oreRuby", new ItemStack(ore, 1, 6));
 		OreDictionary.registerOre("oreSapphire", new ItemStack(ore, 1, 7));
 		
-		MinecraftForge.setBlockHarvestLevel(ore, "pickaxe", 2);
+		//MinecraftForge.setBlockHarvestLevel(ore, "pickaxe", 2);
+
+        ore.setHarvestLevel("pickaxe", 2, 0);
+        ore.setHarvestLevel("pickaxe", 1, 1);
+        ore.setHarvestLevel("pickaxe", 1, 2);
+        ore.setHarvestLevel("pickaxe", 2, 3);
+        ore.setHarvestLevel("pickaxe", 1, 4);
+        ore.setHarvestLevel("pickaxe", 2, 5);
+        ore.setHarvestLevel("pickaxe", 2, 6);
+        ore.setHarvestLevel("pickaxe", 2, 7);
 
         nutrientWaterFluid = new FluidNutrientWater();
         FluidRegistry.registerFluid(nutrientWaterFluid);
 
-        nutrientWater = new BlockNutrientWater(nutrientWaterID, nutrientWaterFluid);
+        nutrientWater = new BlockNutrientWater(nutrientWaterFluid);
         GameRegistry.registerBlock(nutrientWater, "nutrientWater");
-        LanguageRegistry.addName(nutrientWater, "Nutrient Water");
+        //LanguageRegistry.addName(nutrientWater, "Nutrient Water");
 		
-		ingot = new ItemIngot(ingotID);
+		ingot = new ItemIngot();
 		ingot.setUnlocalizedName("e_ingot");
+
+        GameRegistry.registerItem(ingot, "ingot", "emashercore");
 		
-		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotAluminium.name", "Aluminium Ingot");
-		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotBronze.name", 	"Bronze Ingot");
-		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotCopper.name", 	"Copper Ingot");
-		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotLead.name", "Lead Ingot");
-		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotNickel.name", "Nickel Ingot");
-		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotPlatinum.name", "Platinum Ingot");
-		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotSilver.name", "Silver Ingot");
-		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotSteel.name", "Steel Ingot");
-		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotTin.name", "Tin Ingot");
+//		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotAluminium.name", "Aluminium Ingot");
+//		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotBronze.name", 	"Bronze Ingot");
+//		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotCopper.name", 	"Copper Ingot");
+//		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotLead.name", "Lead Ingot");
+//		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotNickel.name", "Nickel Ingot");
+//		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotPlatinum.name", "Platinum Ingot");
+//		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotSilver.name", "Silver Ingot");
+//		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotSteel.name", "Steel Ingot");
+//		LanguageRegistry.instance().addStringLocalization("item.e_ingot.e_ingotTin.name", "Tin Ingot");
 		
 		OreDictionary.registerOre("ingotAluminum", new ItemStack(ingot, 1, 0));
 		//OreDictionary.registerOre("ingotAluminium", new ItemStack(ingot, 1, 0));
@@ -472,76 +504,91 @@ public class EmasherCore
 		steelStack = new ItemStack(ingot, 1, 7);
 		tinStack = new ItemStack(ingot, 1, 8);
 		
-		gem = new ItemGem(gemID);
+		gem = new ItemGem();
 		gem.setUnlocalizedName("e_gem");
+
+        GameRegistry.registerItem(gem, "gem", "emashercore");
 		
-		LanguageRegistry.instance().addStringLocalization("item.e_gem.e_gemEmery.name", "Emery");
-		LanguageRegistry.instance().addStringLocalization("item.e_gem.e_gemRuby.name", 	"Ruby");
-		LanguageRegistry.instance().addStringLocalization("item.e_gem.e_gemSapphire.name", 	"Sapphire");
+//		LanguageRegistry.instance().addStringLocalization("item.e_gem.e_gemEmery.name", "Emery");
+//		LanguageRegistry.instance().addStringLocalization("item.e_gem.e_gemRuby.name", 	"Ruby");
+//		LanguageRegistry.instance().addStringLocalization("item.e_gem.e_gemSapphire.name", 	"Sapphire");
 		
 		OreDictionary.registerOre("gemEmery", new ItemStack(gem, 1, 0));
 		OreDictionary.registerOre("gemRuby", new ItemStack(gem, 1, 1));
 		OreDictionary.registerOre("gemSapphire", new ItemStack(gem, 1, 2));
 		
-		circuit = new ItemCircuit(circuitID);
-		psu = new ItemEmasherGeneric(psuID, "EmasherCore:psu", "psu");
+		circuit = new ItemCircuit();
+		psu = new ItemEmasherGeneric("EmasherCore:psu", "psu");
+
+        GameRegistry.registerItem(circuit, "circuit", "emashercore");
+        GameRegistry.registerItem(psu, "psu", "emashercore");
 		
 		proxy.registerRenderers();
 		GameRegistry.registerBlock(mixedDirt, "mixedDirt");
 		GameRegistry.registerBlock(mixedSand, "mixedSand");
 		GameRegistry.registerBlock(machine, "machine");
 		
-		LanguageRegistry.addName(mixedDirt, "Mixed Dirt");
-		LanguageRegistry.addName(mixedSand, "Mixed Sand");
-		LanguageRegistry.addName(machine, "Machine Chassis");
+//		LanguageRegistry.addName(mixedDirt, "Mixed Dirt");
+//		LanguageRegistry.addName(mixedSand, "Mixed Sand");
+//		LanguageRegistry.addName(machine, "Machine Chassis");
 		
-		MinecraftForge.setBlockHarvestLevel(mixedDirt, "shovel", 2);
-		MinecraftForge.setBlockHarvestLevel(mixedSand, "shovel", 2);
+		mixedDirt.setHarvestLevel("shovel", 2);
+		mixedSand.setHarvestLevel("shovel", 2);
 		
-		algae = new BlockPondScum(pondScumID).setHardness(0.0F).setStepSound(Block.soundGrassFootstep).setUnlocalizedName("algae");
-		Item.itemsList[algae.blockID] = new ItemPondScum(algae.blockID - 256, "emashercore:algae", algae);
-		LanguageRegistry.addName(algae, "Algae");
+		algae = new BlockPondScum().setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("algae");
+        GameRegistry.registerBlock(algae, ItemPondScum.class, "algae", "emashercore", "emashercore:algae");
+//		Item.itemsList[algae] = new ItemPondScum(algae - 256, "emashercore:algae", algae);
+//		LanguageRegistry.addName(algae, "Algae");
 
-        superAlgae = new BlockSuperAlgae(superAlgaeID).setHardness(0.0F).setStepSound(Block.soundGrassFootstep).setUnlocalizedName("superAlgae");
-        Item.itemsList[superAlgae.blockID] = new ItemPondScum(superAlgae.blockID - 256, "emashercore:superAlgae", superAlgae);
-        LanguageRegistry.addName(superAlgae, "Super Algae");
+        superAlgae = new BlockSuperAlgae().setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("superAlgae");
+        GameRegistry.registerBlock(superAlgae, ItemPondScum.class, "superAlgae", "emashercore", "emashercore:superAlgae");
+//        Item.itemsList[superAlgae] = new ItemPondScum(superAlgae - 256, "emashercore:superAlgae", superAlgae);
+//        LanguageRegistry.addName(superAlgae, "Super Algae");
 
-        deadAlgae = new BlockDeadAlgae(deadAlgaeID).setHardness(0.0F).setStepSound(Block.soundGrassFootstep).setUnlocalizedName("deadAlgae");
-        Item.itemsList[deadAlgae.blockID] = new ItemPondScum(deadAlgae.blockID - 256, "emashercore:deadAlgae", deadAlgae);
-        LanguageRegistry.addName(deadAlgae, "Dead Algae");
+        deadAlgae = new BlockDeadAlgae().setHardness(0.0F).setStepSound(Block.soundTypeGrass).setBlockName("deadAlgae");
+        GameRegistry.registerBlock(deadAlgae, ItemPondScum.class, "deadAlgae", "emashercore", "emashercore:deadAlgae");
+//        Item.itemsList[deadAlgae] = new ItemPondScum(deadAlgae - 256, "emashercore:deadAlgae", deadAlgae);
+//        LanguageRegistry.addName(deadAlgae, "Dead Algae");
 
-        bluestone = new ItemBluestone(bluestoneID);
-        LanguageRegistry.addName(bluestone, "Bluestone");
-
-
-		LanguageRegistry.addName(machine, "Machine Chasis");
-		LanguageRegistry.addName(circuit, "Control Circuit");
-		LanguageRegistry.addName(psu, "PSU");
+        bluestone = new ItemBluestone();
+        GameRegistry.registerItem(bluestone, "bluestone", "emashercore");
+//        LanguageRegistry.addName(bluestone, "Bluestone");
+//
+//
+//		LanguageRegistry.addName(machine, "Machine Chasis");
+//		LanguageRegistry.addName(circuit, "Control Circuit");
+//		LanguageRegistry.addName(psu, "PSU");
 		
-		GameRegistry.addShapelessRecipe(new ItemStack(EmasherCore.mixedDirt, 2), new Object[]{Block.dirt, Block.gravel});
-		GameRegistry.addShapelessRecipe(new ItemStack(EmasherCore.mixedSand, 2), new Object[]{Block.sand, Block.gravel});
+		GameRegistry.addShapelessRecipe(new ItemStack(EmasherCore.mixedDirt, 2), new Object[]{Blocks.dirt, Blocks.gravel});
+		GameRegistry.addShapelessRecipe(new ItemStack(EmasherCore.mixedSand, 2), new Object[]{Blocks.sand, Blocks.gravel});
 		
 		//Machine Chasis
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(machine, 2), "gig", "i i", "gig", Character.valueOf('g'), Item.goldNugget, Character.valueOf('i'), "ingotAluminum"));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(machine, 2), "gig", "i i", "gig", Character.valueOf('g'), Item.goldNugget, Character.valueOf('i'), "ingotTin"));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(machine, 2), "gig", "i i", "gig", Character.valueOf('g'), Item.goldNugget, Character.valueOf('i'), Item.ingotIron));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(machine, 2), "gig", "i i", "gig", Character.valueOf('g'), "ingotCopper", Character.valueOf('i'), "ingotAluminum"));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(machine, 2), "gig", "i i", "gig", Character.valueOf('g'), "ingotCopper", Character.valueOf('i'), "ingotTin"));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(machine, 2), "gig", "i i", "gig", Character.valueOf('g'), "ingotCopper", Character.valueOf('i'), Item.ingotIron));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(machine, 2), "gig", "i i", "gig",
+                Character.valueOf('g'), Items.gold_nugget, Character.valueOf('i'), "ingotAluminum"));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(machine, 2), "gig", "i i", "gig",
+                Character.valueOf('g'), Items.gold_nugget, Character.valueOf('i'), "ingotTin"));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(machine, 2), "gig", "i i", "gig",
+                Character.valueOf('g'), Items.gold_nugget, Character.valueOf('i'), Items.iron_ingot));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(machine, 2), "gig", "i i", "gig",
+                Character.valueOf('g'), "ingotCopper", Character.valueOf('i'), "ingotAluminum"));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(machine, 2), "gig", "i i", "gig",
+                Character.valueOf('g'), "ingotCopper", Character.valueOf('i'), "ingotTin"));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(machine, 2), "gig", "i i", "gig",
+                Character.valueOf('g'), "ingotCopper", Character.valueOf('i'), Items.iron_ingot));
 		
 		//PSU
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(psu, 2), "igi", "rrr", "igi", Character.valueOf('g'), Item.goldNugget, Character.valueOf('i'), "ingotLead", Character.valueOf('r'), Item.redstone));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(psu, 2), "igi", "rrr", "igi", Character.valueOf('g'), Item.goldNugget, Character.valueOf('i'), Item.netherQuartz, Character.valueOf('r'), Item.redstone));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(psu, 2), "igi", "rrr", "igi", Character.valueOf('g'),"ingotCopper", Character.valueOf('i'), "ingotLead", Character.valueOf('r'), Item.redstone));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(psu, 2), "igi", "rrr", "igi", Character.valueOf('g'),"ingotCopper", Character.valueOf('i'), Item.netherQuartz, Character.valueOf('r'), Item.redstone));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(psu, 2), "igi", "rrr", "igi", Character.valueOf('g'), Items.gold_nugget, Character.valueOf('i'), "ingotLead", Character.valueOf('r'), Items.redstone));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(psu, 2), "igi", "rrr", "igi", Character.valueOf('g'), Items.gold_nugget, Character.valueOf('i'), Items.quartz, Character.valueOf('r'), Items.redstone));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(psu, 2), "igi", "rrr", "igi", Character.valueOf('g'),"ingotCopper", Character.valueOf('i'), "ingotLead", Character.valueOf('r'), Items.redstone));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(psu, 2), "igi", "rrr", "igi", Character.valueOf('g'),"ingotCopper", Character.valueOf('i'), Items.quartz, Character.valueOf('r'), Items.redstone));
 		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(circuit, 2), "rrr", "ggg", Character.valueOf('r'), Item.redstone, Character.valueOf('g'), Item.goldNugget));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(circuit, 2), "rrr", "ggg", Character.valueOf('r'), Item.redstone, Character.valueOf('g'), "ingotCopper"));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(circuit, 2), "rrr", "ggg", Character.valueOf('r'), Items.redstone, Character.valueOf('g'), Items.gold_nugget));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(circuit, 2), "rrr", "ggg", Character.valueOf('r'), Items.redstone, Character.valueOf('g'), "ingotCopper"));
 		
 		/*if(Loader.isModLoaded("BuildCraft|Silicon"))
 		{
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {new ItemStack(Item.redstone, 1), new ItemStack(Item.goldNugget, 1)}, 20000, new ItemStack(circuit, 4)));
-			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {new ItemStack(Item.redstone, 1), copperStack}, 20000, new ItemStack(circuit, 4)));
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {new ItemStack(Items.redstone, 1), new ItemStack(Items.gold_nugget, 1)}, 20000, new ItemStack(circuit, 4)));
+			AssemblyRecipe.assemblyRecipes.add(new AssemblyRecipe(new ItemStack[] {new ItemStack(Items.redstone, 1), copperStack}, 20000, new ItemStack(circuit, 4)));
 
 		}*/
 		
@@ -564,12 +611,12 @@ public class EmasherCore
 		
 		GameRegistry.addShapelessRecipe(new ItemStack(normalCube, 2, 4), new Object[]
 				{
-					Block.cobblestone, Block.dirt
+					Blocks.cobblestone, Blocks.dirt
 				});
 		
 		GameRegistry.addShapelessRecipe(new ItemStack(normalCube, 2, 4), new Object[]
 				{
-					Block.cobblestone, EmasherCore.mixedDirt
+					Blocks.cobblestone, EmasherCore.mixedDirt
 				});
 		
 		//Metal Recipes
@@ -583,15 +630,14 @@ public class EmasherCore
 			CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(new ItemStack(ingot, 9, i), new ItemStack(metal, 1, i)));
 		}
 		
-		FurnaceRecipes.smelting().addSmelting(ore.blockID, 0, new ItemStack(ingot, 1, 0), 1.0F);
-		FurnaceRecipes.smelting().addSmelting(ore.blockID, 1, new ItemStack(ingot, 1, 8), 1.0F);
-		FurnaceRecipes.smelting().addSmelting(ore.blockID, 2, new ItemStack(gem, 1, 0), 1.0F);
-		FurnaceRecipes.smelting().addSmelting(ore.blockID, 3, new ItemStack(ingot, 1, 3), 1.0F);
-		FurnaceRecipes.smelting().addSmelting(ore.blockID, 4, new ItemStack(ingot, 1, 2), 1.0F);
-		FurnaceRecipes.smelting().addSmelting(ore.blockID, 5, new ItemStack(ingot, 1, 4), 1.0F);
-		FurnaceRecipes.smelting().addSmelting(ore.blockID, 6, new ItemStack(gem, 1, 1), 1.0F);
-		FurnaceRecipes.smelting().addSmelting(ore.blockID, 7, new ItemStack(gem, 1, 2), 1.0F);
-
+		FurnaceRecipes.smelting().func_151394_a(new ItemStack(ore, 1, 0), new ItemStack(ingot, 1, 0), 1.0F);
+		FurnaceRecipes.smelting().func_151394_a(new ItemStack(ore, 1, 1), new ItemStack(ingot, 1, 8), 1.0F);
+		FurnaceRecipes.smelting().func_151394_a(new ItemStack(ore, 1, 2), new ItemStack(gem, 1, 0), 1.0F);
+		FurnaceRecipes.smelting().func_151394_a(new ItemStack(ore, 1, 3), new ItemStack(ingot, 1, 3), 1.0F);
+		FurnaceRecipes.smelting().func_151394_a(new ItemStack(ore, 1, 4), new ItemStack(ingot, 1, 2), 1.0F);
+		FurnaceRecipes.smelting().func_151394_a(new ItemStack(ore, 1, 5), new ItemStack(ingot, 1, 4), 1.0F);
+		FurnaceRecipes.smelting().func_151394_a(new ItemStack(ore, 1, 6), new ItemStack(gem, 1, 1), 1.0F);
+		FurnaceRecipes.smelting().func_151394_a(new ItemStack(ore, 1, 7), new ItemStack(gem, 1, 2), 1.0F);
         OreDictionary.registerOre("limestone", limestone);
 
 		//TC Support
@@ -603,14 +649,14 @@ public class EmasherCore
 			Smeltery.addMelting(new ItemStack(ore, 1, 0), 400, l);
 			l = l.copy();
 			l.amount = 144;
-			Smeltery.addMelting(new ItemStack(ingot, 1, 0), metal.blockID, 0, 400, l);
+			Smeltery.addMelting(new ItemStack(ingot, 1, 0), metal, 0, 400, l);
 			l = l.copy();
 			l.amount = 144 * 9;
 			Smeltery.addMelting(new ItemStack(metal, 1, 0), 400, l);
 		}*/
 		
 			
-		if(this.spawnAlgae) GameRegistry.registerWorldGenerator(scumGenerator);
+		if(spawnAlgae) GameRegistry.registerWorldGenerator(scumGenerator, 1);
 		
 		if(retroGen)
 		{
@@ -618,7 +664,7 @@ public class EmasherCore
 		}
 		else
 		{
-			GameRegistry.registerWorldGenerator(gen);
+			GameRegistry.registerWorldGenerator(gen, 1);
 		}
 		
 		registerInRegistry();
@@ -626,7 +672,7 @@ public class EmasherCore
 		
 		registerOreGen();
 		
-		LanguageRegistry.instance().addStringLocalization("itemGroup.tabEmasher", "en_US", "Emasher Resource");
+		//LanguageRegistry.instance().addStringLocalization("itemGroup.tabEmasher", "en_US", "Emasher Resource");
 		
 		initHemp();
 	}
@@ -638,51 +684,57 @@ public class EmasherCore
 	
 	private void initHemp()
 	{
-		hemp = new BlockHemp(hempBlockID, 0).setStepSound(Block.soundGrassFootstep)
+		hemp = new BlockHemp().setStepSound(Block.soundTypeGrass)
 				.setHardness(0.0F).setResistance(0.0F)
-				.setLightValue(0.0F)
-				.setUnlocalizedName("Hemp");
+				.setBlockName("Hemp");
 		
-		hempPlant = new ItemHempPlant(hempPlantID);
-		hempSeeds = new ItemHempSeeds(hempSeedsID, hemp);
-		hempOil = new ItemHempOil(hempOilID);
+		hempPlant = new ItemHempPlant();
+		hempSeeds = new ItemHempSeeds(hemp);
+		hempOil = new ItemHempOil();
 		
-		hempCap = new ItemHempCap(hempCapID, enumArmorMaterialHemp, 0, 0);
-		hempTunic = new ItemHempTunic(hempTunicID, enumArmorMaterialHemp, 0, 1);
-		hempPants = new ItemHempPants(hempPantsID, enumArmorMaterialHemp, 0, 2);
-		hempShoes = new ItemHempShoes(hempShoesID, enumArmorMaterialHemp, 0, 3);
+		hempCap = new ItemHempCap(enumArmorMaterialHemp, 0, 0);
+		hempTunic = new ItemHempTunic(enumArmorMaterialHemp, 0, 1);
+		hempPants = new ItemHempPants(enumArmorMaterialHemp, 0, 2);
+		hempShoes = new ItemHempShoes(enumArmorMaterialHemp, 0, 3);
+        GameRegistry.registerItem(hempPlant, "hempPlant", "emashercore");
+        GameRegistry.registerItem(hempSeeds, "hempSeeds", "emashercore");
+        GameRegistry.registerItem(hempOil, "hempOil", "emashercore");
+        GameRegistry.registerItem(hempCap, "hempCap", "emashercore");
+        GameRegistry.registerItem(hempTunic, "hempTunic", "emashercore");
+        GameRegistry.registerItem(hempPants, "hempPants", "emashercore");
+        GameRegistry.registerItem(hempShoes, "hempShoes", "emashercore");
 		
-		LanguageRegistry.addName(hemp, "Hemp Block");
+		//LanguageRegistry.addName(hemp, "Hemp Block");
 		GameRegistry.registerBlock(hemp, "hemp");
 		
-		if(this.spawnHemp)
+		if(spawnHemp)
 		{
-			GameRegistry.registerWorldGenerator(generateHemp);
+			GameRegistry.registerWorldGenerator(generateHemp, 1);
 		}
 		
-		LanguageRegistry.addName(hempPlant, "Hemp");
-		LanguageRegistry.addName(hempSeeds, "Hemp Seeds");
-
-		LanguageRegistry.addName(hempOil, "Hemp Seed Oil");
-		
-		LanguageRegistry.addName(hempCap, "Hemp Cap");
-		LanguageRegistry.addName(hempTunic, "Hemp Tunic");
-		LanguageRegistry.addName(hempPants, "Hemp Pants");
-		LanguageRegistry.addName(hempShoes, "Hemp Shoes");
+//		LanguageRegistry.addName(hempPlant, "Hemp");
+//		LanguageRegistry.addName(hempSeeds, "Hemp Seeds");
+//
+//		LanguageRegistry.addName(hempOil, "Hemp Seed Oil");
+//
+//		LanguageRegistry.addName(hempCap, "Hemp Cap");
+//		LanguageRegistry.addName(hempTunic, "Hemp Tunic");
+//		LanguageRegistry.addName(hempPants, "Hemp Pants");
+//		LanguageRegistry.addName(hempShoes, "Hemp Shoes");
 		
 		GameRegistry.addShapelessRecipe(new ItemStack(hempSeeds, 1), new Object[]{hempPlant});
-		GameRegistry.addShapelessRecipe(new ItemStack(hempOil, 1), new Object[]{hempSeeds, Item.bowlEmpty});
+		GameRegistry.addShapelessRecipe(new ItemStack(hempOil, 1), new Object[]{hempSeeds, Items.bowl});
 		
 		
 		GameRegistry.registerFuelHandler((ItemHempOil)hempOil);
 		
 		Registry.addItem("hemp", hempPlant);
 		
-		GameRegistry.addRecipe(new ItemStack(Item.silk, 3), new Object[]
+		GameRegistry.addRecipe(new ItemStack(Items.string, 3), new Object[]
 		{
 			"#  ", " # ", "  #", Character.valueOf('#'), hempPlant
 		});
-		GameRegistry.addRecipe(new ItemStack(Item.paper, 3), new Object[]
+		GameRegistry.addRecipe(new ItemStack(Items.paper, 3), new Object[]
 		{
 			"###", Character.valueOf('#'), hempPlant
 		});
@@ -707,8 +759,16 @@ public class EmasherCore
 		{
 			"# #", "# #", Character.valueOf('#'), hempPlant
 		});
-		
-		GameRegistry.addSmelting(this.hempPlant.itemID, new ItemStack(Item.dyePowder, 1, 2), 0.1F);
+
+        FurnaceRecipes.smelting().func_151396_a(hempPlant, new ItemStack(Items.dye, 1, 2), 0.1F);
+
+        /*tabEmasher = new CreativeTabs("tabEmasher")
+            {
+                public Item getTabIconItem()
+                {
+                    return psu;
+                }
+            };*/
 	}
 	
 	private void registerOreGen()
@@ -718,7 +778,7 @@ public class EmasherCore
 		
 		if(this.spawnLimestone)
 		{
-			oreGen = new WorldGenMinableSafe(limestone.blockID, limestonePerVein);
+			oreGen = new WorldGenMinableSafe(limestone, limestonePerVein);
 			container = new WorldGenMinableWrap(oreGen, limestonePerChunk, limestoneMinHeight, limestoneMaxHeight);
 			for(BiomeDictionary.Type bType : parseBiomeList(limestoneBiomes)) container.add(bType);
 			gen.add(container);
@@ -726,7 +786,7 @@ public class EmasherCore
 		
 		if(this.spawnRedSandstone)
 		{
-			oreGen = new WorldGenMinableSafe(redSandStone.blockID, redSandstonePerVein);
+			oreGen = new WorldGenMinableSafe(redSandStone, redSandstonePerVein);
 			container = new WorldGenMinableWrap(oreGen, redSandstonePerChunk, redSandstoneMinHeight, redSandstoneMaxHeight);
 			for(BiomeDictionary.Type bType : parseBiomeList(redSandstoneBiomes)) container.add(bType);
 			gen.add(container);
@@ -736,7 +796,7 @@ public class EmasherCore
 		
 		if(this.spawnBauxite)
 		{
-			oreGen = new WorldGenMinableSafe(ore.blockID, 0, bauxitePerVein, Block.stone.blockID);
+			oreGen = new WorldGenMinableSafe(ore, 0, bauxitePerVein, Blocks.stone);
 			container = new WorldGenMinableWrap(oreGen, bauxitePerChunk, bauxiteMinHeight, bauxiteMaxHeight);
 			for(BiomeDictionary.Type bType : parseBiomeList(bauxiteBiomes)) container.add(bType);
 			gen.add(container);
@@ -744,7 +804,7 @@ public class EmasherCore
 		
 		if(this.spawnCassiterite)
 		{
-			oreGen = new WorldGenMinableSafe(ore.blockID, 1, cassiteritePerVein, Block.stone.blockID);
+			oreGen = new WorldGenMinableSafe(ore, 1, cassiteritePerVein, Blocks.stone);
 			container = new WorldGenMinableWrap(oreGen, cassiteritePerChunk, cassiteriteMinHeight, cassiteriteMaxHeight);
 			for(BiomeDictionary.Type bType : parseBiomeList(cassiteriteBiomes)) container.add(bType);
 			gen.add(container);
@@ -752,7 +812,7 @@ public class EmasherCore
 		
 		if(this.spawnEmery)
 		{
-			oreGen = new WorldGenMinableSafe(ore.blockID, 2, emeryPerVein, Block.stone.blockID);
+			oreGen = new WorldGenMinableSafe(ore, 2, emeryPerVein, Blocks.stone);
 			container = new WorldGenMinableWrap(oreGen, emeryPerChunk, emeryMinHeight, emeryMaxHeight);
 			for(BiomeDictionary.Type bType : parseBiomeList(emeryBiomes)) container.add(bType);
 			gen.add(container);
@@ -760,7 +820,7 @@ public class EmasherCore
 		
 		if(this.spawnGalena)
 		{
-			oreGen = new WorldGenMinableSafe(ore.blockID, 3, galenaPerVein, Block.stone.blockID);
+			oreGen = new WorldGenMinableSafe(ore, 3, galenaPerVein, Blocks.stone);
 			container = new WorldGenMinableWrap(oreGen, galenaPerChunk, galenaMinHeight, galenaMaxHeight);
 			for(BiomeDictionary.Type bType : parseBiomeList(galenaBiomes)) container.add(bType);
 			gen.add(container);
@@ -768,7 +828,7 @@ public class EmasherCore
 		
 		if(this.spawnNativeCopper)
 		{
-			oreGen = new WorldGenMinableSafe(ore.blockID, 4, nativeCopperPerVein, Block.stone.blockID);
+			oreGen = new WorldGenMinableSafe(ore, 4, nativeCopperPerVein, Blocks.stone);
 			container = new WorldGenMinableWrap(oreGen, nativeCopperPerChunk, nativeCopperMinHeight, nativeCopperMaxHeight);
 			for(BiomeDictionary.Type bType : parseBiomeList(nativeCopperBiomes)) container.add(bType);
 			gen.add(container);
@@ -776,7 +836,7 @@ public class EmasherCore
 		
 		if(this.spawnPentlandite)
 		{
-			oreGen = new WorldGenMinableSafe(ore.blockID, 5, pentlanditePerVein, Block.stone.blockID);
+			oreGen = new WorldGenMinableSafe(ore, 5, pentlanditePerVein, Blocks.stone);
 			container = new WorldGenMinableWrap(oreGen, pentlanditePerChunk, pentlanditeMinHeight, pentlanditeMaxHeight);
 			for(BiomeDictionary.Type bType : parseBiomeList(pentlanditeBiomes)) container.add(bType);
 			gen.add(container);
@@ -784,7 +844,7 @@ public class EmasherCore
 		
 		if(this.spawnRuby)
 		{
-			oreGen = new WorldGenMinableSafe(ore.blockID, 6, rubyPerVein, Block.stone.blockID);
+			oreGen = new WorldGenMinableSafe(ore, 6, rubyPerVein, Blocks.stone);
 			container = new WorldGenMinableWrap(oreGen, rubyPerChunk, rubyMinHeight, rubyMaxHeight);
 			for(BiomeDictionary.Type bType : parseBiomeList(rubyBiomes)) container.add(bType);
 			gen.add(container);
@@ -792,7 +852,7 @@ public class EmasherCore
 		
 		if(this.spawnSapphire)
 		{
-			oreGen = new WorldGenMinableSafe(ore.blockID, 7, sapphirePerVein, Block.stone.blockID);
+			oreGen = new WorldGenMinableSafe(ore, 7, sapphirePerVein, Blocks.stone);
 			container = new WorldGenMinableWrap(oreGen, sapphirePerChunk, sapphireMinHeight, sapphireMaxHeight);
 			for(BiomeDictionary.Type bType : parseBiomeList(sapphireBiomes)) container.add(bType);
 			gen.add(container);

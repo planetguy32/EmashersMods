@@ -1,0 +1,90 @@
+---- Minecraft Crash Report ----
+// Why did you do that?
+
+Time: 27-08-2014 19:42
+Description: Ticking block entity
+
+java.lang.NullPointerException: Ticking block entity
+	at emasher.sockets.modules.ModKiln.updateSide(ModKiln.java:138)
+	at emasher.sockets.TileSocket.updateEntity(TileSocket.java:161)
+	at net.minecraft.world.World.updateEntities(World.java:2139)
+	at net.minecraft.world.WorldServer.updateEntities(WorldServer.java:517)
+	at net.minecraft.server.MinecraftServer.updateTimeLightAndEntities(MinecraftServer.java:713)
+	at net.minecraft.server.MinecraftServer.tick(MinecraftServer.java:624)
+	at net.minecraft.server.integrated.IntegratedServer.tick(IntegratedServer.java:118)
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:495)
+	at net.minecraft.server.MinecraftServer$2.run(MinecraftServer.java:762)
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- Head --
+Stacktrace:
+	at emasher.sockets.modules.ModKiln.updateSide(ModKiln.java:138)
+	at emasher.sockets.TileSocket.updateEntity(TileSocket.java:161)
+
+-- Block entity being ticked --
+Details:
+	Name: modular_socket // emasher.sockets.TileSocket
+	Block type: ID #425 (tile.modular_socket // emasher.sockets.BlockSocket)
+	Block data value: 0 / 0x0 / 0b0000
+	Block location: World: (33,76,257), Chunk: (at 1,4,1 in 2,16; contains blocks 32,0,256 to 47,255,271), Region: (0,0; contains chunks 0,0 to 31,31, blocks 0,0,0 to 511,255,511)
+	Actual block type: ID #425 (tile.modular_socket // emasher.sockets.BlockSocket)
+	Actual block data value: 0 / 0x0 / 0b0000
+Stacktrace:
+	at net.minecraft.world.World.updateEntities(World.java:2139)
+	at net.minecraft.world.WorldServer.updateEntities(WorldServer.java:517)
+
+-- Affected level --
+Details:
+	Level name: New World
+	All players: 1 total; [EntityPlayerMP['ForgeDevName'/280, l='New World', x=35,06, y=76,00, z=256,77]]
+	Chunk stats: ServerChunkCache: 711 Drop: 0
+	Level seed: 6876668720911661087
+	Level generator: ID 00 - default, ver 1. Features enabled: true
+	Level generator options: 
+	Level spawn location: World: (40,64,256), Chunk: (at 8,4,0 in 2,16; contains blocks 32,0,256 to 47,255,271), Region: (0,0; contains chunks 0,0 to 31,31, blocks 0,0,0 to 511,255,511)
+	Level time: 3976 game time, 3976 day time
+	Level dimension: 0
+	Level storage version: 0x04ABD - Anvil
+	Level weather: Rain time: 34638 (now: false), thunder time: 78156 (now: false)
+	Level game mode: Game mode: creative (ID 1). Hardcore: false. Cheats: true
+Stacktrace:
+	at net.minecraft.server.MinecraftServer.updateTimeLightAndEntities(MinecraftServer.java:713)
+	at net.minecraft.server.MinecraftServer.tick(MinecraftServer.java:624)
+	at net.minecraft.server.integrated.IntegratedServer.tick(IntegratedServer.java:118)
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:495)
+	at net.minecraft.server.MinecraftServer$2.run(MinecraftServer.java:762)
+
+-- System Details --
+Details:
+	Minecraft Version: 1.7.10
+	Operating System: Windows 8.1 (amd64) version 6.3
+	Java Version: 1.7.0_60, Oracle Corporation
+	Java VM Version: Java HotSpot(TM) 64-Bit Server VM (mixed mode), Oracle Corporation
+	Memory: 747092960 bytes (712 MB) / 1037959168 bytes (989 MB) up to 1037959168 bytes (989 MB)
+	JVM Flags: 3 total; -Xincgc -Xmx1024M -Xms1024M
+	AABB Pool Size: 0 (0 bytes; 0 MB) allocated, 0 (0 bytes; 0 MB) used
+	IntCache: cache: 0, tcache: 0, allocated: 15, tallocated: 95
+	FML: MCP v9.05 FML v7.10.25.1208 Minecraft Forge 10.13.0.1208 15 mods loaded, 15 mods active
+	mcp{9.05} [Minecraft Coder Pack] (minecraft.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	FML{7.10.25.1208} [Forge Mod Loader] (forgeSrc-1.7.10-10.13.0.1208.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	Forge{10.13.0.1208} [Minecraft Forge] (forgeSrc-1.7.10-10.13.0.1208.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	CodeChickenCore{1.0.3.23} [CodeChicken Core] (minecraft.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	NotEnoughItems{1.0.3.51} [Not Enough Items] (NotEnoughItems-1.7.10-1.0.3.51-dev.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	BuildCraft|Core{6.0.17} [BuildCraft] (buildcraft-6.0.17-dev.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	emashercore{1.3.0.0} [Emasher Resource] (main) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	eng_toolbox{1.1.8.3} [Engineer's Toolbox] (main) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	BuildCraft|Transport{6.0.17} [BC Transport] (buildcraft-6.0.17-dev.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	BuildCraft|Silicon{6.0.17} [BC Silicon] (buildcraft-6.0.17-dev.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	BuildCraft|Energy{6.0.17} [BC Energy] (buildcraft-6.0.17-dev.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	BuildCraft|Builders{6.0.17} [BC Builders] (buildcraft-6.0.17-dev.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	BuildCraft|Factory{6.0.17} [BC Factory] (buildcraft-6.0.17-dev.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	IC2{2.2.621-experimental} [IndustrialCraft 2] (industrialcraft-2-2.2.621-experimental-dev.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	Waila{1.5.3} [Waila] (Waila-1.5.3_1.7.10.jar) Unloaded->Constructed->Pre-initialized->Initialized->Post-initialized->Available->Available->Available->Available
+	Profiler Position: N/A (disabled)
+	Vec3 Pool Size: 0 (0 bytes; 0 MB) allocated, 0 (0 bytes; 0 MB) used
+	Player Count: 1 / 8; [EntityPlayerMP['ForgeDevName'/280, l='New World', x=35,06, y=76,00, z=256,77]]
+	Type: Integrated Server (map_client.txt)
+	Is Modded: Definitely; Client brand changed to 'fml,forge'

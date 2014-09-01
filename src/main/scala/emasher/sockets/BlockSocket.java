@@ -1,23 +1,33 @@
 package emasher.sockets;
 
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.network.FMLEmbeddedChannel;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import emasher.sockets.packethandling.PacketPipeline;
+import emasher.sockets.packethandling.PacketTileEntity;
+import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.client.C17PacketCustomPayload;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 import emasher.api.ModuleRegistry;
 import emasher.api.SideConfig;
@@ -29,25 +39,25 @@ import buildcraft.api.tools.IToolWrench;
 public class BlockSocket extends BlockContainer
 {
 	@SideOnly(Side.CLIENT)
-	public Icon[][] textures;
+	public IIcon[][] textures;
 	@SideOnly(Side.CLIENT)
-	public Icon[] tankIndicator;
+	public IIcon[] tankIndicator;
 	@SideOnly(Side.CLIENT)
-	public Icon[] inventoryIndicator;
+	public IIcon[] inventoryIndicator;
 	@SideOnly(Side.CLIENT)
-	public Icon[] rsIndicator;
+	public IIcon[] rsIndicator;
 	@SideOnly(Side.CLIENT)
-	public Icon[] latchIndicator;
+	public IIcon[] latchIndicator;
 	@SideOnly(Side.CLIENT)
-	public Icon[] bar1;
+	public IIcon[] bar1;
 	@SideOnly(Side.CLIENT)
-	public Icon[] bar2;
+	public IIcon[] bar2;
 	@SideOnly(Side.CLIENT)
-	public Icon buttonInd;
+	public IIcon buttonInd;
 	@SideOnly(Side.CLIENT)
-	public Icon[] chargeInd;
+	public IIcon[] chargeInd;
 	@SideOnly(Side.CLIENT)
-	public Icon hasData;
+	public IIcon hasData;
 	
 	public static final String[] dyes =
         {
@@ -71,12 +81,12 @@ public class BlockSocket extends BlockContainer
 	
 	public BlockSocket(int id)
 	{
-		super(id, Material.iron);
+		super(Material.iron);
 		setCreativeTab(SocketsMod.tabSockets);
 	}
 	
 	@Override
-	public TileEntity createNewTileEntity(World world)
+	public TileEntity createNewTileEntity(World world, int metadata)
 	{
 		return new TileSocket();
 	}
@@ -92,13 +102,13 @@ public class BlockSocket extends BlockContainer
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float subX, float subY, float subZ)
 	{
-		TileEntity t = world.getBlockTileEntity(x, y, z);
-		
+		TileEntity t = world.getTileEntity(x, y, z);
+
 		if(! world.isRemote && t != null && t instanceof TileSocket)
 		{
 			TileSocket ts = (TileSocket)t;
 			
-			if(player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().itemID == SocketsMod.remote.itemID && ! player.isSneaking())
+			if(player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == SocketsMod.remote && ! player.isSneaking())
 			{
 				switch(player.getCurrentEquippedItem().getItemDamage())
 				{
@@ -123,8 +133,8 @@ public class BlockSocket extends BlockContainer
 				case 6:
 					ts.facID[side] = 0;
 					ts.facMeta[side] = 0;
-					PacketHandler.instance.SendClientSideState(ts, (byte)side);
-					break;
+                    PacketHandler.instance.SendClientSideState(ts, (byte)side);
+                    break;
 				}
 			}
 			else if(player.getCurrentEquippedItem() != null && (player.getCurrentEquippedItem().getItem() instanceof IToolWrench))
@@ -134,7 +144,7 @@ public class BlockSocket extends BlockContainer
 					int dam = player.getCurrentEquippedItem().getItemDamage();
 					if(dam == 1)
 					{
-						ItemStack theStack = new ItemStack(this.blockID, 1, 0);
+						ItemStack theStack = new ItemStack(this, 1, 0);
 						
 						NBTTagCompound data = new NBTTagCompound();
 						ts.writeToNBT(data);
@@ -159,7 +169,7 @@ public class BlockSocket extends BlockContainer
 						
 						if(sideID != 0 && ! ts.sideLocked[side])
 						{
-							ItemStack theStack = new ItemStack(SocketsMod.module.itemID, 1, sideID);
+							ItemStack theStack = new ItemStack(SocketsMod.module, 1, sideID);
 							
 							if (! world.isRemote)
 					        {
@@ -186,7 +196,7 @@ public class BlockSocket extends BlockContainer
 				}
 				else if(player.isSneaking())
 				{
-					ItemStack theStack = new ItemStack(this.blockID, 1, 0);
+					ItemStack theStack = new ItemStack(this, 1, 0);
 					
 					NBTTagCompound data = new NBTTagCompound();
 					ts.writeToNBT(data);
@@ -205,7 +215,7 @@ public class BlockSocket extends BlockContainer
 			        }
 					
 					world.setBlockToAir(x, y, z);
-					world.removeBlockTileEntity(x, y, z);
+					world.removeTileEntity(x, y, z);
 				}
 				else
 				{	
@@ -213,7 +223,7 @@ public class BlockSocket extends BlockContainer
 					
 					if(sideID != 0 && ! ts.sideLocked[side])
 					{
-						ItemStack theStack = new ItemStack(SocketsMod.module.itemID, 1, sideID);
+						ItemStack theStack = new ItemStack(SocketsMod.module, 1, sideID);
 						
 						if (! world.isRemote)
 				        {
@@ -234,7 +244,7 @@ public class BlockSocket extends BlockContainer
 					}
 				}
 			}
-			else if(player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().itemID == SocketsMod.module.itemID)
+			else if(player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == SocketsMod.module)
 			{
 				if(ts.sides[side] == 0 || player.capabilities.isCreativeMode)
 				{
@@ -314,7 +324,7 @@ public class BlockSocket extends BlockContainer
 	@Override
 	public void onEntityWalking(World world, int x, int y, int z, Entity entity)
 	{
-		TileEntity t = world.getBlockTileEntity(x, y, z);
+		TileEntity t = world.getTileEntity(x, y, z);
 		SocketModule m;
 		
 		if(! world.isRemote && t != null && t instanceof TileSocket)
@@ -330,29 +340,29 @@ public class BlockSocket extends BlockContainer
 	
 	
 	@Override
-	public void breakBlock(World par1World, int par2, int par3, int par4, int par5, int par6)
+	public void breakBlock(World par1World, int par2, int par3, int par4, Block par5, int par6)
 	{
 		//System.out.println("Break");
 		super.breakBlock(par1World, par2, par3, par4, par5, par6);
-		par1World.removeBlockTileEntity(par2, par3, par4);
+		par1World.removeTileEntity(par2, par3, par4);
 	}
 	
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-    public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int blockSide)
+    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int blockSide)
     {
-		Icon result = blockIcon;
+		IIcon result = blockIcon;
 		
-		TileEntity t = world.getBlockTileEntity(x, y, z);
+		TileEntity t = world.getTileEntity(x, y, z);
 		
 		if(t != null && t instanceof TileSocket)
 		{
 			TileSocket ts = (TileSocket)t;
 			
-			if(ts.facID[blockSide] >= 0 && Block.blocksList[ts.facID[blockSide]] != null)
+			if(ts.facID[blockSide] > 0 && Block.getBlockById(ts.facID[blockSide]) != null)
 			{
-				Block b = Block.blocksList[ts.facID[blockSide]];
+				Block b = Block.getBlockById(ts.facID[blockSide]);
 				result = b.getIcon(blockSide, ts.facMeta[blockSide]);
 			}
 			else if(ts.sides[blockSide] != 0)
@@ -369,7 +379,7 @@ public class BlockSocket extends BlockContainer
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-    public void registerIcons(IconRegister ir)
+    public void registerBlockIcons(IIconRegister ir)
     {
 		SocketModule m;
 		int l;
@@ -377,14 +387,14 @@ public class BlockSocket extends BlockContainer
 		
 		this.blockIcon = ir.registerIcon("sockets:bg");
 		
-		textures = new Icon[ModuleRegistry.numModules][];
-		tankIndicator = new Icon[4];
-		inventoryIndicator = new Icon[4];
-		rsIndicator = new Icon[8];
-		latchIndicator = new Icon[8];
-		bar1 = new Icon[8];
-		bar2 = new Icon[8];
-		chargeInd = new Icon[13];
+		textures = new IIcon[ModuleRegistry.numModules][];
+		tankIndicator = new IIcon[4];
+		inventoryIndicator = new IIcon[4];
+		rsIndicator = new IIcon[8];
+		latchIndicator = new IIcon[8];
+		bar1 = new IIcon[8];
+		bar2 = new IIcon[8];
+		chargeInd = new IIcon[13];
 		
 		for(int i = 0; i < ModuleRegistry.numModules; i++)
 		{
@@ -392,7 +402,7 @@ public class BlockSocket extends BlockContainer
 			if(m != null)
 			{
 				l = m.textureFiles.length;
-				textures[i] = new Icon[l];
+				textures[i] = new IIcon[l];
 				for(int j = 0; j < l; j++)
 				{
 					textures[i][j] = ir.registerIcon(m.textureFiles[j]);
@@ -437,7 +447,7 @@ public class BlockSocket extends BlockContainer
 	{
 		if(side < 0 || side > 5) return false;
 		
-		TileEntity t = world.getBlockTileEntity(x, y, z);
+		TileEntity t = world.getTileEntity(x, y, z);
 		
 		if(t != null && t instanceof TileSocket)
 		{
@@ -453,9 +463,9 @@ public class BlockSocket extends BlockContainer
 	
 	
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, int nId)
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block nblock)
 	{
-		TileEntity t = world.getBlockTileEntity(x, y, z);
+		TileEntity t = world.getTileEntity(x, y, z);
 		
 		if(t != null && t instanceof TileSocket && ! world.isRemote)
 		{
@@ -468,7 +478,7 @@ public class BlockSocket extends BlockContainer
 				ForgeDirection opposite = d.getOpposite();
 				m = ts.getSide(opposite);
 				
-				if(nId != Block.redstoneWire.blockID && ts.initialized) 
+				if(nblock != Blocks.redstone_wire && ts.initialized)
 				{
 					m.onAdjChange(ts, ts.configs[opposite.ordinal()], opposite);
 					ts.checkSideForChange(i);
@@ -481,7 +491,7 @@ public class BlockSocket extends BlockContainer
 				{	
 					ts.sideRS[opposite.ordinal()] = rs;
 					m.updateRestone(rs, ts.configs[opposite.ordinal()], ts);
-					PacketHandler.instance.SendClientSideState(ts, (byte)opposite.ordinal());
+                    PacketHandler.instance.SendClientSideState(ts, (byte)opposite.ordinal());
 				}
 			}
 		}
@@ -490,7 +500,7 @@ public class BlockSocket extends BlockContainer
 	@Override
     public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z, int side)
     {
-		TileEntity t = world.getBlockTileEntity(x, y, z);
+		TileEntity t = world.getTileEntity(x, y, z);
 		
 		side = ForgeDirection.OPPOSITES[side];
 		
@@ -508,7 +518,7 @@ public class BlockSocket extends BlockContainer
 	
 	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int side)
     {
-		TileEntity t = world.getBlockTileEntity(x, y, z);
+		TileEntity t = world.getTileEntity(x, y, z);
 		
 		side = ForgeDirection.OPPOSITES[side];
 		
@@ -525,7 +535,7 @@ public class BlockSocket extends BlockContainer
     }
 	
 	@Override
-	public boolean isBlockSolidOnSide(World world, int x, int y, int z, ForgeDirection side)
+	public boolean isBlockSolid(IBlockAccess world, int x, int y, int z, int side)
 	{
 		return true;
 	}

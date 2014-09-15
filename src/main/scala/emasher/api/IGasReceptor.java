@@ -1,8 +1,7 @@
 package emasher.api;
 
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.liquids.*;
 
 public interface IGasReceptor
 {

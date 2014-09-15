@@ -4,7 +4,7 @@ import java.util.Random;
 
 import cpw.mods.fml.common.IFuelHandler;
 import emasher.core.*;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -12,18 +12,15 @@ import net.minecraft.src.*;
 
 public class ItemHempOil extends Item implements IFuelHandler
 {
-	public ItemHempOil(int i)
+	public ItemHempOil()
 	{
-		super(i);
-		maxStackSize = 64;
-		
+		super();
 		this.setCreativeTab(EmasherCore.tabEmasher);
-		//setIconIndex(2);
 		setUnlocalizedName("hempOil");
 	}
 	
 	@Override
-	public void registerIcons(IconRegister iconRegister)
+	public void registerIcons(IIconRegister iconRegister)
 	{
 		itemIcon = iconRegister.registerIcon("emashercore:hempSeedOil");
 	}
@@ -31,7 +28,7 @@ public class ItemHempOil extends Item implements IFuelHandler
 	@Override
 	public int getBurnTime(ItemStack fuel) 
 	{
-		if(fuel.itemID == EmasherCore.hempOil.itemID)
+		if(fuel.getItem() == EmasherCore.hempOil)
 		{
 			return 500;
 		}

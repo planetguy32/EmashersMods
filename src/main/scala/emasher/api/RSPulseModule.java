@@ -1,8 +1,7 @@
 package emasher.api;
 
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import emasher.api.SocketTileAccess;
-import emasher.sockets.PacketHandler;
 
 public abstract class RSPulseModule extends RSGateModule
 {

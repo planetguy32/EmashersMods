@@ -2,6 +2,7 @@ package emasher.core;
 
 import java.util.Random;
 
+import net.minecraft.init.Blocks;
 import net.minecraftforge.common.*;
 
 import net.minecraft.block.Block;
@@ -14,6 +15,7 @@ import cpw.mods.fml.common.IWorldGenerator;
 
 public class WorldGenPondScum implements IWorldGenerator
 {
+    @Override
 	public void generate(Random var2, int var3, int var5, World var1,  IChunkProvider provider, IChunkProvider provider2) 
 	{
 		var3 *= 16;
@@ -44,13 +46,13 @@ public class WorldGenPondScum implements IWorldGenerator
 	
 	private void genScum(World world, Random gen, int x, int y, int z, int depth)
 	{
-		int startId = world.getBlockId(x, y, z);
+		Block startId = world.getBlock(x, y, z);
 		
 		
-		if(depth < 500 && startId == Block.waterStill.blockID && world.isAirBlock(x, y + 1, z))
+		if(depth < 500 && startId == Blocks.water && world.isAirBlock(x, y + 1, z))
 		{
 
-			world.setBlock(x, y + 1, z, EmasherCore.algae.blockID, 0, 2);
+			world.setBlock(x, y + 1, z, EmasherCore.algae, 0, 2);
 				
 			
 			if(gen.nextInt(4) != 0)for(int i = 0; i<3; i++)

@@ -3,25 +3,25 @@ package emasher.core.item
 import net.minecraft.item.{ItemStack, Item}
 import net.minecraft.world.World
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.util.EnumMovingObjectType
 import emasher.core.{Tuple, EmasherCore}
 import scala.collection.mutable
+import net.minecraft.util.MovingObjectPosition
 
-class ItemBluestone(id: Int) extends ItemEmasherGeneric(id, "emashercore:bluestone", "bluestone") {
+class ItemBluestone() extends ItemEmasherGeneric("emashercore:bluestone", "bluestone") {
 
   override def onItemRightClick(itemStack: ItemStack, world: World, player: EntityPlayer): ItemStack = {
     val position = getMovingObjectPositionFromPlayer(world, player, true)
 
     if(position != null) {
       position.typeOfHit match {
-        case EnumMovingObjectType.TILE =>
+        case MovingObjectPosition.MovingObjectType.BLOCK =>
           val x = position.blockX
           val y = position.blockY
           val z = position.blockZ
 
-          val id = world.getBlockId(x, y, z)
+          val id = world.getBlock(x, y, z)
 
-          if(id == EmasherCore.algae.blockID) {
+          if(id == EmasherCore.algae) {
             val queue = new mutable.Queue[Tuple]
             var queueFilled = false
             val offsets = List(new Tuple(1, 0, 0), new Tuple(-1, 0, 0), new Tuple(0, 0, 1), new Tuple(0, 0, -1))
@@ -33,12 +33,12 @@ class ItemBluestone(id: Int) extends ItemEmasherGeneric(id, "emashercore:bluesto
               val cY = curr.y
               val cZ = curr.z
 
-              world.setBlock(cX, cY, cZ, EmasherCore.deadAlgae.blockID)
+              world.setBlock(cX, cY, cZ, EmasherCore.deadAlgae)
 
               if(! queueFilled) {
                 offsets.map { t =>
-                  val bId = world.getBlockId(cX + t.x, cY + t.y, cZ + t.z)
-                  if(bId == EmasherCore.algae.blockID) {
+                  val bId = world.getBlock(cX + t.x, cY + t.y, cZ + t.z)
+                  if(bId == EmasherCore.algae) {
                     queue.enqueue(new Tuple(cX + t.x, cY + t.y, cZ + t.z))
                   }
                 }

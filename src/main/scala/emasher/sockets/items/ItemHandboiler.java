@@ -119,8 +119,6 @@ public class ItemHandboiler extends ItemEmasherGeneric
 	                					doDamage = true;
                 						par3World.setBlockToAir(i, j, k);
                 					}
-                                    //TODO Check this else if
-                					//else if(product.itemID < Block.blocksList.length && Block.blocksList[product.itemID] != null && Block.blocksList[product.itemID] instanceof Block)
                                     else if(Block.blockRegistry.containsId(itemID) && Block.blockRegistry.getObjectById(itemID) instanceof Block)
                 					{
                 						if(block != Blocks.sand || SocketsMod.smeltSand)

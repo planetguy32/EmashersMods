@@ -12,6 +12,7 @@ import emasher.sockets.TileSocket;
 import emasher.sockets.BlockSocket;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -82,12 +83,12 @@ public class ItemBlockSocket extends ItemBlock
     {
         Block b1 = par3World.getBlock(par4, par5, par6);
 
-        if (b1 == Block.getBlockFromName("snow") && (par3World.getBlockMetadata(par4, par5, par6) & 7) < 1)
+        if (b1 == Blocks.snow_layer && (par3World.getBlockMetadata(par4, par5, par6) & 7) < 1)
         {
             par7 = 1;
         }
-        else if (b1 != Block.getBlockFromName("vine") && b1 != Block.getBlockFromName("tallGrass") && b1 != Block.getBlockFromName("deadBush")
-                || !b1.isReplaceable(par3World, par4, par5, par6))
+        else if (b1 != Blocks.vine && b1 != Blocks.tallgrass && b1 != Blocks.deadbush
+                && !b1.isReplaceable(par3World, par4, par5, par6))
         {
             if (par7 == 0)
             {

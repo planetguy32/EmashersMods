@@ -545,6 +545,5 @@ public class BlockSocket extends BlockContainer
     {		
 		return true;
     }
-	
-	
+
 }

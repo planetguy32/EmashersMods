@@ -64,9 +64,7 @@ public class ModKiln extends SocketModule
 	public void init(SocketTileAccess ts, SideConfig config, ForgeDirection side)
 	{
 		config.meta = 0;
-		//TODO Check if ItemStack first 1 is ID of item or ID of block(i.e Stone)
-		// ts.sideInventory.setInventorySlotContents(side.ordinal(), new ItemStack(1, 1, 0));
-        ts.sideInventory.setInventorySlotContents(side.ordinal(), new ItemStack(Blocks.stone, 1, 0));
+		ts.sideInventory.setInventorySlotContents(side.ordinal(), new ItemStack(Blocks.stone, 1, 0));
 	}
 	
 	@Override

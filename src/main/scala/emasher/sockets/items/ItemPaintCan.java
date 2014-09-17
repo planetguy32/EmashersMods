@@ -138,8 +138,6 @@ public class ItemPaintCan extends Item
     			par1ItemStack.damageItem(1, par3EntityPlayer);
             }
 
-            //TODO Check
-            //if(Block.blocksList[BlockID] != null && Block.blocksList[BlockID] instanceof BlockPipeBase && par2World.getBlockTileEntity(var13, var14, var15) != null && par2World.getBlockTileEntity(var13, var14, var15) instanceof TilePipeBase)
             if(b instanceof BlockPipeBase && par2World.getTileEntity(var13, var14, var15) != null && par2World.getTileEntity(var13, var14, var15) instanceof TilePipeBase)
             {
             	if(! par2World.isRemote)

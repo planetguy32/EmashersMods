@@ -33,7 +33,7 @@ public abstract class BlockAdapterBase extends BlockContainer
             if(item != null && item instanceof IToolWrench)
 			{
 				TileEntity te = world.getTileEntity(x, y, z);
-                System.out.println(te instanceof TileAdapterBase);
+
 				if(te != null && te instanceof TileAdapterBase)
 				{
 					((TileAdapterBase)te).toggleOutput(side);

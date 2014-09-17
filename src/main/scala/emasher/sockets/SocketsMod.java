@@ -416,9 +416,6 @@ public class SocketsMod
 		socket = new BlockSocket(socketID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("modular_socket");
 		//GameRegistry.registerBlock(socket, "modular_socket");
 		LanguageRegistry.addName(socket, "Modular Socket");
-		
-		//TODO Clear
-		//Item.getItemFromBlock(socket) = new ItemBlockSocket(socket);
 
         GameRegistry.registerBlock(socket, ItemBlockSocket.class, "modular_socket");
 		

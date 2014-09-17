@@ -32,7 +32,7 @@ public class TileSocketAssembler extends TileEntity implements ISpecialInventory
 			if(inv.getStackInSlot(i) != null)
 			{
 				NBTTagCompound itemCompound = new NBTTagCompound();
-				itemCompound.setInteger("slot", i);
+                itemCompound.setInteger("slot", i);
 				inv.getStackInSlot(i).writeToNBT(itemCompound);
 				itemList.appendTag(itemCompound);
 			}
@@ -47,7 +47,7 @@ public class TileSocketAssembler extends TileEntity implements ISpecialInventory
 	{
 		super.readFromNBT(data);
 		
-		NBTTagList itemList = data.getTagList("items", 9);//TODO Check if it is 9 or 3);
+		NBTTagList itemList = data.getTagList("items", 10);
 		
 		if(itemList != null) for(int i = 0; i < itemList.tagCount(); i++)
 	    {
@@ -94,11 +94,11 @@ public class TileSocketAssembler extends TileEntity implements ISpecialInventory
     @Override
     public void openInventory()
     {
-        //TODO
     }
 
     @Override
-    public void closeInventory() {
+    public void closeInventory()
+    {
 
     }
 

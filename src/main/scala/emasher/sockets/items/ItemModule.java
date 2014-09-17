@@ -110,7 +110,7 @@ public class ItemModule extends Item
 		int l;
 		int temp;
 		
-		this.itemIcon = ir.registerIcon("bg");
+		this.itemIcon = ir.registerIcon("sockets:bg");
 		
 		textures = new IIcon[ModuleRegistry.numModules];
 		

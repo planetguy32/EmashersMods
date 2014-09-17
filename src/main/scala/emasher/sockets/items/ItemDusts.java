@@ -176,7 +176,9 @@ public class ItemDusts extends Item
 	@SideOnly(Side.CLIENT)
 	public IIcon getIconFromDamage(int damage)
 	{
-		return textures[damage];//TODO There's some crash here
+        if(damage >= 0 && damage < NUM_ITEMS)
+            return textures[damage];
+        return null;
 	}
 	
 	@Override

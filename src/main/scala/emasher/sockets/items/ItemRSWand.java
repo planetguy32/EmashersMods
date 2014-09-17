@@ -126,9 +126,6 @@ public class ItemRSWand extends Item
 
 	       if (world.getBlock(x, y, z) == SocketsMod.tempRS)
 	       {
-               //TODO Check it
-	           //Block.blocksList[SocketsMod.tempRS.blockID].onBlockPlacedBy(world, x, y, z, player, stack);
-	           //Block.blocksList[SocketsMod.tempRS.blockID].onPostBlockPlaced(world, x, y, z, metadata);
                SocketsMod.tempRS.onBlockPlacedBy(world, x, y, z, player, stack);
                SocketsMod.tempRS.onPostBlockPlaced(world, x, y, z, metadata);
 	       }

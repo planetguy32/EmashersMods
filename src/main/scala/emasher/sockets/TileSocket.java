@@ -435,7 +435,6 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		int zo = zCoord + d.offsetZ;
 		boolean result = false;
 
-        //TODO Check if this ID implementation is ok
 		Block block = worldObj.getBlock(xo, yo, zo);
         int id = Block.getIdFromBlock(block);
 
@@ -648,11 +647,11 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
     @Override
     public void openInventory()
     {
-        //TODO
     }
 
     @Override
-    public void closeInventory() {
+    public void closeInventory()
+    {
 
     }
 

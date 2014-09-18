@@ -1,12 +1,13 @@
 package emasher.sockets.modules
 
 import emasher.api.{Util, SideConfig, SocketTileAccess, SocketModule}
+import net.minecraft.init.Blocks
 import net.minecraft.item.crafting.CraftingManager
 import java.util.List
 import net.minecraftforge.oredict.ShapedOreRecipe
 import net.minecraft.item.{Item, ItemStack}
 import emasher.sockets.SocketsMod
-import net.minecraftforge.common.ForgeDirection
+import net.minecraftforge.common.util.ForgeDirection
 import net.minecraft.block.Block
 
 class ModHinge(id: Int) extends SocketModule(id, "sockets:hinge") {
@@ -16,7 +17,7 @@ class ModHinge(id: Int) extends SocketModule(id, "sockets:hinge") {
   override def addRecipe(): Unit = {
     CraftingManager.getInstance().getRecipeList.asInstanceOf[java.util.List[Object]]
       .add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "p", "m",
-      Character.valueOf('p'), Block.pistonBase,
+      Character.valueOf('p'), Blocks.piston,
        Character.valueOf('m'), new ItemStack(SocketsMod.blankSide)))
   }
 
@@ -67,18 +68,18 @@ class ModHinge(id: Int) extends SocketModule(id, "sockets:hinge") {
     val ny = ts.yCoord + otherHinge.offsetY
     val nz = ts.zCoord + otherHinge.offsetZ
 
-    if(! ts.worldObj.isAirBlock(x, y, z)) {
-      val done = Util.moveBlock(ts.worldObj, x, y, z, nx, ny, nz)
+    if(! ts.getWorldObj().isAirBlock(x, y, z)) {
+      val done = Util.moveBlock(ts.getWorldObj(), x, y, z, nx, ny, nz)
       if(done) {
-        ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F);
-        ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F);
+        ts.getWorldObj().playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.getWorldObj().rand.nextFloat() * 0.25F + 0.6F);
+        ts.getWorldObj().playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.getWorldObj().rand.nextFloat() * 0.25F + 0.6F);
       }
 
-    } else if(! ts.worldObj.isAirBlock(nx, ny, nz)) {
-      val done = Util.moveBlock(ts.worldObj, nx, ny, nz, x, y, z)
+    } else if(! ts.getWorldObj().isAirBlock(nx, ny, nz)) {
+      val done = Util.moveBlock(ts.getWorldObj(), nx, ny, nz, x, y, z)
       if(done) {
-        ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F);
-        ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F);
+        ts.getWorldObj().playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.getWorldObj().rand.nextFloat() * 0.25F + 0.6F);
+        ts.getWorldObj().playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.getWorldObj().rand.nextFloat() * 0.25F + 0.6F);
       }
     }
   }

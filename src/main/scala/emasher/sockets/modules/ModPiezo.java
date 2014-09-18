@@ -6,9 +6,10 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
@@ -47,7 +48,7 @@ public class ModPiezo extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "pip", " b ", Character.valueOf('i'), Block.pressurePlateStone, Character.valueOf('p'), EmasherCore.psu,
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "pip", " b ", Character.valueOf('i'), Blocks.stone_pressure_plate, Character.valueOf('p'), EmasherCore.psu,
 				Character.valueOf('b'), SocketsMod.blankSide);
 	}
 	
@@ -72,7 +73,7 @@ public class ModPiezo extends SocketModule
 			EntityLiving el = (EntityLiving)entity;
 			ts.addEnergy(80, false);
 			config.meta = 10;
-			if(ts.worldObj.rand.nextInt(20) == 0)el.attackEntityFrom(DamageSource.inFire, 4);
+			if(ts.getWorldObj().rand.nextInt(20) == 0)el.attackEntityFrom(DamageSource.inFire, 4);
 		}
 	}
 	

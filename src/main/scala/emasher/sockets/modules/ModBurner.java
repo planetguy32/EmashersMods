@@ -4,11 +4,13 @@ import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
@@ -48,14 +50,14 @@ public class ModBurner extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ini", "ifi", " b ", Character.valueOf('i'), Item.ingotIron, Character.valueOf('f'), Item.flintAndSteel, Character.valueOf('n'),
-				Block.netherrack, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ini", "ifi", " b ", Character.valueOf('i'), Items.iron_ingot, Character.valueOf('f'), Items.flint_and_steel, Character.valueOf('n'),
+				Blocks.netherrack, Character.valueOf('b'), SocketsMod.blankSide);
 		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ini", "ifi", " b ", Character.valueOf('i'), "ingotNickel", Character.valueOf('f'), Item.flintAndSteel, Character.valueOf('n'),
-				Block.netherrack, Character.valueOf('b'), SocketsMod.blankSide));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ini", "ifi", " b ", Character.valueOf('i'), "ingotNickel", Character.valueOf('f'), Items.flint_and_steel, Character.valueOf('n'),
+				Blocks.netherrack, Character.valueOf('b'), SocketsMod.blankSide));
 		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ini", "ifi", " b ", Character.valueOf('i'), "ingotSteel", Character.valueOf('f'), Item.flintAndSteel, Character.valueOf('n'),
-				Block.netherrack, Character.valueOf('b'), SocketsMod.blankSide));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ini", "ifi", " b ", Character.valueOf('i'), "ingotSteel", Character.valueOf('f'), Items.flint_and_steel, Character.valueOf('n'),
+				Blocks.netherrack, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	@Override
@@ -93,11 +95,12 @@ public class ModBurner extends SocketModule
 		int yo = ts.yCoord + side.offsetY;
 		int zo = ts.zCoord + side.offsetZ;
 		
-		int blockID = ts.worldObj.getBlockId(xo, yo, zo);
-		
-		if(blockID == Block.fire.blockID && ! canBurn) ts.worldObj.setBlockToAir(xo, yo, zo);
-		else if(ts.worldObj.isAirBlock(xo, yo, zo) && canBurn) ts.worldObj.setBlock(xo, yo, zo, Block.fire.blockID);
-		else if(blockID == Block.portal.blockID && ! canBurn) ts.worldObj.setBlockToAir(xo, yo, zo);
+		//int blockID = ts.getWorldObj().getBlockId(xo, yo, zo);
+        Block block = ts.getWorldObj().getBlock(xo, yo, zo);
+
+		if(block == Blocks.fire && ! canBurn) ts.getWorldObj().setBlockToAir(xo, yo, zo);
+		else if(ts.getWorldObj().isAirBlock(xo, yo, zo) && canBurn) ts.getWorldObj().setBlock(xo, yo, zo, Blocks.fire);
+		else if(block == Blocks.portal && ! canBurn) ts.getWorldObj().setBlockToAir(xo, yo, zo);
 	}
 	
 }

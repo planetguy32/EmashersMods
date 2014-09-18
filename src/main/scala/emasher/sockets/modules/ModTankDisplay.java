@@ -2,8 +2,10 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
-import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -13,7 +15,7 @@ import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.sockets.BlockSocket;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
@@ -53,8 +55,8 @@ public class ModTankDisplay extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ggg", "slr", " b ", Character.valueOf('g'), Block.thinGlass, Character.valueOf('s'),
-				Item.glowstone, Character.valueOf('l'), "dyeBlue", Character.valueOf('r'), Item.redstone, Character.valueOf('b'), SocketsMod.blankSide));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ggg", "slr", " b ", Character.valueOf('g'), Blocks.glass_pane, Character.valueOf('s'),
+				Items.glowstone_dust, Character.valueOf('l'), "dyeBlue", Character.valueOf('r'), Items.redstone, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	@Override
@@ -79,9 +81,9 @@ public class ModTankDisplay extends SocketModule
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+	public IIcon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side)
 	{
-		return new Icon[] {((BlockSocket)SocketsMod.socket).textures[moduleID][1]};
+		return new IIcon[] {((BlockSocket)SocketsMod.socket).textures[moduleID][1]};
 	}
 	
 	@Override
@@ -107,7 +109,9 @@ public class ModTankDisplay extends SocketModule
 					ts.fillInternal(config.tank, inContainer, true);
                     if(FluidContainerRegistry.isBucket(is))
                     {
-                        is.itemID = Item.bucketEmpty.itemID;
+                        //TODO Check if it works this way
+                        // is.itemID = Item.bucketEmpty.itemID;
+                        is.getItem().setContainerItem(Items.bucket);
                         is.setItemDamage(0);
                         is.stackSize = 1;
                         is.setTagCompound(null);
@@ -150,9 +154,9 @@ public class ModTankDisplay extends SocketModule
 	{
 		if (stack.stackSize == 1)
 		{
-			if (stack.getItem().hasContainerItem())
+			if (stack.getItem().hasContainerItem(stack))
 			{
-				return stack.getItem().getContainerItemStack(stack);
+				return stack.getItem().getContainerItem(stack);
 			}
 			else
 			{

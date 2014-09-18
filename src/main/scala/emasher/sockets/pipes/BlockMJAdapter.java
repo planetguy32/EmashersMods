@@ -3,9 +3,9 @@ package emasher.sockets.pipes;
 import emasher.sockets.SocketsMod;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 public class BlockMJAdapter extends BlockAdapterBase
@@ -23,13 +23,13 @@ public class BlockMJAdapter extends BlockAdapterBase
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world)
+	public TileEntity createNewTileEntity(World world, int metadata)
 	{
 		return new TileMJAdapter();
 	}
 	
 	@Override
-	public void registerIcons(IconRegister ir)
+	public void registerBlockIcons(IIconRegister ir)
 	{
 		this.blockIcon = ir.registerIcon("sockets:mjConverter");
 		this.outputIcon = ir.registerIcon("sockets:mjAdapterOut");

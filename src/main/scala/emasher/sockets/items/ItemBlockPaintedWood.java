@@ -15,7 +15,7 @@ import net.minecraft.potion.*;
 
 public class ItemBlockPaintedWood extends ItemBlock
 {
-	public ItemBlockPaintedWood(int par1)
+	public ItemBlockPaintedWood(Block par1)
 	{
 		super(par1);
 		setHasSubtypes(true);

@@ -4,9 +4,10 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
@@ -24,8 +25,8 @@ public class ModMachineOutput extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "h", "d", "b", Character.valueOf('d'), Block.dispenser, Character.valueOf('h'), Block.hopperBlock,
-				Character.valueOf('u'), Block.trapdoor, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "h", "d", "b", Character.valueOf('d'), Blocks.dispenser, Character.valueOf('h'), Blocks.hopper,
+				Character.valueOf('u'), Blocks.trapdoor, Character.valueOf('b'), SocketsMod.blankSide);
 	}
 
 	@Override
@@ -112,8 +113,8 @@ public class ModMachineOutput extends SocketModule
 				int xo = ts.xCoord + side.offsetX;
 				int yo = ts.yCoord + side.offsetY;
 				int zo = ts.zCoord + side.offsetZ;
-				int id = ts.worldObj.getBlockId(xo, yo, zo);
-				if(! ts.worldObj.isAirBlock(xo, yo, zo)) return;
+				//int id = ts.getWorldObj().getBlockId(xo, yo, zo);
+				if(! ts.getWorldObj().isAirBlock(xo, yo, zo)) return;
 				
 				dropItemsOnSide(ts, config, side, xo, yo, zo, ts.getStackInInventorySlot(config.inventory));
 			}
@@ -133,15 +134,15 @@ public class ModMachineOutput extends SocketModule
 	
 	public void dropItemsOnSide(SocketTileAccess ts, SideConfig config, ForgeDirection side, int xo, int yo, int zo, ItemStack stack)
 	{
-		if (! ts.worldObj.isRemote)
+		if (! ts.getWorldObj().isRemote)
         {
             float f = 0.7F;
-            double d0 = (double)(ts.worldObj.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-            double d1 = (double)(ts.worldObj.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-            double d2 = (double)(ts.worldObj.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-            EntityItem entityitem = new EntityItem(ts.worldObj, (double)xo + d0, (double)yo + d1, (double)zo + d2, stack.copy());
+            double d0 = (double)(ts.getWorldObj().rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+            double d1 = (double)(ts.getWorldObj().rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+            double d2 = (double)(ts.getWorldObj().rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+            EntityItem entityitem = new EntityItem(ts.getWorldObj(), (double)xo + d0, (double)yo + d1, (double)zo + d2, stack.copy());
             entityitem.delayBeforeCanPickup = 1;
-            ts.worldObj.spawnEntityInWorld(entityitem);
+            ts.getWorldObj().spawnEntityInWorld(entityitem);
             ts.extractItemInternal(true, config.inventory, ts.getStackInInventorySlot(config.inventory).stackSize);
             //ts.inventory.setInventorySlotContents(config.inventory, null);
         }

@@ -1,11 +1,12 @@
 package emasher.sockets.modules
 
-import emasher.api._
+import emasher.api.{SocketTileAccess, SideConfig, RSPulseModule}
 import emasher.sockets.SocketsMod
+import net.minecraft.init.Items
 import net.minecraft.item.crafting.CraftingManager
 import net.minecraftforge.oredict.ShapedOreRecipe
 import net.minecraft.item.{Item, ItemStack}
-import net.minecraftforge.common.ForgeDirection
+import net.minecraftforge.common.util.ForgeDirection
 
 class ModAccelerometer(id: Int) extends RSPulseModule(id, "sockets:accelerometer", "sockets:accelerometerActive") {
   def getLocalizedName: String = "Accelerometer"
@@ -22,8 +23,8 @@ class ModAccelerometer(id: Int) extends RSPulseModule(id, "sockets:accelerometer
   override def addRecipe(): Unit = {
     CraftingManager.getInstance().getRecipeList.asInstanceOf[java.util.List[Object]]
       .add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "rbr", " m ",
-      Character.valueOf('b'), Item.netherQuartz,
-      Character.valueOf('r'), Item.redstone,
+      Character.valueOf('b'), Items.quartz,
+      Character.valueOf('r'), Items.redstone,
       Character.valueOf('m'), new ItemStack(SocketsMod.blankSide)))
   }
 

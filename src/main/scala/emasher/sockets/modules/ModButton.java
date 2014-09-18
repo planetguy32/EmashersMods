@@ -7,11 +7,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.ForgeDirection;
 import emasher.api.RSPulseModule;
 import emasher.api.SideConfig;
 import emasher.api.SocketTileAccess;
@@ -49,16 +51,16 @@ public class ModButton extends RSPulseModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "t", "b", Character.valueOf('t'), Block.stoneButton, Character.valueOf('r'), Item.redstone,
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "t", "b", Character.valueOf('t'), Blocks.stone_button, Character.valueOf('r'), Items.redstone,
 				Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 16));
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+	public IIcon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side)
 	{
-		if((config.meta & 7) == 0) return new Icon[] {};
-		return new Icon[] {((BlockSocket)SocketsMod.socket).buttonInd};
+		if((config.meta & 7) == 0) return new IIcon[] {};
+		return new IIcon[] {((BlockSocket)SocketsMod.socket).buttonInd};
 	}
 	
 	@Override

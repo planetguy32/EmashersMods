@@ -4,9 +4,10 @@ import java.util.List;
 
 import buildcraft.api.power.PowerHandler;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
@@ -48,8 +49,8 @@ public class ModWaterMill extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "sps", "sps", "sbs", Character.valueOf('s'), Block.pressurePlateIron, Character.valueOf('p'), EmasherCore.psu,
-				Character.valueOf('u'), Block.blockDiamond, Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 7));
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "sps", "sps", "sbs", Character.valueOf('s'), Blocks.heavy_weighted_pressure_plate, Character.valueOf('p'), EmasherCore.psu,
+				Character.valueOf('u'), Blocks.diamond_block, Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 7));
 	}
 	
 	@Override
@@ -79,11 +80,11 @@ public class ModWaterMill extends SocketModule
 				int yo = ts.yCoord + side.offsetY;
 				int zo = ts.zCoord + side.offsetZ;
 				
-				int blockID = ts.worldObj.getBlockId(xo, yo, zo);
-				if(blockID == Block.waterStill.blockID || blockID == Block.waterMoving.blockID)
+				Block block = ts.getWorldObj().getBlock(xo, yo, zo);
+				if(block == Blocks.water || block == Blocks.flowing_water)
 				{
-					int biomeID = ts.worldObj.getBiomeGenForCoords(xo, zo).biomeID;
-					String biomeName = ts.worldObj.getBiomeGenForCoords(xo, zo).biomeName;
+					int biomeID = ts.getWorldObj().getBiomeGenForCoords(xo, zo).biomeID;
+					String biomeName = ts.getWorldObj().getBiomeGenForCoords(xo, zo).biomeName;
 					if(biomeID == BiomeGenBase.river.biomeID || biomeID == BiomeGenBase.frozenRiver.biomeID || biomeName.contains("iver") || biomeName.contains("tream"))
 						if(ts.yCoord <= 64 && ts.yCoord >= 40)
 							if(side != ForgeDirection.UP && side != ForgeDirection.DOWN) ts.addEnergy(10, false);

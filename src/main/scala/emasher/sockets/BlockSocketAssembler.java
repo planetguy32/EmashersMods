@@ -10,11 +10,11 @@ public class BlockSocketAssembler extends BlockContainer
 
 	protected BlockSocketAssembler(int par1)
 	{
-		super(par1, Material.iron);
+		super(Material.iron);
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world)
+	public TileEntity createNewTileEntity(World world, int metadata)
 	{
 		return new TileSocketAssembler();
 	}

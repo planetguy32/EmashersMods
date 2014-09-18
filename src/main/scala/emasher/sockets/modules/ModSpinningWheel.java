@@ -4,18 +4,20 @@ import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.core.EmasherCore;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 
 public class ModSpinningWheel extends SocketModule
@@ -50,7 +52,7 @@ public class ModSpinningWheel extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " hs", "sws", "sb ", Character.valueOf('s'), Item.stick, Character.valueOf('h'), EmasherCore.psu,
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " hs", "sws", "sb ", Character.valueOf('s'), Items.stick, Character.valueOf('h'), EmasherCore.psu,
 				Character.valueOf('w'), "plankWood", Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
@@ -91,7 +93,7 @@ public class ModSpinningWheel extends SocketModule
 					ItemStack toIntake = ts.getStackInInventorySlot(config.inventory);
 					
 					ItemStack product = null;
-					if(toIntake.itemID == Block.cloth.blockID)product = new ItemStack(Item.silk, 4, 0);
+					if(toIntake.getItem() == Item.getItemFromBlock(Blocks.wool))product = new ItemStack(Items.string, 4, 0);
 					
 					if(product != null)
 					{

@@ -7,11 +7,12 @@ import emasher.api.SocketTileAccess;
 import emasher.sockets.SocketsMod;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
@@ -60,8 +61,8 @@ public class ModStirlingGenerator extends SocketModule {
 				"ggg",
 				" F ",
 				" b ",
-				Character.valueOf('g'), Block.stone,
-				Character.valueOf('F'), Block.furnaceIdle,
+				Character.valueOf('g'), Blocks.stone,
+				Character.valueOf('F'), Blocks.furnace,
 				Character.valueOf('b'), SocketsMod.blankSide));
 	}
 
@@ -109,7 +110,7 @@ public class ModStirlingGenerator extends SocketModule {
 				else
 				{
 					config.meta -= 2;
-					if(ts.worldObj.rand.nextBoolean()) config.meta--;
+					if(ts.getWorldObj().rand.nextBoolean()) config.meta--;
 					ts.addEnergy(20, false);
 				}
 				if(config.meta == 0)

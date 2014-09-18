@@ -5,6 +5,8 @@ import java.util.List;
 import buildcraft.api.inventory.ISpecialInventory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHopper;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
@@ -12,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
@@ -51,8 +53,8 @@ public class ModItemExtractor extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "h", "u", "b", Character.valueOf('i'), Item.ingotIron, Character.valueOf('h'), Block.hopperBlock,
-				Character.valueOf('u'), Block.trapdoor, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "h", "u", "b", Character.valueOf('i'), Items.iron_ingot, Character.valueOf('h'), Blocks.hopper,
+				Character.valueOf('u'), Blocks.trapdoor, Character.valueOf('b'), SocketsMod.blankSide);
 	}
 	
 	@Override
@@ -112,7 +114,7 @@ public class ModItemExtractor extends SocketModule
 		int yo = ts.yCoord + side.offsetY;
 		int zo = ts.zCoord + side.offsetZ;
 		
-		TileEntity t = ts.worldObj.getBlockTileEntity(xo, yo, zo);
+		TileEntity t = ts.getWorldObj().getTileEntity(xo, yo, zo);
 		
 		if(t != null && ! (t instanceof TileEntityHopper) && t instanceof IInventory && config.inventory != -1)
 		{

@@ -1,8 +1,10 @@
 package emasher.sockets
 
+import emasher.api.{Util, SocketTileAccess}
+import net.minecraft.init.Blocks
 import net.minecraft.world.World
-import net.minecraftforge.common.ForgeDirection
 import emasher.sockets.SocketsMod
+import net.minecraftforge.common.util.ForgeDirection
 import scala.collection.mutable.ListBuffer
 import emasher.sockets.modules.ModMagnet
 import scala.collection.mutable
@@ -10,13 +12,12 @@ import net.minecraft.block.Block
 import emasher.sockets.pipes.{TileDirectionChanger, TileAdapterBase, TileFrame}
 import net.minecraft.nbt.NBTTagCompound
 import scala.util.control.Breaks._
-import emasher.api.{Util, SocketTileAccess}
 
 object UtilScala {
   def moveGroup(world: World, root: Coords, dir: ForgeDirection): Boolean = {
-    val rb = world.getBlockId(root.x, root.y, root.z)
-    if(rb == SocketsMod.socket.blockID) {
-      val te = world.getBlockTileEntity(root.x, root.y, root.z)
+    val rb = world.getBlock(root.x, root.y, root.z)
+    if(rb == SocketsMod.socket) {
+      val te = world.getTileEntity(root.x, root.y, root.z)
 
       te match {
         case ts: SocketTileAccess =>
@@ -39,18 +40,19 @@ object UtilScala {
               val curr = checkQueue.dequeue()
               if(shouldBlockBeMovable(world, curr.x, curr.y, curr.z)) {
                 moveSet += curr
-                val bId = world.getBlockId(curr.x, curr.y, curr.z)
-                val theBlock = Block.blocksList(bId)
+                //val bId = world.getBlockId(curr.x, curr.y, curr.z)
+                //val theBlock = Block.blocksList(bId)
+                val theBlock = world.getBlock(curr.x, curr.y, curr.z)
                 if(theBlock != null) {
                   if(! theBlock.isOpaqueCube) {
-                    val t = world.getBlockTileEntity(curr.x, curr.y, curr.z)
+                    val t = world.getTileEntity(curr.x, curr.y, curr.z)
                     val data = new NBTTagCompound()
                     if(t != null) t.writeToNBT(data)
-                    val theBlockId = world.getBlockId(curr.x, curr.y, curr.z)
+                    val theBlockId = Block.getIdFromBlock(world.getBlock(curr.x, curr.y, curr.z))
                     val theBlockMeta = world.getBlockMetadata(curr.x, curr.y, curr.z)
                     nonNormalSet += NonNormalBlock(curr, theBlockId, theBlockMeta, data)
-                    world.removeBlockTileEntity(curr.x, curr.y, curr.z)
-                    world.setBlock(curr.x, curr.y, curr.z, 0, 0, 3)
+                    world.removeTileEntity(curr.x, curr.y, curr.z)
+                    world.setBlock(curr.x, curr.y, curr.z, Blocks.air, 0, 3)
                   }
                 }
                 addToQueueForBlock(checkQueue, moveSet, curr, world)
@@ -83,8 +85,8 @@ object UtilScala {
               }
 
               for(n <- nonNormalSet) {
-                world.setBlock(n.t.x + dir.offsetX, n.t.y + dir.offsetY, n.t.z + dir.offsetZ, n.id, n.meta, 3)
-                val tileEntity = world.getBlockTileEntity(n.t.x + dir.offsetX, n.t.y + dir.offsetY, n.t.z + dir.offsetZ)
+                world.setBlock(n.t.x + dir.offsetX, n.t.y + dir.offsetY, n.t.z + dir.offsetZ, n.asInstanceOf[Block], n.meta, 3)
+                val tileEntity = world.getTileEntity(n.t.x + dir.offsetX, n.t.y + dir.offsetY, n.t.z + dir.offsetZ)
                 if(tileEntity != null && n.data != null) {
                   tileEntity.readFromNBT(n.data)
                   tileEntity.xCoord = n.t.x + dir.offsetX
@@ -94,7 +96,7 @@ object UtilScala {
               }
 
               sorted.map { u =>
-                val te = world.getBlockTileEntity(u.x + dir.offsetX, u.y + dir.offsetY, u.z + dir.offsetZ)
+                val te = world.getTileEntity(u.x + dir.offsetX, u.y + dir.offsetY, u.z + dir.offsetZ)
                 if(te != null && te.isInstanceOf[SocketTileAccess]) {
                   val ts = te.asInstanceOf[SocketTileAccess]
                   for(i <- 0 to 5) {
@@ -122,8 +124,8 @@ object UtilScala {
               }
             } else {
               for(n <- nonNormalSet) {
-                world.setBlock(n.t.x, n.t.y, n.t.z, n.id, n.meta, 3)
-                val tileEntity = world.getBlockTileEntity(n.t.x, n.t.y, n.t.z)
+                world.setBlock(n.t.x, n.t.y, n.t.z, n.asInstanceOf[Block], n.meta, 3)
+                val tileEntity = world.getTileEntity(n.t.x, n.t.y, n.t.z)
                 if(tileEntity != null && n.data != null) {
                   tileEntity.readFromNBT(n.data)
                 }
@@ -198,15 +200,15 @@ object UtilScala {
   }
 
   def shouldBlockBeMovable(world: World, x: Int, y: Int, z: Int): Boolean = {
-    val id: Int = world.getBlockId(x, y, z)
-    if(SocketsMod.miniPortal != null && id == SocketsMod.miniPortal.blockID) return false
-    val b: Block = Block.blocksList(id)
-    !(b != null && b.blockHardness < 0)
+    val b: Block = world.getBlock(x, y, z)
+    if(SocketsMod.miniPortal != null && b == SocketsMod.miniPortal) return false
+    //val b: Block = Block.blocksList(id)
+    !(b != null && b.getBlockHardness(world, x, y, z) < 0)
   }
 
   def addToQueueForBlock(q: mutable.Queue[Coords], s: mutable.ListBuffer[Coords], t: Coords, world: World) {
 
-    val te = world.getBlockTileEntity(t.x, t.y, t.z)
+    val te = world.getTileEntity(t.x, t.y, t.z)
     te match {
       case tile: SocketTileAccess =>
 
@@ -252,7 +254,7 @@ object UtilScala {
           val yo = t.y + d.offsetY
           val zo = t.z + d.offsetZ
 
-          if(isOn || world.getBlockId(xo, yo, zo) == SocketsMod.frame.blockID) {
+          if(isOn || world.getBlock(xo, yo, zo) == SocketsMod.frame) {
             if(! Util.isBlockReplaceable(world, xo, yo, zo) && ! s.contains(Coords(xo, yo, zo))) {
               q.enqueue(Coords(xo, yo, zo))
             }

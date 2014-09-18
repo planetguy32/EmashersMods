@@ -2,16 +2,18 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
@@ -52,8 +54,8 @@ public class ModItemDisplay extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ggg", "slr", " b ", Character.valueOf('g'), Block.thinGlass, Character.valueOf('s'), Item.glowstone,
-				Character.valueOf('l'), "dyeLime", Character.valueOf('r'), Item.redstone, Character.valueOf('b'), SocketsMod.blankSide));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ggg", "slr", " b ", Character.valueOf('g'), Blocks.glass_pane, Character.valueOf('s'), Items.glowstone_dust,
+				Character.valueOf('l'), "dyeLime", Character.valueOf('r'), Items.redstone, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	@Override
@@ -191,15 +193,15 @@ public class ModItemDisplay extends SocketModule
 	
 	public void dropItemsOnSide(SocketTileAccess ts, SideConfig config, ForgeDirection side, int xo, int yo, int zo, ItemStack stack)
 	{
-		if (! ts.worldObj.isRemote)
+		if (! ts.getWorldObj().isRemote)
         {
             float f = 0.7F;
-            double d0 = (double)(ts.worldObj.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-            double d1 = (double)(ts.worldObj.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-            double d2 = (double)(ts.worldObj.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-            EntityItem entityitem = new EntityItem(ts.worldObj, (double)xo + d0, (double)yo + d1, (double)zo + d2, stack);
+            double d0 = (double)(ts.getWorldObj().rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+            double d1 = (double)(ts.getWorldObj().rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+            double d2 = (double)(ts.getWorldObj().rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+            EntityItem entityitem = new EntityItem(ts.getWorldObj(), (double)xo + d0, (double)yo + d1, (double)zo + d2, stack);
             entityitem.delayBeforeCanPickup = 1;
-            ts.worldObj.spawnEntityInWorld(entityitem);
+            ts.getWorldObj().spawnEntityInWorld(entityitem);
         }
 	}
 	

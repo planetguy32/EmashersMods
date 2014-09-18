@@ -5,14 +5,15 @@ import java.util.List;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHopper;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquidTank;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fluids.FluidStack;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
@@ -50,7 +51,7 @@ public class ModItemDistributor extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "t", "b", Character.valueOf('t'), Item.pocketSundial, Character.valueOf('r'), Item.redstone,
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "t", "b", Character.valueOf('t'), Items.clock, Character.valueOf('r'), Items.redstone,
 				Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 1));
 	}
 	
@@ -128,7 +129,7 @@ public class ModItemDistributor extends SocketModule
 			int yo = ts.yCoord + side.offsetY;
 			int zo = ts.zCoord + side.offsetZ;
 			
-			TileEntity t = ts.worldObj.getBlockTileEntity(xo, yo, zo);
+			TileEntity t = ts.getWorldObj().getTileEntity(xo, yo, zo);
 			
 			if(t != null && t instanceof TileEntityHopper)
 			{	
@@ -142,7 +143,7 @@ public class ModItemDistributor extends SocketModule
 					if(config.rsLatch[i] && ts.getRSLatch(i)) canIntake = false;
 				}
 				
-				int direction = BlockHopper.getDirectionFromMetadata(ts.worldObj.getBlockMetadata(xo, yo, zo));
+				int direction = BlockHopper.getDirectionFromMetadata(ts.getWorldObj().getBlockMetadata(xo, yo, zo));
 				if(ForgeDirection.getOrientation(direction).getOpposite() == side && canIntake)
 				{
 					for (int i = 0; i < th.getSizeInventory(); ++i)

@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileSocketAssembler extends TileEntity implements ISpecialInventory
 {
@@ -32,7 +32,7 @@ public class TileSocketAssembler extends TileEntity implements ISpecialInventory
 			if(inv.getStackInSlot(i) != null)
 			{
 				NBTTagCompound itemCompound = new NBTTagCompound();
-				itemCompound.setInteger("slot", i);
+                itemCompound.setInteger("slot", i);
 				inv.getStackInSlot(i).writeToNBT(itemCompound);
 				itemList.appendTag(itemCompound);
 			}
@@ -47,11 +47,11 @@ public class TileSocketAssembler extends TileEntity implements ISpecialInventory
 	{
 		super.readFromNBT(data);
 		
-		NBTTagList itemList = data.getTagList("items");
+		NBTTagList itemList = data.getTagList("items", 10);
 		
 		if(itemList != null) for(int i = 0; i < itemList.tagCount(); i++)
 	    {
-	    	NBTTagCompound itemCompound = (NBTTagCompound) itemList.tagAt(i);
+	    	NBTTagCompound itemCompound = (NBTTagCompound) itemList.getCompoundTagAt(i);
 	    	int slot = itemCompound.getInteger("slot");
 	    	inv.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(itemCompound));
 	    }
@@ -91,16 +91,27 @@ public class TileSocketAssembler extends TileEntity implements ISpecialInventory
 		inv.setInventorySlotContents(i, itemstack);
 	}
 
+    @Override
+    public void openInventory()
+    {
+    }
+
+    @Override
+    public void closeInventory()
+    {
+
+    }
+
 	@Override
-	public String getInvName()
+	public String getInventoryName()
 	{
-		return inv.getInvName();
+		return inv.getInventoryName();
 	}
 
 	@Override
-	public boolean isInvNameLocalized()
+	public boolean hasCustomInventoryName()
 	{
-		return inv.isInvNameLocalized();
+		return inv.hasCustomInventoryName();
 	}
 
 	@Override
@@ -115,7 +126,7 @@ public class TileSocketAssembler extends TileEntity implements ISpecialInventory
 		return inv.isUseableByPlayer(entityplayer);
 	}
 
-	@Override
+	/*@Override
 	public void openChest()
 	{
 		inv.openChest();
@@ -125,7 +136,7 @@ public class TileSocketAssembler extends TileEntity implements ISpecialInventory
 	public void closeChest()
 	{
 		inv.closeChest();
-	}
+	}*/
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack)

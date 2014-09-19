@@ -18,7 +18,7 @@ public class ItemPondScum extends ItemBlock
 
 	public ItemPondScum(Block b, String texture)
     {
-		super(EmasherCore.algae);
+		super(b);
 		maxStackSize = 64;
 		setUnlocalizedName("pondScumItem");
         this.texture = texture;

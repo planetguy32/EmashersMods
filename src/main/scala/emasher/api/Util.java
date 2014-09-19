@@ -2,9 +2,10 @@ package emasher.api;
 
 import com.mojang.authlib.GameProfile;
 //import emasher.sockets.PacketHandler;
-//import emasher.sockets.SocketsMod;
-//import emasher.sockets.pipes.TileAdapterBase;
-//import emasher.sockets.pipes.TileDirectionChanger;
+import emasher.sockets.PacketHandler;
+import emasher.sockets.SocketsMod;
+import emasher.sockets.pipes.TileAdapterBase;
+import emasher.sockets.pipes.TileDirectionChanger;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.entity.Entity;
@@ -15,11 +16,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-//import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 
@@ -27,14 +26,16 @@ import java.util.List;
 
 public class Util
 {
-	/*public static EntityPlayer createFakePlayer(World world, int x, int y, int z)
+	public static EntityPlayer createFakePlayer(World world, int x, int y, int z)
 	{
+        EntityPlayer player = createFakePlayer(world, x, y, z);
 		/*EntityPlayer player = new EntityPlayer(world, "[Engineer's Toolbox]") {
-			@Override
-			public void sendChatToPlayer(ChatMessageComponent var1) {
-			}
+            @Override
+            public void addChatMessage(IChatComponent p_145747_1_) {
 
-			@Override
+            }
+
+            @Override
 			public boolean canCommandSenderUseCommand(int var1, String var2) {
 				return false;
 			}
@@ -43,33 +44,30 @@ public class Util
 			public ChunkCoordinates getPlayerCoordinates() {
 				return null;
 			}
-		};
-
-        if(world instanceof WorldServer) {
-            EntityPlayer player = FakePlayerFactory.get((WorldServer)world, new GameProfile("[Engineer's Toolbox", "[Engineer's Toolbox]"));
-
-            player.posX = x;
-            player.posY = y;
-            player.posZ = z;
-            player.prevPosX = x;
-            player.prevPosY = y;
-            player.prevPosZ = z;
-
-            return player;
-        }
-
-        return null;
+		};*/
+		
+		player.posX = x;
+		player.posY = y;
+		player.posZ = z;
+		player.prevPosX = x;
+		player.prevPosY = y;
+		player.prevPosZ = z;
+		
+		return player;
 	}
 
     public static boolean swapBlocks(World world, int x, int y, int z, int nx, int ny, int nz)
     {
-        Block b1 = world.getBlock(x, y, z);//world.getBlockId(x, y ,z);
+        Block b1 = world.getBlock(x, y ,z);
         int meta1 = world.getBlockMetadata(x, y, z);
         Block b2 = world.getBlock(nx, ny, nz);
         int meta2 = world.getBlockMetadata(nx, ny, nz);
 
         if(b1 == SocketsMod.miniPortal) return false;
         if(b2 == SocketsMod.miniPortal) return false;
+
+        //Block b1 = Block.blocksList[id1];
+        //Block b2 = Block.blocksList[id2];
 
         if(b1 != null && b1.getBlockHardness(world, x, y, z) < 0) return false;
         if(b2 != null && b2.getBlockHardness(world, nx, ny, nz) < 0) return false;
@@ -203,8 +201,10 @@ public class Util
     {
         if(ny >= 255 || ny <= 0) return false;
         if(! isBlockReplaceable(world, nx, ny, nz)) return false;
+        //int id = world.getBlockId(x, y, z);
         Block b = world.getBlock(x, y, z);
         if(b == SocketsMod.miniPortal) return false;
+        //Block b = Block.blocksList[id];
         return ! (b != null && b.getBlockHardness(world, x, y, z) < 0);
     }
 
@@ -217,8 +217,10 @@ public class Util
     {
         if(ny >= 255 || ny <= 0) return false;
         if(! isBlockReplaceable(world, nx, ny, nz)) return false;
+        //int id = world.getBlockId(x, y, z);
         Block b = world.getBlock(x, y, z);
         if(b == SocketsMod.miniPortal) return false;
+        //Block b = Block.blocksList[id];
         if(b != null && b.getBlockHardness(world, x, y, z) < 0) return false;
         int meta = world.getBlockMetadata(x, y, z);
 
@@ -234,7 +236,7 @@ public class Util
 
         world.setBlock(nx, ny, nz, b, meta, 3);
 
-        List ents = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getAABBPool().getAABB(x, y, z, x + 1, y + 3, z + 1));
+        List ents = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 3, z + 1));//.getAABBPool().getAABB(x, y, z, x + 1, y + 3, z + 1));
         for(Object e: ents) {
             if(e instanceof Entity)
             {
@@ -262,6 +264,7 @@ public class Util
         return true;
     }
 
+
     public static boolean isBlockReplaceable(World world, int x, int y, int z)
     {
         Block b = world.getBlock(x, y, z);
@@ -270,13 +273,13 @@ public class Util
                 b == Blocks.tallgrass ||
                 b == Blocks.deadbush ||
                 b == Blocks.fire ||
-                b == Blocks.water ||
                 b == Blocks.flowing_water ||
-                b == Blocks.lava ||
+                b == Blocks.water ||
                 b == Blocks.flowing_lava ||
-                b.isReplaceable(world, x, y, z) ||
-                b instanceof BlockFluidBase;
-    }*/
+                b == Blocks.lava ||
+                (b.isReplaceable(world, x, y, z) ||
+                        b instanceof BlockFluidBase);
+    }
 	
 
 }

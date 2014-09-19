@@ -447,6 +447,7 @@ public class SocketsMod
 		LanguageRegistry.addName(euAdapter, "EU Adapter");
 		
 		rsIngot = new ItemRSIngot(rsIngotID);
+        GameRegistry.registerItem(rsIngot, "Sweet Redstone Ingot", "eng_toolbox");
 		LanguageRegistry.addName(rsIngot, "Sweet Redstone Ingot");
 		
 		if(enableMiniPortal)

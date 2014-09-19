@@ -3,6 +3,7 @@ package emasher.defense;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
@@ -28,7 +29,7 @@ public class TileDeflectorGen extends TileEntity
 	{
 		boolean stop = false;
 		
-		if(worldObj.getBlockId(xCoord, yCoord + 1, zCoord) != EmasherDefense.deflectorBase.blockID)
+		if(worldObj.getBlock(xCoord, yCoord + 1, zCoord) != EmasherDefense.deflectorBase)
 		{
 			boolean signal = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 			
@@ -39,15 +40,15 @@ public class TileDeflectorGen extends TileEntity
 				loopCount = yCoord + 7;
 				strChange = false;
 			}
-			
+
 			for(int y = yCoord + 1; y <= loopCount && !stop; y++)
 			{
-				if(worldObj.getBlockId(xCoord, y, zCoord) == 0 && y <= yCoord + strength && !signal)
+				if(worldObj.getBlock(xCoord, y, zCoord) == Blocks.air && y <= yCoord + strength && !signal)
 				{
-					worldObj.setBlock(xCoord, y, zCoord, EmasherDefense.deflector.blockID);
+					worldObj.setBlock(xCoord, y, zCoord, EmasherDefense.deflector);
 					worldObj.setBlockMetadataWithNotify(xCoord, y, zCoord, strength - 1, 2);
 				}
-				else if(worldObj.getBlockId(xCoord, y, zCoord) == EmasherDefense.deflector.blockID)
+				else if(worldObj.getBlock(xCoord, y, zCoord) == EmasherDefense.deflector)
 				{
 					if(y > yCoord + strength || signal)
 					{

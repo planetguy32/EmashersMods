@@ -5,12 +5,13 @@ import java.util.List;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import emasher.api.CentrifugeRecipeRegistry;
@@ -19,7 +20,7 @@ import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.api.CentrifugeRecipeRegistry.CentrifugeRecipe;
 import emasher.core.EmasherCore;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 
 public class ModCentrifuge extends SocketModule
@@ -40,7 +41,7 @@ public class ModCentrifuge extends SocketModule
 	public void addRecipe()
 	{	
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "tpt", "tct", "gbg", Character.valueOf('t'), "ingotTin", Character.valueOf('p'), EmasherCore.psu,
-				Character.valueOf('c'), "ingotCopper", Character.valueOf('g'), Item.ghastTear, Character.valueOf('b'), SocketsMod.blankSide));
+				Character.valueOf('c'), "ingotCopper", Character.valueOf('g'), Items.ghast_tear, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	@Override
@@ -153,7 +154,7 @@ public class ModCentrifuge extends SocketModule
 			{
 				config.rsControl[1] = true;
 				CentrifugeRecipe re = CentrifugeRecipeRegistry.getRecipe(ts.sideInventory.getStackInSlot(side.ordinal()));
-				if(re != null && (re.shouldOuputSecondary(ts.worldObj.rand) || config.rsControl[2]))
+				if(re != null && (re.shouldOuputSecondary(ts.getWorldObj().rand) || config.rsControl[2]))
 				{
 					int num = ts.forceOutputItem(re.getSecondaryOutput().copy());
 					if(num == 0) config.rsControl[2] = true;

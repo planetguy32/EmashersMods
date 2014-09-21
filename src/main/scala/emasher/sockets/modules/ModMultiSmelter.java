@@ -3,10 +3,11 @@ package emasher.sockets.modules;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import cpw.mods.fml.common.registry.GameRegistry;
 import emasher.api.MultiSmelterRecipeRegistry;
@@ -51,7 +52,7 @@ public class ModMultiSmelter extends SocketModule
 	public void addRecipe()
 	{
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " h ", "uiu", " b ", Character.valueOf('i'), "blockNickel", Character.valueOf('h'), EmasherCore.psu,
-				Character.valueOf('u'), Block.furnaceIdle, Character.valueOf('b'), SocketsMod.blankSide));
+				Character.valueOf('u'), Blocks.furnace, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	@Override

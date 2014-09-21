@@ -3,7 +3,7 @@ package emasher.sockets.pipes
 import net.minecraft.tileentity._;
 import net.minecraft.nbt._;
 import net.minecraftforge.fluids._;
-import net.minecraftforge.common._;
+import net.minecraftforge.common.util.ForgeDirection;
 
 class TileFluidPipe extends TilePipeBase with IFluidHandler
 {
@@ -60,7 +60,7 @@ class TileFluidPipe extends TilePipeBase with IFluidHandler
 						xo = xCoord + d.offsetX;
 						yo = yCoord + d.offsetY;
 						zo = zCoord + d.offsetZ;
-						var t:TileEntity = worldObj.getBlockTileEntity(xo, yo, zo);
+						var t:TileEntity = worldObj.getTileEntity(xo, yo, zo);
 						if(t != null && t.isInstanceOf[IFluidHandler] && ! t.isInstanceOf[TileStartPipe] && ! t.isInstanceOf[TileFluidPipe])
 						{
 							var amnt:Int = t.asInstanceOf[IFluidHandler].fill(d.getOpposite(), tank.drain(CAPACITY, false), true);
@@ -82,7 +82,7 @@ class TileFluidPipe extends TilePipeBase with IFluidHandler
 						xo = xCoord + d.offsetX;
 						yo = yCoord + d.offsetY;
 						zo = zCoord + d.offsetZ;
-						var t:TileEntity = worldObj.getBlockTileEntity(xo, yo, zo);
+						var t:TileEntity = worldObj.getTileEntity(xo, yo, zo);
 						
 						if(d != lastFrom)
 						{

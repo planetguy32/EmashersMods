@@ -1,7 +1,7 @@
 package emasher.sockets.client;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import emasher.sockets.CommonProxy;
 import emasher.sockets.TileSocket;
 import emasher.sockets.pipes.TilePipeBase;

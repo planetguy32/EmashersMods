@@ -206,7 +206,18 @@ public class EmasherCore
 	public static WorldGenPondScum scumGenerator = new WorldGenPondScum();
 	public static WorldGenHemp generateHemp = new WorldGenHemp();
 	
-	public static CreativeTabs tabEmasher;
+	public static CreativeTabs tabEmasher = new CreativeTabs("tabEmasher")
+    {
+        @Override
+        public Item getTabIconItem() {
+            return new ItemCircuit();
+        }
+
+        public ItemStack getIconItemStack()
+        {
+            return new ItemStack(psu);
+        }
+    };
 	
 	// Says where the client and server 'proxy' code is loaded.
 	@SidedProxy(clientSide="emasher.core.client.ClientProxy", serverSide="emasher.core.CommonProxy")
@@ -751,13 +762,13 @@ public class EmasherCore
 
         FurnaceRecipes.smelting().func_151396_a(hempPlant, new ItemStack(Items.dye, 1, 2), 0.1F);
 
-        tabEmasher = new CreativeTabs("tabEmasher")
+        /*tabEmasher = new CreativeTabs("tabEmasher")
             {
                 public Item getTabIconItem()
                 {
                     return psu;
                 }
-            };
+            };*/
 	}
 	
 	private void registerOreGen()

@@ -28,9 +28,9 @@ public class ItemGem extends Item
 	@SideOnly(Side.CLIENT)
 	public IIcon getIconFromDamage(int damage)
 	{
-        if(textures == null)System.out.println("textures are null");
-        System.out.println(damage);
-		return textures[damage];
+        if(textures != null && damage >= 0)
+            return textures[damage];
+        return null;
 	}
 	
 	@Override

@@ -4,30 +4,30 @@ import buildcraft.api.tools.IToolWrench;
 import emasher.sockets.SocketsMod;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockDirectionChanger extends BlockContainer {
 
-    public Icon upIcon;
-    public Icon downIcon;
-    public Icon leftIcon;
-    public Icon rightIcon;
+    public IIcon upIcon;
+    public IIcon downIcon;
+    public IIcon leftIcon;
+    public IIcon rightIcon;
 
     public BlockDirectionChanger(int id)
     {
-        super(id, Material.circuits);
+        super(Material.circuits);
         setCreativeTab(SocketsMod.tabSockets);
     }
 
-    public TileEntity createNewTileEntity(World world)
+    public TileEntity createNewTileEntity(World world, int metadata)
     {
         return new TileDirectionChanger();
     }
@@ -42,7 +42,7 @@ public class BlockDirectionChanger extends BlockContainer {
             if(is != null) item = is.getItem();
             if(item != null && item instanceof IToolWrench)
             {
-                TileEntity te = world.getBlockTileEntity(x, y, z);
+                TileEntity te = world.getTileEntity(x, y, z);
                 if(te != null && te instanceof TileDirectionChanger)
                 {
                     ((TileDirectionChanger)te).nextDirection(ForgeDirection.getOrientation(side));
@@ -56,9 +56,9 @@ public class BlockDirectionChanger extends BlockContainer {
     }
 
     @Override
-    public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side)
+    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side)
     {
-        TileEntity te = world.getBlockTileEntity(x, y, z);
+        TileEntity te = world.getTileEntity(x, y, z);
         if(te != null && te instanceof TileDirectionChanger)
         {
             TileDirectionChanger td = (TileDirectionChanger)te;
@@ -78,7 +78,7 @@ public class BlockDirectionChanger extends BlockContainer {
     }
 
     @Override
-    public void registerIcons(IconRegister ir)
+    public void registerBlockIcons(IIconRegister ir)
     {
         blockIcon = ir.registerIcon("sockets:dirChange");
         upIcon = ir.registerIcon("sockets:dirChangeUp");

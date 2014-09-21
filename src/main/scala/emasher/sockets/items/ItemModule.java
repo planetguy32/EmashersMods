@@ -2,6 +2,7 @@ package emasher.sockets.items;
 
 import java.util.List;
 
+import net.minecraft.block.Block;
 import org.lwjgl.input.Keyboard;
 
 import cpw.mods.fml.relauncher.Side;
@@ -12,24 +13,24 @@ import emasher.core.EmasherCore;
 import emasher.sockets.BlockSocket;
 import emasher.sockets.SocketsMod;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 public class ItemModule extends Item
 {
 	@SideOnly(Side.CLIENT)
-	public Icon[] textures;
+	public IIcon[] textures;
 	
 	public ItemModule(int id)
 	{
-		super(id);
+		super();
 		this.setCreativeTab(SocketsMod.tabSockets);
 		this.setHasSubtypes(true);
 		this.setUnlocalizedName("socket_module");
@@ -37,7 +38,7 @@ public class ItemModule extends Item
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIconFromDamage(int damage)
+	public IIcon getIconFromDamage(int damage)
     {
         return textures[damage];
     }
@@ -90,20 +91,20 @@ public class ItemModule extends Item
 	}
 	
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(int id, CreativeTabs par2CreativeTabs, List list)
+	public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List list)
 	{
 		for(int i = 1; i < ModuleRegistry.numModules; i++)
 		{
 			if(ModuleRegistry.getModule(i) != null)
 			{
-				list.add(new ItemStack(id, 1, i));
+				list.add(new ItemStack(item, 1, i));
 			}
 		}
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister ir)
+	public void registerIcons(IIconRegister ir)
 	{
 		SocketModule m;
 		int l;
@@ -111,7 +112,7 @@ public class ItemModule extends Item
 		
 		this.itemIcon = ir.registerIcon("sockets:bg");
 		
-		textures = new Icon[ModuleRegistry.numModules];
+		textures = new IIcon[ModuleRegistry.numModules];
 		
 		for(int i = 0; i < ModuleRegistry.numModules; i++)
 		{

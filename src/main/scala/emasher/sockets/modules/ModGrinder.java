@@ -5,12 +5,13 @@ import java.util.List;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import emasher.api.GrinderRecipeRegistry;
@@ -19,7 +20,7 @@ import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.api.GrinderRecipeRegistry.GrinderRecipe;
 import emasher.core.EmasherCore;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 import ic2.api.recipe.*;
 
@@ -61,7 +62,7 @@ public class ModGrinder extends SocketModule
 				//Character.valueOf('u'), Block.blockDiamond, Character.valueOf('b'), SocketsMod.blankSide);
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ihi", "iui", "ibi", Character.valueOf('i'), "gemEmery", Character.valueOf('h'), EmasherCore.psu,
-				Character.valueOf('u'), Item.diamond, Character.valueOf('b'), SocketsMod.blankSide));
+				Character.valueOf('u'), Items.diamond, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	@Override

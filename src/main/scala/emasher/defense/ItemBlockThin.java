@@ -1,15 +1,16 @@
 package emasher.defense;
 
 import emasher.core.EmasherCore;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.*;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 
 public class ItemBlockThin extends ItemBlock
 {
 	
-	public ItemBlockThin(int par1)
+	public ItemBlockThin(Block par1)
 	{
 		super(par1);
 		setHasSubtypes(true);
@@ -56,9 +57,9 @@ public class ItemBlockThin extends ItemBlock
 		return getUnlocalizedName() + "." + name;
 	}
 	
-	public Icon getIconFromDamage(int par1)
+	public IIcon getIconFromDamage(int par1)
     {
-        Icon result;
+        IIcon result;
         
         switch(par1)
         {

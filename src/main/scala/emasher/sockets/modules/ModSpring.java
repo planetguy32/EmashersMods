@@ -8,10 +8,12 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
@@ -51,8 +53,8 @@ public class ModSpring extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ipi", " b ", Character.valueOf('i'), Item.ingotIron,
-				Character.valueOf('p'), Block.pistonBase, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ipi", " b ", Character.valueOf('i'), Items.iron_ingot,
+				Character.valueOf('p'), Blocks.piston, Character.valueOf('b'), SocketsMod.blankSide);
 	}
 	
 	@Override
@@ -64,7 +66,7 @@ public class ModSpring extends SocketModule
 			double y = ts.yCoord + side.offsetY;
 			double z = ts.zCoord + side.offsetZ;
 			
-			List l = ts.worldObj.getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getAABBPool().getAABB(x, y, z, x + 1, y + 1, z + 1));
+			List l = ts.getWorldObj().getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 1, z + 1));
 			for(Object o : l)
 			{
 				if(o instanceof Entity)

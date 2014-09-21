@@ -3,25 +3,25 @@ package emasher.sockets;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.util.Icon;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 
 public class BlockSlickwater extends BlockFluidClassic
 {
 	@SideOnly(Side.CLIENT)
-	public Icon flowingTexture;
+	public IIcon flowingTexture;
 	
 	public BlockSlickwater(int id, Fluid fluid)
 	{
-		super(id, fluid, Material.water);
+		super(fluid, Material.water);
 		this.setCreativeTab(null);
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister ir)
+	public void registerBlockIcons(IIconRegister ir)
 	{
 		this.blockIcon = ir.registerIcon("sockets:slickwater_still");
 		flowingTexture = ir.registerIcon("sockets:slickwater_flow");
@@ -32,7 +32,7 @@ public class BlockSlickwater extends BlockFluidClassic
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int side, int meta)
+	public IIcon getIcon(int side, int meta)
 	{
 		if(side == 0 || side == 1) return this.blockIcon;
 		else return (this.flowingTexture);

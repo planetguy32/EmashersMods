@@ -7,33 +7,33 @@ import cpw.mods.fml.relauncher.SideOnly;
 import emasher.api.SocketModule;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockTempRS extends BlockContainer
 {
 
 	public BlockTempRS(int id)
 	{
-		super(id, Material.redstoneLight);
+		super(Material.redstoneLight);
 		setBlockBounds(0.4F, 0.4F, 0.4F, 0.6F, 0.6F, 0.6F);
 		this.setCreativeTab(null);
-		this.setUnlocalizedName("tempRS");
-		this.setLightValue(5.0F);
+		this.setBlockName("tempRS");
+		this.setLightLevel(5.0F);
 	}
 	
 	@Override
-	public void registerIcons(IconRegister ir)
+	public void registerBlockIcons(IIconRegister ir)
 	{
 		blockIcon = ir.registerIcon("sockets:tempRS");
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world)
+	public TileEntity createNewTileEntity(World world, int metadata)
 	{
 		return new TileTempRS();
 	}
@@ -63,7 +63,7 @@ public class BlockTempRS extends BlockContainer
     }
 
 	@Override
-	public boolean canBeReplacedByLeaves(World world, int x, int y, int z)
+	public boolean canBeReplacedByLeaves(IBlockAccess world, int x, int y, int z)
 	{
 		return true;
 	}

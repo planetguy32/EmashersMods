@@ -1,12 +1,13 @@
 package emasher.sockets.modules
 
 import emasher.api.{Util, SideConfig, SocketTileAccess, SocketModule}
+import net.minecraft.init.Items
 import net.minecraft.item.crafting.CraftingManager
 import java.util.List
 import net.minecraftforge.oredict.ShapedOreRecipe
 import net.minecraft.item.{Item, ItemStack}
 import emasher.sockets.SocketsMod
-import net.minecraftforge.common.ForgeDirection
+import net.minecraftforge.common.util.ForgeDirection
 
 class ModEnderHinge(id: Int) extends SocketModule(id, "sockets:enderHinge") {
 
@@ -15,7 +16,7 @@ class ModEnderHinge(id: Int) extends SocketModule(id, "sockets:enderHinge") {
   override def addRecipe(): Unit = {
     CraftingManager.getInstance().getRecipeList.asInstanceOf[java.util.List[Object]]
       .add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 2, moduleID), "mpm",
-      Character.valueOf('p'), Item.enderPearl,
+      Character.valueOf('p'), Items.ender_pearl,
       Character.valueOf('m'), new ItemStack(SocketsMod.module, 1, 40)))
   }
 
@@ -62,9 +63,9 @@ class ModEnderHinge(id: Int) extends SocketModule(id, "sockets:enderHinge") {
     val ny = ts.yCoord + otherHinge.offsetY
     val nz = ts.zCoord + otherHinge.offsetZ
 
-    if(Util.swapBlocks(ts.worldObj, x, y, z, nx, ny, nz)) {
-      ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
-      ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
+    if(Util.swapBlocks(ts.getWorldObj(), x, y, z, nx, ny, nz)) {
+      ts.getWorldObj().playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.getWorldObj().rand.nextFloat() * 0.25F + 0.6F)
+      ts.getWorldObj().playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.getWorldObj().rand.nextFloat() * 0.25F + 0.6F)
     }
   }
 

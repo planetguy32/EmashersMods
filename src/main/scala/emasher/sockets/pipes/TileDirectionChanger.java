@@ -1,9 +1,11 @@
 package emasher.sockets.pipes;
 
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.PacketHandler;
+import emasher.sockets.client.ClientPacketHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileDirectionChanger extends TileEntity
 {
@@ -16,7 +18,7 @@ public class TileDirectionChanger extends TileEntity
         super.validate();
         if(this.worldObj.isRemote)
         {
-            emasher.sockets.client.ClientPacketHandler.instance.requestDirectionData(this);
+            ClientPacketHandler.instance.requestDirectionData(this);
         }
     }
 

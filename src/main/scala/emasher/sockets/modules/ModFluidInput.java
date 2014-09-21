@@ -4,10 +4,12 @@ import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
@@ -45,8 +47,8 @@ public class ModFluidInput extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "h", "b", Character.valueOf('i'), Item.ingotIron, Character.valueOf('h'), Block.fenceIron,
-				Character.valueOf('u'), Item.bucketEmpty, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "h", "b", Character.valueOf('i'), Items.iron_ingot, Character.valueOf('h'), Blocks.iron_bars,
+				Character.valueOf('u'), Items.bucket, Character.valueOf('b'), SocketsMod.blankSide);
 	}
 	
 	@Override

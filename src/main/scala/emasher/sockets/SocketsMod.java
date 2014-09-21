@@ -2,18 +2,26 @@ package emasher.sockets;
 
 import java.util.ArrayList;
 
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.network.NetworkCheckHandler;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import emasher.sockets.packethandling.PacketPipeline;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
@@ -25,8 +33,6 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import emasher.api.CentrifugeRecipeRegistry;
@@ -40,18 +46,19 @@ import emasher.api.Util;
 import emasher.core.EmasherCore;
 import emasher.core.item.ItemEmasherGeneric;
 import emasher.core.item.ItemPondScum;
-import emasher.sockets.client.ClientPacketHandler;
+//import emasher.sockets.client.ClientPacketHandler;
 import emasher.sockets.items.*;
 import emasher.sockets.modules.*;
 import emasher.sockets.client.ClientProxy;
 import emasher.sockets.pipes.*;
 
 @Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.8.3", dependencies = "required-after:emashercore")
-@NetworkMod(clientSideRequired=true, serverSideRequired=false,
+
+/*@NetworkMod(clientSideRequired=true, serverSideRequired=false,
 clientPacketHandlerSpec =
 @SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = ClientPacketHandler.class),
 serverPacketHandlerSpec =
-@SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = PacketHandler.class))
+@SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = PacketHandler.class))*/
 public class SocketsMod
 {
 	@Instance("Sockets")
@@ -59,6 +66,8 @@ public class SocketsMod
 	
 	@SidedProxy(clientSide="emasher.sockets.client.ClientProxy", serverSide="emasher.sockets.CommonProxy")
 	public static CommonProxy proxy;
+
+    public static final PacketPipeline packetPipeline = new PacketPipeline();
 	
 	//Blocks
 	public static Block socket;
@@ -203,7 +212,12 @@ public class SocketsMod
 	
 	public static CreativeTabs tabSockets = new CreativeTabs("tabSockets")
 	{
-		public ItemStack getIconItemStack()
+        @Override
+        public Item getTabIconItem() {
+            return new ItemEngWrench(1);
+        }
+
+        public ItemStack getIconItemStack()
 		{
 			return new ItemStack(rsWand);
 		}
@@ -212,39 +226,39 @@ public class SocketsMod
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) 
 	{
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
-		Property temp;
+        Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+        Property temp;
 		
 		config.load();
 		
-		socketID = config.get(Configuration.CATEGORY_BLOCK, "Socket ID", 4070).getInt();
-		tempRSID = config.get(Configuration.CATEGORY_BLOCK, "tempRS ID", 4071).getInt();
-		paintedPlankID = config.get(Configuration.CATEGORY_BLOCK, "Painted Plank ID", 4072).getInt();
-		groundLimestoneID = config.get(Configuration.CATEGORY_BLOCK, "Ground Limestone ID", 4073).getInt();
-		slickwaterID = config.get(Configuration.CATEGORY_BLOCK, "Slickwater Block ID", 4074).getInt();
+		/*socketID = config.get(Configuration.CATEGORY_GENERAL, "Socket ID", 4070).getInt();
+		tempRSID = config.get(Configuration.CATEGORY_GENERAL, "tempRS ID", 4071).getInt();
+		paintedPlankID = config.get(Configuration.CATEGORY_GENERAL, "Painted Plank ID", 4072).getInt();
+		groundLimestoneID = config.get(Configuration.CATEGORY_GENERAL, "Ground Limestone ID", 4073).getInt();
+		slickwaterID = config.get(Configuration.CATEGORY_GENERAL, "Slickwater Block ID", 4074).getInt();
 		
-		startPipeID = config.get(Configuration.CATEGORY_BLOCK, "Start Pipe ID", 4075).getInt();
-		fluidPipeID = config.get(Configuration.CATEGORY_BLOCK, "Fluid Pipe ID", 4076).getInt();
-		energyPipeID = config.get(Configuration.CATEGORY_BLOCK, "Energy Pipe ID", 4077).getInt();
-		mjAdapterID = config.get(Configuration.CATEGORY_BLOCK, "MJ Adapter ID", 4078).getInt();
-		euAdapterID = config.get(Configuration.CATEGORY_BLOCK, "EU Adapter ID", 4079).getInt();
-		miniPortalID = config.get(Configuration.CATEGORY_BLOCK, "Fluidic Nether Portal", 4080).getInt();
-        directionChangerID = config.get(Configuration.CATEGORY_BLOCK, "Direction Changer ID", 4081).getInt();
-        frameID = config.get(Configuration.CATEGORY_BLOCK, "Frame ID", 4082).getInt();
+		startPipeID = config.get(Configuration.CATEGORY_GENERAL, "Start Pipe ID", 4075).getInt();
+		fluidPipeID = config.get(Configuration.CATEGORY_GENERAL, "Fluid Pipe ID", 4076).getInt();
+		energyPipeID = config.get(Configuration.CATEGORY_GENERAL, "Energy Pipe ID", 4077).getInt();
+		mjAdapterID = config.get(Configuration.CATEGORY_GENERAL, "MJ Adapter ID", 4078).getInt();
+		euAdapterID = config.get(Configuration.CATEGORY_GENERAL, "EU Adapter ID", 4079).getInt();
+		miniPortalID = config.get(Configuration.CATEGORY_GENERAL, "Fluidic Nether Portal", 4080).getInt();
+        directionChangerID = config.get(Configuration.CATEGORY_GENERAL, "Direction Changer ID", 4081).getInt();
+        frameID = config.get(Configuration.CATEGORY_GENERAL, "Frame ID", 4082).getInt();
 		
-		moduleID = config.get(Configuration.CATEGORY_ITEM, "Module ID", 4170).getInt();
-		remoteID = config.get(Configuration.CATEGORY_ITEM, "Remote ID", 4172).getInt();
-		blankID = config.get(Configuration.CATEGORY_ITEM, "Blank Module ID", 4171).getInt();
-		wrenchID = config.get(Configuration.CATEGORY_ITEM, "Wrench ID", 4173).getInt();
-		rsWandID = config.get(Configuration.CATEGORY_ITEM, "Redstone Wand ID", 4174).getInt();
-		handboilerID = config.get(Configuration.CATEGORY_ITEM, "Hand Boiler ID", 4175).getInt();
-		temp = config.get(Configuration.CATEGORY_ITEM, "Paint Can ID", 4176);
+		moduleID = config.get(Configuration.CATEGORY_GENERAL, "Module ID", 4170).getInt();
+		remoteID = config.get(Configuration.CATEGORY_GENERAL, "Remote ID", 4172).getInt();
+		blankID = config.get(Configuration.CATEGORY_GENERAL, "Blank Module ID", 4171).getInt();
+		wrenchID = config.get(Configuration.CATEGORY_GENERAL, "Wrench ID", 4173).getInt();
+		rsWandID = config.get(Configuration.CATEGORY_GENERAL, "Redstone Wand ID", 4174).getInt();
+		handboilerID = config.get(Configuration.CATEGORY_GENERAL, "Hand Boiler ID", 4175).getInt();
+		temp = config.get(Configuration.CATEGORY_GENERAL, "Paint Can ID", 4176);
 		temp.comment = "This ID and the 15 following it will be taken up";
 		paintCanID = temp.getInt();
-		dustsID = config.get(Configuration.CATEGORY_ITEM, "Dusts ID", 4192).getInt();
-		slickBucketID = config.get(Configuration.CATEGORY_ITEM, "Slickwater Bucket ID", 4193).getInt();
-		rsIngotID = config.get(Configuration.CATEGORY_ITEM, "RS Ingot ID", 4194).getInt();
-        nutBucketID = config.get(Configuration.CATEGORY_ITEM, "Nutrient Water Bucket ID", 4195).getInt();
+		dustsID = config.get(Configuration.CATEGORY_GENERAL, "Dusts ID", 4192).getInt();
+		slickBucketID = config.get(Configuration.CATEGORY_GENERAL, "Slickwater Bucket ID", 4193).getInt();
+		rsIngotID = config.get(Configuration.CATEGORY_GENERAL, "RS Ingot ID", 4194).getInt();
+        nutBucketID = config.get(Configuration.CATEGORY_GENERAL, "Nutrient Water Bucket ID", 4195).getInt();*/
 		//rsShooterID = config.get(Configuration.CATEGORY_ITEM, "Redstone Shooter ID", 4175).getInt();
 		//handPistonID = config.get(Configuration.CATEGORY_ITEM, "Hand Piston ID", 4176).getInt();
 		//cattleProdID = config.get(Configuration.CATEGORY_ITEM, "Cattle Prod ID", 4177).getInt();
@@ -294,7 +308,9 @@ public class SocketsMod
 	
 	@EventHandler
 	public void load(FMLInitializationEvent event) 
-	{	
+	{
+        packetPipeline.initialise();
+
 		MinecraftForge.EVENT_BUS.register(new Util());
 		MinecraftForge.EVENT_BUS.register(new BucketEventHandler());
 		
@@ -397,65 +413,66 @@ public class SocketsMod
 			reg.registerModules();
 		}
 		
-		socket = new BlockSocket(socketID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("modular_socket");
+		socket = new BlockSocket(socketID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("modular_socket");
 		//GameRegistry.registerBlock(socket, "modular_socket");
 		LanguageRegistry.addName(socket, "Modular Socket");
-		
-		Item.itemsList[socket.blockID] = new ItemBlockSocket(socket.blockID - 256);
+
+        GameRegistry.registerBlock(socket, ItemBlockSocket.class, "modular_socket");
 		
 		tempRS = new BlockTempRS(tempRSID).setBlockUnbreakable();
 		GameRegistry.registerBlock(tempRS, "tempRS");
 		LanguageRegistry.addName(tempRS, "TempRS");
-		
-		blockStartPipe = new BlockStartPipe(startPipeID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("start_pipe");
+
+		blockStartPipe = new BlockStartPipe(startPipeID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("start_pipe");
 		GameRegistry.registerBlock(blockStartPipe, "start_pipe");
 		LanguageRegistry.addName(blockStartPipe, "Universal Extractor");
 		blockStartPipe.setCreativeTab(tabSockets);
 		
-		blockFluidPipe = new BlockFluidPipe(fluidPipeID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("fluid_pipe");
+		blockFluidPipe = new BlockFluidPipe(fluidPipeID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("fluid_pipe");
 		GameRegistry.registerBlock(blockFluidPipe, "fluid_pipe");
 		LanguageRegistry.addName(blockFluidPipe, "Fluid Pipe");
 		blockFluidPipe.setCreativeTab(tabSockets);
 		
-		blockEnergyPipe = new BlockEnergyPipe(energyPipeID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("energy_pipe");
+		blockEnergyPipe = new BlockEnergyPipe(energyPipeID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("energy_pipe");
 		GameRegistry.registerBlock(blockEnergyPipe, "energy_pipe");
 		LanguageRegistry.addName(blockEnergyPipe, "Flux Pipe");
 		blockEnergyPipe.setCreativeTab(tabSockets);
 		
-		mjAdapter = new BlockMJAdapter(mjAdapterID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("emasher_MJ_adapter");
+		mjAdapter = new BlockMJAdapter(mjAdapterID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("emasher_MJ_adapter");
 		GameRegistry.registerBlock(mjAdapter, "emasher_MJ_adapter");
 		LanguageRegistry.addName(mjAdapter, "MJ Adapter");
 		
-		euAdapter = new BlockEUAdapter(euAdapterID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("emasher_EU_adapter");
+		euAdapter = new BlockEUAdapter(euAdapterID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("emasher_EU_adapter");
 		GameRegistry.registerBlock(euAdapter, "emasher_EU_adapter");
 		LanguageRegistry.addName(euAdapter, "EU Adapter");
 		
 		rsIngot = new ItemRSIngot(rsIngotID);
+        GameRegistry.registerItem(rsIngot, "Sweet Redstone Ingot", "eng_toolbox");
 		LanguageRegistry.addName(rsIngot, "Sweet Redstone Ingot");
 		
 		if(enableMiniPortal)
 		{
-			miniPortal = new BlockMiniPortal(miniPortalID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("emasher_mini_portal");
+			miniPortal = new BlockMiniPortal(miniPortalID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeStone).setBlockName("emasher_mini_portal");
 			GameRegistry.registerBlock(miniPortal, "emasher_mini_portal");
 			LanguageRegistry.addName(miniPortal, "Fluidic Nether Portal");
 			
 			GameRegistry.addRecipe(new ItemStack(miniPortal), new Object[]
 					{
-						"ooo", "oso", "ooo", Character.valueOf('o'), Block.obsidian, Character.valueOf('s'), rsIngot
+						"ooo", "oso", "ooo", Character.valueOf('o'), Blocks.obsidian, Character.valueOf('s'), rsIngot
 					});
 			
 		}
 
-        directionChanger = new BlockDirectionChanger(directionChangerID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundGlassFootstep).setUnlocalizedName("emasher_direction_changer");
+        directionChanger = new BlockDirectionChanger(directionChangerID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeGlass).setBlockName("emasher_direction_changer");
 		GameRegistry.registerBlock(directionChanger, "emasher_direction_changer");
         LanguageRegistry.addName(directionChanger, "Direction Changer");
 
         GameRegistry.addShapelessRecipe(new ItemStack(directionChanger, 4), new Object[]
                 {
-                        EmasherCore.machine, Item.glowstone, new ItemStack(EmasherCore.gem, 1, 0)
+                        EmasherCore.machine, Items.glowstone_dust, new ItemStack(EmasherCore.gem, 1, 0)
                 });
 
-        frame = new BlockFrame(frameID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("emasher_frame");
+        frame = new BlockFrame(frameID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("emasher_frame");
         GameRegistry.registerBlock(frame, "emasher_frame");
         LanguageRegistry.addName(frame, "Socket Frame");
 
@@ -486,11 +503,13 @@ public class SocketsMod
 
 
 		paintedPlanks = (new BlockPaintedWood(paintedPlankID, 0, Material.wood))
-				.setHardness(2.0F).setResistance(5.0F).setStepSound(Block.soundWoodFootstep)
-				.setUnlocalizedName("paintedPlanks");
+				.setHardness(2.0F).setResistance(5.0F).setStepSound(Block.soundTypeWood)
+				.setBlockName("paintedPlanks");
 		
-		Item.itemsList[paintedPlanks.blockID] = new ItemBlockPaintedWood(paintedPlanks.blockID - 256);
-		
+		//Item.itemsList[paintedPlanks.blockID] = new ItemBlockPaintedWood(paintedPlanks.blockID - 256);
+
+        GameRegistry.registerBlock(paintedPlanks, ItemBlockPaintedWood.class, "paintedPlanks");
+
 		registerPaintedPlankNames();
 		
 		for(int i = 0; i < 16; i++)
@@ -498,11 +517,12 @@ public class SocketsMod
 			OreDictionary.registerOre("plankWood", new ItemStack(this.paintedPlanks, 1, i));
 		}
 		
-		groundLimestone = new BlockGroundLimestone(groundLimestoneID).setHardness(0.6F).setStepSound(Block.soundGravelFootstep).setUnlocalizedName("groundLimestone");
+		groundLimestone = new BlockGroundLimestone(groundLimestoneID).setHardness(0.6F).setStepSound(Block.soundTypeGravel).setBlockName("groundLimestone");
 		GameRegistry.registerBlock(groundLimestone, "groundLimestone");
 		LanguageRegistry.addName(groundLimestone, "Ground Limestone");
 		
 		handboiler = new ItemHandboiler(handboilerID, "", "");
+        GameRegistry.registerItem(handboiler, "handBoiler");
 		LanguageRegistry.addName(handboiler, "Hand Boiler");
 		
 		
@@ -510,15 +530,18 @@ public class SocketsMod
 		for(int i = 0; i<16; i++)
 		{
 			paintCans[i] = new ItemPaintCan(paintCanID + i, i);
+            GameRegistry.registerItem(paintCans[i], "item.paintCan." + colours[i] + ".name", colours[i] + " Spray Paint");
 			LanguageRegistry.instance().addStringLocalization("item.paintCan." + colours[i] + ".name", colours[i] + " Spray Paint");
 			
 		}
 		
 		remote = new ItemSocketRemote(remoteID);
 		LanguageRegistry.addName(remote, "Socket Remote");
+        GameRegistry.registerItem(remote, "Socket Remote", "eng_toolbox");
 		
 		rsWand = new ItemRSWand(rsWandID);
 		LanguageRegistry.addName(rsWand, "Redstone Wand");
+        GameRegistry.registerItem(rsWand, "Redstone Wand", "eng_toolbox");
 		
 		fluidSlickwater = new FluidSlickwater();
 		FluidRegistry.registerFluid(fluidSlickwater);
@@ -529,8 +552,9 @@ public class SocketsMod
 		slickBucket = new ItemSlickBucket(slickBucketID);
 		slickBucket.setMaxStackSize(1);
 		slickBucket.setCreativeTab(this.tabSockets);
+        GameRegistry.registerItem(slickBucket, "Slickwater Bucket", "eng_toolbox");
 
-        FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidSlickwater, FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(slickBucket), new ItemStack(Item.bucketEmpty));
+        FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidSlickwater, FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(slickBucket), new ItemStack(Items.bucket));
 		
 		LanguageRegistry.addName(slickBucket, "Slickwater Bucket");
 		LanguageRegistry.addName(blockSlickwater, "Slickwater");
@@ -538,16 +562,19 @@ public class SocketsMod
         nutBucket = new ItemNutrientBucket(nutBucketID);
         nutBucket.setMaxStackSize(1);
         nutBucket.setCreativeTab(this.tabSockets);
+        GameRegistry.registerItem(nutBucket, "Nutrient Water Bucket", "eng_toolbox");
         LanguageRegistry.addName(nutBucket, "Nutrient Water Bucket");
 
-        FluidContainerRegistry.registerFluidContainer(new FluidStack(EmasherCore.nutrientWaterFluid, FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(nutBucket), new ItemStack(Item.bucketEmpty));
-		
-		//cattleProd = new ItemCattleProd(cattleProdID);
+        FluidContainerRegistry.registerFluidContainer(new FluidStack(EmasherCore.nutrientWaterFluid, FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(nutBucket), new ItemStack(Items.bucket));
+
+        //cattleProd = new ItemCattleProd(cattleProdID);
+        //GameRegistry.registerItem(cattleProd, "Cattle Prod", "eng_toolbox");
 		//LanguageRegistry.addName(cattleProd, "Cattle Prod");
 		
-		blankSide = new ItemEmasherGeneric(blankID, "sockets:blankmod", "blankSide");
+		blankSide = new ItemEmasherGeneric("sockets:blankmod", "blankSide");
 		LanguageRegistry.addName(blankSide, "Blank Module");
 		blankSide.setCreativeTab(tabSockets);
+        GameRegistry.registerItem(blankSide, "Blank Module", "eng_toolbox");
 		
 		module = new ItemModule(moduleID);
 		
@@ -556,92 +583,96 @@ public class SocketsMod
 			if(ModuleRegistry.getModule(i) != null)
 			{
 				LanguageRegistry.instance().addStringLocalization("item.socket_module." + i + ".name", ModuleRegistry.getModule(i).getLocalizedName());
+
 			}
 		}
+        GameRegistry.registerItem(module, "Module", "eng_toolbox");
 		
 		engWrench = new ItemEngWrench(wrenchID);
 		LanguageRegistry.addName(engWrench, "Engineer's Wrench");
+        GameRegistry.registerItem(engWrench, "Engineer's Wrench", "eng_toolbox");
 		
 		dusts = new ItemDusts(dustsID);
 		for(int i = 0; i < ItemDusts.NUM_ITEMS; i++)
 		{
-			LanguageRegistry.instance().addStringLocalization("item.e_dusts." + "e_" + ItemDusts.NAMES[i] + ".name", ItemDusts.NAMES_LOC[i]);
+            LanguageRegistry.instance().addStringLocalization("item.e_dusts." + "e_" + ItemDusts.NAMES[i] + ".name", ItemDusts.NAMES_LOC[i]);
 			OreDictionary.registerOre(ItemDusts.ORE_NAMES[i], new ItemStack(dusts, 1, i));
 		}
-		
+        GameRegistry.registerItem(dusts, "Dust", "eng_toolbox");
+
 		registerOreRecipes();
 		
 		GameRegistry.addRecipe(new ItemStack(socket), new Object[]
 				{
-					" b ", "pmc", " h ", Character.valueOf('m'), EmasherCore.machine, Character.valueOf('h'), Block.chest,
-					Character.valueOf('b'), Item.bucketEmpty, Character.valueOf('p'), EmasherCore.psu,
-					Character.valueOf('i'), Item.ingotIron, Character.valueOf('c'), EmasherCore.circuit
+					" b ", "pmc", " h ", Character.valueOf('m'), EmasherCore.machine, Character.valueOf('h'), Blocks.chest,
+					Character.valueOf('b'), Items.bucket, Character.valueOf('p'), EmasherCore.psu,
+					Character.valueOf('i'), Items.iron_ingot, Character.valueOf('c'), EmasherCore.circuit
 				});
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blankSide, 12), "ggg", "reb", "sms", Character.valueOf('m'), EmasherCore.machine,
-				Character.valueOf('g'), Block.thinGlass, Character.valueOf('s'), Item.glowstone, Character.valueOf('r'), "dyeRed", Character.valueOf('e'), "dyeGreen", Character.valueOf('b'), "dyeBlue"));
+				Character.valueOf('g'), Blocks.glass_pane, Character.valueOf('s'), Items.glowstone_dust, Character.valueOf('r'), "dyeRed", Character.valueOf('e'), "dyeGreen", Character.valueOf('b'), "dyeBlue"));
 		
 		GameRegistry.addRecipe(new ItemStack(remote), new Object[]
 				{
-					"e", "c", "s", Character.valueOf('e'), Item.enderPearl, Character.valueOf('c'), EmasherCore.circuit,
+					"e", "c", "s", Character.valueOf('e'), Items.ender_pearl, Character.valueOf('c'), EmasherCore.circuit,
 					Character.valueOf('s'), blankSide
 				});
 		
 		GameRegistry.addRecipe(new ItemStack(engWrench), new Object[]
 				{
-					" i ", "ii ", "  b", Character.valueOf('i'), Item.ingotIron, Character.valueOf('b'), Block.stoneButton
+					" i ", "ii ", "  b", Character.valueOf('i'), Items.iron_ingot, Character.valueOf('b'), Blocks.stone_button
 				});
 		
 		GameRegistry.addRecipe(new ItemStack(rsWand), new Object[]
 				{
-					"rt ", "tc ", "  w", Character.valueOf('r'), Block.blockRedstone, Character.valueOf('t'), Block.torchRedstoneActive,
+					"rt ", "tc ", "  w", Character.valueOf('r'), Blocks.redstone_block, Character.valueOf('t'), Blocks.redstone_torch,
 					Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('w'), engWrench
 				});
 		
 		if(! Loader.isModLoaded("gascraft"))for(int i = 0; i < 16; i++)
 		{
 			CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(paintCans[i], 1),
-						"i", "p", "d", Character.valueOf('i'), Block.stoneButton, Character.valueOf('p'), Item.glassBottle, Character.valueOf('d'), dyes[i])
+						"i", "p", "d", Character.valueOf('i'), Blocks.stone_button, Character.valueOf('p'), Items.glass_bottle, Character.valueOf('d'), dyes[i])
 					);
 		}
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockFluidPipe, 16),
-				"sss", "ccc", "sss", Character.valueOf('s'), Block.stone, Character.valueOf('c'), "ingotCopper")
+				"sss", "ccc", "sss", Character.valueOf('s'), Blocks.stone, Character.valueOf('c'), "ingotCopper")
 			);
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockEnergyPipe, 16),
-				"sgs", "rcr", "sgs", Character.valueOf('s'), Block.stone, Character.valueOf('g'), Block.thinGlass, Character.valueOf('c'), "ingotCopper",
+				"sgs", "rcr", "sgs", Character.valueOf('s'), Blocks.stone, Character.valueOf('g'), Blocks.glass_pane, Character.valueOf('c'), "ingotCopper",
 				Character.valueOf('r'), new ItemStack(rsIngot))
 			);
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockEnergyPipe, 16),
-				"sgs", "rcr", "sgs", Character.valueOf('s'), Block.stone, Character.valueOf('g'), Block.thinGlass, Character.valueOf('c'), Item.goldNugget,
+				"sgs", "rcr", "sgs", Character.valueOf('s'), Blocks.stone, Character.valueOf('g'), Blocks.glass_pane, Character.valueOf('c'), Items.gold_nugget,
 				Character.valueOf('r'), new ItemStack(rsIngot))
 			);
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockStartPipe, 1),
-				"sss", " l ", "sss", Character.valueOf('s'), Block.stoneSingleSlab, Character.valueOf('l'), Block.lever)
+				"sss", " l ", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('l'), Blocks.lever)
 			);
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(mjAdapter, 1),
-				"sss", "wpr", "sss", Character.valueOf('s'), Block.stoneSingleSlab, Character.valueOf('w'), rsIngot,
-				Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), Item.redstone)
+				"sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
+				Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), Items.redstone)
 			);
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(euAdapter, 1),
-				"sss", "wpr", "sss", Character.valueOf('s'), Block.stoneSingleSlab, Character.valueOf('w'), rsIngot,
+				"sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
 				Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), "ingotCopper")
 			);
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(euAdapter, 1),
-				"sss", "wpr", "sss", Character.valueOf('s'), Block.stoneSingleSlab, Character.valueOf('w'), rsIngot,
-				Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), Item.goldNugget)
+				"sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
+				Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), Items.gold_nugget)
 			);
 		
 		GameRegistry.addRecipe(new ItemStack(handboiler, 1), new Object[]
 				{
-					"bbb", "ici", " n ", Character.valueOf('b'), Item.blazeRod, Character.valueOf('c'), Item.fireballCharge,
-					Character.valueOf('i'), Item.ingotIron, Character.valueOf('n'), EmasherCore.circuit
+					"bbb", "ici", " n ", Character.valueOf('b'), Items.blaze_rod, Character.valueOf('c'), Items.fire_charge,
+					Character.valueOf('i'), Items.iron_ingot, Character.valueOf('n'), EmasherCore.circuit
 				});
 		
 		for(int i = 0; i < ModuleRegistry.numModules; i++)
@@ -654,7 +685,17 @@ public class SocketsMod
 		
 		registerInRegistry();
 	}
-	
+
+    /*@EventHandler
+    public void serverLoad(FMLServerStartingEvent event) {
+        NetworkRegistry.INSTANCE.newChannel("Emasher_Sockets", new PacketHandler());
+    }*/
+
+    @EventHandler
+    public void postInitialise(FMLPostInitializationEvent event) {
+        packetPipeline.postInitialise();
+    }
+
 	private void registerPaintedPlankNames()
 	{
 		
@@ -694,25 +735,25 @@ public class SocketsMod
 		GrinderRecipeRegistry.registerRecipe("oreCobalt", new ItemStack(dusts, 1, ItemDusts.Const.groundCobalt.ordinal()));
 		GrinderRecipeRegistry.registerRecipe("oreArdite", new ItemStack(dusts, 1, ItemDusts.Const.groundArdite.ordinal()));
 		
-		GrinderRecipeRegistry.registerRecipe("oreLapis", new ItemStack(Item.dyePowder, 16, 4));
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Block.oreCoal), new ItemStack(Item.coal, 2));
-		GrinderRecipeRegistry.registerRecipe("oreDiamond", new ItemStack(Item.diamond, 2));
-		GrinderRecipeRegistry.registerRecipe("oreEmerald", new ItemStack(Item.emerald, 2));
-		GrinderRecipeRegistry.registerRecipe("oreRedstone", new ItemStack(Item.redstone, 8));
-		GrinderRecipeRegistry.registerRecipe("oreQuartz", new ItemStack(Item.netherQuartz, 2));
+		GrinderRecipeRegistry.registerRecipe("oreLapis", new ItemStack(Items.dye, 16, 4));
+		GrinderRecipeRegistry.registerRecipe(new ItemStack(Blocks.coal_ore), new ItemStack(Items.coal, 2));
+		GrinderRecipeRegistry.registerRecipe("oreDiamond", new ItemStack(Items.diamond, 2));
+		GrinderRecipeRegistry.registerRecipe("oreEmerald", new ItemStack(Items.emerald, 2));
+		GrinderRecipeRegistry.registerRecipe("oreRedstone", new ItemStack(Items.redstone, 8));
+		GrinderRecipeRegistry.registerRecipe("oreQuartz", new ItemStack(Items.quartz, 2));
 		GrinderRecipeRegistry.registerRecipe("oreEmery", new ItemStack(EmasherCore.gem, 4, 0));
 		GrinderRecipeRegistry.registerRecipe("oreRuby", new ItemStack(EmasherCore.gem, 2, 1));
 		GrinderRecipeRegistry.registerRecipe("oreSapphire", new ItemStack(EmasherCore.gem, 2, 2));
 
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Block.cobblestone), new ItemStack(Block.sand));
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Block.stone), new ItemStack(Block.gravel));
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Item.blazeRod), new ItemStack(Item.blazePowder, 5));
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Item.bone), new ItemStack(Item.dyePowder, 5, 3));
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Block.obsidian), "dustObsidian");
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Block.netherrack), "dustNetherrack");
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Item.coal), "dustCoal");
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Item.coal, 1), "dustCharcoal");
-		GrinderRecipeRegistry.registerRecipe(new ItemStack(Item.clay), "dustClay");
+		GrinderRecipeRegistry.registerRecipe(new ItemStack(Blocks.cobblestone), new ItemStack(Blocks.sand));
+		GrinderRecipeRegistry.registerRecipe(new ItemStack(Blocks.stone), new ItemStack(Blocks.gravel));
+		GrinderRecipeRegistry.registerRecipe(new ItemStack(Items.blaze_rod), new ItemStack(Items.blaze_powder, 5));
+		GrinderRecipeRegistry.registerRecipe(new ItemStack(Items.bone), new ItemStack(Items.dye, 5, 3));
+		GrinderRecipeRegistry.registerRecipe(new ItemStack(Blocks.obsidian), "dustObsidian");
+		GrinderRecipeRegistry.registerRecipe(new ItemStack(Blocks.netherrack), "dustNetherrack");
+		GrinderRecipeRegistry.registerRecipe(new ItemStack(Items.coal), "dustCoal");
+		GrinderRecipeRegistry.registerRecipe(new ItemStack(Items.coal, 1), "dustCharcoal");
+		GrinderRecipeRegistry.registerRecipe(new ItemStack(Items.clay_ball), "dustClay");
 
 		//Multi Smelter
 		
@@ -728,8 +769,8 @@ public class SocketsMod
 		MultiSmelterRecipeRegistry.registerRecipe("dustQuicklime", "groundArdite", new ItemStack(dusts, 3, ItemDusts.Const.impureArditeDust.ordinal()));
 		
 		MultiSmelterRecipeRegistry.registerRecipe("ingotCopper", "ingotTin", new ItemStack(EmasherCore.ingot, 1, 1));
-		MultiSmelterRecipeRegistry.registerRecipe(new ItemStack(Item.redstone), new ItemStack(Item.sugar), new ItemStack(rsIngot));
-        MultiSmelterRecipeRegistry.registerRecipe("ingotCopper", new ItemStack(Item.gunpowder), new ItemStack(EmasherCore.bluestone, 2));
+		MultiSmelterRecipeRegistry.registerRecipe(new ItemStack(Items.redstone), new ItemStack(Items.sugar), new ItemStack(rsIngot));
+        MultiSmelterRecipeRegistry.registerRecipe("ingotCopper", new ItemStack(Items.gunpowder), new ItemStack(EmasherCore.bluestone, 2));
 		
 		
 		//Centrifuge
@@ -752,56 +793,56 @@ public class SocketsMod
 		if(list.size() > 0) cobalt = list.get(0);
 		list = OreDictionary.getOres("ingotArdite");
 		if(list.size() > 0) ardite = list.get(0);
-		
-		if(cobalt != null)
-		{
-			FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.groundCobalt.ordinal(), new ItemStack(cobalt.getItem(), 2, cobalt.getItemDamage()), 1);
-			FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.impureCobaltDust.ordinal(), new ItemStack(cobalt.getItem(), 1, cobalt.getItemDamage()), 1);
-			FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.pureCobaltDust.ordinal(), new ItemStack(cobalt.getItem(), 1, cobalt.getItemDamage()), 1);
-		}
-		
-		if(ardite != null)
-		{
-			FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.groundArdite.ordinal(), new ItemStack(ardite.getItem(), 2, ardite.getItemDamage()), 1);
-			FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.impureArditeDust.ordinal(), new ItemStack(ardite.getItem(), 1, ardite.getItemDamage()), 1);
-			FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.pureArditeDust.ordinal(), new ItemStack(ardite.getItem(), 1, ardite.getItemDamage()), 1);
-		}
-		
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.groundGold.ordinal(), new ItemStack(Item.ingotGold, 2), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.groundIron.ordinal(), new ItemStack(Item.ingotIron, 2), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.groundBauxite.ordinal(), new ItemStack(EmasherCore.ingot, 2, 0), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.groundCassiterite.ordinal(), new ItemStack(EmasherCore.ingot, 2, 8), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.groundNativeCopper.ordinal(), new ItemStack(EmasherCore.ingot, 2, 2), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.groundPentlandite.ordinal(), new ItemStack(EmasherCore.ingot, 2, 4), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.groundGalena.ordinal(), new ItemStack(EmasherCore.ingot, 2, 3), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.groundSilver.ordinal(), new ItemStack(EmasherCore.ingot, 2, 6), 1);
-		
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.impureGoldDust.ordinal(), new ItemStack(Item.ingotGold), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.impureIronDust.ordinal(), new ItemStack(Item.ingotIron), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.impureAluminiumDust.ordinal(), new ItemStack(EmasherCore.ingot, 1, 0), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.impureTinDust.ordinal(), new ItemStack(EmasherCore.ingot, 1, 8), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.impureCopperDust.ordinal(), new ItemStack(EmasherCore.ingot, 1, 2), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.impureNickelDust.ordinal(), new ItemStack(EmasherCore.ingot, 1, 4), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.impureLeadDust.ordinal(), new ItemStack(EmasherCore.ingot, 1, 3), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.impureSilverDust.ordinal(), new ItemStack(EmasherCore.ingot, 1, 6), 1);
-		
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.pureGoldDust.ordinal(), new ItemStack(Item.ingotGold), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.pureIronDust.ordinal(), new ItemStack(Item.ingotIron), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.pureAluminiumDust.ordinal(), new ItemStack(EmasherCore.ingot, 1, 0), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.pureTinDust.ordinal(), new ItemStack(EmasherCore.ingot, 1, 8), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.pureCopperDust.ordinal(), new ItemStack(EmasherCore.ingot, 1, 2), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.pureNickelDust.ordinal(), new ItemStack(EmasherCore.ingot, 1, 4), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.pureLeadDust.ordinal(), new ItemStack(EmasherCore.ingot, 1, 3), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.pureSilverDust.ordinal(), new ItemStack(EmasherCore.ingot, 1, 6), 1);
-		FurnaceRecipes.smelting().addSmelting(dusts.itemID, ItemDusts.Const.purePlatinumDust.ordinal(), new ItemStack(EmasherCore.ingot, 1, 5), 1);
+
+        if(cobalt != null)
+        {
+            FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.groundCobalt.ordinal()), new ItemStack(cobalt.getItem(), 2, cobalt.getItemDamage()), 1);
+            FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.impureCobaltDust.ordinal()), new ItemStack(cobalt.getItem(), 1, cobalt.getItemDamage()), 1);
+            FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.pureCobaltDust.ordinal()), new ItemStack(cobalt.getItem(), 1, cobalt.getItemDamage()), 1);
+        }
+
+        if(ardite != null)
+        {
+            FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.groundArdite.ordinal()), new ItemStack(ardite.getItem(), 2, ardite.getItemDamage()), 1);
+            FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.impureArditeDust.ordinal()), new ItemStack(ardite.getItem(), 1, ardite.getItemDamage()), 1);
+            FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.pureArditeDust.ordinal()), new ItemStack(ardite.getItem(), 1, ardite.getItemDamage()), 1);
+        }
+
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.groundGold.ordinal()), new ItemStack(Items.gold_ingot, 2), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.groundIron.ordinal()), new ItemStack(Items.iron_ingot, 2), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.groundBauxite.ordinal()), new ItemStack(EmasherCore.ingot, 2, 0), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.groundCassiterite.ordinal()), new ItemStack(EmasherCore.ingot, 2, 8), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.groundNativeCopper.ordinal()), new ItemStack(EmasherCore.ingot, 2, 2), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.groundPentlandite.ordinal()), new ItemStack(EmasherCore.ingot, 2, 4), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.groundGalena.ordinal()), new ItemStack(EmasherCore.ingot, 2, 3), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.groundSilver.ordinal()), new ItemStack(EmasherCore.ingot, 2, 6), 1);
+
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.impureGoldDust.ordinal()), new ItemStack(Items.gold_ingot), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.impureIronDust.ordinal()), new ItemStack(Items.iron_ingot), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.impureAluminiumDust.ordinal()), new ItemStack(EmasherCore.ingot, 1, 0), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.impureTinDust.ordinal()), new ItemStack(EmasherCore.ingot, 1, 8), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.impureCopperDust.ordinal()), new ItemStack(EmasherCore.ingot, 1, 2), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.impureNickelDust.ordinal()), new ItemStack(EmasherCore.ingot, 1, 4), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.impureLeadDust.ordinal()), new ItemStack(EmasherCore.ingot, 1, 3), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.impureSilverDust.ordinal()), new ItemStack(EmasherCore.ingot, 1, 6), 1);
+
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.pureGoldDust.ordinal()), new ItemStack(Items.gold_ingot), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.pureIronDust.ordinal()), new ItemStack(Items.iron_ingot), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.pureAluminiumDust.ordinal()), new ItemStack(EmasherCore.ingot, 1, 0), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.pureTinDust.ordinal()), new ItemStack(EmasherCore.ingot, 1, 8), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.pureCopperDust.ordinal()), new ItemStack(EmasherCore.ingot, 1, 2), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.pureNickelDust.ordinal()), new ItemStack(EmasherCore.ingot, 1, 4), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.pureLeadDust.ordinal()), new ItemStack(EmasherCore.ingot, 1, 3), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.pureSilverDust.ordinal()), new ItemStack(EmasherCore.ingot, 1, 6), 1);
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(dusts, 1, ItemDusts.Const.purePlatinumDust.ordinal()), new ItemStack(EmasherCore.ingot, 1, 5), 1);
 		
 		//Mixer
 		
 		MixerRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.mixedDirt), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, slickwaterAmount));
 		MixerRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.mixedSand), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, slickwaterAmount));
-		MixerRecipeRegistry.registerRecipe(new ItemStack(Block.sand), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, slickwaterAmount));
+		MixerRecipeRegistry.registerRecipe(new ItemStack(Blocks.sand), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, slickwaterAmount));
 		MixerRecipeRegistry.registerRecipe(new ItemStack(groundLimestone), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidSlickwater, slickwaterAmount));
-        MixerRecipeRegistry.registerRecipe(new ItemStack(Item.dyePowder, 1, 15), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(EmasherCore.nutrientWaterFluid, 1000));
+        MixerRecipeRegistry.registerRecipe(new ItemStack(Items.dye, 1, 15), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(EmasherCore.nutrientWaterFluid, 1000));
 		
 	}
 	

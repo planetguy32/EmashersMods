@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import emasher.api.SideConfig;
@@ -69,10 +71,10 @@ public class ModPump extends SocketModule
 				"uuu",
 				"cbc",
 				"ded",
-				Character.valueOf('u'), Item.bucketEmpty,
+				Character.valueOf('u'), Items.bucket,
 				Character.valueOf('c'), "ingotCopper",
-				Character.valueOf('d'), Item.diamond,
-				Character.valueOf('e'), Item.enderPearl,
+				Character.valueOf('d'), Items.diamond,
+				Character.valueOf('e'), Items.ender_pearl,
 				Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
@@ -198,7 +200,7 @@ public class ModPump extends SocketModule
 		
 		while(allQuards.size() > 0)
 		{
-			int rnd = ts.worldObj.rand.nextInt(allQuards.size());
+			int rnd = ts.getWorldObj().rand.nextInt(allQuards.size());
 			Tuple quards = allQuards.remove(rnd);
 			
 			config.tags.setInteger("x" + i, quards.x());
@@ -211,33 +213,33 @@ public class ModPump extends SocketModule
 	//Returns true iff the pump should move on
 	public boolean drainCurrentBlock(SideConfig config, SocketTileAccess ts, ForgeDirection side, int x, int y, int z)
 	{
-		int bID = ts.worldObj.getBlockId(x, y, z);
-		Block b = Block.blocksList[bID];
+		//int bID = ts.getWorldObj().getBlockId(x, y, z);
+		Block b = ts.getWorldObj().getBlock(x, y, z);
 		Fluid filterFluid = getFilterFluid(ts, config);
 		int filterID = -1;
 		if(filterFluid != null) filterID = filterFluid.getID();
 		
 		
-		if(bID == Block.waterStill.blockID)
+		if(b == Blocks.water)
 		{
 			FluidStack fs = new FluidStack(FluidRegistry.WATER, 1000);
 			
 			if(fs != null && ts.fillInternal(config.tank, fs, false) == fs.amount && (filterID == -1 || filterID == fs.fluidID) )
 			{
 				ts.fillInternal(config.tank, fs, true);
-				ts.worldObj.setBlock(x, y, z, 0);
+				ts.getWorldObj().setBlock(x, y, z, Blocks.air);
 				return true;
 			}
 			return false;
 		}
-		else if(bID == Block.lavaStill.blockID)
+		else if(b == Blocks.lava)
 		{
 			FluidStack fs = new FluidStack(FluidRegistry.LAVA, 1000);
 			
 			if(fs != null && ts.fillInternal(config.tank, fs, false) == fs.amount && (filterID == -1 || filterID == fs.fluidID) )
 			{
 				ts.fillInternal(config.tank, fs, true);
-				ts.worldObj.setBlock(x, y, z, Block.stone.blockID);
+				ts.getWorldObj().setBlock(x, y, z, Blocks.stone);
 				return true;
 			}
 			return false;
@@ -245,12 +247,12 @@ public class ModPump extends SocketModule
 		else if(b != null && b instanceof IFluidBlock)
 		{
 			IFluidBlock fb = (IFluidBlock)b;
-			FluidStack fs = fb.drain(ts.worldObj, x, y, z, false);
+			FluidStack fs = fb.drain(ts.getWorldObj(), x, y, z, false);
 			if(fs != null && ts.fillInternal(config.tank, fs, false) == fs.amount && (filterID == -1 || filterID == fs.fluidID) )
 			{
-				ts.fillInternal(config.tank, fb.drain(ts.worldObj, x, y, z, true), true);
-				ts.worldObj.setBlock(x, y, z, 0);
-				ts.worldObj.removeBlockTileEntity(x, y, z);
+				ts.fillInternal(config.tank, fb.drain(ts.getWorldObj(), x, y, z, true), true);
+				ts.getWorldObj().setBlock(x, y, z, Blocks.air);
+				ts.getWorldObj().removeTileEntity(x, y, z);
 				return true;
 			}
 		}
@@ -265,11 +267,11 @@ public class ModPump extends SocketModule
 	
 	public boolean isFluidBlock(SideConfig config, SocketTileAccess ts, ForgeDirection side, int x, int y, int z)
 	{
-		int bID = ts.worldObj.getBlockId(x, y, z);
+		//int bID = ts.getWorldObj().getBlockId(x, y, z);
+        Block b = ts.getWorldObj().getBlock(x, y, z);
+
+        if(b == Blocks.water || b == Blocks.lava) return true;
 		
-		if(bID == Block.waterStill.blockID || bID == Block.lavaStill.blockID) return true;
-		
-		Block b = Block.blocksList[bID];
 		if(b != null && b instanceof IFluidBlock)
 		{
 			return true;
@@ -280,12 +282,12 @@ public class ModPump extends SocketModule
 	
 	public Fluid getBlockFluid(SocketTileAccess ts, int x, int y, int z)
 	{
-		int bID = ts.worldObj.getBlockId(x, y, z);
-		
-		if(bID == Block.waterStill.blockID) return FluidRegistry.WATER;
-		else if(bID == Block.lavaStill.blockID) return FluidRegistry.LAVA;
-		
-		Block b = Block.blocksList[bID];
+		//int bID =
+        Block b = ts.getWorldObj().getBlock(x, y, z);
+
+        if(b == Blocks.water) return FluidRegistry.WATER;
+		else if(b == Blocks.lava) return FluidRegistry.LAVA;
+
 		if(b != null && b instanceof IFluidBlock)
 		{
 			return ((IFluidBlock)b).getFluid();
@@ -300,8 +302,8 @@ public class ModPump extends SocketModule
 		{
 			ItemStack is = ts.getStackInInventorySlot(config.inventory);
 			if(is == null) return null;
-			if(is.itemID == Item.bucketWater.itemID) return FluidRegistry.WATER;
-			else if(is.itemID == Item.bucketLava.itemID) return FluidRegistry.LAVA;
+			if(is.getItem() == Items.water_bucket) return FluidRegistry.WATER;
+			else if(is.getItem() == Items.lava_bucket) return FluidRegistry.LAVA;
 			else
 			{
 				if(is.getItem() instanceof IFluidContainerItem)

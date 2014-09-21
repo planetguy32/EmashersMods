@@ -1,11 +1,12 @@
 package emasher.sockets.modules
 
-import emasher.api._
+import emasher.api.{SocketTileAccess, SideConfig, SocketModule}
+import net.minecraft.init.Items
 import net.minecraft.item.crafting.CraftingManager
 import net.minecraftforge.oredict.ShapedOreRecipe
 import net.minecraft.item.{Item, ItemStack}
 import emasher.sockets.{Coords, UtilScala, SocketsMod}
-import net.minecraftforge.common.ForgeDirection
+import net.minecraftforge.common.util.ForgeDirection
 import net.minecraft.entity.Entity
 import net.minecraft.util.AxisAlignedBB
 import scala.collection.JavaConverters._
@@ -18,7 +19,7 @@ class ModElevator(id: Int) extends SocketModule(id, "sockets:elevatorUp", "socke
   override def addRecipe(): Unit = {
     CraftingManager.getInstance().getRecipeList.asInstanceOf[java.util.List[Object]]
       .add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 2, moduleID), "gmg",
-      Character.valueOf('g'), Item.ghastTear,
+      Character.valueOf('g'), Items.ghast_tear,
       Character.valueOf('m'), new ItemStack(SocketsMod.blankSide)))
   }
 
@@ -68,7 +69,7 @@ class ModElevator(id: Int) extends SocketModule(id, "sockets:elevatorUp", "socke
       case false => ForgeDirection.UP
     }
 
-    val world = ts.worldObj
+    val world = ts.getWorldObj
     val x = ts.xCoord
     val y = ts.yCoord
     val z = ts.zCoord
@@ -78,8 +79,8 @@ class ModElevator(id: Int) extends SocketModule(id, "sockets:elevatorUp", "socke
     if(done) {
       ts.dead = true
 
-      ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
-      ts.worldObj.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.worldObj.rand.nextFloat() * 0.25F + 0.6F)
+      world.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, world.rand.nextFloat() * 0.25F + 0.6F)
+      world.playSoundEffect(ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, world.rand.nextFloat() * 0.25F + 0.6F)
     }
 
   }
@@ -90,7 +91,7 @@ class ModElevator(id: Int) extends SocketModule(id, "sockets:elevatorUp", "socke
       val xo = ts.xCoord + d.offsetX
       val zo = ts.zCoord + d.offsetZ
 
-      val t = ts.worldObj.getBlockTileEntity(xo, ts.yCoord, zo)
+      val t = ts.getWorldObj().getTileEntity(xo, ts.yCoord, zo)
       if(t != null && t.isInstanceOf[TileDirectionChanger]) {
         val td = t.asInstanceOf[TileDirectionChanger]
         td.directions(d.getOpposite.ordinal()) match {

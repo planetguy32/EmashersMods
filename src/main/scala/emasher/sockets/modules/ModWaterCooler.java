@@ -3,11 +3,13 @@ package emasher.sockets.modules;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraft.block.material.*;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
@@ -38,7 +40,7 @@ public class ModWaterCooler extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "www", " b ", Character.valueOf('w'), Item.bucketWater, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "www", " b ", Character.valueOf('w'), Items.water_bucket, Character.valueOf('b'), SocketsMod.blankSide);
 	}
 	
 	@Override
@@ -54,21 +56,21 @@ public class ModWaterCooler extends SocketModule
 			int yo = ts.yCoord + side.offsetY;
 			int zo = ts.zCoord + side.offsetZ;
 			
-			int id = ts.worldObj.getBlockId(xo, yo, zo);
+			//int id =
 			
-			Block b = Block.blocksList[id];
+			Block b = ts.getWorldObj().getBlock(xo, yo, zo);
 			Material mat = Material.water;
-			if(b != null) mat = b.blockMaterial;
+			if(b != null) mat = b.getMaterial();
 			
 			if(mat == Material.lava)
 			{
-				int meta = ts.worldObj.getBlockMetadata(xo, yo, zo);
+				int meta = ts.getWorldObj().getBlockMetadata(xo, yo, zo);
 				
 				
-				if(meta == 0) ts.worldObj.setBlock(xo, yo, zo, Block.obsidian.blockID);
-				else ts.worldObj.setBlock(xo, yo, zo, Block.cobblestone.blockID);
+				if(meta == 0) ts.getWorldObj().setBlock(xo, yo, zo, Blocks.obsidian);
+				else ts.getWorldObj().setBlock(xo, yo, zo, Blocks.cobblestone);
 			
-				triggerLavaMixEffects(ts.worldObj, xo, yo, zo);
+				triggerLavaMixEffects(ts.getWorldObj(), xo, yo, zo);
 			}
 		}
 	}

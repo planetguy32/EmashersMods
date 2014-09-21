@@ -3,9 +3,9 @@ package emasher.sockets.modules;
 import java.util.List;
 
 import cofh.api.energy.IEnergyContainerItem;
-import ic2.api.item.ElectricItem;
-import ic2.api.item.IElectricItem;
-import ic2.api.item.IElectricItemManager;
+//import ic2.api.item.ElectricItem;
+//import ic2.api.item.IElectricItem;
+//import ic2.api.item.IElectricItemManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -116,21 +116,21 @@ public class ModCharger extends SocketModule
 					ieci.extractEnergy(is, amnt, false);
 				}
 			}
-			else if(is.getItem() instanceof IElectricItem)
-			{
-				IElectricItem iei = (IElectricItem)is.getItem();
-				if(config.tank == -1)
-				{
-					int used = (int)ElectricItem.manager.charge(is, (ts.getEnergyStored() / 4), 3, false, false);
-					ts.useEnergy(used * 4, false);
-				}
-				else
-				{
-					int used = (int)ElectricItem.manager.discharge(is, ((ts.getMaxEnergyStored() - ts.getEnergyStored()) / 4), 3, false, false, false);
-					ts.addEnergy(used * 4, false);
-				}
-				updateMeta(ts, config, side);
-			}
+//			else if(is.getItem() instanceof IElectricItem)
+//			{
+//				IElectricItem iei = (IElectricItem)is.getItem();
+//				if(config.tank == -1)
+//				{
+//					int used = (int)ElectricItem.manager.charge(is, (ts.getEnergyStored() / 4), 3, false, false);
+//					ts.useEnergy(used * 4, false);
+//				}
+//				else
+//				{
+//					int used = (int)ElectricItem.manager.discharge(is, ((ts.getMaxEnergyStored() - ts.getEnergyStored()) / 4), 3, false, false, false);
+//					ts.addEnergy(used * 4, false);
+//				}
+//				updateMeta(ts, config, side);
+//			}
 		}
 	}
 	
@@ -217,19 +217,20 @@ public class ModCharger extends SocketModule
 		if(config.inventory != -1 && ts.getStackInInventorySlot(config.inventory) != null)
 		{
 			ItemStack is = ts.getStackInInventorySlot(config.inventory);
-			if(is.getItem() instanceof IElectricItem)
-			{
-				IElectricItem iei = (IElectricItem)is.getItem();
-				int maxCharge = (int)iei.getMaxCharge(is);
-				int currCharge = (int)ElectricItem.manager.getCharge(is);
-				
-				int oldMeta = config.meta;
-				int newMeta = (int)(((float)currCharge/(float)maxCharge) * 12);
-				config.meta = newMeta;
-				if(oldMeta != newMeta) ts.sendClientSideState(side.ordinal());
-				return;
-			}
-			else if(is.getItem() instanceof IEnergyContainerItem)
+//			if(is.getItem() instanceof IElectricItem)
+//			{
+//				IElectricItem iei = (IElectricItem)is.getItem();
+//				int maxCharge = (int)iei.getMaxCharge(is);
+//				int currCharge = (int)ElectricItem.manager.getCharge(is);
+//
+//				int oldMeta = config.meta;
+//				int newMeta = (int)(((float)currCharge/(float)maxCharge) * 12);
+//				config.meta = newMeta;
+//				if(oldMeta != newMeta) ts.sendClientSideState(side.ordinal());
+//				return;
+//			}
+//			else
+            if(is.getItem() instanceof IEnergyContainerItem)
 			{
 				IEnergyContainerItem ieci = (IEnergyContainerItem)is.getItem();
 				int maxCharge = ieci.getMaxEnergyStored(is);

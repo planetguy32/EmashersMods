@@ -1,18 +1,22 @@
 package emasher.sockets;
 
+import java.util.List;
 import java.util.Random;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockSand;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 
-public class BlockGroundLimestone extends BlockSand
+public class BlockGroundLimestone extends BlockFalling
 {
 	@SideOnly(Side.CLIENT)
 	protected IIcon texture_g;
@@ -56,6 +60,13 @@ public class BlockGroundLimestone extends BlockSand
         //return Math.max(super.getBlockBrightness(world, x, y, z), 12.0F);
         if(meta == 0) return super.getMixedBrightnessForBlock(world, x, y, z);
         return Math.max(super.getMixedBrightnessForBlock(world, x, y, z), 12);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List par3List)
+    {
+        par3List.add(new ItemStack(par1, 1, 0));
     }
 
 }

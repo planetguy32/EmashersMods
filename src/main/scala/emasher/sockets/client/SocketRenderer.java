@@ -2,6 +2,7 @@ package emasher.sockets.client;
 
 import java.awt.image.BufferedImage;
 
+import emasher.core.EmasherCore;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -311,11 +312,7 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 					}
 				}
 			}
-
-			
-			
-			
-			
+            
 			FMLClientHandler.instance().getClient().entityRenderer.enableLightmap(1);
 			RenderHelper.enableStandardItemLighting();
 			
@@ -339,6 +336,20 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 			module = ts.getSide(d);
 			module.doCustomRendering(ts, ts.getConfigForSide(d), d, tessellator, blockRender);
 		}
+
+        FMLClientHandler.instance().getClient().entityRenderer.disableLightmap(1);
+        RenderHelper.disableStandardItemLighting();
+        GL11.glDisable(GL11.GL_LIGHTING);
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationItemsTexture);
+        CubeRenderBounds bounds = new CubeRenderBounds(0.05, 0.05, 0.05, 0.95, 0.95, 0.95);
+        CubeRenderer.render(x, y, z, EmasherCore.circuit.getIconFromDamage(0), bounds, false);
+
+        FMLClientHandler.instance().getClient().entityRenderer.enableLightmap((double) counter);
+        RenderHelper.enableStandardItemLighting();
+
+        bounds = new CubeRenderBounds(0, 0, 0, 1, 1, 1);
+        CubeRenderer.render(x, y, z, SocketsMod.blankSide.getIconFromDamage(0), bounds, true);
+        GL11.glEnable(GL11.GL_LIGHTING);
 	}
 
 }

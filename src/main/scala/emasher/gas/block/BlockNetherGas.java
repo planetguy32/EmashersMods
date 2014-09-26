@@ -6,7 +6,7 @@ import emasher.core.EmasherCore;
 import emasher.gas.EmasherGas;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -15,22 +15,23 @@ public class BlockNetherGas extends Block
 
 	public BlockNetherGas(int id)
 	{
-		super(id, Material.rock);
+		super(Material.rock);
 		this.setCreativeTab(null);
 	}
 	
 	
 	@Override
-	public void registerIcons(IconRegister ir)
+	public void registerBlockIcons(IIconRegister ir)
 	{
 		this.blockIcon = ir.registerIcon("netherrack");
 	}
-	
-	@Override
-	public int idDropped(int par1, Random rand, int par3)
+
+    //TODO Check if this needs to be specified in some way
+    // @Override
+	/*public int idDropped(int par1, Random rand, int par3)
 	{
 		return 0;
-	}
+	}*/
 	
 	
 	@Override

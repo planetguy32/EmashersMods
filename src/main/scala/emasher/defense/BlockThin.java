@@ -37,8 +37,6 @@ public class BlockThin extends BlockPane
 	{
 		super("emasherdefense:blank", "emasherdefense:blank", par4Material, true);
 		this.setCreativeTab(null);
-        //TODO Check if the isOpaqueCube method below replaces this
-        //Block.opaqueCubeLookup[id] = true;
 		this.setCreativeTab(EmasherDefense.tabDefense);
 	}
 	

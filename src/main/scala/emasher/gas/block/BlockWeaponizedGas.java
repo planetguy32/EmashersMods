@@ -5,11 +5,12 @@ import java.util.Random;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
@@ -27,7 +28,7 @@ public class BlockWeaponizedGas extends BlockGasGeneric
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-    public void registerIcons(IconRegister ir)
+    public void registerBlockIcons(IIconRegister ir)
     {
 		this.blockIcon = ir.registerIcon("gascraft:toxicGas");
     }
@@ -38,17 +39,17 @@ public class BlockWeaponizedGas extends BlockGasGeneric
 		if(! par1World.isRemote)
 		{
 			Random rand = par1World.rand;
-			int helmet = -1;
+			Item helmet = null;
 			int helmetIndex = 3;
 			if(ent instanceof EntityPlayer)
 			{
 				if(((EntityPlayer)ent).inventory.armorItemInSlot(helmetIndex) != null)
 				{
-					helmet = ((EntityPlayer)ent).inventory.armorItemInSlot(helmetIndex).itemID;
+					helmet = ((EntityPlayer)ent).inventory.armorItemInSlot(helmetIndex).getItem();
 				}
 			}
 			
-			if(ent instanceof EntityPlayer && helmet == EmasherGas.gasMask.itemID)
+			if(ent instanceof EntityPlayer && helmet == EmasherGas.gasMask)
 			{
 				ItemStack helmStack = ((EntityPlayer)ent).inventory.armorItemInSlot(helmetIndex);
 				

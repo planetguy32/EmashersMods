@@ -2,7 +2,8 @@ package emasher.gas.modules;
 
 import java.util.List;
 
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.init.Items;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraft.block.*;
@@ -57,7 +58,7 @@ public class ModFan extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ipi", " b ", Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('i'), Item.ingotIron,
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ipi", " b ", Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('i'), Items.iron_ingot,
 				Character.valueOf('p'), EmasherCore.psu, Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 4)));
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ipi", " b ", Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('i'), "ingotAluminum",
@@ -117,14 +118,14 @@ public class ModFan extends SocketModule
 					{
 						for(int k = zMin; k < z + 1; k++)
 						{
-							int bID = ts.worldObj.getBlockId(i, j, k);
-							if(Block.blocksList[bID] != null && Block.blocksList[bID] instanceof BlockGasGeneric)
+							Block b = ts.getWorldObj().getBlock(i, j, k);
+							if(b != null && b instanceof BlockGasGeneric)
 							{
-								BlockGasGeneric theBlock = (BlockGasGeneric)Block.blocksList[bID];
-								FluidStack avaliable = theBlock.drain(ts.worldObj, i, j, k, false);
+								BlockGasGeneric theBlock = (BlockGasGeneric)b;
+								FluidStack avaliable = theBlock.drain(ts.getWorldObj(), i, j, k, false);
 								if(ts.fillInternal(config.tank, avaliable, false) == avaliable.amount)
 								{
-									ts.fillInternal(config.tank, theBlock.drain(ts.worldObj, i, j, k, true), true);
+									ts.fillInternal(config.tank, theBlock.drain(ts.getWorldObj(), i, j, k, true), true);
 								}
 							}
 						}

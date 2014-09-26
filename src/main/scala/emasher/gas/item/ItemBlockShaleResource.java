@@ -15,7 +15,7 @@ import net.minecraft.potion.*;
 
 public class ItemBlockShaleResource extends ItemBlock
 {
-	public ItemBlockShaleResource(int par1) {
+	public ItemBlockShaleResource(Block par1) {
 		super(par1);
 		this.setHasSubtypes(true);
 	}

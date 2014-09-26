@@ -20,7 +20,7 @@ public class BlockTempRS extends BlockContainer
 	public BlockTempRS(int id)
 	{
 		super(Material.redstoneLight);
-		setBlockBounds(0.4F, 0.4F, 0.4F, 0.6F, 0.6F, 0.6F);
+		//setBlockBounds(0.4F, 0.4F, 0.4F, 0.6F, 0.6F, 0.6F);
 		this.setCreativeTab(null);
 		this.setBlockName("tempRS");
 		this.setLightLevel(5.0F);
@@ -37,13 +37,7 @@ public class BlockTempRS extends BlockContainer
 	{
 		return new TileTempRS();
 	}
-	
-	@Override
-	public boolean hasTileEntity()
-	{
-		return true;
-	}
-	
+
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k)
     {
@@ -60,6 +54,11 @@ public class BlockTempRS extends BlockContainer
 	public int getRenderBlockPass()
     {
         return 0;
+    }
+
+    @Override
+    public int getRenderType() {
+        return -1;
     }
 
 	@Override

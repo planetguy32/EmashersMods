@@ -2,10 +2,11 @@ package emasher.gas.block;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import emasher.core.EmasherCore;
 import emasher.gas.CommonProxy;
+import net.minecraft.world.World;
 
 public class BlockHydrogen extends BlockGasGeneric
 {
@@ -17,9 +18,9 @@ public class BlockHydrogen extends BlockGasGeneric
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-    public void registerIcons(IconRegister ir)
+    public void registerBlockIcons(IIconRegister ir)
     {
 		this.blockIcon = ir.registerIcon("gascraft:hydrogen");
     }
-    
+
 }

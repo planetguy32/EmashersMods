@@ -28,8 +28,6 @@ public class BlockDeflector extends BlockPane
 	{
 		super("emasherdefense:deflector_edge", "emasherdefense:deflector_edge", Material.circuits, false);
 		rand = new Random(System.nanoTime());
-        //TODO Check if the isOpaqueCube method below replaces this
-		//Block.opaqueCubeLookup[id] = true;
 		this.setTickRandomly(true);
 		this.setCreativeTab(null);
 	}

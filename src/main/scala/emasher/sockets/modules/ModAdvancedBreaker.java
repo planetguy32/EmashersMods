@@ -23,7 +23,7 @@ public class ModAdvancedBreaker extends SocketModule
 
 	public ModAdvancedBreaker(int id)
 	{
-		super(id, "sockets:advBreaker");
+		super(id, "sockets:advanced_breaker");
 	}
 
 	@Override

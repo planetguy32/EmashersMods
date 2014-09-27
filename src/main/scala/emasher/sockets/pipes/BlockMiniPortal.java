@@ -15,9 +15,9 @@ import net.minecraft.world.WorldServer;
 public class BlockMiniPortal extends BlockAdapterBase
 {
 
-	public BlockMiniPortal(int id)
+	public BlockMiniPortal()
 	{
-		super(id, Material.rock);
+		super(Material.rock);
 		setCreativeTab(SocketsMod.tabSockets);
 	}
 	

@@ -28,7 +28,7 @@ public class ItemModule extends Item
 	@SideOnly(Side.CLIENT)
 	public IIcon[] textures;
 	
-	public ItemModule(int id)
+	public ItemModule()
 	{
 		super();
 		this.setCreativeTab(SocketsMod.tabSockets);

@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 public class ItemRSWand extends Item
 {
 
-	public ItemRSWand(int id)
+	public ItemRSWand()
 	{
 		super();
 		

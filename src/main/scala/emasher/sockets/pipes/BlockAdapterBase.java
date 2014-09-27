@@ -17,7 +17,7 @@ public abstract class BlockAdapterBase extends BlockContainer
 {
 	public IIcon outputIcon;
 	
-	public BlockAdapterBase(int id, Material m)
+	public BlockAdapterBase(Material m)
 	{
 		super(m);
 	}

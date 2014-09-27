@@ -17,10 +17,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class BlockTempRS extends BlockContainer
 {
 
-	public BlockTempRS(int id)
+	public BlockTempRS()
 	{
 		super(Material.redstoneLight);
-		//setBlockBounds(0.4F, 0.4F, 0.4F, 0.6F, 0.6F, 0.6F);
 		this.setCreativeTab(null);
 		this.setBlockName("tempRS");
 		this.setLightLevel(5.0F);

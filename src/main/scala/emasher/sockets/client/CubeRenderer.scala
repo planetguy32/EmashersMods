@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.Tessellator
 import org.lwjgl.opengl.GL11
 
 object CubeRenderer {
-  def render(x: Double, y: Double, z: Double, icon: IIcon, bounds: CubeRenderBounds, inverted: Boolean): Unit = {
+  def render(x: Double, y: Double, z: Double, icons: Array[IIcon], bounds: CubeRenderBounds, inverted: Boolean): Unit = {
     val tessellator = Tessellator.instance
 
     for(i <- 0 to 5) {
@@ -44,10 +44,10 @@ object CubeRenderer {
       }
 
       tessellator.startDrawingQuads()
-      tessellator.addVertexWithUV(bounds.minX, bounds.maxY, bounds.minZ, icon.getMinU, icon.getMaxV)
-      tessellator.addVertexWithUV(bounds.maxX, bounds.maxY, bounds.minZ, icon.getMaxU, icon.getMaxV)
-      tessellator.addVertexWithUV(bounds.maxX, bounds.minY, bounds.minZ, icon.getMaxU, icon.getMinV)
-      tessellator.addVertexWithUV(bounds.minX, bounds.minY, bounds.minZ, icon.getMinU, icon.getMinV)
+      tessellator.addVertexWithUV(bounds.minX, bounds.maxY, bounds.minZ, icons(i).getMinU, icons(i).getMaxV)
+      tessellator.addVertexWithUV(bounds.maxX, bounds.maxY, bounds.minZ, icons(i).getMaxU, icons(i).getMaxV)
+      tessellator.addVertexWithUV(bounds.maxX, bounds.minY, bounds.minZ, icons(i).getMaxU, icons(i).getMinV)
+      tessellator.addVertexWithUV(bounds.minX, bounds.minY, bounds.minZ, icons(i).getMinU, icons(i).getMinV)
 
       tessellator.draw()
 

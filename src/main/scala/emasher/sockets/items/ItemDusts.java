@@ -163,7 +163,7 @@ public class ItemDusts extends Item
 				"Pure Ardite Dust"
 			};
 
-	public ItemDusts(int id)
+	public ItemDusts()
 	{
 		super();
 		this.setCreativeTab(SocketsMod.tabSockets);

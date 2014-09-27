@@ -55,6 +55,12 @@ public class ModCharger extends SocketModule
 		l.add(SocketsMod.PREF_AQUA + "Item dependent power requirement");
 	}
 
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side) { return "sockets:inner_charger"; }
+
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures() { return new String[] {"sockets:inner_charger"}; }
+
 	@Override
 	public void addRecipe()
 	{

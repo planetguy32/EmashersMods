@@ -8,7 +8,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe
 import net.minecraft.item.{Item, ItemStack}
 import net.minecraftforge.common.util.ForgeDirection
 
-class ModAccelerometer(id: Int) extends RSPulseModule(id, "sockets:accelerometer", "sockets:accelerometerActive") {
+class ModAccelerometer(id: Int) extends RSPulseModule(id, "sockets:accelerometer") {
   def getLocalizedName: String = "Accelerometer"
 
   override def getToolTip(l: java.util.List[Object]) {

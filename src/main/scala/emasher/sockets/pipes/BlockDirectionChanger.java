@@ -21,7 +21,7 @@ public class BlockDirectionChanger extends BlockContainer {
     public IIcon leftIcon;
     public IIcon rightIcon;
 
-    public BlockDirectionChanger(int id)
+    public BlockDirectionChanger()
     {
         super(Material.circuits);
         setCreativeTab(SocketsMod.tabSockets);

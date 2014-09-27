@@ -10,9 +10,9 @@ import net.minecraft.world.World;
 
 public class BlockMJAdapter extends BlockAdapterBase
 {	
-	public BlockMJAdapter(int id)
+	public BlockMJAdapter()
 	{
-		super(id, Material.iron);
+		super(Material.iron);
 		this.setCreativeTab(SocketsMod.tabSockets);
 	}
 	

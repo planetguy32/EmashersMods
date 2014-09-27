@@ -19,7 +19,7 @@ public class ItemSocketRemote extends Item
 	@SideOnly(Side.CLIENT)
 	public IIcon[] textures;
 
-	public ItemSocketRemote(int id)
+	public ItemSocketRemote()
 	{
 		super();
 		this.setCreativeTab(SocketsMod.tabSockets);

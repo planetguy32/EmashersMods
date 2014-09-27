@@ -27,7 +27,7 @@ public class BlockPaintedWood extends Block
 	private static final int NUM_BLOCKS = 16;
 	private IIcon[] textures = new IIcon[16];
 
-	public BlockPaintedWood(int par1, int par2, Material par4Material) 
+	public BlockPaintedWood(int par2, Material par4Material)
 	{
 		super(par4Material);
 		this.setCreativeTab(SocketsMod.tabSockets);

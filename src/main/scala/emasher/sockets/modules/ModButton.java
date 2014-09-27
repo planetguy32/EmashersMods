@@ -49,19 +49,10 @@ public class ModButton extends RSPulseModule
 	}
 	
 	@Override
-	public void addRecipe()
-	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "t", "b", Character.valueOf('t'), Blocks.stone_button, Character.valueOf('r'), Items.redstone,
-				Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 16));
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side)
-	{
-		if((config.meta & 7) == 0) return new IIcon[] {};
-		return new IIcon[] {((BlockSocket)SocketsMod.socket).buttonInd};
-	}
+	public void addRecipe() {
+        GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "t", "b", Character.valueOf('t'), Blocks.stone_button, Character.valueOf('r'), Items.redstone,
+                Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 16));
+    }
 	
 	@Override
 	public int getCurrentTexture(SideConfig config)

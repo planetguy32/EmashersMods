@@ -2,6 +2,8 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
@@ -108,6 +110,11 @@ public class ModItemEjector extends SocketModule
 			
 			if(allOff) dropItemsOnSide(ts, config, side, xo, yo, zo, ts.getStackInInventorySlot(config.inventory));
 		}
+
+        if(index == config.inventory)
+        {
+            ts.sendClientInventorySlot(index);
+        }
 	}
 	
 	@Override
@@ -134,4 +141,12 @@ public class ModItemEjector extends SocketModule
             //ts.inventory.setInventorySlotContents(config.inventory, null);
         }
 	}
+
+    @SideOnly(Side.CLIENT)
+    public ItemStack getItemToRender(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        if(config.inventory != -1) return ts.getStackInInventorySlot(config.inventory);
+        return null;
+    }
+
 }

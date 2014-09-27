@@ -3,6 +3,8 @@ package emasher.sockets.modules;
 import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -136,4 +138,20 @@ public class ModItemOutput extends SocketModule
 		if(config.inventory != -1) return ts.extractItemInternal(doExtract, config.inventory, amount);
 		return null;
 	}
+
+    @SideOnly(Side.CLIENT)
+    public ItemStack getItemToRender(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        if(config.inventory != -1) return ts.getStackInInventorySlot(config.inventory);
+        return null;
+    }
+
+    @Override
+    public void onInventoryChange(SideConfig config, int index, SocketTileAccess ts, ForgeDirection side, boolean add)
+    {
+        if(index == config.inventory)
+        {
+            ts.sendClientInventorySlot(index);
+        }
+    }
 }

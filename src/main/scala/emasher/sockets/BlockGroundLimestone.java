@@ -21,7 +21,7 @@ public class BlockGroundLimestone extends BlockFalling
 	@SideOnly(Side.CLIENT)
 	protected IIcon texture_g;
 	
-    public BlockGroundLimestone(int par1)
+    public BlockGroundLimestone()
     {
         super();
         this.setCreativeTab(SocketsMod.tabSockets);

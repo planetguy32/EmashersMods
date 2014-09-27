@@ -8,7 +8,7 @@ import net.minecraft.item.ItemFood;
 
 public class ItemRSIngot extends ItemFood
 {
-	public ItemRSIngot(int id)
+	public ItemRSIngot()
 	{
 		super(4, 4, false);
 		this.setMaxStackSize(64);

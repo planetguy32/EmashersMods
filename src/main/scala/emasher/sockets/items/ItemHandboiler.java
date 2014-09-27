@@ -31,7 +31,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class ItemHandboiler extends ItemEmasherGeneric
 {
 	
-	public ItemHandboiler(int id, String texture, String name)
+	public ItemHandboiler(String texture, String name)
 	{
 		super("sockets:handboiler", "handboiler");
 		this.setMaxDamage(64);

@@ -31,7 +31,7 @@ public class ItemEngWrench extends Item implements IToolWrench
 	
 	private final Set<Class<? extends Block>> shiftRotations = new HashSet<Class<? extends Block>>();
 	
-	public ItemEngWrench(int id)
+	public ItemEngWrench()
 	{
 		super();
 		this.setCreativeTab(SocketsMod.tabSockets);

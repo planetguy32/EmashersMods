@@ -79,7 +79,7 @@ public class BlockSocket extends BlockContainer
             "dyeWhite"
         };
 	
-	public BlockSocket(int id)
+	public BlockSocket()
 	{
 		super(Material.iron);
 		setCreativeTab(SocketsMod.tabSockets);
@@ -90,14 +90,7 @@ public class BlockSocket extends BlockContainer
 	{
 		return new TileSocket();
 	}
-	
-	@Override
-	public boolean hasTileEntity()
-	{
-		return true;
-	}
-	
-	
+
 	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float subX, float subY, float subZ)
@@ -407,6 +400,15 @@ public class BlockSocket extends BlockContainer
 				{
 					textures[i][j] = ir.registerIcon(m.textureFiles[j]);
 				}
+
+                //Register inner textures
+                String[] innerTextures = m.getAllInternalTextures();
+                for(int j = 0; j < innerTextures.length; j++) {
+                    String texture = innerTextures[j];
+                    if(! SocketsMod.innerTextures.containsKey(texture)) {
+                        SocketsMod.innerTextures.put(texture, ir.registerIcon(texture));
+                    }
+                }
 			}
 		}
 		

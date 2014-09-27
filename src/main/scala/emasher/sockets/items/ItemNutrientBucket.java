@@ -11,7 +11,7 @@ import net.minecraft.item.ItemBucket;
 
 public class ItemNutrientBucket extends ItemBucket
 {
-    public ItemNutrientBucket(int id)
+    public ItemNutrientBucket()
     {
         super(EmasherCore.nutrientWater);
 

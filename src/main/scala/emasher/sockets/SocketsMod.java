@@ -1,6 +1,8 @@
 package emasher.sockets;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
@@ -19,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -110,36 +113,36 @@ public class SocketsMod
 	
 	//Ids
 	
-	public int socketID;
-	public int tempRSID;
-	public int paintedPlankID;
-	public int groundLimestoneID;
-	public int slickwaterID;
-	public int moduleID;
-	public int remoteID;
-	public int blankID;
-	public int wrenchID;
-	public int rsWandID;
-	public int handPistonID;
-	public int rsShooterID;
-	public int cattleProdID;
-	public int handboilerID;
-	public int paintCanID;
-	public int dustsID;
-	public int slickBucketID;
-	public int rsIngotID;
-    public int nutBucketID;
-	
-	public int fluidPipeID;
-	public int startPipeID;
-	public int energyPipeID;
-	
-	public int mjAdapterID;
-	public int euAdapterID;
-	
-	public int miniPortalID;
-    public int directionChangerID;
-    public int frameID;
+//	public int socketID;
+//	public int tempRSID;
+//	public int paintedPlankID;
+//	public int groundLimestoneID;
+//	public int slickwaterID;
+//	public int moduleID;
+//	public int remoteID;
+//	public int blankID;
+//	public int wrenchID;
+//	public int rsWandID;
+//	public int handPistonID;
+//	public int rsShooterID;
+//	public int cattleProdID;
+//	public int handboilerID;
+//	public int paintCanID;
+//	public int dustsID;
+//	public int slickBucketID;
+//	public int rsIngotID;
+//    public int nutBucketID;
+//
+//	public int fluidPipeID;
+//	public int startPipeID;
+//	public int energyPipeID;
+//
+//	public int mjAdapterID;
+//	public int euAdapterID;
+//
+//	public int miniPortalID;
+//    public int directionChangerID;
+//    public int frameID;
 
 	public int slickwaterAmount;
 	
@@ -161,6 +164,8 @@ public class SocketsMod
 
 	public static int RFperMJ;
 	public static int RFperEU;
+
+    public static Map<String, IIcon> innerTextures;
 	
 	public static String[] colours = new String[]
 	{
@@ -214,7 +219,7 @@ public class SocketsMod
 	{
         @Override
         public Item getTabIconItem() {
-            return new ItemEngWrench(1);
+            return new ItemEngWrench();
         }
 
         public ItemStack getIconItemStack()
@@ -230,38 +235,6 @@ public class SocketsMod
         Property temp;
 		
 		config.load();
-		
-		/*socketID = config.get(Configuration.CATEGORY_GENERAL, "Socket ID", 4070).getInt();
-		tempRSID = config.get(Configuration.CATEGORY_GENERAL, "tempRS ID", 4071).getInt();
-		paintedPlankID = config.get(Configuration.CATEGORY_GENERAL, "Painted Plank ID", 4072).getInt();
-		groundLimestoneID = config.get(Configuration.CATEGORY_GENERAL, "Ground Limestone ID", 4073).getInt();
-		slickwaterID = config.get(Configuration.CATEGORY_GENERAL, "Slickwater Block ID", 4074).getInt();
-		
-		startPipeID = config.get(Configuration.CATEGORY_GENERAL, "Start Pipe ID", 4075).getInt();
-		fluidPipeID = config.get(Configuration.CATEGORY_GENERAL, "Fluid Pipe ID", 4076).getInt();
-		energyPipeID = config.get(Configuration.CATEGORY_GENERAL, "Energy Pipe ID", 4077).getInt();
-		mjAdapterID = config.get(Configuration.CATEGORY_GENERAL, "MJ Adapter ID", 4078).getInt();
-		euAdapterID = config.get(Configuration.CATEGORY_GENERAL, "EU Adapter ID", 4079).getInt();
-		miniPortalID = config.get(Configuration.CATEGORY_GENERAL, "Fluidic Nether Portal", 4080).getInt();
-        directionChangerID = config.get(Configuration.CATEGORY_GENERAL, "Direction Changer ID", 4081).getInt();
-        frameID = config.get(Configuration.CATEGORY_GENERAL, "Frame ID", 4082).getInt();
-		
-		moduleID = config.get(Configuration.CATEGORY_GENERAL, "Module ID", 4170).getInt();
-		remoteID = config.get(Configuration.CATEGORY_GENERAL, "Remote ID", 4172).getInt();
-		blankID = config.get(Configuration.CATEGORY_GENERAL, "Blank Module ID", 4171).getInt();
-		wrenchID = config.get(Configuration.CATEGORY_GENERAL, "Wrench ID", 4173).getInt();
-		rsWandID = config.get(Configuration.CATEGORY_GENERAL, "Redstone Wand ID", 4174).getInt();
-		handboilerID = config.get(Configuration.CATEGORY_GENERAL, "Hand Boiler ID", 4175).getInt();
-		temp = config.get(Configuration.CATEGORY_GENERAL, "Paint Can ID", 4176);
-		temp.comment = "This ID and the 15 following it will be taken up";
-		paintCanID = temp.getInt();
-		dustsID = config.get(Configuration.CATEGORY_GENERAL, "Dusts ID", 4192).getInt();
-		slickBucketID = config.get(Configuration.CATEGORY_GENERAL, "Slickwater Bucket ID", 4193).getInt();
-		rsIngotID = config.get(Configuration.CATEGORY_GENERAL, "RS Ingot ID", 4194).getInt();
-        nutBucketID = config.get(Configuration.CATEGORY_GENERAL, "Nutrient Water Bucket ID", 4195).getInt();*/
-		//rsShooterID = config.get(Configuration.CATEGORY_ITEM, "Redstone Shooter ID", 4175).getInt();
-		//handPistonID = config.get(Configuration.CATEGORY_ITEM, "Hand Piston ID", 4176).getInt();
-		//cattleProdID = config.get(Configuration.CATEGORY_ITEM, "Cattle Prod ID", 4177).getInt();
 		
 		//vanillaCircuitRecipe = config.get(Configuration.CATEGORY_GENERAL, "Enable Vanilla Circuit Recipe", true).getBoolean(true);
 		//ic2First = config.get(Configuration.CATEGORY_GENERAL, "Look for ic2 Macerator Recipes First", false).getBoolean(false);
@@ -313,6 +286,8 @@ public class SocketsMod
 
 		MinecraftForge.EVENT_BUS.register(new Util());
 		MinecraftForge.EVENT_BUS.register(new BucketEventHandler());
+
+        innerTextures = new HashMap<String, IIcon>();
 		
 		LanguageRegistry.instance().addStringLocalization("itemGroup.tabSockets", "en_US", "Engineer's Toolbox");
 		
@@ -413,46 +388,46 @@ public class SocketsMod
 			reg.registerModules();
 		}
 		
-		socket = new BlockSocket(socketID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("modular_socket");
+		socket = new BlockSocket().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("modular_socket");
 		//GameRegistry.registerBlock(socket, "modular_socket");
 		LanguageRegistry.addName(socket, "Modular Socket");
 
         GameRegistry.registerBlock(socket, ItemBlockSocket.class, "modular_socket");
 		
-		tempRS = new BlockTempRS(tempRSID).setBlockUnbreakable();
+		tempRS = new BlockTempRS().setBlockUnbreakable();
 		GameRegistry.registerBlock(tempRS, "tempRS");
 		LanguageRegistry.addName(tempRS, "TempRS");
 
-		blockStartPipe = new BlockStartPipe(startPipeID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("start_pipe");
+		blockStartPipe = new BlockStartPipe().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("start_pipe");
 		GameRegistry.registerBlock(blockStartPipe, "start_pipe");
 		LanguageRegistry.addName(blockStartPipe, "Universal Extractor");
 		blockStartPipe.setCreativeTab(tabSockets);
 		
-		blockFluidPipe = new BlockFluidPipe(fluidPipeID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("fluid_pipe");
+		blockFluidPipe = new BlockFluidPipe().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("fluid_pipe");
 		GameRegistry.registerBlock(blockFluidPipe, "fluid_pipe");
 		LanguageRegistry.addName(blockFluidPipe, "Fluid Pipe");
 		blockFluidPipe.setCreativeTab(tabSockets);
 		
-		blockEnergyPipe = new BlockEnergyPipe(energyPipeID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("energy_pipe");
+		blockEnergyPipe = new BlockEnergyPipe().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("energy_pipe");
 		GameRegistry.registerBlock(blockEnergyPipe, "energy_pipe");
 		LanguageRegistry.addName(blockEnergyPipe, "Flux Pipe");
 		blockEnergyPipe.setCreativeTab(tabSockets);
 		
-		mjAdapter = new BlockMJAdapter(mjAdapterID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("emasher_MJ_adapter");
-		GameRegistry.registerBlock(mjAdapter, "emasher_MJ_adapter");
-		LanguageRegistry.addName(mjAdapter, "MJ Adapter");
+//		mjAdapter = new BlockMJAdapter().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("emasher_MJ_adapter");
+//		GameRegistry.registerBlock(mjAdapter, "emasher_MJ_adapter");
+//		LanguageRegistry.addName(mjAdapter, "MJ Adapter");
+//
+//		euAdapter = new BlockEUAdapter().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("emasher_EU_adapter");
+//		GameRegistry.registerBlock(euAdapter, "emasher_EU_adapter");
+//		LanguageRegistry.addName(euAdapter, "EU Adapter");
 		
-		euAdapter = new BlockEUAdapter(euAdapterID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("emasher_EU_adapter");
-		GameRegistry.registerBlock(euAdapter, "emasher_EU_adapter");
-		LanguageRegistry.addName(euAdapter, "EU Adapter");
-		
-		rsIngot = new ItemRSIngot(rsIngotID);
+		rsIngot = new ItemRSIngot();
         GameRegistry.registerItem(rsIngot, "Sweet Redstone Ingot", "eng_toolbox");
 		LanguageRegistry.addName(rsIngot, "Sweet Redstone Ingot");
 		
 		if(enableMiniPortal)
 		{
-			miniPortal = new BlockMiniPortal(miniPortalID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeStone).setBlockName("emasher_mini_portal");
+			miniPortal = new BlockMiniPortal().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeStone).setBlockName("emasher_mini_portal");
 			GameRegistry.registerBlock(miniPortal, "emasher_mini_portal");
 			LanguageRegistry.addName(miniPortal, "Fluidic Nether Portal");
 			
@@ -463,7 +438,7 @@ public class SocketsMod
 			
 		}
 
-        directionChanger = new BlockDirectionChanger(directionChangerID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeGlass).setBlockName("emasher_direction_changer");
+        directionChanger = new BlockDirectionChanger().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeGlass).setBlockName("emasher_direction_changer");
 		GameRegistry.registerBlock(directionChanger, "emasher_direction_changer");
         LanguageRegistry.addName(directionChanger, "Direction Changer");
 
@@ -472,7 +447,7 @@ public class SocketsMod
                         EmasherCore.machine, Items.glowstone_dust, new ItemStack(EmasherCore.gem, 1, 0)
                 });
 
-        frame = new BlockFrame(frameID).setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("emasher_frame");
+        frame = new BlockFrame().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("emasher_frame");
         GameRegistry.registerBlock(frame, "emasher_frame");
         LanguageRegistry.addName(frame, "Socket Frame");
 
@@ -502,7 +477,7 @@ public class SocketsMod
                 Character.valueOf('s'), "ingotBronze"));
 
 
-		paintedPlanks = (new BlockPaintedWood(paintedPlankID, 0, Material.wood))
+		paintedPlanks = (new BlockPaintedWood(0, Material.wood))
 				.setHardness(2.0F).setResistance(5.0F).setStepSound(Block.soundTypeWood)
 				.setBlockName("paintedPlanks");
 		
@@ -517,11 +492,11 @@ public class SocketsMod
 			OreDictionary.registerOre("plankWood", new ItemStack(this.paintedPlanks, 1, i));
 		}
 		
-		groundLimestone = new BlockGroundLimestone(groundLimestoneID).setHardness(0.6F).setStepSound(Block.soundTypeGravel).setBlockName("groundLimestone");
+		groundLimestone = new BlockGroundLimestone().setHardness(0.6F).setStepSound(Block.soundTypeGravel).setBlockName("groundLimestone");
 		GameRegistry.registerBlock(groundLimestone, "groundLimestone");
 		LanguageRegistry.addName(groundLimestone, "Ground Limestone");
 		
-		handboiler = new ItemHandboiler(handboilerID, "", "");
+		handboiler = new ItemHandboiler("", "");
         GameRegistry.registerItem(handboiler, "handBoiler");
 		LanguageRegistry.addName(handboiler, "Hand Boiler");
 		
@@ -529,27 +504,27 @@ public class SocketsMod
 		
 		for(int i = 0; i<16; i++)
 		{
-			paintCans[i] = new ItemPaintCan(paintCanID + i, i);
+			paintCans[i] = new ItemPaintCan(i);
             GameRegistry.registerItem(paintCans[i], "item.paintCan." + colours[i] + ".name", colours[i] + " Spray Paint");
 			LanguageRegistry.instance().addStringLocalization("item.paintCan." + colours[i] + ".name", colours[i] + " Spray Paint");
 			
 		}
 		
-		remote = new ItemSocketRemote(remoteID);
+		remote = new ItemSocketRemote();
 		LanguageRegistry.addName(remote, "Socket Remote");
         GameRegistry.registerItem(remote, "Socket Remote", "eng_toolbox");
 		
-		rsWand = new ItemRSWand(rsWandID);
+		rsWand = new ItemRSWand();
 		LanguageRegistry.addName(rsWand, "Redstone Wand");
         GameRegistry.registerItem(rsWand, "Redstone Wand", "eng_toolbox");
 		
 		fluidSlickwater = new FluidSlickwater();
 		FluidRegistry.registerFluid(fluidSlickwater);
 		
-		blockSlickwater = new BlockSlickwater(slickwaterID, fluidSlickwater);
+		blockSlickwater = new BlockSlickwater(fluidSlickwater);
 		GameRegistry.registerBlock(blockSlickwater, "slickwater");
 
-		slickBucket = new ItemSlickBucket(slickBucketID);
+		slickBucket = new ItemSlickBucket();
 		slickBucket.setMaxStackSize(1);
 		slickBucket.setCreativeTab(this.tabSockets);
         GameRegistry.registerItem(slickBucket, "Slickwater Bucket", "eng_toolbox");
@@ -559,7 +534,7 @@ public class SocketsMod
 		LanguageRegistry.addName(slickBucket, "Slickwater Bucket");
 		LanguageRegistry.addName(blockSlickwater, "Slickwater");
 
-        nutBucket = new ItemNutrientBucket(nutBucketID);
+        nutBucket = new ItemNutrientBucket();
         nutBucket.setMaxStackSize(1);
         nutBucket.setCreativeTab(this.tabSockets);
         GameRegistry.registerItem(nutBucket, "Nutrient Water Bucket", "eng_toolbox");
@@ -576,7 +551,7 @@ public class SocketsMod
 		blankSide.setCreativeTab(tabSockets);
         GameRegistry.registerItem(blankSide, "Blank Module", "eng_toolbox");
 		
-		module = new ItemModule(moduleID);
+		module = new ItemModule();
 		
 		for(int i = 0; i < ModuleRegistry.numModules; i++)
 		{
@@ -588,11 +563,11 @@ public class SocketsMod
 		}
         GameRegistry.registerItem(module, "Module", "eng_toolbox");
 		
-		engWrench = new ItemEngWrench(wrenchID);
+		engWrench = new ItemEngWrench();
 		LanguageRegistry.addName(engWrench, "Engineer's Wrench");
         GameRegistry.registerItem(engWrench, "Engineer's Wrench", "eng_toolbox");
 		
-		dusts = new ItemDusts(dustsID);
+		dusts = new ItemDusts();
 		for(int i = 0; i < ItemDusts.NUM_ITEMS; i++)
 		{
             LanguageRegistry.instance().addStringLocalization("item.e_dusts." + "e_" + ItemDusts.NAMES[i] + ".name", ItemDusts.NAMES_LOC[i]);

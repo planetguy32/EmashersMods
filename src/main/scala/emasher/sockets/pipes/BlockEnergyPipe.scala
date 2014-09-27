@@ -15,19 +15,19 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids._;
 import emasher.sockets.client;
 
-class BlockEnergyPipe(id: Int) extends BlockPipeBase(id, false)
+class BlockEnergyPipe() extends BlockPipeBase(false)
 {	
-	override def createNewTileEntity(world: World, metadata: Int):TileEntity = new TileEnergyPipe();
+	override def createNewTileEntity(world: World, metadata: Int):TileEntity = new TileEnergyPipe()
 	
 	@SideOnly(Side.CLIENT)
 	override def registerBlockIcons(ir: IIconRegister)
 	{
 		for(i <- 0 to 16)
 		{
-			textures(i) = ir.registerIcon("sockets:ePipe" + i);
+			textures(i) = ir.registerIcon("sockets:ePipe" + i)
 		}
 		
-		this.blockIcon = textures(0);
+		this.blockIcon = textures(0)
 	}
 	
 }

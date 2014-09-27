@@ -13,7 +13,7 @@ public class BlockSlickwater extends BlockFluidClassic
 	@SideOnly(Side.CLIENT)
 	public IIcon flowingTexture;
 	
-	public BlockSlickwater(int id, Fluid fluid)
+	public BlockSlickwater(Fluid fluid)
 	{
 		super(fluid, Material.water);
 		this.setCreativeTab(null);

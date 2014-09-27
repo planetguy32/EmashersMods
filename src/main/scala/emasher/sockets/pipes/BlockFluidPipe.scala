@@ -14,7 +14,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids._;
 import emasher.sockets.client;
 
-class BlockFluidPipe(id: Int) extends BlockPipeBase(id, true)
+class BlockFluidPipe() extends BlockPipeBase(true)
 {	
 	override def createNewTileEntity(world: World, metadata: Int):TileEntity = new TileFluidPipe();
 	

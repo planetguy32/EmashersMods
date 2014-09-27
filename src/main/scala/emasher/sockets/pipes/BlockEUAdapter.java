@@ -14,9 +14,9 @@ import net.minecraft.world.World;
 
 public class BlockEUAdapter extends BlockAdapterBase
 {
-	public BlockEUAdapter(int id)
+	public BlockEUAdapter()
 	{
-		super(id, Material.iron);
+		super(Material.iron);
 		this.setCreativeTab(SocketsMod.tabSockets);
 	}
 	

@@ -20,7 +20,7 @@ public class ModBUD extends RSPulseModule
 
 	public ModBUD(int id)
 	{
-		super(id, "sockets:BUD_0", "sockets:BUD_1", "sockets:DBUD_0", "sockets:DBUD_1");
+		super(id, "sockets:BUD_0", "sockets:DBUDS");
 	}
 
 	@Override
@@ -46,13 +46,12 @@ public class ModBUD extends RSPulseModule
 	@Override
 	public int getCurrentTexture(SideConfig config)
 	{
-		if(config.meta == 0)
+		if(config.tank == 0)
 		{
-			if(config.tank == 0) return 0;
-			else return 2;
+			return 0;
 		}
-		if(config.tank == 0) return 1;
-		else return 3;
+
+		return 1;
 	}
 	
 	@Override

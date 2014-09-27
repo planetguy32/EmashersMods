@@ -8,9 +8,9 @@ import net.minecraft.world.World;
 
 public class BlockFrame extends BlockAdapterBase
 {
-    public BlockFrame(int id)
+    public BlockFrame()
     {
-        super(id, Material.iron);
+        super(Material.iron);
         this.setCreativeTab(SocketsMod.tabSockets);
     }
 

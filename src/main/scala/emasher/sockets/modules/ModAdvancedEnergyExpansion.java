@@ -2,6 +2,8 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import ic2.api.energy.tile.IEnergyAcceptor;
 import buildcraft.api.power.IPowerReceptor;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -25,7 +27,7 @@ public class ModAdvancedEnergyExpansion extends SocketModule
 {
 	public ModAdvancedEnergyExpansion(int id)
 	{
-		super(id, "sockets:advEnExpansion", "sockets:advEnExpansionIn", "sockets:advEnExpansionOut");
+		super(id, "sockets:aenergy_expansion", "sockets:energy_expansion_in", "sockets:energy_expansion_out");
 	}
 
 	@Override
@@ -46,7 +48,13 @@ public class ModAdvancedEnergyExpansion extends SocketModule
 	{
 		l.add(SocketsMod.PREF_WHITE + "Configure if input or output or neither");
 	}
-	
+
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side) { return "sockets:inner_blue_tile"; }
+
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures() { return new String[] {"sockets:inner_blue_tile"}; }
+
 	@Override
 	public void addRecipe()
 	{

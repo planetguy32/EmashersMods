@@ -15,7 +15,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids._;
 import cofh.api.energy._;
 
-abstract class BlockPipeBase(id: Int, fluid:Boolean) extends BlockContainer(Material.iron)
+abstract class BlockPipeBase(fluid:Boolean) extends BlockContainer(Material.iron)
 {
 	var textures:Array[IIcon] = new Array(17);
 	

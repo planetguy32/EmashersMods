@@ -12,7 +12,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-class BlockStartPipe(id: Int) extends BlockContainer(Material.iron)
+class BlockStartPipe() extends BlockContainer(Material.iron)
 {
 	override def createNewTileEntity(world: World, metadata: Int):TileEntity = new TileStartPipe();
 	

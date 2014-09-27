@@ -131,6 +131,20 @@ public abstract class SocketModule
 	 */
 	@SideOnly(Side.CLIENT)
 	public IIcon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side) { return new IIcon[] {}; }
+
+    /**
+     * If there is transparency in a module's texture you will be able to see another cube rendered inside the socket.
+     * This method returns the name of the texture that should be used to render the internal cube for the side that a
+     * given module is installed on.
+     */
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side) { return "sockets:inner_black"; }
+
+    /**
+     * To ensure all the inner textures are loaded, a list of all possible internal textures must be provided
+     */
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures() { return new String[] {"sockets:inner_black"}; }
 	
 	/**
 	 * For some reason Minecraft flips the textures on the bottom of blocks. Because certain additional overlays would be displayed

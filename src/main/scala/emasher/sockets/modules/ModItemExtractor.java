@@ -3,6 +3,8 @@ package emasher.sockets.modules;
 import java.util.List;
 
 import buildcraft.api.inventory.ISpecialInventory;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHopper;
 import net.minecraft.init.Blocks;
@@ -167,7 +169,21 @@ public class ModItemExtractor extends SocketModule
 			}
 		}
 	}
-	
-	
-	
+
+
+    @SideOnly(Side.CLIENT)
+    public ItemStack getItemToRender(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        if(config.inventory != -1) return ts.getStackInInventorySlot(config.inventory);
+        return null;
+    }
+
+    @Override
+    public void onInventoryChange(SideConfig config, int index, SocketTileAccess ts, ForgeDirection side, boolean add)
+    {
+        if(index == config.inventory)
+        {
+            ts.sendClientInventorySlot(index);
+        }
+    }
 }

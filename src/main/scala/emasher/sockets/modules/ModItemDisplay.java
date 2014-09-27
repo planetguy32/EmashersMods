@@ -27,7 +27,7 @@ public class ModItemDisplay extends SocketModule
 
 	public ModItemDisplay(int id)
 	{
-		super(id, "sockets:itemDisplay", "sockets:itemDisplayFull", "sockets:itemDisplayStack", "sockets:itemDisplayFullStack");
+		super(id, "sockets:itemDisplay", "sockets:itemDisplayStack");
 	}
 
 	@Override
@@ -64,13 +64,8 @@ public class ModItemDisplay extends SocketModule
 	@Override
 	public int getCurrentTexture(SideConfig config, SocketTileAccess ts, ForgeDirection side)
 	{
-		if(config.inventory != -1 && ts.getStackInInventorySlot(config.inventory) != null)
-		{
-			if(config.meta == 0) return 1;
-			return 3;
-		}
-		if(config.meta ==  0) return 0;
-		return 2;
+		if(config.meta == 0) return 0;
+        return 1;
 	}
 	
 	@Override

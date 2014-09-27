@@ -24,7 +24,7 @@ import emasher.sockets.*;
 public class ItemSlickBucket extends ItemBucket
 {
 	
-	public ItemSlickBucket(int id) 
+	public ItemSlickBucket()
 	{
 		super(SocketsMod.blockSlickwater);
 		

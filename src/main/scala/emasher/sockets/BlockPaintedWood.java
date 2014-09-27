@@ -31,8 +31,6 @@ public class BlockPaintedWood extends Block
 	{
 		super(par4Material);
 		this.setCreativeTab(SocketsMod.tabSockets);
-        //TODO Get fire thing working
-        // Blocks.fire.setFireInfo(this, 5, 5);
 	}
 	
 	public IIcon getIcon(int par1, int par2)

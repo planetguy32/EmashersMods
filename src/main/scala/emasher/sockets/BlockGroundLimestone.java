@@ -25,6 +25,7 @@ public class BlockGroundLimestone extends BlockFalling
     {
         super();
         this.setCreativeTab(SocketsMod.tabSockets);
+        this.useNeighborBrightness = true;
     }
 
     @Override
@@ -49,10 +50,8 @@ public class BlockGroundLimestone extends BlockFalling
     	return 0;
     }
     
-    @Override
+    /*@Override
     @SideOnly(Side.CLIENT)
-    //TODO Check if it is the same
-    //public float getBlockBrightness(IBlockAccess world, int x, int y, int z)
     public int getMixedBrightnessForBlock(IBlockAccess world, int x, int y, int z)
     {
         int meta = world.getBlockMetadata(x, y, z);
@@ -60,7 +59,7 @@ public class BlockGroundLimestone extends BlockFalling
         //return Math.max(super.getBlockBrightness(world, x, y, z), 12.0F);
         if(meta == 0) return super.getMixedBrightnessForBlock(world, x, y, z);
         return Math.max(super.getMixedBrightnessForBlock(world, x, y, z), 12);
-    }
+    }*/
 
     @Override
     @SideOnly(Side.CLIENT)

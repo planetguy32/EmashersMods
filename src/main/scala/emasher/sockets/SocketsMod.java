@@ -509,6 +509,7 @@ public class SocketsMod
 		//Item.itemsList[paintedPlanks.blockID] = new ItemBlockPaintedWood(paintedPlanks.blockID - 256);
 
         GameRegistry.registerBlock(paintedPlanks, ItemBlockPaintedWood.class, "paintedPlanks");
+        Blocks.fire.setFireInfo(paintedPlanks, 5, 20);
 
 		registerPaintedPlankNames();
 		

@@ -20,7 +20,7 @@ public class BlockTempRS extends BlockContainer
 	public BlockTempRS(int id)
 	{
 		super(Material.redstoneLight);
-		//setBlockBounds(0.4F, 0.4F, 0.4F, 0.6F, 0.6F, 0.6F);
+		setBlockBounds(0.4F, 0.4F, 0.4F, 0.6F, 0.6F, 0.6F);
 		this.setCreativeTab(null);
 		this.setBlockName("tempRS");
 		this.setLightLevel(5.0F);

@@ -16,7 +16,7 @@ import net.minecraft.block.*;
 import net.minecraft.item.*;
 import net.minecraft.tileentity.*;
 import net.minecraft.block.material.*;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.entity.*;
@@ -25,7 +25,7 @@ import net.minecraft.potion.*;
 
 import net.minecraftforge.common.*;
 import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.liquids.*;
+import net.minecraftforge.fluids.*;
 
 public class BlockNaturalGas extends BlockGasGeneric
 {	
@@ -38,7 +38,7 @@ public class BlockNaturalGas extends BlockGasGeneric
     
 	@Override
 	@SideOnly(Side.CLIENT)
-    public void registerIcons(IconRegister ir)
+    public void registerBlockIcons(IIconRegister ir)
     {
 		this.blockIcon = ir.registerIcon("gascraft:naturalGas");
     }
@@ -49,17 +49,17 @@ public class BlockNaturalGas extends BlockGasGeneric
     	if(! par1World.isRemote)
     	{	
 			Random rand = par1World.rand;
-			int helmet = -1;
+			Item helmet = null;
 			int helmetIndex = 3;
 			if(ent instanceof EntityPlayer)
 			{
 				if(((EntityPlayer)ent).inventory.armorItemInSlot(helmetIndex) != null)
 				{
-					helmet = ((EntityPlayer)ent).inventory.armorItemInSlot(helmetIndex).itemID;
+					helmet = ((EntityPlayer)ent).inventory.armorItemInSlot(helmetIndex).getItem();
 				}
 			}
 			
-			if(ent instanceof EntityPlayer && helmet == EmasherGas.gasMask.itemID)
+			if(ent instanceof EntityPlayer && helmet == EmasherGas.gasMask)
 			{
 				ItemStack helmStack = ((EntityPlayer)ent).inventory.armorItemInSlot(helmetIndex);
 				

@@ -2,6 +2,8 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -156,13 +158,6 @@ public class ModMixer extends SocketModule
 		}
 	}
 	
-	@Override
-	public int getCurrentTexture(SideConfig config)
-	{
-		if(config.meta == 0 || ! config.rsControl[0]) return 0;
-		return 1;
-	}
-	
 	private ItemStack fluidToItem(FluidStack f)
 	{
         //TODO Check what this is used for to see if it works this way or not
@@ -179,4 +174,20 @@ public class ModMixer extends SocketModule
             return null;
         return new FluidStack(((BlockFluidBase) b).getFluid(), i.getItemDamage());
 	}
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        if(config.meta == 0 || ! config.rsControl[0]) return "sockets:inner_black";
+        return "sockets:inner_mixer";
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures()
+    {
+        System.out.println("inner mixer texture loaded");
+        return new String[] {"sockets:inner_mixer"};
+    }
 }

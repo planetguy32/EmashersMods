@@ -1,0 +1,64 @@
+itemGroup.tabEmasher=ET Resources
+
+tile.redSandstone.name=Red Sandstone
+tile.limestone.name=Limestone
+tile.mixedDirt.name=Mixed Dirt
+tile.mixedsand.name=Mixed Sand
+tile.machine.name=Machine Chassis
+tile.algae.name=Algae
+tile.superAlgae.name=Super Algae
+tile.deadAlgae.name=Dead Algae
+tile.hemp.name=Hemp
+
+tile.normalCube.litchenStone.name=Lichen Stone
+tile.normalCube.redSandstoneBricks.name=Red Sandstone Bricks
+tile.normalCube.limestoneBricks.name=Limestone Bricks
+tile.normalCube.roadWay.name=Roadway
+tile.normalCube.dirtyCobblestone.name=Dirty Cobblestone
+
+tile.e_metal.e_blockAluminium.name=Aluminium Block
+tile.e_metal.e_blockBronze.name=Bronze Block
+tile.e_metal.e_blockCopper.name=Copper Block
+tile.e_metal.e_blockLead.name=Lead Block
+tile.e_metal.e_blockNickel.name=Nickel Block
+tile.e_metal.e_blockPlatinum.name=Platinum Block
+tile.e_metal.e_blockSilver.name=Silver Block
+tile.e_metal.e_blockSteel.name=Steel Block
+tile.e_metal.e_blockTin.name=Tin Block
+
+tile.e_ore.e_oreBauxite.name=Bauxite Ore
+tile.e_ore.e_oreCassiterite.name=Cassiterite Ore
+tile.e_ore.e_oreEmery.name=Emery Ore
+tile.e_ore.e_oreGalena.name=Galena Ore
+tile.e_ore.e_oreNativeCopper.name=Native Copper Ore
+tile.e_ore.e_orePentlandite.name=Pentlandite Ore
+tile.e_ore.e_oreRuby.name=Ruby Ore
+tile.e_ore.e_oreSapphire.name=Sapphire Ore
+
+tile.nutrientWater.name=Nutrient Water
+
+item.e_ingot.e_ingotAluminium.name=Aluminium Ingot
+item.e_ingot.e_ingotBronze.name=Bronze Ingot
+item.e_ingot.e_ingotCopper.name=Copper Ingot
+item.e_ingot.e_ingotLead.name=Lead Ingot
+item.e_ingot.e_ingotNickel.name=Nickel Ingot
+item.e_ingot.e_ingotPlatinum.name=Platinum Ingot
+item.e_ingot.e_ingotSilver.name=Silver Ingot
+item.e_ingot.e_ingotSteel.name=Steel Ingot
+item.e_ingot.e_ingotTin.name=Tin Ingot
+
+item.e_gem.e_gemEmery.name=Emery
+item.e_gem.e_gemRuby.name=Ruby
+item.e_gem.e_gemSapphire.name=Sapphire
+
+item.psu.name=Power Management Device
+item.circuit.name=Electronic Circuit
+item.bluestone.name=Bluestone
+
+item.hempPlant.name=Hemp
+item.hempSeeds.name=Hemp Seeds
+item.hempOil.name=Hemp Seed Oil
+item.hempCap.name=Hemp Cap
+item.hempTunic.name=Hemp Tunic
+item.hempPants.name=Hemp Pants
+item.hempShoes.name=Hemp Shoes

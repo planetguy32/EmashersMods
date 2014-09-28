@@ -1,5 +1,7 @@
 package emasher.sockets.modules;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import emasher.api.PhotobioReactorRecipeRegistry;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
@@ -25,8 +27,8 @@ public class ModStirlingGenerator extends SocketModule {
 
 	public ModStirlingGenerator(int id)
 	{
-		super(id, "sockets:stirlingGenIdle0", "sockets:stirlingGenActive0",
-				  "sockets:stirlingGenIdle1", "sockets:stirlingGenActive1");
+		super(id, "sockets:stirlingGenIdle0",
+				  "sockets:stirlingGenIdle1");
 	}
 
 	@Override
@@ -145,17 +147,31 @@ public class ModStirlingGenerator extends SocketModule {
 	@Override
 	public int getCurrentTexture(SideConfig config)
 	{
-		if((config.tank & ACTIVE) == ACTIVE)
-		{
-			if((config.tank & HIGH_POWER) == HIGH_POWER)
-				return 3;
-			return 1;
-		}
-		else
-		{
-			if((config.tank & HIGH_POWER) == HIGH_POWER)
-				return 2;
-			return 0;
-		}
+        if((config.tank & HIGH_POWER) == HIGH_POWER)
+            return 1;
+        return 0;
 	}
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        if((config.tank & ACTIVE) == ACTIVE)
+        {
+            if((config.tank & HIGH_POWER) == HIGH_POWER)
+                return "sockets:inner_fire_blue";
+            return "sockets:inner_fire_orange";
+        }
+        else
+        {
+            return "sockets:inner_black";
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures()
+    {
+        return new String[] {"sockets:inner_fire_blue", "sockets:inner_fire_orange"};
+    }
 }

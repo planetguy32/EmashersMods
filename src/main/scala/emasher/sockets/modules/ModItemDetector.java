@@ -25,7 +25,7 @@ public class ModItemDetector extends RSPulseModule
 
 	public ModItemDetector(int id)
 	{
-		super(id, "sockets:DETItem_0", "sockets:DETItem_1");
+		super(id, "sockets:DETItem_0");
 	}
 
 	@Override

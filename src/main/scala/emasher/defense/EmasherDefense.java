@@ -28,8 +28,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import emasher.core.*;
 
-@Mod(modid="emasherdefense", name="Defense", version="1.2.1.1", dependencies = "required-after:emashercore")
-//@NetworkMod(clientSideRequired=true, serverSideRequired=false)
+@Mod(modid="emasherdefense", name="ET Defense", version="1.3.0.0", dependencies = "required-after:emashercore")
 public class EmasherDefense
 {
 
@@ -67,35 +66,18 @@ public class EmasherDefense
 			return new ItemStack(deflectorBase, 1, 0);
 		}
 	};
-	
-	// Says where the client and server 'proxy' code is loaded.
+
 	@SidedProxy(clientSide="emasher.defense.client.ClientProxy", serverSide="emasher.defense.CommonProxy")
 	public static CommonProxy proxy;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) 
 	{
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
-		
-		config.load();
-		
-		/*chainFenceID = config.get(Configuration.CATEGORY_BLOCK,  "Chain Fence ID", 2036).getInt();
-		chainSheetID = config.get(Configuration.CATEGORY_ITEM, "Chain Sheet ID", 2037).getInt();
-		fenceWireID = config.get(Configuration.CATEGORY_ITEM, "Fence Wire ID", 2038).getInt();
-		sandbagID = config.get(Configuration.CATEGORY_BLOCK, "Sandbag ID", 2045).getInt();
-		emeryTileID = config.get(Configuration.CATEGORY_BLOCK, "Emery Tile ID", 2046).getInt();
-		deflectorBaseID = config.get(Configuration.CATEGORY_BLOCK, "Deflector Generator ID", 3170).getInt();
-		deflectorID = config.get(Configuration.CATEGORY_BLOCK, "Deflector ID", 3171).getInt();*/
-
-		if(config.hasChanged())
-			config.save();
 	}
 	
 	@EventHandler
 	public void load(FMLInitializationEvent event) 
 	{
-		LanguageRegistry.instance().addStringLocalization("itemGroup.tabDefense", "en_US", "Defense");
-		
 		GameRegistry.registerTileEntity(TileDeflectorGen.class, "DeflectorGen");
 		
 		chainFence = (new BlockThin(chainFenceID, Material.iron))
@@ -122,27 +104,13 @@ public class EmasherDefense
         GameRegistry.registerItem(chainSheet, "chainSheet", "emasherdefense");
 		fenceWire = new ItemFenceWire(fenceWireID);
         GameRegistry.registerItem(fenceWire, "fenceWire", "emasherdefense");
-		
-		LanguageRegistry.addName(chainSheet, "Chain Sheet");
-		LanguageRegistry.addName(fenceWire, "Fence Wire");
-		LanguageRegistry.addName(emeryTile, "Emery Tile");
-		LanguageRegistry.addName(deflectorBase, "Deflector Generator");
-		LanguageRegistry.addName(deflector, "Deflector");
-		
-		//Item.itemsList[chainFence.blockID] = new ItemBlockThin(chainFence.blockID - 256);
+
         GameRegistry.registerBlock(chainFence, ItemBlockThin.class, "chainFence");
 		GameRegistry.registerBlock(sandbag, "sandbag");
 		GameRegistry.registerBlock(emeryTile, "emeryTile");
 		GameRegistry.registerBlock(deflectorBase, "deflectorBase");
 		GameRegistry.registerBlock(deflector, "deflector");		
 
-		LanguageRegistry.instance().addStringLocalization("tile.chainFence.chainFence.name", "Chain Link Fence");
-		LanguageRegistry.instance().addStringLocalization("tile.chainFence.chainPost.name", "Chain Link Fence Post");
-		LanguageRegistry.instance().addStringLocalization("tile.chainFence.barbWireFence.name", "Barbed Wire Fence");
-		LanguageRegistry.instance().addStringLocalization("tile.chainFence.barbPostWood.name", "Barbed Wire Fence Wood Post");
-		LanguageRegistry.instance().addStringLocalization("tile.chainFence.barbPost.name", "Barbed Wire Fence Post");
-		LanguageRegistry.instance().addStringLocalization("tile.chainFence.razorWireFence.name", "Razor Wire Fence");
-		LanguageRegistry.addName(sandbag, "Sandbags");
 
 		addRecipies();
 		
@@ -154,7 +122,6 @@ public class EmasherDefense
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
-		// Stub Method
 	}
 	
 	private void addRecipies()

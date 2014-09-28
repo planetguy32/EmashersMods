@@ -12,7 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import emasher.api.SideConfig;
 import emasher.api.SocketTileAccess;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import emasher.gas.fluids.FluidGas;
 import emasher.api._;

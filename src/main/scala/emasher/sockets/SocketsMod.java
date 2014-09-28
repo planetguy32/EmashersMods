@@ -55,13 +55,7 @@ import emasher.sockets.modules.*;
 import emasher.sockets.client.ClientProxy;
 import emasher.sockets.pipes.*;
 
-@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.1.8.3", dependencies = "required-after:emashercore")
-
-/*@NetworkMod(clientSideRequired=true, serverSideRequired=false,
-clientPacketHandlerSpec =
-@SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = ClientPacketHandler.class),
-serverPacketHandlerSpec =
-@SidedPacketHandler(channels = {"Emasher_Sockets" }, packetHandler = PacketHandler.class))*/
+@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.2.0.0", dependencies = "required-after:emashercore")
 public class SocketsMod
 {
 	@Instance("Sockets")
@@ -110,39 +104,6 @@ public class SocketsMod
 	public static Item slickBucket;
 	public static Item rsIngot;
     public static Item nutBucket;
-	
-	//Ids
-	
-//	public int socketID;
-//	public int tempRSID;
-//	public int paintedPlankID;
-//	public int groundLimestoneID;
-//	public int slickwaterID;
-//	public int moduleID;
-//	public int remoteID;
-//	public int blankID;
-//	public int wrenchID;
-//	public int rsWandID;
-//	public int handPistonID;
-//	public int rsShooterID;
-//	public int cattleProdID;
-//	public int handboilerID;
-//	public int paintCanID;
-//	public int dustsID;
-//	public int slickBucketID;
-//	public int rsIngotID;
-//    public int nutBucketID;
-//
-//	public int fluidPipeID;
-//	public int startPipeID;
-//	public int energyPipeID;
-//
-//	public int mjAdapterID;
-//	public int euAdapterID;
-//
-//	public int miniPortalID;
-//    public int directionChangerID;
-//    public int frameID;
 
 	public int slickwaterAmount;
 	
@@ -227,6 +188,7 @@ public class SocketsMod
 			return new ItemStack(rsWand);
 		}
 	};
+
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) 
@@ -235,9 +197,7 @@ public class SocketsMod
         Property temp;
 		
 		config.load();
-		
-		//vanillaCircuitRecipe = config.get(Configuration.CATEGORY_GENERAL, "Enable Vanilla Circuit Recipe", true).getBoolean(true);
-		//ic2First = config.get(Configuration.CATEGORY_GENERAL, "Look for ic2 Macerator Recipes First", false).getBoolean(false);
+
 		enableGrinder = config.get(Configuration.CATEGORY_GENERAL, "Enable Grinder Module", true).getBoolean(true);
 		enableKiln = config.get(Configuration.CATEGORY_GENERAL, "Enable Kiln Module", true).getBoolean(true);
 		enableMultiSmelter = config.get(Configuration.CATEGORY_GENERAL, "Enable Multi Smelter Module", true).getBoolean(true);
@@ -248,7 +208,6 @@ public class SocketsMod
 		enableWaterIntake = config.get(Configuration.CATEGORY_GENERAL, "Enable Water Intake", true).getBoolean(true);
 		enableHusher = config.get(Configuration.CATEGORY_GENERAL, "Enable Husher", true).getBoolean(true);
 		cbTextures = config.get(Configuration.CATEGORY_GENERAL, "Enable Colour Blind Mode", false).getBoolean(false);
-		//EUPerMJ = config.get(Configuration.CATEGORY_GENERAL, "EU Per MJ", 2.44).getDouble(2.44);
 		smeltSand = config.get(Configuration.CATEGORY_GENERAL, "Hand boiler smelts sand", false).getBoolean(false);
 		RFperMJ = config.get(Configuration.CATEGORY_GENERAL, "RF per MJ", 10).getInt();
 		RFperEU = config.get(Configuration.CATEGORY_GENERAL, "RF per EU", 4).getInt();
@@ -288,8 +247,6 @@ public class SocketsMod
 		MinecraftForge.EVENT_BUS.register(new BucketEventHandler());
 
         innerTextures = new HashMap<String, IIcon>();
-		
-		LanguageRegistry.instance().addStringLocalization("itemGroup.tabSockets", "en_US", "Engineer's Toolbox");
 		
 		GameRegistry.registerTileEntity(TileStartPipe.class, "emasherstartpipe");
 		GameRegistry.registerTileEntity(TileFluidPipe.class, "emasherfluidpipe");
@@ -389,28 +346,21 @@ public class SocketsMod
 		}
 		
 		socket = new BlockSocket().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("modular_socket");
-		//GameRegistry.registerBlock(socket, "modular_socket");
-		LanguageRegistry.addName(socket, "Modular Socket");
-
         GameRegistry.registerBlock(socket, ItemBlockSocket.class, "modular_socket");
 		
 		tempRS = new BlockTempRS().setBlockUnbreakable();
 		GameRegistry.registerBlock(tempRS, "tempRS");
-		LanguageRegistry.addName(tempRS, "TempRS");
 
 		blockStartPipe = new BlockStartPipe().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("start_pipe");
 		GameRegistry.registerBlock(blockStartPipe, "start_pipe");
-		LanguageRegistry.addName(blockStartPipe, "Universal Extractor");
 		blockStartPipe.setCreativeTab(tabSockets);
 		
 		blockFluidPipe = new BlockFluidPipe().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("fluid_pipe");
 		GameRegistry.registerBlock(blockFluidPipe, "fluid_pipe");
-		LanguageRegistry.addName(blockFluidPipe, "Fluid Pipe");
 		blockFluidPipe.setCreativeTab(tabSockets);
 		
 		blockEnergyPipe = new BlockEnergyPipe().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("energy_pipe");
 		GameRegistry.registerBlock(blockEnergyPipe, "energy_pipe");
-		LanguageRegistry.addName(blockEnergyPipe, "Flux Pipe");
 		blockEnergyPipe.setCreativeTab(tabSockets);
 		
 //		mjAdapter = new BlockMJAdapter().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("emasher_MJ_adapter");
@@ -422,14 +372,12 @@ public class SocketsMod
 //		LanguageRegistry.addName(euAdapter, "EU Adapter");
 		
 		rsIngot = new ItemRSIngot();
-        GameRegistry.registerItem(rsIngot, "Sweet Redstone Ingot", "eng_toolbox");
-		LanguageRegistry.addName(rsIngot, "Sweet Redstone Ingot");
+        GameRegistry.registerItem(rsIngot, "rsIngot", "eng_toolbox");
 		
 		if(enableMiniPortal)
 		{
 			miniPortal = new BlockMiniPortal().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeStone).setBlockName("emasher_mini_portal");
 			GameRegistry.registerBlock(miniPortal, "emasher_mini_portal");
-			LanguageRegistry.addName(miniPortal, "Fluidic Nether Portal");
 			
 			GameRegistry.addRecipe(new ItemStack(miniPortal), new Object[]
 					{
@@ -440,7 +388,6 @@ public class SocketsMod
 
         directionChanger = new BlockDirectionChanger().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeGlass).setBlockName("emasher_direction_changer");
 		GameRegistry.registerBlock(directionChanger, "emasher_direction_changer");
-        LanguageRegistry.addName(directionChanger, "Direction Changer");
 
         GameRegistry.addShapelessRecipe(new ItemStack(directionChanger, 4), new Object[]
                 {
@@ -449,7 +396,6 @@ public class SocketsMod
 
         frame = new BlockFrame().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("emasher_frame");
         GameRegistry.registerBlock(frame, "emasher_frame");
-        LanguageRegistry.addName(frame, "Socket Frame");
 
 
         CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(frame, 4),
@@ -480,12 +426,9 @@ public class SocketsMod
 		paintedPlanks = (new BlockPaintedWood(0, Material.wood))
 				.setHardness(2.0F).setResistance(5.0F).setStepSound(Block.soundTypeWood)
 				.setBlockName("paintedPlanks");
-		
-		//Item.itemsList[paintedPlanks.blockID] = new ItemBlockPaintedWood(paintedPlanks.blockID - 256);
 
         GameRegistry.registerBlock(paintedPlanks, ItemBlockPaintedWood.class, "paintedPlanks");
-
-		registerPaintedPlankNames();
+        Blocks.fire.setFireInfo(paintedPlanks, 5, 20);
 		
 		for(int i = 0; i < 16; i++)
 		{
@@ -494,28 +437,21 @@ public class SocketsMod
 		
 		groundLimestone = new BlockGroundLimestone().setHardness(0.6F).setStepSound(Block.soundTypeGravel).setBlockName("groundLimestone");
 		GameRegistry.registerBlock(groundLimestone, "groundLimestone");
-		LanguageRegistry.addName(groundLimestone, "Ground Limestone");
 		
 		handboiler = new ItemHandboiler("", "");
         GameRegistry.registerItem(handboiler, "handBoiler");
-		LanguageRegistry.addName(handboiler, "Hand Boiler");
-		
-		
 		
 		for(int i = 0; i<16; i++)
 		{
 			paintCans[i] = new ItemPaintCan(i);
             GameRegistry.registerItem(paintCans[i], "item.paintCan." + colours[i] + ".name", colours[i] + " Spray Paint");
-			LanguageRegistry.instance().addStringLocalization("item.paintCan." + colours[i] + ".name", colours[i] + " Spray Paint");
 			
 		}
 		
 		remote = new ItemSocketRemote();
-		LanguageRegistry.addName(remote, "Socket Remote");
         GameRegistry.registerItem(remote, "Socket Remote", "eng_toolbox");
 		
 		rsWand = new ItemRSWand();
-		LanguageRegistry.addName(rsWand, "Redstone Wand");
         GameRegistry.registerItem(rsWand, "Redstone Wand", "eng_toolbox");
 		
 		fluidSlickwater = new FluidSlickwater();
@@ -530,15 +466,11 @@ public class SocketsMod
         GameRegistry.registerItem(slickBucket, "Slickwater Bucket", "eng_toolbox");
 
         FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidSlickwater, FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(slickBucket), new ItemStack(Items.bucket));
-		
-		LanguageRegistry.addName(slickBucket, "Slickwater Bucket");
-		LanguageRegistry.addName(blockSlickwater, "Slickwater");
 
         nutBucket = new ItemNutrientBucket();
         nutBucket.setMaxStackSize(1);
         nutBucket.setCreativeTab(this.tabSockets);
         GameRegistry.registerItem(nutBucket, "Nutrient Water Bucket", "eng_toolbox");
-        LanguageRegistry.addName(nutBucket, "Nutrient Water Bucket");
 
         FluidContainerRegistry.registerFluidContainer(new FluidStack(EmasherCore.nutrientWaterFluid, FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(nutBucket), new ItemStack(Items.bucket));
 
@@ -547,30 +479,27 @@ public class SocketsMod
 		//LanguageRegistry.addName(cattleProd, "Cattle Prod");
 		
 		blankSide = new ItemEmasherGeneric("sockets:blankmod", "blankSide");
-		LanguageRegistry.addName(blankSide, "Blank Module");
 		blankSide.setCreativeTab(tabSockets);
         GameRegistry.registerItem(blankSide, "Blank Module", "eng_toolbox");
 		
 		module = new ItemModule();
 		
-		for(int i = 0; i < ModuleRegistry.numModules; i++)
-		{
-			if(ModuleRegistry.getModule(i) != null)
-			{
-				LanguageRegistry.instance().addStringLocalization("item.socket_module." + i + ".name", ModuleRegistry.getModule(i).getLocalizedName());
-
-			}
-		}
+//		for(int i = 0; i < ModuleRegistry.numModules; i++)
+//		{
+//			if(ModuleRegistry.getModule(i) != null)
+//			{
+//				LanguageRegistry.instance().addStringLocalization("item.socket_module." + i + ".name", ModuleRegistry.getModule(i).getLocalizedName());
+//
+//			}
+//		}
         GameRegistry.registerItem(module, "Module", "eng_toolbox");
 		
 		engWrench = new ItemEngWrench();
-		LanguageRegistry.addName(engWrench, "Engineer's Wrench");
         GameRegistry.registerItem(engWrench, "Engineer's Wrench", "eng_toolbox");
 		
 		dusts = new ItemDusts();
 		for(int i = 0; i < ItemDusts.NUM_ITEMS; i++)
-		{
-            LanguageRegistry.instance().addStringLocalization("item.e_dusts." + "e_" + ItemDusts.NAMES[i] + ".name", ItemDusts.NAMES_LOC[i]);
+        {
 			OreDictionary.registerOre(ItemDusts.ORE_NAMES[i], new ItemStack(dusts, 1, i));
 		}
         GameRegistry.registerItem(dusts, "Dust", "eng_toolbox");
@@ -661,36 +590,10 @@ public class SocketsMod
 		registerInRegistry();
 	}
 
-    /*@EventHandler
-    public void serverLoad(FMLServerStartingEvent event) {
-        NetworkRegistry.INSTANCE.newChannel("Emasher_Sockets", new PacketHandler());
-    }*/
-
     @EventHandler
     public void postInitialise(FMLPostInitializationEvent event) {
         packetPipeline.postInitialise();
     }
-
-	private void registerPaintedPlankNames()
-	{
-		
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.blackPlanks.name", "Black Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.redPlanks.name", "Red Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.greenPlanks.name", "Green Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.brownPlanks.name", "Brown Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.bluePlanks.name", "Blue Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.purplePlanks.name", "Purple Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.cyanPlanks.name", "Cyan Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.lightGrayPlanks.name", "Light Gray Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.grayPlanks.name", "Gray Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.pinkPlanks.name", "Pink Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.limePlanks.name", "Lime Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.yellowPlanks.name", "Yellow Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.lightBluePlanks.name", "Light Blue Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.magentaPlanks.name", "Magenta Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.orangePlanks.name", "Orange Planks");
-		LanguageRegistry.instance().addStringLocalization("tile.paintedPlanks.whitePlanks.name", "White Planks");
-	}
 	
 	private void registerOreRecipes()
 	{

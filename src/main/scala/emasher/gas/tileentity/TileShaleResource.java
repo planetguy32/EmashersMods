@@ -1,5 +1,6 @@
 package emasher.gas.tileentity;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.*;
@@ -13,7 +14,7 @@ import net.minecraft.entity.*;
 import net.minecraft.util.*;
 import net.minecraft.potion.*;
 import net.minecraft.nbt.*;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -80,8 +81,8 @@ public class TileShaleResource extends TileEntity
 		FluidStack result = null;
 		if(theFluid == null)
 		{
-			worldObj.setBlock(xCoord, yCoord, zCoord, Block.bedrock.blockID);
-			worldObj.removeBlockTileEntity(xCoord, yCoord, zCoord);
+			worldObj.setBlock(xCoord, yCoord, zCoord, Blocks.bedrock);
+			worldObj.removeTileEntity(xCoord, yCoord, zCoord);
 		}
 		else if(theFluid.amount <= maxDrain && ! EmasherGas.infiniteGasInVent)
 		{
@@ -90,8 +91,8 @@ public class TileShaleResource extends TileEntity
 			{
 				theFluid.amount = 0;
 			}
-			worldObj.setBlock(xCoord, yCoord, zCoord, Block.bedrock.blockID);
-			worldObj.removeBlockTileEntity(xCoord, yCoord, zCoord);
+			worldObj.setBlock(xCoord, yCoord, zCoord, Blocks.bedrock);
+			worldObj.removeTileEntity(xCoord, yCoord, zCoord);
 		}
 		else
 		{

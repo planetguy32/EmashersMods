@@ -7,7 +7,7 @@ import emasher.core.EmasherCore;
 
 public class BlockLimestone extends Block
 {
-	public BlockLimestone(int id) 
+	public BlockLimestone()
 	{
 		super(Material.rock);
 		this.setCreativeTab(EmasherCore.tabEmasher);

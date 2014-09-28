@@ -21,7 +21,7 @@ public class ModInternalClock extends SocketModule
 
     public ModInternalClock(int id)
     {
-        super(id, "sockets:clock", "sockets:clockActive");
+        super(id, "sockets:clock");
     }
 
     @Override
@@ -56,12 +56,21 @@ public class ModInternalClock extends SocketModule
     @Override
     public boolean hasLatchIndicator() { return true; }
 
-    @Override
-    public int getCurrentTexture(SideConfig config)
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
     {
         int timer = config.meta & 7;
-        if(timer == 0) return 0;
-        else return 1;
+        if(timer == 0) return "sockets:inner_latch_inactive";
+        return "sockets:inner_latch_active";
+    }
+
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures()
+    {
+        return new String[] {
+                "sockets:inner_latch_inactive",
+                "sockets:inner_latch_active"
+        };
     }
 
     @SideOnly(Side.CLIENT)

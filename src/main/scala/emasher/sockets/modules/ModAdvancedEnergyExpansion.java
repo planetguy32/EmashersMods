@@ -65,9 +65,6 @@ public class ModAdvancedEnergyExpansion extends SocketModule
 	@Override
 	public int getCurrentTexture(SideConfig config) { return config.meta; }
 	
-	/*@Override
-	public boolean hasTankIndicator() {return true; }*/
-	
 	@Override
 	public boolean hasRSIndicator() { return true; }
 	

@@ -3,6 +3,8 @@ package emasher.sockets.modules;
 import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -51,9 +53,22 @@ public class ModLatchToggle extends SocketModule
 	
 	@Override
 	public boolean hasLatchIndicator() { return true; }
-	
-	@Override
-	public int getCurrentTexture(SideConfig config) { return config.meta; }
+
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        if(config.meta == 0) return "sockets:inner_redstone_inactive";
+        return "sockets:inner_redstone_active";
+    }
+
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures()
+    {
+        return new String[] {
+                "sockets:inner_redstone_inactive",
+                "sockets:inner_redstone_active"
+        };
+    }
 	
 	@Override
 	public boolean isRedstoneInterface() { return true; }

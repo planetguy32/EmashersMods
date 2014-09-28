@@ -48,12 +48,6 @@ import emasher.sockets.items.ItemDusts;
 
 
 @Mod(modid="gascraft", name="GasCraft", version="2.0.4.3", dependencies = "required-after:eng_toolbox")
-@NetworkMod(clientSideRequired=true, serverSideRequired=false, 
-clientPacketHandlerSpec =
-@SidedPacketHandler(channels = {"GasCraft" }, packetHandler = PacketHandler.class),
-serverPacketHandlerSpec =
-@SidedPacketHandler(channels = {"GasCraft" }, packetHandler = PacketHandler.class))
-
 public class EmasherGas
 {
 	@Instance("gascraft")

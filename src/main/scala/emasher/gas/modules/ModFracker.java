@@ -3,11 +3,13 @@ package emasher.gas.modules;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -53,14 +55,14 @@ public class ModFracker extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "hih", "cdu", " b ", Character.valueOf('h'), Block.hopperBlock, Character.valueOf('u'), Item.bucketEmpty,
-				Character.valueOf('i'), Item.ingotIron, Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('d'), Item.diamond, Character.valueOf('b'), SocketsMod.blankSide));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "hih", "cdu", " b ", Character.valueOf('h'), Blocks.hopper, Character.valueOf('u'), Items.bucket,
+				Character.valueOf('i'), Items.iron_ingot, Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('d'), Items.diamond, Character.valueOf('b'), SocketsMod.blankSide));
 		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "hih", "cdu", " b ", Character.valueOf('h'), Block.hopperBlock, Character.valueOf('u'), Item.bucketEmpty,
-				Character.valueOf('i'), "ingotAluminum", Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('d'), Item.diamond, Character.valueOf('b'), SocketsMod.blankSide));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "hih", "cdu", " b ", Character.valueOf('h'), Blocks.hopper, Character.valueOf('u'), Items.bucket,
+				Character.valueOf('i'), "ingotAluminum", Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('d'), Items.diamond, Character.valueOf('b'), SocketsMod.blankSide));
 		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "hih", "cdu", " b ", Character.valueOf('h'), Block.hopperBlock, Character.valueOf('u'), Item.bucketEmpty,
-				Character.valueOf('i'), "ingotTin", Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('d'), Item.diamond, Character.valueOf('b'), SocketsMod.blankSide));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "hih", "cdu", " b ", Character.valueOf('h'), Blocks.hopper, Character.valueOf('u'), Items.bucket,
+				Character.valueOf('i'), "ingotTin", Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('d'), Items.diamond, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	@Override
@@ -115,9 +117,9 @@ public class ModFracker extends SocketModule
 				}
 				
 				
-				if(ts.worldObj.getBlockId(ts.xCoord, ts.yCoord - 1, ts.zCoord) == EmasherGas.shaleResource.blockID && ts.worldObj.getBlockMetadata(ts.xCoord, ts.yCoord -1, ts.zCoord) != 2)
+				if(ts.getWorldObj().getBlock(ts.xCoord, ts.yCoord - 1, ts.zCoord) == EmasherGas.shaleResource && ts.getWorldObj().getBlockMetadata(ts.xCoord, ts.yCoord -1, ts.zCoord) != 2)
 				{
-					TileEntity te = ts.worldObj.getBlockTileEntity(ts.xCoord, ts.yCoord - 1, ts.zCoord);
+					TileEntity te = ts.getWorldObj().getTileEntity(ts.xCoord, ts.yCoord - 1, ts.zCoord);
 					if(te != null && te instanceof TileShaleResource)
 					{
 						TileShaleResource tsr = (TileShaleResource)te;
@@ -146,9 +148,9 @@ public class ModFracker extends SocketModule
 			{
 				int amntToDraw = 1000;
 				
-				if(ts.worldObj.getBlockId(ts.xCoord, ts.yCoord -1, ts.zCoord) == EmasherGas.shaleResource.blockID && ts.worldObj.getBlockMetadata(ts.xCoord, ts.yCoord -1, ts.zCoord) == 2)
+				if(ts.getWorldObj().getBlock(ts.xCoord, ts.yCoord -1, ts.zCoord) == EmasherGas.shaleResource && ts.getWorldObj().getBlockMetadata(ts.xCoord, ts.yCoord -1, ts.zCoord) == 2)
 				{
-					TileEntity te = ts.worldObj.getBlockTileEntity(ts.xCoord, ts.yCoord - 1, ts.zCoord);
+					TileEntity te = ts.getWorldObj().getTileEntity(ts.xCoord, ts.yCoord - 1, ts.zCoord);
 					if(te != null && te instanceof TileShaleResource)
 					{
 						TileShaleResource tsr = (TileShaleResource)te;

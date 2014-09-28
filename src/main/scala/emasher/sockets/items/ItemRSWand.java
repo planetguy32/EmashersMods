@@ -23,7 +23,7 @@ public class ItemRSWand extends Item
 		
 		this.setCreativeTab(SocketsMod.tabSockets);
 		this.setMaxStackSize(1);
-		this.setUnlocalizedName("eng_rsWand");
+		this.setUnlocalizedName("redstone_wand");
 		this.setMaxDamage(64);
 	}
 	

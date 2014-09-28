@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 public class BlockMachine extends Block
 {
 
-	public BlockMachine(int id)
+	public BlockMachine()
 	{
 		super(Material.iron);
 		this.setCreativeTab(EmasherCore.tabEmasher);

@@ -24,7 +24,7 @@ public class ModDelayer extends SocketModule
 
 	public ModDelayer(int id)
 	{
-		super(id, "sockets:delayer0", "sockets:delayer1");
+		super(id, "sockets:delayer0");
 	}
 
 	@Override
@@ -63,14 +63,23 @@ public class ModDelayer extends SocketModule
 	
 	@Override
 	public boolean isRedstoneInterface() { return true; }
-	
-	@Override
-	public int getCurrentTexture(SideConfig config)
-	{
-		int timer = config.meta & 7;
-		if(timer == 0) return 0;
-		else return 1;
-	}
+
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        int timer = config.meta & 7;
+        if(timer == 0) return "sockets:inner_redstone_inactive";
+        return "sockets:inner_redstone_active";
+    }
+
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures()
+    {
+        return new String[] {
+                "sockets:inner_redstone_inactive",
+                "sockets:inner_redstone_active"
+        };
+    }
 	
 	@SideOnly(Side.CLIENT)
 	public IIcon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side)

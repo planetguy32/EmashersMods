@@ -1,8 +1,8 @@
 package emasher.api;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
-import emasher.api.SocketTileAccess;
-//import emasher.sockets.PacketHandler;
 
 public abstract class RSGateModule extends SocketModule
 {
@@ -30,9 +30,22 @@ public abstract class RSGateModule extends SocketModule
 	
 	@Override
 	public boolean hasLatchIndicator() { return true; }
-	
-	@Override
-	public int getCurrentTexture(SideConfig config) { return config.meta; }
+
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        if(config.meta == 0) return "sockets:inner_redstone_inactive";
+        return "sockets:inner_redstone_active";
+    }
+
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures()
+    {
+        return new String[] {
+                "sockets:inner_redstone_inactive",
+                "sockets:inner_redstone_active"
+        };
+    }
 	
 	@Override
 	public boolean isRedstoneInterface() { return true; }

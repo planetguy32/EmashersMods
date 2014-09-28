@@ -27,7 +27,7 @@ public class BlockNormalCube extends Block
 	private static IIcon[] textures;
 	private int numBlocks;
 
-	public BlockNormalCube(int par1, int par2, Material par4Material) 
+	public BlockNormalCube(int par2, Material par4Material)
 	{
 		super(par4Material);
 		this.setCreativeTab(EmasherCore.tabEmasher);

@@ -250,18 +250,18 @@ public class BlockSocket extends BlockContainer
 					}
 				}
 			}
-			/*else if(Loader.isModLoaded("BuildCraft|Core") && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemFacade)
-			{
-				int bId = ItemFacade.getBlockId(player.getCurrentEquippedItem());
-				
-				if(Block.blocksList[bId] != null && Block.blocksList[bId].isOpaqueCube())
-				{
-					ts.facID[side] = bId;
-					ts.facMeta[side] =ItemFacade.getMetaData(player.getCurrentEquippedItem());
-					PacketHandler.instance.SendClientSideState(ts, (byte)side);
-					player.getCurrentEquippedItem().stackSize--;
-				}
-			}*/
+//			else if(Loader.isModLoaded("BuildCraft|Core") && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof ItemFacade)
+//			{
+//				int bId = ItemFacade.getBlockId(player.getCurrentEquippedItem());
+//
+//				if(Block.blocksList[bId] != null && Block.blocksList[bId].isOpaqueCube())
+//				{
+//					ts.facID[side] = bId;
+//					ts.facMeta[side] =ItemFacade.getMetaData(player.getCurrentEquippedItem());
+//					PacketHandler.instance.SendClientSideState(ts, (byte)side);
+//					player.getCurrentEquippedItem().stackSize--;
+//				}
+//			}
 			else
 			{
 				SocketModule m = ts.getSide(ForgeDirection.getOrientation(side));

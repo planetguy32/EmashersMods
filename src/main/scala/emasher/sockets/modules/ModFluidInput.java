@@ -3,6 +3,8 @@ package emasher.sockets.modules;
 import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -84,4 +86,20 @@ public class ModFluidInput extends SocketModule
 		
 		return 0;
 	}
+
+    @Override
+    public void onTankChange(SideConfig config, int index, SocketTileAccess ts, ForgeDirection side, boolean add)
+    {
+        if(index == config.tank)
+        {
+            ts.sendClientTankSlot(index);
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getTankToRender(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        return config.tank;
+    }
 }

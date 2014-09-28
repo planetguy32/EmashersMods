@@ -2,6 +2,8 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -47,6 +49,20 @@ public class ModFreezer extends SocketModule
 		l.add(SocketsMod.PREF_GREEN + "Output inventory");
 		l.add(SocketsMod.PREF_AQUA + "Requires 160 RF/operation");
 	}
+
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        return "sockets:inner_freezer";
+    }
+
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures()
+    {
+        return new String[] {
+                "sockets:inner_freezer"
+        };
+    }
 	
 	@Override
 	public boolean hasTankIndicator() { return true; }

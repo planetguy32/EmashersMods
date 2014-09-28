@@ -29,7 +29,7 @@ public class BlockOre extends Block
 	private static IIcon[] textures;
 	private int numBlocks;
 
-	public BlockOre(int par1, int par2, Material par4Material) 
+	public BlockOre(int par2, Material par4Material)
 	{
 		super(par4Material);
 		this.setCreativeTab(EmasherCore.tabEmasher);

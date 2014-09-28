@@ -409,4 +409,6 @@ public abstract class SocketModule
 	public void onSocketPlaced(SideConfig config, SocketTileAccess ts, ForgeDirection side) {}
 
     public boolean canModuleBeDyed() { return false; }
+
+    public boolean renderEnergyAmount() { return false; }
 }

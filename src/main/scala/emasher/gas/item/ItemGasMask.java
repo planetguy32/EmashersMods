@@ -10,7 +10,7 @@ import net.minecraft.block.*;
 import net.minecraft.item.*;
 import net.minecraft.tileentity.*;
 import net.minecraft.block.material.*;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.*;
 import net.minecraft.entity.player.*;
 import net.minecraft.entity.*;
@@ -20,9 +20,9 @@ import net.minecraftforge.common.*;
 
 public class ItemGasMask extends ItemArmor
 {
-	public ItemGasMask(int par1, EnumArmorMaterial par2EnumArmorMaterial,
+	public ItemGasMask(ArmorMaterial par2EnumArmorMaterial,
 			int par3, int par4) {
-		super(par1, par2EnumArmorMaterial, par3, par4);
+		super(par2EnumArmorMaterial, par3, par4);
 
 		setCreativeTab(EmasherGas.tabGasCraft);
 		this.setUnlocalizedName("gasmask");
@@ -35,7 +35,7 @@ public class ItemGasMask extends ItemArmor
 		return "emasher:gasmask.png";
 	}
 	
-	public void registerIcons(IconRegister registry)
+	public void registerIcons(IIconRegister registry)
 	{
 		this.itemIcon = registry.registerIcon("gascraft:gasmask");
 	}

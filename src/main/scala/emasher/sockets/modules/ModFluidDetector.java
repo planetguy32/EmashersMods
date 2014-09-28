@@ -25,7 +25,7 @@ public class ModFluidDetector extends RSPulseModule
 
 	public ModFluidDetector(int id)
 	{
-		super(id, "sockets:DETLiquid_0", "sockets:DETLiquid_1");
+		super(id, "sockets:DETLiquid_0");
 	}
 
 	@Override

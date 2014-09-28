@@ -20,7 +20,7 @@ public class ModRSAND extends RSGateModule
 
 	public ModRSAND(int id)
 	{
-		super(id, "sockets:AND_0", "sockets:AND_1");
+		super(id, "sockets:AND_0");
 	}
 
 	@Override

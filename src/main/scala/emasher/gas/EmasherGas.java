@@ -1,9 +1,12 @@
 package emasher.gas;
 
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import buildcraft.api.fuels.IronEngineFuel;
-import buildcraft.api.recipes.*;
+import buildcraft.api.recipes.BuildcraftRecipes;
 import mods.railcraft.api.fuel.*;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -13,12 +16,9 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import net.minecraftforge.common.*;
+import net.minecraftforge.common.util.EnumHelper;
 import cpw.mods.fml.common.Loader;
 import net.minecraft.block.*;
 import net.minecraft.item.*;
@@ -47,7 +47,7 @@ import emasher.sockets.SocketsMod;
 import emasher.sockets.items.ItemDusts;
 
 
-@Mod(modid="gascraft", name="GasCraft", version="2.0.4.3", dependencies = "required-after:eng_toolbox")
+@Mod(modid="gascraft", name="GasCraft", version="2.1.0.0", dependencies = "required-after:eng_toolbox")
 public class EmasherGas
 {
 	@Instance("gascraft")
@@ -99,41 +99,23 @@ public class EmasherGas
 	public static boolean flatBedrock;
 	public static int flatBedrockTop;
 	
-	public int naturalGasID;
-	public int propellentID;
-	public int hydrogenID;
-	public int smokeID;
-	public int toxicGasID;
-	public int neurotoxinID;
-	public int corrosiveGasID;
-	public int plasmaID;
-	
-	public int vialID;
-	public int filledVialID;
-	
-	
-	public int shaleID;
-	public int gasPocketID;
-	public int plasmaPocketID;
-	
-	public int gasMaskID;
-	public int smokeGrenadeID;
-	public int ashID;
-	
-	public int chimneyID;
-	
-	
 	public static int maxGasInVent;
 	public static int minGasInVent;
 	public static boolean infiniteGasInVent;
-	
-	public static CreativeTabs tabGasCraft = new CreativeTabs("tabGasCraft")
-	{
-		public ItemStack getIconItemStack()
-		{
-			return new ItemStack(vialFilled, 1, 0);
-		}
-	};
+
+    public static CreativeTabs tabGasCraft = new CreativeTabs("tabGasCraft")
+    {
+        @Override
+        public Item getTabIconItem()
+        {
+            return new ItemStack(gasMask).getItem();
+        }
+
+        public ItemStack getIconItemStack()
+        {
+            return new ItemStack(gasMask);
+        }
+    };
 	
 	public static String[] dyes =
         {
@@ -155,7 +137,7 @@ public class EmasherGas
             "dyeWhite"
         };
 	
-	static EnumArmorMaterial enumArmorMaterialGas = EnumHelper.addArmorMaterial("Gas", 5, new int[]{1, 3, 2, 1}, 15);
+	static ItemArmor.ArmorMaterial enumArmorMaterialGas = EnumHelper.addArmorMaterial("Gas", 5, new int[]{1, 3, 2, 1}, 15);
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) 
@@ -163,28 +145,6 @@ public class EmasherGas
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		
 		config.load();
-		
-		naturalGasID = config.get(Configuration.CATEGORY_BLOCK,  "Gas Block ID", 2039).getInt();
-		propellentID = config.get(Configuration.CATEGORY_BLOCK, "Propellent ID", 2065).getInt();
-		hydrogenID = config.get(Configuration.CATEGORY_BLOCK, "Hydrogen Block ID", 2097).getInt();
-		smokeID = config.get(Configuration.CATEGORY_BLOCK, "Smoke ID", 2098).getInt();
-		toxicGasID = config.get(Configuration.CATEGORY_BLOCK, "Weaponized Gas Block ID", 2099).getInt();
-		neurotoxinID = config.get(Configuration.CATEGORY_BLOCK, "Neurotoxin ID", 2100).getInt();
-		corrosiveGasID = config.get(Configuration.CATEGORY_BLOCK, "Corrosive Gas ID", 2101).getInt();
-		plasmaID = config.get(Configuration.CATEGORY_BLOCK, "Plasma ID", 2102).getInt();
-		
-		vialID = config.get(Configuration.CATEGORY_ITEM, "Vial ID", 4341).getInt();
-		filledVialID = config.get(Configuration.CATEGORY_GENERAL, "Filled Vial ID", 4342).getInt();
-		
-		shaleID = config.get(Configuration.CATEGORY_BLOCK, "Shale Resource ID", 2040).getInt();
-		gasPocketID = config.get(Configuration.CATEGORY_BLOCK, "Gas Pocket ID", 2112).getInt();
-		plasmaPocketID = config.get(Configuration.CATEGORY_BLOCK, "Plasma Pocket ID", 2113).getInt();
-		
-		gasMaskID = config.get(Configuration.CATEGORY_ITEM, "Gas Mask ID", 4243).getInt();
-		smokeGrenadeID = config.get(Configuration.CATEGORY_ITEM, "Smoke Grenade ID", 4205).getInt();
-		ashID = config.get(Configuration.CATEGORY_ITEM, "Ash ID", 4206).getInt();
-		
-		chimneyID = config.get(Configuration.CATEGORY_BLOCK, "Chimney ID", 2108).getInt();
 		
 		maxGasInVent = config.get(Configuration.CATEGORY_GENERAL, "Max Fluid In Shale Resources (In Buckets)", 50000).getInt();
 		minGasInVent = config.get(Configuration.CATEGORY_GENERAL, "Min Fluid In Shale Resources (In Buckets)", 5000).getInt();
@@ -197,26 +157,27 @@ public class EmasherGas
 			config.save();
 		
 		ModuleRegistry.addModuleRegistrationManager(new GasModuleRegistrationManager());
-	}
+
+        registerItems();
+        registerBlocks();
+        registerFluids();
+
+        registerTileEntities();
+        registerEvents();
+        registerWorldGen();
+
+        proxy.registerRenderers();
+
+        registerInRegistry();
+
+        registerRecipes();
+    }
 	
 	@EventHandler
 	public void load(FMLInitializationEvent event) 
 	{
-		registerItems();
-		registerBlocks();
-		registerFluids();
-		registerRecipes();
-		registerTileEntities();
-		registerEvents();
-		registerNames();
-		registerWorldGen();
-		
-		LanguageRegistry.instance().addStringLocalization("itemGroup.tabGasCraft", "en_US", "GasCraft");
-		
-		proxy.registerRenderers();
-		
-		registerInRegistry();
-		
+        registerRecipes();
+
 	}
 	
 	private void registerTileEntities()
@@ -231,28 +192,25 @@ public class EmasherGas
 	
 	private void registerBlocks()
 	{
-		gasPocket = (new BlockMineGas(gasPocketID)).setHardness(1.5F).setResistance(10.0F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("gasPocket");
-		plasmaPocket = new BlockNetherGas(plasmaPocketID).setHardness(0.4F).setResistance(10.0F).setStepSound(Block.soundStoneFootstep).setUnlocalizedName("plasmaPocket");
+		gasPocket = (new BlockMineGas()).setHardness(1.5F).setResistance(10.0F).setStepSound(Block.soundTypeStone).setBlockName("gasPocket");
+		plasmaPocket = new BlockNetherGas().setHardness(0.4F).setResistance(10.0F).setStepSound(Block.soundTypeStone).setBlockName("plasmaPocket");
 		
-		naturalGas = (BlockGasGeneric)new BlockNaturalGas(naturalGasID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("naturalGas").setResistance(0.0F);
-		propellent = (BlockGasGeneric)new BlockPropellent(propellentID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("propellent").setResistance(0.0F);
-		hydrogen = (BlockGasGeneric)new BlockHydrogen(hydrogenID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("hydrogen").setResistance(0.0F);
-		smoke = (BlockGasGeneric)new BlockSmoke(smokeID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("smoke").setResistance(0.0F);
-		toxicGas = (BlockGasGeneric)new BlockWeaponizedGas(toxicGasID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("toxicGas").setResistance(0.0F);
-		neurotoxin = (BlockGasGeneric)new BlockNeurotoxin(neurotoxinID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("neurotoxin").setResistance(0.0F);
-		corrosiveGas = (BlockGasGeneric) new BlockCorrosiveGas(corrosiveGasID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("corrosiveGas").setResistance(0.0F);
-		plasma = (BlockGasGeneric) new BlockPlasma(plasmaID).setBlockUnbreakable().setLightValue(0.0F).setUnlocalizedName("plasma").setResistance(0.0F);
+		naturalGas = (BlockGasGeneric)new BlockNaturalGas().setBlockUnbreakable().setBlockName("naturalGas").setResistance(0.0F);
+		propellent = (BlockGasGeneric)new BlockPropellent().setBlockUnbreakable().setBlockName("propellent").setResistance(0.0F);
+		hydrogen = (BlockGasGeneric)new BlockHydrogen().setBlockUnbreakable().setBlockName("hydrogen").setResistance(0.0F);
+		smoke = (BlockGasGeneric)new BlockSmoke().setBlockUnbreakable().setBlockName("smoke").setResistance(0.0F);
+		toxicGas = (BlockGasGeneric)new BlockWeaponizedGas().setBlockUnbreakable().setBlockName("toxicGas").setResistance(0.0F);
+		neurotoxin = (BlockGasGeneric)new BlockNeurotoxin().setBlockUnbreakable().setBlockName("neurotoxin").setResistance(0.0F);
+		corrosiveGas = (BlockGasGeneric) new BlockCorrosiveGas().setBlockUnbreakable().setBlockName("corrosiveGas").setResistance(0.0F);
+		plasma = (BlockGasGeneric) new BlockPlasma().setBlockUnbreakable().setBlockName("plasma").setResistance(0.0F);
 		
-		shaleResource = new BlockShaleResource(shaleID);
-		Item.itemsList[shaleResource.blockID] = new ItemBlockShaleResource(shaleResource.blockID - 256);
-		LanguageRegistry.instance().addStringLocalization("tile.shaleResource.gas.name", "Shale Gas");
-		LanguageRegistry.instance().addStringLocalization("tile.shaleResource.oil.name", "Shale Oil");
-		LanguageRegistry.instance().addStringLocalization("tile.shaleResource.plasma.name", "Shale Plasma");
+		shaleResource = new BlockShaleResource();
+
+        GameRegistry.registerBlock(shaleResource, ItemBlockShaleResource.class, "shaleResource");
 		
-		chimney = new BlockDuct(chimneyID).setResistance(5.0F).setHardness(2.0F).setStepSound(Block.soundMetalFootstep).setUnlocalizedName("chimney");
+		chimney = new BlockDuct().setResistance(5.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("chimney");
 		GameRegistry.registerBlock(chimney, "chimney");
-		
-		
+
 		GameRegistry.registerBlock(naturalGas, "naturalGas");
 		GameRegistry.registerBlock(propellent, "propellent");
 		GameRegistry.registerBlock(hydrogen, "hydrogen");
@@ -262,9 +220,6 @@ public class EmasherGas
 		GameRegistry.registerBlock(corrosiveGas, "corrosiveGas");
 		GameRegistry.registerBlock(gasPocket, "gasPocket");
 		GameRegistry.registerBlock(plasma, "plasma");
-		
-		
-		
 	}
 	
 	private void registerFluids()
@@ -301,8 +256,11 @@ public class EmasherGas
 	
 	private void registerFluidContainers()
 	{
-		vial = new ItemGasVial(vialID);
-		vialFilled = new ItemGasVialFilled(filledVialID);
+		vial = new ItemGasVial();
+		vialFilled = new ItemGasVialFilled();
+
+        GameRegistry.registerItem(vial, "vial");
+        GameRegistry.registerItem(vialFilled, "vialFilled");
 		
 		FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidNaturalGas, 4000), new ItemStack(vialFilled, 1, 0), new ItemStack(vial));
 		FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidPropellent, 4000), new ItemStack(vialFilled, 1, 1), new ItemStack(vial));
@@ -312,41 +270,20 @@ public class EmasherGas
 		FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidNeurotoxin, 4000), new ItemStack(vialFilled, 1, 5), new ItemStack(vial));
 		FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidCorrosiveGas, 4000), new ItemStack(vialFilled, 1, 6), new ItemStack(vial));
 		FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidPlasma, 4000), new ItemStack(vialFilled, 1, 7), new ItemStack(vial));
-		
-		LanguageRegistry.instance().addStringLocalization("item.gasVialFilled.naturalGas.name", "Natural Gas Vial");
-		LanguageRegistry.instance().addStringLocalization("item.gasVialFilled.propellent.name", "Propellent Vial");
-		LanguageRegistry.instance().addStringLocalization("item.gasVialFilled.hydrogen.name", "Hydrogen Vial");
-		LanguageRegistry.instance().addStringLocalization("item.gasVialFilled.smoke.name", "Smoke Vial");
-		LanguageRegistry.instance().addStringLocalization("item.gasVialFilled.toxicGas.name", "Toxic Gas Vial");
-		LanguageRegistry.instance().addStringLocalization("item.gasVialFilled.neurotoxin.name", "Neurotoxin Vial");
-		LanguageRegistry.instance().addStringLocalization("item.gasVialFilled.corrosiveGas.name", "Corrosive Gas Vial");
-		LanguageRegistry.instance().addStringLocalization("item.gasVialFilled.plasma.name", "Nether Plasma Vial");
 	}
 	
 	private void registerItems()
 	{
-		gasMask = new ItemGasMask(gasMaskID, enumArmorMaterialGas, CommonProxy.ARMOR_GAS, 0);
-		smokeGrenade = new ItemSmokeGrenade(smokeGrenadeID);
-		ash = new ItemEmasherGeneric(ashID, "gascraft:ash", "ash");
+		gasMask = new ItemGasMask(enumArmorMaterialGas, 0, 0);
+		smokeGrenade = new ItemSmokeGrenade();
+		ash = new ItemEmasherGeneric("gascraft:ash", "ash");
+
+        ash.setCreativeTab(tabGasCraft);
+        GameRegistry.registerItem(gasMask, "gasMask");
+        GameRegistry.registerItem(smokeGrenade, "smokeGrenade");
+        GameRegistry.registerItem(ash, "ash");
+
 		OreDictionary.registerOre("dustAsh", ash);
-	}
-	
-	private void registerNames()
-	{
-		LanguageRegistry.addName(naturalGas, "naturalGas");
-		LanguageRegistry.addName(propellent, "Propellent");
-		LanguageRegistry.addName(hydrogen, "Hydrogen");
-		LanguageRegistry.addName(smoke, "Smoke");
-		LanguageRegistry.addName(toxicGas, "Weaponized Gas");
-		LanguageRegistry.addName(neurotoxin, "Deadly Neurotoxin");
-		LanguageRegistry.addName(corrosiveGas, "Corrosive Gas");
-		LanguageRegistry.addName(vial, "Empty Gas Vial");
-		LanguageRegistry.addName(gasMask, "Gas Mask");
-		LanguageRegistry.addName(chimney, "Chimney");
-		LanguageRegistry.addName(smokeGrenade, "Smoke Grenade");
-		LanguageRegistry.addName(gasPocket, "Gas Pocket");
-		LanguageRegistry.addName(plasmaPocket, "Nether Plasma Pocket");
-		LanguageRegistry.addName(ash, "Ash");
 	}
 	
 	private void registerRecipes()
@@ -355,7 +292,7 @@ public class EmasherGas
         PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.superAlgae), new FluidStack(FluidRegistry.WATER, 1000), new FluidStack(fluidHydrogen, 3000));
 		PhotobioReactorRecipeRegistry.registerRecipe(new ItemStack(EmasherCore.superAlgae), new FluidStack(fluidToxicGas, 1000), new FluidStack(fluidNeurotoxin, 500));
 		
-		MixerRecipeRegistry.registerRecipe(new ItemStack(Item.gunpowder), new FluidStack(fluidPropellent, 1000), new FluidStack(fluidToxicGas, 500));
+		MixerRecipeRegistry.registerRecipe(new ItemStack(Items.gunpowder), new FluidStack(fluidPropellent, 1000), new FluidStack(fluidToxicGas, 500));
 		MixerRecipeRegistry.registerRecipe(new ItemStack(SocketsMod.dusts, 1, ItemDusts.Const.lime.ordinal()), new FluidStack(fluidPropellent, 100), new FluidStack(fluidCorrosiveGas, 100));
 		
 		FuelManager.addBoilerFuel(fluidNaturalGas, 20000);
@@ -385,23 +322,23 @@ public class EmasherGas
 		toSend.setString("fluidName", "gasCraft_hydrogen");
 		toSend.setInteger("energy", 30000);
 		FMLInterModComms.sendMessage("ThermalExpansion", "CompressionFuel", toSend);
+
+        BuildcraftRecipes.refinery.addRecipe(new FluidStack(fluidNaturalGas, 2), new FluidStack(fluidPropellent, 1), 1, 1);
+
+        FurnaceRecipes.smelting().func_151394_a(new ItemStack(vialFilled, 0, 1), new ItemStack(vialFilled, 1, 1), 1.0F);
 		
-		RefineryRecipes.addRecipe(new FluidStack(fluidNaturalGas, 2), new FluidStack(fluidPropellent, 1), 1, 1);
-		
-		FurnaceRecipes.smelting().addSmelting(this.vialFilled.itemID, 0, new ItemStack(vialFilled, 1, 1), 1.0F);
-		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(vial, 8), "s", "g", "g", Character.valueOf('g'), Block.glass, Character.valueOf('s'), Item.silk));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(gasMask), "lll", "lgl", "vwv", Character.valueOf('g'), Block.glass, Character.valueOf('l'), Item.leather,
-				Character.valueOf('v'), vial, Character.valueOf('w'), Block.cloth));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(smokeGrenade), " i ", "isi", " i ", Character.valueOf('i'), Item.ingotIron, Character.valueOf('s'), new ItemStack(vialFilled, 1, 3)));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(vial, 8), "s", "g", "g", Character.valueOf('g'), Blocks.glass, Character.valueOf('s'), Items.string));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(gasMask), "lll", "lgl", "vwv", Character.valueOf('g'), Blocks.glass, Character.valueOf('l'), Items.leather,
+				Character.valueOf('v'), vial, Character.valueOf('w'), Blocks.wool));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(smokeGrenade), " i ", "isi", " i ", Character.valueOf('i'), Items.iron_ingot, Character.valueOf('s'), new ItemStack(vialFilled, 1, 3)));
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(smokeGrenade), " i ", "isi", " i ", Character.valueOf('i'), "ingotAluminum", Character.valueOf('s'), new ItemStack(vialFilled, 1, 3)));
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(smokeGrenade), " i ", "isi", " i ", Character.valueOf('i'), "ingotTin", Character.valueOf('s'), new ItemStack(vialFilled, 1, 3)));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(chimney), " i ", "i i", " i ", Character.valueOf('i'), Item.brick));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(chimney), " i ", "i i", " i ", Character.valueOf('i'), Items.brick));
 		
 		for(int i = 0; i < 16; i++)
 		{
 			CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.paintCans[i], 1),
-						"i", "p", "d", Character.valueOf('i'), Block.stoneButton, Character.valueOf('p'), new ItemStack(vialFilled, 1, 1), Character.valueOf('d'), dyes[i])
+						"i", "p", "d", Character.valueOf('i'), Blocks.stone_button, Character.valueOf('p'), new ItemStack(vialFilled, 1, 1), Character.valueOf('d'), dyes[i])
 					);
 		}
 	}
@@ -414,7 +351,7 @@ public class EmasherGas
 	
 	private void registerWorldGen()
 	{
-		if(this.spawnMineGas)GameRegistry.registerWorldGenerator(gasGenerator);
+		if(this.spawnMineGas)GameRegistry.registerWorldGenerator(gasGenerator, 1);
 	}
 	
 	@EventHandler

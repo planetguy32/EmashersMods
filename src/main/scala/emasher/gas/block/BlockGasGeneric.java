@@ -2,28 +2,18 @@ package emasher.gas.block;
 
 import java.util.Random;
 
+import emasher.gas.EmasherGas;
 import emasher.gas.tileentity.TileGas;
 
 import net.minecraft.init.Blocks;
-import net.minecraft.world.biome.*;
 import net.minecraft.world.*;
-import net.minecraft.world.chunk.*;
 import net.minecraft.block.*;
-import net.minecraft.item.*;
 import net.minecraft.tileentity.*;
 import net.minecraft.block.material.*;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.entity.*;
 import net.minecraft.util.*;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.*;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fluids.*;
 
 public abstract class BlockGasGeneric extends BlockContainer implements IFluidBlock
 {
@@ -33,22 +23,20 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
 	public boolean isDestructive;
 	public Fluid blocksFluid;
 	
-	public IIcon[] textures = new IIcon[16];
-	
-	public BlockGasGeneric(int ID, int lightOpacity, boolean canExplode)
+	public BlockGasGeneric(int lightOpacity, boolean canExplode)
 	{
-		super(Material.air);
+		super(Material.circuits);
 		
 		setLightOpacity(lightOpacity);
 		this.canExplode = canExplode;
 		this.canBurn = false;
 		this.isDestructive = false;
-		this.setCreativeTab(null);
+		this.setCreativeTab(EmasherGas.tabGasCraft);
 	}
 	
-	public BlockGasGeneric(int id, int lightOpacity, boolean canExplode, boolean canBurn, boolean isDestructive)
+	public BlockGasGeneric(int lightOpacity, boolean canExplode, boolean canBurn, boolean isDestructive)
 	{
-		this(id, lightOpacity, canExplode);
+		this(lightOpacity, canExplode);
 		this.canBurn = canBurn;
 		this.isDestructive = isDestructive;
 	}
@@ -56,8 +44,7 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
 	@Override
 	public TileEntity createNewTileEntity(World var1, int metadata)
 	{
-		TileGas entity = new TileGas(this.getFluid());
-		return entity;
+		return new TileGas(this.getFluid());
 	}
 	
 	@Override
@@ -168,11 +155,11 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
     /**
      * If this block doesn't render as an ordinary block it will return False (examples: signs, buttons, stairs, etc)
      */
-	@Override
-    public boolean renderAsNormalBlock()
-    {
-        return false;
-    }
+//	@Override
+//    public boolean renderAsNormalBlock()
+//    {
+//        return false;
+//    }
 
 	@Override
 	public Fluid getFluid()
@@ -223,6 +210,9 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
         return false;
     }
 
-
-	
+    @Override
+    public float getFilledPercentage(World world, int x, int y, int z)
+    {
+        return 1;
+    }
 }

@@ -53,8 +53,6 @@ public class BlockSocket extends BlockContainer
 	@SideOnly(Side.CLIENT)
 	public IIcon[] bar2;
 	@SideOnly(Side.CLIENT)
-	public IIcon buttonInd;
-	@SideOnly(Side.CLIENT)
 	public IIcon[] chargeInd;
 	@SideOnly(Side.CLIENT)
 	public IIcon hasData;
@@ -432,8 +430,7 @@ public class BlockSocket extends BlockContainer
 		{
 			chargeInd[i] = ir.registerIcon("sockets:chargeInd" + i);
 		}
-		
-		buttonInd = ir.registerIcon("sockets:buttonInd");
+
 		hasData = ir.registerIcon("sockets:hasData");
 		
     }

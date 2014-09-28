@@ -1,30 +1,24 @@
 package emasher.gas.block;
 
-import java.util.*;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import emasher.core.EmasherCore;
 import emasher.gas.EmasherGas;
 import emasher.gas.tileentity.TileDuct;
 
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
 
 public class BlockDuct extends BlockContainer
 {
 	@SideOnly(Side.CLIENT)
 	public IIcon topTexture;
 	
-	public BlockDuct(int par1) 
+	public BlockDuct()
 	{
 		super(Material.rock);
 		this.setCreativeTab(EmasherGas.tabGasCraft);

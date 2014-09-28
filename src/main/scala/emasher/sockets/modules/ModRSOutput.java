@@ -19,7 +19,7 @@ public class ModRSOutput extends RSGateModule
 
 	public ModRSOutput(int id)
 	{
-		super(id, "sockets:RSOUT_0", "sockets:RSOUT_1");
+		super(id, "sockets:RSOUT_0");
 	}
 
 	@Override

@@ -1,26 +1,12 @@
 package emasher.gas.tileentity;
 
 import net.minecraft.init.Blocks;
-import net.minecraft.world.biome.*;
-import net.minecraft.world.*;
-import net.minecraft.world.chunk.*;
-import net.minecraft.block.*;
-import net.minecraft.item.*;
 import net.minecraft.tileentity.*;
-import net.minecraft.block.material.*;
-import net.minecraft.creativetab.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.entity.*;
-import net.minecraft.util.*;
-import net.minecraft.potion.*;
 import net.minecraft.nbt.*;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
-import java.util.*;
 
 import cpw.mods.fml.common.Loader;
 import emasher.gas.EmasherGas;

@@ -4,10 +4,10 @@ import java.util.List;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import emasher.core.EmasherCore;
 import emasher.gas.EmasherGas;
 import emasher.gas.tileentity.TileShaleResource;
 
+import emasher.sockets.SocketsMod;
 import net.minecraft.world.*;
 import net.minecraft.block.*;
 import net.minecraft.item.*;
@@ -22,7 +22,7 @@ public class BlockShaleResource extends BlockContainer
 	@SideOnly(Side.CLIENT)
 	public IIcon[] textures;
 	
-	public BlockShaleResource(int par1) 
+	public BlockShaleResource()
 	{
 		super(Material.rock);
 		this.setCreativeTab(EmasherGas.tabGasCraft);
@@ -69,6 +69,8 @@ public class BlockShaleResource extends BlockContainer
             par3List.add(new ItemStack(par1, 1, var4));
         }
     }
+
+
 	
 	
 }

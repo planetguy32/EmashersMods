@@ -10,7 +10,7 @@ import net.minecraft.item.Item;
 
 public class ItemChainSheet extends Item
 {
-	public ItemChainSheet(int i)
+	public ItemChainSheet()
 	{
 		super();
 		maxStackSize = 64;

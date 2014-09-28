@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 public class BlockSandBag extends BlockFalling
 {
 
-	public BlockSandBag(int par1, Material par2Material) 
+	public BlockSandBag(Material par2Material)
 	{
         super(par2Material);
 		this.setCreativeTab(EmasherDefense.tabDefense);

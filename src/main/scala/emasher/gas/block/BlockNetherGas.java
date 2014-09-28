@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 public class BlockNetherGas extends Block
 {
 
-	public BlockNetherGas(int id)
+	public BlockNetherGas()
 	{
 		super(Material.rock);
 		this.setCreativeTab(null);
@@ -26,17 +26,15 @@ public class BlockNetherGas extends Block
 		this.blockIcon = ir.registerIcon("netherrack");
 	}
 
-    //TODO Check if this needs to be specified in some way
-    // @Override
-	/*public int idDropped(int par1, Random rand, int par3)
-	{
-		return 0;
-	}*/
+    public int quantityDropped(Random rand)
+{
+    return 0;
+}
 	
 	
 	@Override
 	public void onBlockClicked(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer)
     {
-		par1World.setBlock(par2, par3, par4, EmasherGas.plasma.blockID);
+		par1World.setBlock(par2, par3, par4, EmasherGas.plasma);
     }
 }

@@ -2,22 +2,17 @@ package emasher.gas.item;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import emasher.core.EmasherCore;
-import emasher.gas.CommonProxy;
 import emasher.gas.EmasherGas;
 import emasher.gas.EntitySmokeBomb;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class ItemSmokeGrenade extends Item
 {
-	public ItemSmokeGrenade(int par1)
+	public ItemSmokeGrenade()
     {
         super();
         this.maxStackSize = 16;

@@ -21,7 +21,7 @@ public class BlockDeflectorGen extends BlockContainer
 	public static IIcon sideTexture;
 	public static IIcon bottomTexture;
 
-	protected BlockDeflectorGen(int par1, Material par2Material)
+	protected BlockDeflectorGen(Material par2Material)
 	{
 		super(par2Material);
 		this.setCreativeTab(EmasherDefense.tabDefense);

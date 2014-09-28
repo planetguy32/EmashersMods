@@ -10,17 +10,10 @@ import emasher.sockets.SocketsMod;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.world.biome.*;
 import net.minecraft.world.*;
-import net.minecraft.world.chunk.*;
 import net.minecraft.block.*;
 import net.minecraft.item.*;
 import net.minecraft.tileentity.*;
-import net.minecraft.block.material.*;
-import net.minecraft.creativetab.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.entity.*;
-import net.minecraft.potion.*;
 import net.minecraft.nbt.*;
 
 import net.minecraftforge.common.util.ForgeDirection;

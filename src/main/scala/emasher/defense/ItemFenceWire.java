@@ -10,7 +10,7 @@ import net.minecraft.item.Item;
 
 public class ItemFenceWire extends Item
 {
-	public ItemFenceWire(int i)
+	public ItemFenceWire()
 	{
 		super();
 		maxStackSize = 64;

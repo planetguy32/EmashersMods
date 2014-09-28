@@ -12,27 +12,22 @@ import net.minecraft.world.World;
 
 public class BlockMineGas extends Block
 {
-
-	public BlockMineGas(int id)
+	public BlockMineGas()
 	{
 		super(Material.rock);
 		this.setCreativeTab(null);
 	}
-	
 	
 	@Override
 	public void registerBlockIcons(IIconRegister ir)
 	{
 		this.blockIcon = ir.registerIcon("stone");
 	}
-	
-	//TODO Check if this needs to be specified in some way
-	// @Override
-	/*public int idDropped(int par1, Random rand, int par3)
-	{
-		return 0;
-	}*/
-	
+
+    public int quantityDropped(Random rand)
+    {
+        return 0;
+    }
 	
 	@Override
 	public void onBlockClicked(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer)

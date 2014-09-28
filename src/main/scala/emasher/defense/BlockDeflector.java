@@ -24,7 +24,7 @@ public class BlockDeflector extends BlockPane
 	public static IIcon shieldLow;
 	public static Random rand;
 
-	protected BlockDeflector(int id)
+	protected BlockDeflector()
 	{
 		super("emasherdefense:deflector_edge", "emasherdefense:deflector_edge", Material.circuits, false);
 		rand = new Random(System.nanoTime());

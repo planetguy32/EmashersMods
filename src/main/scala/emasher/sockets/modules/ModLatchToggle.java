@@ -22,7 +22,7 @@ public class ModLatchToggle extends SocketModule
 
 	public ModLatchToggle(int id)
 	{
-		super(id, "sockets:TOGGLE_0", "sockets:TOGGLE_1");
+		super(id, "sockets:TOGGLE_0");
 	}
 
 	@Override

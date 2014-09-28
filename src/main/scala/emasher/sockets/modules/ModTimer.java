@@ -23,7 +23,7 @@ public class ModTimer extends SocketModule
 
 	public ModTimer(int id)
 	{
-		super(id, "sockets:timer", "sockets:timerActive");
+		super(id, "sockets:timer");
 	}
 
 	@Override

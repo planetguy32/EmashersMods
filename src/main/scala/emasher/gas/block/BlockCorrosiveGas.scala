@@ -18,7 +18,7 @@ import net.minecraft.block.Block
 import emasher.core.EmasherCore
 ;
 
-class BlockCorrosiveGas(id: Int) extends BlockGasGeneric(id, 0, false)
+class BlockCorrosiveGas() extends BlockGasGeneric(0, false)
 {
 	@SideOnly(Side.CLIENT)
 	override def registerBlockIcons(ir: IIconRegister)

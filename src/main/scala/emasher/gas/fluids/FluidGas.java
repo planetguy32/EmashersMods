@@ -27,12 +27,6 @@ public class FluidGas extends Fluid
 	}
 	
 	@Override
-	public String getLocalizedName()
-	{
-		return NAMES[internalID];
-	}
-	
-	@Override
 	public IIcon getStillIcon()
     {
         if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)

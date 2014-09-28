@@ -20,7 +20,7 @@ public class ModRSInput extends SocketModule
 
 	public ModRSInput(int id)
 	{
-		super(id, "sockets:RSIN_0", "sockets:RSIN_1");
+		super(id, "sockets:RSIN_0");
 	}
 
 	@Override

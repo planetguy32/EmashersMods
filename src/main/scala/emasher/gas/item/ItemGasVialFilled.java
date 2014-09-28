@@ -2,27 +2,17 @@ package emasher.gas.item;
 
 import java.util.List;
 
-import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import emasher.core.EmasherCore;
-import emasher.gas.CommonProxy;
 import emasher.gas.EmasherGas;
 import net.minecraft.init.Blocks;
-import net.minecraft.world.biome.*;
 import net.minecraft.world.*;
-import net.minecraft.world.chunk.*;
 import net.minecraft.block.*;
 import net.minecraft.item.*;
-import net.minecraft.tileentity.*;
-import net.minecraft.block.material.*;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.*;
 import net.minecraft.entity.player.*;
-import net.minecraft.entity.*;
 import net.minecraft.util.*;
-import net.minecraft.potion.*;
-import net.minecraftforge.common.*;
 import net.minecraftforge.fluids.*;
 
 public class ItemGasVialFilled extends Item
@@ -30,7 +20,7 @@ public class ItemGasVialFilled extends Item
 	@SideOnly(Side.CLIENT)
 	public IIcon[] textures;
 	
-	public ItemGasVialFilled(int id) 
+	public ItemGasVialFilled()
 	{
 		super();
 		
@@ -43,6 +33,7 @@ public class ItemGasVialFilled extends Item
 	@SideOnly(Side.CLIENT)
 	public IIcon getIconFromDamage(int damage)
 	{
+        if(damage == 0) return this.itemIcon;
 		return textures[damage];
 	}
 	

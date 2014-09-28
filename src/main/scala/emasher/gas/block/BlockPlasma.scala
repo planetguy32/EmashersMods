@@ -21,7 +21,7 @@ import scala.util.control.Breaks._
 import net.minecraft.block.material.Material
 import net.minecraft.item.crafting.FurnaceRecipes
 
-class BlockPlasma(id: Int) extends BlockGasGeneric(id, 0, false)
+class BlockPlasma() extends BlockGasGeneric(0, false)
 {
 	@SideOnly(Side.CLIENT)
 	override def registerBlockIcons(ir: IIconRegister)

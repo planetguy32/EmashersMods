@@ -8,14 +8,12 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import emasher.sockets.SocketsMod;
 import net.minecraft.block.*;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.core.EmasherCore;
-import emasher.gas.EmasherGas;
 import emasher.gas.block.*;
 
 public class ModExhaust extends SocketModule

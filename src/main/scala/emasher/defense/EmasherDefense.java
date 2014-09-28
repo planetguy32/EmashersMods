@@ -7,9 +7,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-//import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -18,11 +16,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraftforge.common.*;
-
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
@@ -44,14 +37,6 @@ public class EmasherDefense
 	
 	public static Item chainSheet;
 	public static Item fenceWire;
-	
-	int chainFenceID;
-	int chainSheetID;
-	int fenceWireID;
-	int sandbagID;
-	int emeryTileID;
-	int deflectorBaseID;
-	int deflectorID;
 	
 	public static CreativeTabs tabDefense = new CreativeTabs("tabDefense")
 	{
@@ -80,29 +65,29 @@ public class EmasherDefense
 	{
 		GameRegistry.registerTileEntity(TileDeflectorGen.class, "DeflectorGen");
 		
-		chainFence = (new BlockThin(chainFenceID, Material.iron))
+		chainFence = (new BlockThin(Material.iron))
 				.setHardness(5.0F).setStepSound(Block.soundTypeMetal)
 				.setBlockName("chainFence");
 		
-		sandbag = new BlockSandBag(sandbagID, Material.cloth)
+		sandbag = new BlockSandBag(Material.cloth)
 				.setHardness(2.0F).setResistance(20.0F)
                 .setStepSound(Block.soundTypeCloth).setBlockName("sandbag");
 		
-		emeryTile = new BlockEmeryTile(emeryTileID, Material.rock)
+		emeryTile = new BlockEmeryTile(Material.rock)
 			.setHardness(2.0F).setResistance(20.0F)
 			.setStepSound(Block.soundTypeStone).setBlockName("emeryTile");
 		
-		deflectorBase = new BlockDeflectorGen(deflectorBaseID, Material.iron)
+		deflectorBase = new BlockDeflectorGen(Material.iron)
 				.setHardness(50.0F).setResistance(2000.0F)
 				.setStepSound(Block.soundTypeMetal).setBlockName("deflectorGenerator");
 
-		deflector = new BlockDeflector(deflectorID)
+		deflector = new BlockDeflector()
 				.setBlockUnbreakable().setStepSound(Block.soundTypeGlass)
 				.setBlockName("deflector");
 		
-		chainSheet = new ItemChainSheet(chainSheetID);
+		chainSheet = new ItemChainSheet();
         GameRegistry.registerItem(chainSheet, "chainSheet", "emasherdefense");
-		fenceWire = new ItemFenceWire(fenceWireID);
+		fenceWire = new ItemFenceWire();
         GameRegistry.registerItem(fenceWire, "fenceWire", "emasherdefense");
 
         GameRegistry.registerBlock(chainFence, ItemBlockThin.class, "chainFence");

@@ -22,7 +22,7 @@ public class ModLatchSet extends SocketModule
 
 	public ModLatchSet(int id)
 	{
-		super(id, "sockets:SET_0", "sockets:SET_1");
+		super(id, "sockets:SET_0");
 	}
 
 	@Override

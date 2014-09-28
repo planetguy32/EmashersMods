@@ -20,7 +20,7 @@ public class ModRSXNOR extends RSGateModule
 
 	public ModRSXNOR(int id)
 	{
-		super(id, "sockets:XNOR_0", "sockets:XNOR_1");
+		super(id, "sockets:XNOR_0");
 	}
 
 	@Override

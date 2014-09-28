@@ -24,7 +24,7 @@ public class ModStateCell extends SocketModule
 
 	public ModStateCell(int id)
 	{
-		super(id, "sockets:stateCell", "sockets:stateCellActive");
+		super(id, "sockets:stateCell");
 	}
 
 	@Override

@@ -13,11 +13,10 @@ import net.minecraft.world.World;
 public class BlockEmeryTile extends Block 
 {
 
-	public BlockEmeryTile(int par1, Material par2Material) 
+	public BlockEmeryTile(Material par2Material)
 	{
 		super(par2Material);
 		this.setCreativeTab(EmasherDefense.tabDefense);
-		//blockIndexInblockIcon = 5;
 	}
 	
 	@Override

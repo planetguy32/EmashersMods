@@ -2,18 +2,14 @@ package emasher.gas.block;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import emasher.core.EmasherCore;
-import emasher.gas.CommonProxy;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.*;
 
 public class BlockPropellent extends BlockGasGeneric
 {
 	
-	public BlockPropellent(int ID)
+	public BlockPropellent()
     {
-        super(ID, 0, false, true, true);
-		//this.setCreativeTab(EmasherCore.tabEmasher);
+        super(0, false, true, true);
     }
 	
 	@Override

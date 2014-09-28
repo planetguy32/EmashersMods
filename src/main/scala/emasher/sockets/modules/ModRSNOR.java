@@ -16,7 +16,7 @@ public class ModRSNOR extends RSGateModule
 
 	public ModRSNOR(int id)
 	{
-		super(id, "sockets:NOR_0", "sockets:NOR_1");
+		super(id, "sockets:NOR_0");
 	}
 
 	@Override

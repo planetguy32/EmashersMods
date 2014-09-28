@@ -64,7 +64,7 @@ public class ModEnergyIndicator extends SocketModule
 	@Override
 	public void updateSide(SideConfig config, SocketTileAccess ts, ForgeDirection side)
 	{	
-		double f = ts.getEnergyStored() / ts.getMaxEnergyStored();
+		double f = (double)ts.getEnergyStored() / (double)ts.getMaxEnergyStored();
 		int d = (int)(f * 100);
 		if(d != config.meta)
 		{

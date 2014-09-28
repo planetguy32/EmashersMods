@@ -2,27 +2,30 @@ package emasher.gas.modules;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import cpw.mods.fml.common.Loader;
 import emasher.api.PhotobioReactorRecipeRegistry;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.api.PhotobioReactorRecipeRegistry.PhotobioReactorRecipe;
-import emasher.core.EmasherCore;
 import emasher.sockets.SocketsMod;
 
 public class ModPhotobioReactor extends SocketModule
 {
 	public ModPhotobioReactor(int id)
 	{
-		super(id, "gascraft:photobioReactor", "gascraft:photobioReactorActive");
+		super(id, "gascraft:photobioReactor");
 	}
 
 	@Override
@@ -51,8 +54,8 @@ public class ModPhotobioReactor extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ggg", "u u", " b ", Character.valueOf('h'), Block.hopperBlock, Character.valueOf('u'), Item.bucketEmpty,
-				Character.valueOf('g'), Block.thinGlass, Character.valueOf('b'), SocketsMod.blankSide));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ggg", "u u", " b ", Character.valueOf('h'), Blocks.hopper, Character.valueOf('u'), Items.bucket,
+				Character.valueOf('g'), Blocks.glass_pane, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	@Override
@@ -101,12 +104,10 @@ public class ModPhotobioReactor extends SocketModule
 					PhotobioReactorRecipe r = PhotobioReactorRecipeRegistry.getRecipe(toIntake, toIntakeFluid);
 					if(r != null) product = r.getOutput();
 					
-					
 					if(product != null && r.getFluidInput().amount <= toIntakeFluid.amount)
 					{
 						ts.extractItemInternal(true, config.inventory, 1);
 						ts.drainInternal(config.tank, r.getFluidInput().amount, true);
-						
 						ts.sideInventory.setInventorySlotContents(side.ordinal(), fluidToItem(product));
 						config.meta = 400;
 						config.rsControl[0] = false;
@@ -114,7 +115,7 @@ public class ModPhotobioReactor extends SocketModule
 					}
 				}
 			}
-			else if(ts.worldObj.getBlockLightValue(ts.xCoord, ts.yCoord + 1, ts.zCoord) > 14 && config.meta > 0)
+			else if(ts.getWorldObj().getBlockLightValue(ts.xCoord, ts.yCoord + 1, ts.zCoord) > 14 && config.meta > 0)
 			{
 				config.meta--;
 				if(config.meta == 0) updateClient = true;
@@ -140,7 +141,7 @@ public class ModPhotobioReactor extends SocketModule
 				int num = ts.forceOutputFluid(f);
 				if(num < f.amount)
 				{
-					ts.sideInventory.setInventorySlotContents(side.ordinal(), new ItemStack(f.fluidID, 1, f.amount - num));
+					ts.sideInventory.setInventorySlotContents(side.ordinal(), new ItemStack(f.getFluid().getBlock(), 1, f.amount - num));
 				}
 				else
 				{
@@ -151,21 +152,32 @@ public class ModPhotobioReactor extends SocketModule
 			if(updateClient) ts.sendClientSideState(side.ordinal());
 		}
 	}
-	
-	@Override
-	public int getCurrentTexture(SideConfig config)
-	{
-		if(config.meta == 0 || ! config.rsControl[0]) return 0;
-		return 1;
-	}
-	
+
 	private ItemStack fluidToItem(FluidStack f)
 	{
-		return new ItemStack(f.fluidID, 1, f.amount);
+        return new ItemStack(f.getFluid().getBlock(), 1, f.amount);
 	}
 	
 	private FluidStack itemToFluid(ItemStack i)
 	{
-		return new FluidStack(i.itemID, i.getItemDamage());
+        Block b = Block.getBlockFromItem(i.getItem());
+        if(!(b instanceof IFluidBlock))
+            return null;
+        return new FluidStack(((IFluidBlock) b).getFluid(), i.getItemDamage());
 	}
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        if(config.meta == 0 || ! config.rsControl[0]) return "sockets:inner_black";
+        return "gascraft:inner_photobio";
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures()
+    {
+        return new String[] {"gascraft:inner_photobio"};
+    }
 }

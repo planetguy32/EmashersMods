@@ -18,7 +18,7 @@ public class ModPressurePlate extends RSPulseModule
 
 	public ModPressurePlate(int id)
 	{
-		super(id, "sockets:pressurePlate", "sockets:pressurePlateActive");
+		super(id, "sockets:pressurePlate");
 	}
 
 	@Override

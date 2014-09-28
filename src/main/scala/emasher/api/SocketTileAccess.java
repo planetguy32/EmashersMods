@@ -7,6 +7,7 @@ import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -244,4 +245,9 @@ public abstract class SocketTileAccess extends TileEntity
 	public abstract void setMaxEnergyStored(int newMax);
 	public abstract int useEnergy(int amnt, boolean simulate);
 	public abstract int addEnergy(int amnt, boolean simulate);
+
+    public World getWorldObj()
+    {
+        return worldObj;
+    }
 }

@@ -1,7 +1,8 @@
 package emasher.gas.modules;
 import java.util.List;
 
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.init.Blocks;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -48,8 +49,8 @@ public class ModGasVent extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "civ", " b ", Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('i'), Block.fenceIron,
-				Character.valueOf('v'), Block.hopperBlock, Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 5)));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "civ", " b ", Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('i'), Blocks.iron_bars,
+				Character.valueOf('v'), Blocks.hopper, Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 5)));
 	}
 	
 	@Override
@@ -67,21 +68,18 @@ public class ModGasVent extends SocketModule
 			int yo = ts.yCoord + side.offsetY;
 			int zo = ts.zCoord + side.offsetZ;
 			
-			if(ts.worldObj.isAirBlock(xo, yo, zo))
+			if(ts.getWorldObj().isAirBlock(xo, yo, zo))
 			{
 				FluidStack f = ts.getFluidInTank(config.tank);
 				if(f != null && f.amount >= 4000)
 				{
 					Fluid fl = f.getFluid();
-					int bID = fl.getBlockID();
-					if(bID > 0 && bID < 4096)
-					{
-						if(Block.blocksList[bID] != null && Block.blocksList[bID] instanceof BlockGasGeneric)
-						{
-							ts.worldObj.setBlock(xo, yo, zo, bID);
-							ts.drainInternal(config.tank, 4000, true);
-						}
-					}
+					Block b = fl.getBlock();
+                    if(b instanceof BlockGasGeneric)
+                    {
+                        ts.getWorldObj().setBlock(xo, yo, zo, b);
+                        ts.drainInternal(config.tank, 4000, true);
+                    }
 				}
 			}
 		}

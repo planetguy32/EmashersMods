@@ -22,7 +22,7 @@ public class ModLatchReset extends SocketModule
 
 	public ModLatchReset(int id)
 	{
-		super(id, "sockets:RESET_0", "sockets:RESET_1");
+		super(id, "sockets:RESET_0");
 	}
 
 	@Override

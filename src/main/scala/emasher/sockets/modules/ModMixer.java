@@ -14,6 +14,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import cpw.mods.fml.common.Loader;
 import emasher.api.MixerRecipeRegistry;
@@ -170,9 +171,9 @@ public class ModMixer extends SocketModule
         //TODO Check what this is used for to see if it works this way or not
 		//return new FluidStack(i.itemID, i.getItemDamage());
         Block b = Block.getBlockFromItem(i.getItem());
-        if(!(b instanceof BlockFluidBase))
+        if(!(b instanceof IFluidBlock))
             return null;
-        return new FluidStack(((BlockFluidBase) b).getFluid(), i.getItemDamage());
+        return new FluidStack(((IFluidBlock) b).getFluid(), i.getItemDamage());
 	}
 
     @Override

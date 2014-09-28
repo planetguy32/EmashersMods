@@ -18,7 +18,7 @@ public class ModRSOR extends RSGateModule
 
 	public ModRSOR(int id)
 	{
-		super(id, "sockets:OR_0", "sockets:OR_1");
+		super(id, "sockets:OR_0");
 	}
 
 	@Override

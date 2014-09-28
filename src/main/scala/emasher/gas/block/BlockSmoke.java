@@ -6,25 +6,21 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-import emasher.core.EmasherCore;
-import emasher.gas.CommonProxy;
 import emasher.gas.EmasherGas;
 
 public class BlockSmoke extends BlockGasGeneric
 {
 
-	public BlockSmoke(int ID)
+	public BlockSmoke()
 	{
-		super(ID, 100, false, false, true);
+		super(100, false, false, true);
 		//this.setCreativeTab(EmasherCore.tabEmasher);
 	}
 	

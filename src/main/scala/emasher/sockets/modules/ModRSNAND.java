@@ -20,7 +20,7 @@ public class ModRSNAND extends RSGateModule
 
 	public ModRSNAND(int id)
 	{
-		super(id, "sockets:NAND_0", "sockets:NAND_1");
+		super(id, "sockets:NAND_0");
 	}
 
 	@Override

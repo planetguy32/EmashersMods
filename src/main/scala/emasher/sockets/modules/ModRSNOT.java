@@ -20,7 +20,7 @@ public class ModRSNOT extends RSGateModule
 
 	public ModRSNOT(int id)
 	{
-		super(id, "sockets:NOT_0", "sockets:NOT_1");
+		super(id, "sockets:NOT_0");
 	}
 
 	@Override

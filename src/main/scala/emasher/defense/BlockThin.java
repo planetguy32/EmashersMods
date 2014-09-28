@@ -33,7 +33,7 @@ public class BlockThin extends BlockPane
 	
 	private static final int NUM_BLOCKS = 6;
 
-	public BlockThin(int par1, Material par4Material) 
+	public BlockThin(Material par4Material)
 	{
 		super("emasherdefense:blank", "emasherdefense:blank", par4Material, true);
 		this.setCreativeTab(null);

@@ -18,12 +18,12 @@ buildscript {
 apply plugin: 'scala'
 apply plugin: 'forge'
 
-version = "1.0"
-group= "com.yourname.modid" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "modid"
+version = "1.7.10-1.2.0.0-alpha"
+group= "com.emashersmods" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "EmashersMods"
 
 minecraft {
-    version = "1.7.10-10.13.0.1208"
+    version = "1.7.10-10.13.1.1217"
 }
 
 repositories {
@@ -47,10 +47,23 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
-    compile 'net.industrial-craft:industrialcraft-2:2.2.621-experimental:dev'
-    compile 'com.mod-buildcraft:buildcraft:6.0.17:dev'  // adds buildcraft to the dev env
+    compile 'net.industrial-craft:industrialcraft-2:2.2.647-experimental:dev'
+    compile 'com.mod-buildcraft:buildcraft:6.0.18:dev'  // adds buildcraft to the dev env
 
 }
+
+sourceSets {
+    main {
+        scala {
+            srcDir 'src/main/scala'
+            exclude '**/emasher/gas/**'
+        }
+        resources {
+            srcDir 'resources'
+        }
+    }
+}
+
 
 processResources
 {

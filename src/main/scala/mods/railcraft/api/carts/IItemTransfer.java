@@ -40,7 +40,7 @@ public interface IItemTransfer
      * determine which ItemStack to return, or none at all.
      * However, if the return value is not null
      * it should fulfill the following condition:<br/>
-     * InventoryTools.isItemEqual(it.requestItem(this,request), request) == true
+     * InvTools.isItemEqual(it.requestItem(this,request), request) == true
      *
      * @param source The Object submitting the request
      * @param request The type of item requested
@@ -55,7 +55,7 @@ public interface IItemTransfer
      * determine which ItemStack to return, or none at all.
      * However, if the return value is not null
      * it should fulfill the following condition:<br/>
-     * IItemType.isItemType(it.requestItem(this,request), request) == true
+     * IStackFilter.matches(it.requestItem(this,request), request) == true
      *
      * @param source The Object submitting the request
      * @param request The type of item requested

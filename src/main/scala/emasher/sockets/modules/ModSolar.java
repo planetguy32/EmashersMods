@@ -5,8 +5,9 @@ import java.util.List;
 import buildcraft.api.power.PowerHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
@@ -45,8 +46,8 @@ public class ModSolar extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "sss", "sps", "sbs", Character.valueOf('s'), Block.daylightSensor, Character.valueOf('p'), EmasherCore.psu,
-				Character.valueOf('u'), Block.blockDiamond, Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 7));
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "sss", "sps", "sbs", Character.valueOf('s'), Blocks.daylight_detector, Character.valueOf('p'), EmasherCore.psu,
+				Character.valueOf('u'), Blocks.diamond_block, Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 7));
 	}
 	
 	@Override
@@ -59,7 +60,7 @@ public class ModSolar extends SocketModule
 	@Override
 	public void updateSide(SideConfig config, SocketTileAccess ts, ForgeDirection side)
 	{
-		if(ts.worldObj.getBlockLightValue(ts.xCoord, ts.yCoord + 1, ts.zCoord) > 14 && ts.getMaxEnergyStored() - ts.getEnergyStored() >= 5)
+		if(ts.getWorldObj().getBlockLightValue(ts.xCoord, ts.yCoord + 1, ts.zCoord) > 14 && ts.getMaxEnergyStored() - ts.getEnergyStored() >= 5)
 		{
 				
 			if(side == ForgeDirection.UP) ts.addEnergy(5, false);

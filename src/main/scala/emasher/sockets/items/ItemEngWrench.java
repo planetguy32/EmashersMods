@@ -11,31 +11,29 @@ import net.minecraft.block.BlockButton;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumMovingObjectType;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.Event;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import buildcraft.api.tools.IToolWrench;
 
 public class ItemEngWrench extends Item implements IToolWrench
 {
 	@SideOnly(Side.CLIENT)
-	public Icon[] textures;
+	public IIcon textures[];
 	
 	private final Set<Class<? extends Block>> shiftRotations = new HashSet<Class<? extends Block>>();
 	
-	public ItemEngWrench(int id)
+	public ItemEngWrench()
 	{
-		super(id);
+		super();
 		this.setCreativeTab(SocketsMod.tabSockets);
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName("eng_wrench");
@@ -47,9 +45,9 @@ public class ItemEngWrench extends Item implements IToolWrench
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister ir)
+	public void registerIcons(IIconRegister ir)
 	{
-		textures = new Icon[3];
+		textures = new IIcon[3];
 		textures[0] = ir.registerIcon("sockets:wrench0");
 		textures[1] = ir.registerIcon("sockets:wrench1");
 		textures[2] = ir.registerIcon("sockets:wrench2");
@@ -57,7 +55,7 @@ public class ItemEngWrench extends Item implements IToolWrench
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIconFromDamage(int damage)
+	public IIcon getIconFromDamage(int damage)
 	{
 		return textures[damage];
 	}
@@ -106,8 +104,9 @@ public class ItemEngWrench extends Item implements IToolWrench
 	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		
-		int blockId = world.getBlockId(x, y, z);
-		Block block = Block.blocksList[blockId];
+		//int blockId = world.getBlockId(x, y, z);
+		//Block block = Block.blocksList[blockId];
+        Block block = world.getBlock(x, y, z);
 		
 		if(block == null)
 			return false;
@@ -123,7 +122,7 @@ public class ItemEngWrench extends Item implements IToolWrench
 	}
 	
 	@Override
-	public boolean shouldPassSneakingClickToBlock(World par2World, int par4, int par5, int par6)
+	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player)
 	{
 		return true;
 	}

@@ -5,18 +5,9 @@ import java.util.Random;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
 import emasher.gas.EmasherGas;
-import net.minecraft.world.biome.*;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.*;
-import net.minecraft.block.*;
-import net.minecraft.item.*;
-import net.minecraft.tileentity.*;
-import net.minecraft.block.material.*;
-import net.minecraft.creativetab.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.entity.*;
-import net.minecraft.util.*;
-import net.minecraft.potion.*;
 
 public class WorldGenGasVent implements IWorldGenerator
 {
@@ -34,7 +25,7 @@ public class WorldGenGasVent implements IWorldGenerator
 		
 		try
 		{
-	    	if(world.getBlockId(x + 4, 0, z) == Block.bedrock.blockID && world.getWorldInfo().getTerrainType() != WorldType.FLAT)
+	    	if(world.getBlock(x + 4, 0, z) == Blocks.bedrock && world.getWorldInfo().getTerrainType() != WorldType.FLAT)
 	    	{
 	    		if(world.getBlockMetadata(x + 4, 0, z) == 0)
 	    		{
@@ -56,18 +47,18 @@ public class WorldGenGasVent implements IWorldGenerator
 				    	{
 					        if(random.nextInt(8) == 0)
 					        {
-					        	world.setBlock(x, y, z, EmasherGas.shaleResource.blockID, 0, 2);
+					        	world.setBlock(x, y, z, EmasherGas.shaleResource, 0, 2);
 					        	//System.out.println("Gen: " + x + ", " + y + ", " + z);
 					        	
 					        }
 					        else if(Loader.isModLoaded("BuildCraft|Energy") && random.nextInt(12) == 0)
 					        {
-					        	world.setBlock(x, y, z, EmasherGas.shaleResource.blockID, 1, 2);
+					        	world.setBlock(x, y, z, EmasherGas.shaleResource, 1, 2);
 					        }
 				    	}
 				    	else
 				    	{
-				    		if(random.nextInt(6) == 0) world.setBlock(x, y, z, EmasherGas.shaleResource.blockID, 2, 2);
+				    		if(random.nextInt(6) == 0) world.setBlock(x, y, z, EmasherGas.shaleResource, 2, 2);
 				    	}
 				        
 				        

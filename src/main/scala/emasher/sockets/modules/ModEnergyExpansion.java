@@ -2,28 +2,31 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import ic2.api.energy.tile.IEnergyAcceptor;
 import buildcraft.api.power.IPowerReceptor;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.core.EmasherCore;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 
 public class ModEnergyExpansion extends SocketModule
 {
 	public ModEnergyExpansion(int id)
 	{
-		super(id, "sockets:enExpansion", "sockets:enExpansionIn", "sockets:enExpansionOut");
+		super(id, "sockets:energy_expansion", "sockets:energy_expansion_in", "sockets:energy_expansion_out");
 	}
 
 	@Override
@@ -48,15 +51,18 @@ public class ModEnergyExpansion extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "pdp", "ggg", "pbp", Character.valueOf('g'), Item.ingotGold, Character.valueOf('p'), EmasherCore.psu,
-                Character.valueOf('d'), Item.diamond, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "pdp", "ggg", "pbp", Character.valueOf('g'), Items.gold_ingot, Character.valueOf('p'), EmasherCore.psu,
+                Character.valueOf('d'), Items.diamond, Character.valueOf('b'), SocketsMod.blankSide);
 	}
+
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side) { return "sockets:inner_grey_tile"; }
+
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures() { return new String[] {"sockets:inner_grey_tile"}; }
 	
 	@Override
 	public int getCurrentTexture(SideConfig config) { return config.meta; }
-	
-	/*@Override
-	public boolean hasTankIndicator() {return true; }*/
 	
 	@Override
 	public boolean hasRSIndicator() { return true; }

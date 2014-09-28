@@ -9,10 +9,12 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
@@ -56,8 +58,8 @@ public class ModVacuum extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " s ", "ipi", " b ", Character.valueOf('i'), Item.ingotIron, Character.valueOf('s'), Block.hopperBlock,
-				Character.valueOf('p'), Block.pistonBase, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " s ", "ipi", " b ", Character.valueOf('i'), Items.iron_ingot, Character.valueOf('s'), Blocks.hopper,
+				Character.valueOf('p'), Blocks.piston, Character.valueOf('b'), SocketsMod.blankSide);
 	}
 	
 	@Override
@@ -93,7 +95,7 @@ public class ModVacuum extends SocketModule
 			
 			ts.useEnergy(10, false);
 			
-			List l = ts.worldObj.getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getAABBPool().getAABB(xMin, yMin, zMin, x + 1, y + 1, z + 1));
+			List l = ts.getWorldObj().getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getBoundingBox(xMin, yMin, zMin, x + 1, y + 1, z + 1));
 			for(Object o : l)
 			{
 				if(o instanceof EntityItem)
@@ -105,7 +107,7 @@ public class ModVacuum extends SocketModule
 					item.stackSize -= num;
 					if(item.stackSize == 0)
 					{
-						ts.worldObj.removeEntity(e);
+						ts.getWorldObj().removeEntity(e);
 					}
 				}
 			}

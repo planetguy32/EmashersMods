@@ -5,8 +5,8 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -21,7 +21,7 @@ public class ModInternalClock extends SocketModule
 
     public ModInternalClock(int id)
     {
-        super(id, "sockets:clock", "sockets:clockActive");
+        super(id, "sockets:clock");
     }
 
     @Override
@@ -56,16 +56,25 @@ public class ModInternalClock extends SocketModule
     @Override
     public boolean hasLatchIndicator() { return true; }
 
-    @Override
-    public int getCurrentTexture(SideConfig config)
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
     {
         int timer = config.meta & 7;
-        if(timer == 0) return 0;
-        else return 1;
+        if(timer == 0) return "sockets:inner_latch_inactive";
+        return "sockets:inner_latch_active";
     }
 
     @SideOnly(Side.CLIENT)
-    public Icon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    public String[] getAllInternalTextures()
+    {
+        return new String[] {
+                "sockets:inner_latch_inactive",
+                "sockets:inner_latch_active"
+        };
+    }
+
+    @SideOnly(Side.CLIENT)
+    public IIcon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side)
     {
         int setting = 0;
         int time = 0;
@@ -81,7 +90,7 @@ public class ModInternalClock extends SocketModule
 
         if(on > 0) time = 7;
 
-        return new Icon[] { ((BlockSocket)SocketsMod.socket).bar1[setting], ((BlockSocket)SocketsMod.socket).bar2[time] };
+        return new IIcon[] { ((BlockSocket)SocketsMod.socket).bar1[setting], ((BlockSocket)SocketsMod.socket).bar2[time] };
     }
 
     @Override

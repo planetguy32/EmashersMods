@@ -1,155 +1,22 @@
 package emasher.sockets;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.OutputStream;
 
+import cpw.mods.fml.common.network.NetworkRegistry;
+import emasher.sockets.packethandling.PacketTileEntity;
 import emasher.sockets.pipes.TileDirectionChanger;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet250CustomPayload;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.liquids.LiquidDictionary;
-import net.minecraftforge.liquids.LiquidStack;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
 import emasher.api.SideConfig;
-import emasher.api.SocketTileAccess;
 import emasher.sockets.pipes.TileAdapterBase;
 import emasher.sockets.pipes.TilePipeBase;
 
-public class PacketHandler implements IPacketHandler
+public class PacketHandler
 {
 	public static PacketHandler instance = new PacketHandler();
 	public final static String networkChannel = "Emasher_Sockets";
-	
-	@Override
-	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player)
-	{
-		int dimID;
-		try
-		{
-			if(packet.channel.equals(networkChannel))
-			{
-				if(packet.data[0] == 0)
-				{
-					int x = toInteger(packet.data, 1);
-					int y = toInteger(packet.data, 5);
-					int z = toInteger(packet.data, 9);
-					int side = packet.data[17];
-					dimID = toInteger(packet.data, 13);
-					
-					World world = ((EntityPlayer) player).worldObj;
-					TileEntity te = world.getBlockTileEntity(x, y, z);
-					if(te != null && te instanceof TileSocket)
-					{
-						TileSocket ts = (TileSocket)te;
-						
-						SendClientSideState(ts, (byte)side);
-					}
-				}
-				else if(packet.data[0] == 1)
-				{
-					int x = toInteger(packet.data, 1);
-					int y = toInteger(packet.data, 5);
-					int z = toInteger(packet.data, 9);
-					int inventory = packet.data[17];
-					dimID = toInteger(packet.data, 13);
-					
-					World world = ((EntityPlayer) player).worldObj;
-					TileEntity te = world.getBlockTileEntity(x, y, z);
-					if(te != null && te instanceof TileSocket)
-					{
-						TileSocket ts = (TileSocket)te;
-						
-						SendClientInventorySlot(ts, (byte)inventory);
-					}
-				}
-				else if(packet.data[0] == 2)
-				{
-					int x = toInteger(packet.data, 1);
-					int y = toInteger(packet.data, 5);
-					int z = toInteger(packet.data, 9);
-					int tank = packet.data[17];
-					dimID = toInteger(packet.data, 13);
-					
-					World world = ((EntityPlayer) player).worldObj;
-					TileEntity te = world.getBlockTileEntity(x, y, z);
-					if(te != null && te instanceof TileSocket)
-					{
-						TileSocket ts = (TileSocket)te;
-						
-						SendClientTankSlot(ts, (byte)tank);
-					}
-				}
-				else if(packet.data[0] == 3)
-				{
-					int x = toInteger(packet.data, 1);
-					int y = toInteger(packet.data, 5);
-					int z = toInteger(packet.data, 9);
-					
-					World world = ((EntityPlayer) player).worldObj;
-					TileEntity te = world.getBlockTileEntity(x, y, z);
-					if(te != null && te instanceof TilePipeBase)
-					{
-						TilePipeBase p = (TilePipeBase)te;
-						
-						this.sendClientPipeColour(p);
-					}
-				}
-				else if(packet.data[0] == 4)
-				{
-					int x = toInteger(packet.data, 1);
-					int y = toInteger(packet.data, 5);
-					int z = toInteger(packet.data, 9);
-					
-					World world = ((EntityPlayer) player).worldObj;
-					TileEntity te = world.getBlockTileEntity(x, y, z);
-					if(te != null && te instanceof TileAdapterBase)
-					{
-						TileAdapterBase t = (TileAdapterBase)te;
-						
-						for(int i = 0; i < 6; i++)
-						{
-							this.sendClientAdapterSide(t, i);
-						}
-					}
-				}
-                else if(packet.data[0] == 5)
-                {
-                    int x = toInteger(packet.data, 1);
-                    int y = toInteger(packet.data, 5);
-                    int z = toInteger(packet.data, 9);
 
-                    World world = ((EntityPlayer) player).worldObj;
-                    TileEntity te = world.getBlockTileEntity(x, y, z);
-                    if(te != null && te instanceof TileDirectionChanger)
-                    {
-                        TileDirectionChanger t = (TileDirectionChanger)te;
-
-                        for(int i = 0; i < 6; i++)
-                        {
-                            this.sendClientChangerSide(t, i);
-                        }
-                    }
-                }
-			}
-		}
-		catch (Exception e)
-		{
-			System.err.println("[Engineer's Toolbox] Network Error");
-			
-		}
-	}
-	
 	public void SendClientSideState(TileSocket ts, byte side)
 	{
 		SideConfig c = ts.configs[side];
@@ -173,9 +40,7 @@ public class PacketHandler implements IPacketHandler
 		toByte(out, ts.sides[side], 22);
 		out[26] = boolToByte(ts.sideLocked[side]);
 		
-		//PacketDispatcher.sendPacketToAllPlayers(new Packet250CustomPayload(networkChannel, out));
-		//PacketDispatcher.sendPacketToAllInDimension(new Packet250CustomPayload(networkChannel, out), ts.worldObj.provider.dimensionId);
-		PacketDispatcher.sendPacketToAllAround(ts.xCoord, ts.yCoord, ts.zCoord, 160, ts.worldObj.provider.dimensionId, new Packet250CustomPayload(networkChannel, out));
+        SocketsMod.packetPipeline.sendToAllAround(new PacketTileEntity(ts, out), new NetworkRegistry.TargetPoint(ts.getWorldObj().provider.dimensionId, ts.xCoord, ts.yCoord, ts.zCoord, 160));
 	}
 	
 	public void SendClientInventorySlot(TileSocket ts, int inventory)
@@ -198,7 +63,7 @@ public class PacketHandler implements IPacketHandler
 		
 		if(s != null)
 		{
-			toByte(out, s.itemID, 1);
+			toByte(out, Item.getIdFromItem(s.getItem()), 1);
 			toByte(out, s.getItemDamage(), 5);
 			toByte(out, s.stackSize, 23);
 		}
@@ -218,9 +83,7 @@ public class PacketHandler implements IPacketHandler
 		}
 		
 		
-		//PacketDispatcher.sendPacketToAllPlayers(new Packet250CustomPayload(networkChannel, out));
-		//PacketDispatcher.sendPacketToAllInDimension(new Packet250CustomPayload(networkChannel, out), ts.worldObj.provider.dimensionId);
-		PacketDispatcher.sendPacketToAllAround(ts.xCoord, ts.yCoord, ts.zCoord, 160, ts.worldObj.provider.dimensionId, new Packet250CustomPayload(networkChannel, out));
+        SocketsMod.packetPipeline.sendToAllAround(new PacketTileEntity(ts, out), new NetworkRegistry.TargetPoint(ts.getWorldObj().provider.dimensionId, ts.xCoord, ts.yCoord, ts.zCoord, 160));
 	}
 	
 	public void SendClientTankSlot(TileSocket ts, int tank)
@@ -249,9 +112,7 @@ public class PacketHandler implements IPacketHandler
 		toByte(out, amnt, 22);
 		out[26] = (byte)tank;
 		
-		//PacketDispatcher.sendPacketToAllPlayers(new Packet250CustomPayload(networkChannel, out));
-		//PacketDispatcher.sendPacketToAllInDimension(new Packet250CustomPayload(networkChannel, out), ts.worldObj.provider.dimensionId);
-		PacketDispatcher.sendPacketToAllAround(ts.xCoord, ts.yCoord, ts.zCoord, 160, ts.worldObj.provider.dimensionId, new Packet250CustomPayload(networkChannel, out));
+        SocketsMod.packetPipeline.sendToAllAround(new PacketTileEntity(ts, out), new NetworkRegistry.TargetPoint(ts.getWorldObj().provider.dimensionId, ts.xCoord, ts.yCoord, ts.zCoord, 160));
 	}
 	
 	public void sendClientPipeColour(TilePipeBase p)
@@ -262,10 +123,10 @@ public class PacketHandler implements IPacketHandler
 		toByte(out, p.xCoord, 1);
 		toByte(out, p.yCoord, 5);
 		toByte(out, p.zCoord, 9);
-		toByte(out, p.worldObj.provider.dimensionId, 13);
+		toByte(out, p.getWorldObj().provider.dimensionId, 13);
 		out[17] = (byte)p.colour;
 		
-		PacketDispatcher.sendPacketToAllInDimension(new Packet250CustomPayload(networkChannel, out), p.worldObj.provider.dimensionId);
+        SocketsMod.packetPipeline.sendToDimension(new PacketTileEntity(p, out), p.getWorldObj().provider.dimensionId);
 	}
 	
 	public void sendClientAdapterSide(TileAdapterBase t, int side)
@@ -276,12 +137,12 @@ public class PacketHandler implements IPacketHandler
 		toByte(out, t.xCoord, 1);
 		toByte(out, t.yCoord, 5);
 		toByte(out, t.zCoord, 9);
-		toByte(out, t.worldObj.provider.dimensionId, 13);
+		toByte(out, t.getWorldObj().provider.dimensionId, 13);
 		if(t.outputs[side]) out[17] = 1;
 		else out[17] = 0;
 		out[18] = (byte)side;
-		
-		PacketDispatcher.sendPacketToAllInDimension(new Packet250CustomPayload(networkChannel, out), t.worldObj.provider.dimensionId);
+
+        SocketsMod.packetPipeline.sendToDimension(new PacketTileEntity(t, out), t.getWorldObj().provider.dimensionId);
 	}
 
     public void sendClientChangerSide(TileDirectionChanger t, int side)
@@ -292,14 +153,14 @@ public class PacketHandler implements IPacketHandler
         toByte(out, t.xCoord, 1);
         toByte(out, t.yCoord, 5);
         toByte(out, t.zCoord, 9);
-        toByte(out, t.worldObj.provider.dimensionId, 13);
+        toByte(out, t.getWorldObj().provider.dimensionId, 13);
         out[17] = (byte)t.directions[side].ordinal();
         out[18] = (byte)side;
 
-        PacketDispatcher.sendPacketToAllInDimension(new Packet250CustomPayload(networkChannel, out), t.worldObj.provider.dimensionId);
+        SocketsMod.packetPipeline.sendToDimension(new PacketTileEntity(t, out), t.getWorldObj().provider.dimensionId);
     }
 	
-	private void toByte(byte[] out, int in, int start)
+	public static void toByte(byte[] out, int in, int start)
 	{
 		out[start++] = (byte) (in >> 24);
 		out[start++] = (byte) (in >> 16);
@@ -316,7 +177,7 @@ public class PacketHandler implements IPacketHandler
 		return value;
 	}
 	
-	private static byte boolToByte(boolean b)
+	public static byte boolToByte(boolean b)
 	{
 		if(b) return (byte)1;
 		return (byte) 0;

@@ -2,7 +2,7 @@ package emasher.defense;
 
 import net.minecraft.block.*;
 import net.minecraft.block.material.*;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -12,9 +12,9 @@ import net.minecraft.item.*;
 import net.minecraft.src.*;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.*;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.*;
 
@@ -23,28 +23,27 @@ import emasher.core.EmasherCore;
 
 public class BlockThin extends BlockPane
 {
-	public static Icon chainlink;
-	public static Icon barb;
-	public static Icon razor;
-	public static Icon chainPost;
-	public static Icon barbPost;
-	public static Icon barbPostWood;
+	public static IIcon chainlink;
+	public static IIcon barb;
+	public static IIcon razor;
+	public static IIcon chainPost;
+	public static IIcon barbPost;
+	public static IIcon barbPostWood;
 	
 	
 	private static final int NUM_BLOCKS = 6;
 
-	public BlockThin(int par1, Material par4Material) 
+	public BlockThin(Material par4Material)
 	{
-		super(par1, "emasherdefense:blank", "emasherdefense:blank", par4Material, true);
+		super("emasherdefense:blank", "emasherdefense:blank", par4Material, true);
 		this.setCreativeTab(null);
-		Block.opaqueCubeLookup[par1] = true;
 		this.setCreativeTab(EmasherDefense.tabDefense);
 	}
 	
 	@Override
-    public void registerIcons(IconRegister par1IconRegister)
+    public void registerBlockIcons(IIconRegister par1IconRegister)
     {
-		super.registerIcons(par1IconRegister);
+		super.registerBlockIcons(par1IconRegister);
 		this.blockIcon = par1IconRegister.registerIcon("emasherdefense:chainlink");
 		chainlink = this.blockIcon;
 		barb = par1IconRegister.registerIcon("emasherdefense:barb");
@@ -55,10 +54,10 @@ public class BlockThin extends BlockPane
     }
 	
 	@Override
-	public Icon getIcon(int par1, int par2)
+	public IIcon getIcon(int par1, int par2)
 	{
 		int meta = par2;
-		Icon result;
+		IIcon result;
 		
 		switch(meta)
 		{
@@ -86,9 +85,15 @@ public class BlockThin extends BlockPane
 		
 		return result;
 	}
+
+    @Override
+    public boolean isOpaqueCube()
+    {
+        return false;
+    }
 	
 	@SideOnly(Side.CLIENT)
-    public void getSubBlocks(int par1, CreativeTabs par2CreativeTabs, List par3List)
+    public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List par3List)
     {
         for (int var4 = 0; var4 < NUM_BLOCKS; ++var4)
         {
@@ -98,7 +103,7 @@ public class BlockThin extends BlockPane
 	
 	
 	@Override
-    public boolean isLadder(World world, int x, int y, int z, EntityLivingBase entity)
+    public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity)
     {
         int meta = world.getBlockMetadata(x,  y,  z);
         

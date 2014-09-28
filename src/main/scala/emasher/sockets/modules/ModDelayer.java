@@ -3,11 +3,12 @@ package emasher.sockets.modules;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -23,7 +24,7 @@ public class ModDelayer extends SocketModule
 
 	public ModDelayer(int id)
 	{
-		super(id, "sockets:delayer0", "sockets:delayer1");
+		super(id, "sockets:delayer0");
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class ModDelayer extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "rtr", " b ", Character.valueOf('t'), Item.pocketSundial, Character.valueOf('r'), Item.redstone,
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "rtr", " b ", Character.valueOf('t'), Items.clock, Character.valueOf('r'), Items.redstone,
 				Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 17));
 	}
 	
@@ -62,17 +63,26 @@ public class ModDelayer extends SocketModule
 	
 	@Override
 	public boolean isRedstoneInterface() { return true; }
-	
-	@Override
-	public int getCurrentTexture(SideConfig config)
-	{
-		int timer = config.meta & 7;
-		if(timer == 0) return 0;
-		else return 1;
-	}
+
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        int timer = config.meta & 7;
+        if(timer == 0) return "sockets:inner_redstone_inactive";
+        return "sockets:inner_redstone_active";
+    }
+
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures()
+    {
+        return new String[] {
+                "sockets:inner_redstone_inactive",
+                "sockets:inner_redstone_active"
+        };
+    }
 	
 	@SideOnly(Side.CLIENT)
-	public Icon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+	public IIcon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side)
 	{
 		int setting = 0;
 		int time = 0;
@@ -88,8 +98,8 @@ public class ModDelayer extends SocketModule
 		
 		if(on > 0) time = 7;
 		
-		if((config.meta >> 6) != 0) return new Icon[] { ((BlockSocket)SocketsMod.socket).bar1[setting], ((BlockSocket)SocketsMod.socket).bar2[time] };
-		else return new Icon[] { ((BlockSocket)SocketsMod.socket).bar1[setting] };
+		if((config.meta >> 6) != 0) return new IIcon[] { ((BlockSocket)SocketsMod.socket).bar1[setting], ((BlockSocket)SocketsMod.socket).bar2[time] };
+		else return new IIcon[] { ((BlockSocket)SocketsMod.socket).bar1[setting] };
 	}
 	
 	@Override

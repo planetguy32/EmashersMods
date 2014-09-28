@@ -2,20 +2,20 @@ package emasher.core.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import emasher.core.EmasherCore;
 
 public class BlockLimestone extends Block
 {
-	public BlockLimestone(int id) 
+	public BlockLimestone()
 	{
-		super(id, Material.rock);
+		super(Material.rock);
 		this.setCreativeTab(EmasherCore.tabEmasher);
 
 	}
 	
 	@Override
-    public void registerIcons(IconRegister par1IconRegister)
+    public void registerBlockIcons(IIconRegister par1IconRegister)
     {
 		this.blockIcon = par1IconRegister.registerIcon("emashercore:limestone");
     }

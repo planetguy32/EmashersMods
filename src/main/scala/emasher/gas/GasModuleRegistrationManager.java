@@ -6,6 +6,8 @@ import emasher.gas.modules.*;
 
 public class GasModuleRegistrationManager implements IModuleRegistrationManager
 {
+    public GasModuleRegistrationManager() {}
+
 	@Override
 	public void registerModules()
 	{
@@ -14,9 +16,9 @@ public class GasModuleRegistrationManager implements IModuleRegistrationManager
 		ModuleRegistry.registerModule(new ModFan(102));
 		ModuleRegistry.registerModule(new ModGasVent(103));
 		ModuleRegistry.registerModule(new ModExhaust(104));
-		ModuleRegistry.registerModule(new ModGasGenerator((Integer)105));
-		ModuleRegistry.registerModule(new ModGasTurbine((Integer)106));
-		ModuleRegistry.registerModule(new ModRefinery((Integer)107));
-		ModuleRegistry.registerModule(new ModPlasmaReactor((Integer)108));
+		ModuleRegistry.registerModule(new ModGasGenerator(105));
+		ModuleRegistry.registerModule(new ModGasTurbine(106));
+		ModuleRegistry.registerModule(new ModRefinery(107));
+		ModuleRegistry.registerModule(new ModPlasmaReactor(108));
 	}
 }

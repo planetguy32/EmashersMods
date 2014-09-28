@@ -7,10 +7,11 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
@@ -22,7 +23,7 @@ public class ModAdvancedBreaker extends SocketModule
 
 	public ModAdvancedBreaker(int id)
 	{
-		super(id, "sockets:advBreaker");
+		super(id, "sockets:advanced_breaker");
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class ModAdvancedBreaker extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "t", "b", Character.valueOf('t'), Item.diamond, Character.valueOf('r'), Item.redstone,
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "t", "b", Character.valueOf('t'), Items.diamond, Character.valueOf('r'), Items.redstone,
 				Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 65));
 	}
 	
@@ -86,14 +87,15 @@ public class ModAdvancedBreaker extends SocketModule
 		int xo = ts.xCoord + side.offsetX;
 		int yo = ts.yCoord + side.offsetY;
 		int zo = ts.zCoord + side.offsetZ;
+
+        Block b = ts.getWorldObj().getBlock(xo, yo, zo);
+        int blockID = Block.getIdFromBlock(b);
+
+		//if(blockID != 0) b = Block.blocksList[blockID];
 		
-		int blockID = ts.worldObj.getBlockId(xo, yo, zo);
-		Block b = null;
-		if(blockID != 0) b = Block.blocksList[blockID];
-		
-		if(canBreak && b != null && b.blockHardness >= 0)
+		if(canBreak && b != null && b.getBlockHardness(ts.getWorldObj(), xo, yo, zo) >= 0)
 		{
-			ArrayList<ItemStack> items = b.getBlockDropped(ts.worldObj, xo, yo, zo, ts.worldObj.getBlockMetadata(xo, yo, zo), 0);
+			ArrayList<ItemStack> items = b.getDrops(ts.getWorldObj(), xo, yo, zo, ts.getWorldObj().getBlockMetadata(xo, yo, zo), 0);
 			for(ItemStack item : items)
 			{
 				if(ts.addItemInternal(item, false, config.inventory) == item.stackSize)
@@ -114,8 +116,8 @@ public class ModAdvancedBreaker extends SocketModule
 				
 			}
 			
-			ts.worldObj.removeBlockTileEntity(xo, yo, zo);
-			ts.worldObj.setBlockToAir(xo, yo, zo);
+			ts.getWorldObj().removeTileEntity(xo, yo, zo);
+			ts.getWorldObj().setBlockToAir(xo, yo, zo);
 		}
 		
 		
@@ -123,18 +125,18 @@ public class ModAdvancedBreaker extends SocketModule
 	
 	public void dropItemsOnSide(SocketTileAccess ts, ForgeDirection side, ItemStack stack)
 	{
-		if (! ts.worldObj.isRemote)
+		if (! ts.getWorldObj().isRemote)
         {
 			int xo = ts.xCoord + side.offsetX;
 			int yo = ts.yCoord + side.offsetY;
 			int zo = ts.zCoord + side.offsetZ;
             float f = 0.7F;
-            double d0 = (double)(ts.worldObj.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-            double d1 = (double)(ts.worldObj.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-            double d2 = (double)(ts.worldObj.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
-            EntityItem entityitem = new EntityItem(ts.worldObj, (double)xo + d0, (double)yo + d1, (double)zo + d2, stack.copy());
+            double d0 = (double)(ts.getWorldObj().rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+            double d1 = (double)(ts.getWorldObj().rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+            double d2 = (double)(ts.getWorldObj().rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+            EntityItem entityitem = new EntityItem(ts.getWorldObj(), (double)xo + d0, (double)yo + d1, (double)zo + d2, stack.copy());
             entityitem.delayBeforeCanPickup = 1;
-            ts.worldObj.spawnEntityInWorld(entityitem);
+            ts.getWorldObj().spawnEntityInWorld(entityitem);
         }
 	}
 	

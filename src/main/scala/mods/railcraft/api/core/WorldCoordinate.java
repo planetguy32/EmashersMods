@@ -2,6 +2,7 @@ package mods.railcraft.api.core;
 // TODO: Add NBT functions
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 
 /**
  * This immutable class represents a point in the Minecraft world, while taking
@@ -43,13 +44,20 @@ public class WorldCoordinate {
         this.z = z;
     }
 
+    public WorldCoordinate(TileEntity tile) {
+        this.dimension = tile.getWorldObj().provider.dimensionId;
+        this.x = tile.xCoord;
+        this.y = tile.yCoord;
+        this.z = tile.zCoord;
+    }
+
     public void writeToNBT(NBTTagCompound data, String tag) {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setInteger("dim", dimension);
         nbt.setInteger("x", x);
         nbt.setInteger("y", y);
         nbt.setInteger("z", z);
-        data.setCompoundTag(tag, nbt);
+        data.setTag(tag, nbt);
     }
 
     public static WorldCoordinate readFromNBT(NBTTagCompound data, String tag) {
@@ -66,26 +74,18 @@ public class WorldCoordinate {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
         final WorldCoordinate other = (WorldCoordinate) obj;
-        if (this.dimension != other.dimension) {
+        if (this.dimension != other.dimension)
             return false;
-        }
-        if (this.x != other.x) {
+        if (this.x != other.x)
             return false;
-        }
-        if (this.y != other.y) {
+        if (this.y != other.y)
             return false;
-        }
-        if (this.z != other.z) {
-            return false;
-        }
-        return true;
+        return this.z == other.z;
     }
 
     @Override
@@ -96,6 +96,11 @@ public class WorldCoordinate {
         hash = 13 * hash + this.y;
         hash = 13 * hash + this.z;
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        return "WorldCoordinate{" + "dimension=" + dimension + ", x=" + x + ", y=" + y + ", z=" + z + '}';
     }
 
 }

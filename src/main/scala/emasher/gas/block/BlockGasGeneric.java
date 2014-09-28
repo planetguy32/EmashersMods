@@ -2,27 +2,18 @@ package emasher.gas.block;
 
 import java.util.Random;
 
+import emasher.gas.EmasherGas;
 import emasher.gas.tileentity.TileGas;
 
-import net.minecraft.world.biome.*;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.*;
-import net.minecraft.world.chunk.*;
 import net.minecraft.block.*;
-import net.minecraft.item.*;
 import net.minecraft.tileentity.*;
 import net.minecraft.block.material.*;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.creativetab.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.entity.*;
 import net.minecraft.util.*;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.*;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.liquids.*;
 
 public abstract class BlockGasGeneric extends BlockContainer implements IFluidBlock
 {
@@ -32,31 +23,28 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
 	public boolean isDestructive;
 	public Fluid blocksFluid;
 	
-	public Icon[] textures = new Icon[16];
-	
-	public BlockGasGeneric(int ID, int lightOpacity, boolean canExplode)
+	public BlockGasGeneric(int lightOpacity, boolean canExplode)
 	{
-		super(ID, Material.air);
+		super(Material.circuits);
 		
 		setLightOpacity(lightOpacity);
 		this.canExplode = canExplode;
 		this.canBurn = false;
 		this.isDestructive = false;
-		this.setCreativeTab(null);
+		this.setCreativeTab(EmasherGas.tabGasCraft);
 	}
 	
-	public BlockGasGeneric(int id, int lightOpacity, boolean canExplode, boolean canBurn, boolean isDestructive)
+	public BlockGasGeneric(int lightOpacity, boolean canExplode, boolean canBurn, boolean isDestructive)
 	{
-		this(id, lightOpacity, canExplode);
+		this(lightOpacity, canExplode);
 		this.canBurn = canBurn;
 		this.isDestructive = isDestructive;
 	}
 	
 	@Override
-	public TileEntity createNewTileEntity(World var1)
+	public TileEntity createNewTileEntity(World var1, int metadata)
 	{
-		TileGas entity = new TileGas(this.getFluid());
-		return entity;
+		return new TileGas(this.getFluid());
 	}
 	
 	@Override
@@ -66,9 +54,9 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
     }
 	
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, int id)
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
 	{
-		if(id == Block.fire.blockID || (id == Block.torchWood.blockID && world.difficultySetting == 3))
+		if(block == Blocks.fire || (block == Blocks.torch && world.difficultySetting == EnumDifficulty.HARD))
 		{
 			contactFire(world, x, y, z);
 		}
@@ -80,28 +68,28 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
 		if(canExplode)
 		{
 			world.setBlockToAir(x, y, z);
-			world.removeBlockTileEntity(x, y, z);
+			world.removeTileEntity(x, y, z);
 			world.createExplosion(null, x, y, z, 4, true);
 		}
 		else if(canBurn)
 		{
 			int tempY = y - 1;
-			while(world.getBlockId(x, tempY, z) == this.blockID || world.getBlockId(x, tempY, z) == 0 || Block.blocksList[world.getBlockId(x, tempY, z)].isBlockReplaceable(world, x, tempY, z))
+			while(world.getBlock(x, tempY, z) == this || world.getBlock(x, tempY, z) == Blocks.air || world.getBlock(x, tempY, z).isReplaceable(world, x, tempY, z))
 			{
 				tempY--;
 			}
 			
 			tempY++;
 			
-			world.setBlock(x, y, z, 0);
-			world.removeBlockTileEntity(x, y, z);
-			world.setBlock(x, tempY, z, Block.fire.blockID);
+			world.setBlock(x, y, z, Blocks.air);
+			world.removeTileEntity(x, y, z);
+			world.setBlock(x, tempY, z, Blocks.fire);
 		}
 	}
 	
 	
 	@Override
-	public boolean isBlockReplaceable(World world, int i, int j, int k)
+	public boolean isReplaceable(IBlockAccess world, int i, int j, int k)
 	{
 		return true;
 	}
@@ -112,7 +100,7 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
     {
 		super.onBlockAdded(world, x, y, z);
 		
-		TileEntity t = world.getBlockTileEntity(x, y, z);
+		TileEntity t = world.getTileEntity(x, y, z);
 		
 		if(t != null && t instanceof TileGas)
 		{
@@ -167,11 +155,11 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
     /**
      * If this block doesn't render as an ordinary block it will return False (examples: signs, buttons, stairs, etc)
      */
-	@Override
-    public boolean renderAsNormalBlock()
-    {
-        return false;
-    }
+//	@Override
+//    public boolean renderAsNormalBlock()
+//    {
+//        return false;
+//    }
 
 	@Override
 	public Fluid getFluid()
@@ -183,7 +171,7 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
 	public FluidStack drain(World world, int x, int y, int z, boolean doDrain)
 	{
 		int amnt = 0;
-		TileEntity te = world.getBlockTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(x, y, z);
 		if(te != null && te instanceof TileGas)
 		{
 			TileGas tg = (TileGas)te;
@@ -194,7 +182,7 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
 			if(doDrain)
 			{
 				world.setBlockToAir(x, y, z);
-				world.removeBlockTileEntity(x, y, z);
+				world.removeTileEntity(x, y, z);
 			}
 			
 			return result;
@@ -208,7 +196,7 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
 	@Override
 	public boolean canDrain(World world, int x, int y, int z)
 	{
-		TileEntity te = world.getBlockTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(x, y, z);
 		if(te != null && te instanceof TileGas)
 		{
 			return true;
@@ -217,11 +205,14 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
 		return false;
 	}
 
-    public boolean canDestroyBlock(int blockID, int x, int y, int z, World world)
+    public boolean canDestroyBlock(Block block, int x, int y, int z, World world)
     {
         return false;
     }
 
-	
-	
+    @Override
+    public float getFilledPercentage(World world, int x, int y, int z)
+    {
+        return 1;
+    }
 }

@@ -1,6 +1,11 @@
 package emasher.sockets.pipes;
 
+//import emasher.sockets.PacketHandler;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import emasher.sockets.PacketHandler;
+import emasher.sockets.SocketsMod;
+import emasher.sockets.client.ClientPacketHandler;
+import emasher.sockets.packethandling.PacketTileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
@@ -11,7 +16,7 @@ public abstract class TileAdapterBase extends TileEntity
 	public void toggleOutput(int side)
 	{
 		outputs[side] = ! outputs[side];
-		PacketHandler.instance.sendClientAdapterSide(this, side);
+        PacketHandler.instance.sendClientAdapterSide(this, side);
 	}
 	
 	@Override
@@ -20,7 +25,7 @@ public abstract class TileAdapterBase extends TileEntity
 		super.validate();
 		if(this.worldObj.isRemote)
 		{
-			emasher.sockets.client.ClientPacketHandler.instance.requestAdapterOutputData(this);
+            ClientPacketHandler.instance.requestAdapterOutputData(this);
 		}
 	}
 	

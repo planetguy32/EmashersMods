@@ -3,7 +3,7 @@ package emasher.sockets.pipes
 import net.minecraft.tileentity._;
 import net.minecraft.nbt._;
 import cofh.api.energy._;
-import net.minecraftforge.common._;
+import net.minecraftforge.common.util.ForgeDirection;
 
 class TileEnergyPipe extends TilePipeBase with IEnergyHandler
 {
@@ -60,7 +60,7 @@ class TileEnergyPipe extends TilePipeBase with IEnergyHandler
 						xo = xCoord + d.offsetX;
 						yo = yCoord + d.offsetY;
 						zo = zCoord + d.offsetZ;
-						var t:TileEntity = worldObj.getBlockTileEntity(xo, yo, zo);
+						var t:TileEntity = worldObj.getTileEntity(xo, yo, zo);
 						if(t != null && t.isInstanceOf[IEnergyHandler] && ! t.isInstanceOf[TileStartPipe] && ! t.isInstanceOf[TileEnergyPipe])
 						{
 							var amnt:Int = t.asInstanceOf[IEnergyHandler].receiveEnergy(d.getOpposite, capacitor.extractEnergy(CAPACITY, true), false)
@@ -82,7 +82,7 @@ class TileEnergyPipe extends TilePipeBase with IEnergyHandler
 						xo = xCoord + d.offsetX;
 						yo = yCoord + d.offsetY;
 						zo = zCoord + d.offsetZ;
-						var t:TileEntity = worldObj.getBlockTileEntity(xo, yo, zo);
+						var t:TileEntity = worldObj.getTileEntity(xo, yo, zo);
 						
 						if(d != lastFrom)
 						{
@@ -139,7 +139,7 @@ class TileEnergyPipe extends TilePipeBase with IEnergyHandler
 		capacitor.extractEnergy(amnt, simulate);
 	}
 	
-	override def canInterface(from: ForgeDirection) = true;
+	override def canConnectEnergy(from: ForgeDirection) = true;
 	
 	override def getEnergyStored(from: ForgeDirection) = capacitor.getEnergyStored();
 	override def getMaxEnergyStored(from: ForgeDirection) = capacitor.getMaxEnergyStored();

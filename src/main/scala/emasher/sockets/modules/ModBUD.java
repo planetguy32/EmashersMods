@@ -4,14 +4,15 @@ import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import emasher.api.RSPulseModule;
 import emasher.api.SideConfig;
 import emasher.api.SocketTileAccess;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 
 public class ModBUD extends RSPulseModule
@@ -19,7 +20,7 @@ public class ModBUD extends RSPulseModule
 
 	public ModBUD(int id)
 	{
-		super(id, "sockets:BUD_0", "sockets:BUD_1", "sockets:DBUD_0", "sockets:DBUD_1");
+		super(id, "sockets:BUD_0", "sockets:DBUDS");
 	}
 
 	@Override
@@ -45,19 +46,18 @@ public class ModBUD extends RSPulseModule
 	@Override
 	public int getCurrentTexture(SideConfig config)
 	{
-		if(config.meta == 0)
+		if(config.tank == 0)
 		{
-			if(config.tank == 0) return 0;
-			else return 2;
+			return 0;
 		}
-		if(config.tank == 0) return 1;
-		else return 3;
+
+		return 1;
 	}
 	
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "i", "b", Character.valueOf('i'), Block.pressurePlateGold, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "i", "b", Character.valueOf('i'), Blocks.light_weighted_pressure_plate, Character.valueOf('b'), SocketsMod.blankSide);
 	}
 	
 	@Override

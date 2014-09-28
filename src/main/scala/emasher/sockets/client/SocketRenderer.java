@@ -2,6 +2,7 @@ package emasher.sockets.client;
 
 import java.awt.image.BufferedImage;
 
+import emasher.core.EmasherCore;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -24,14 +25,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.IItemRenderer.ItemRendererHelper;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.FakePlayerFactory;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.common.util.ForgeDirection;
 //import net.minecraftforge.liquids.LiquidDictionary;
 //import net.minecraftforge.liquids.LiquidStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -49,6 +50,34 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 		TileSocket ts = (TileSocket)t;
 		BlockSocket b = (BlockSocket)SocketsMod.socket;
 		SocketModule m;
+
+        //Render the inside
+
+        FMLClientHandler.instance().getClient().entityRenderer.disableLightmap(1);
+        RenderHelper.disableStandardItemLighting();
+        GL11.glDisable(GL11.GL_LIGHTING);
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        CubeRenderBounds bounds = new CubeRenderBounds(0.05, 0.05, 0.05, 0.95, 0.95, 0.95);
+        IIcon[] icons = new IIcon[6];
+        for(int i = 0; i < 6; i++)
+        {
+            m = ts.getSide(ForgeDirection.getOrientation(i));
+            icons[i] = SocketsMod.innerTextures.get(m.getInternalTexture(ts, ts.configs[i], ForgeDirection.getOrientation(i)));
+        }
+        CubeRenderer.render(x, y, z, icons, bounds, false);
+
+        FMLClientHandler.instance().getClient().entityRenderer.enableLightmap((double) counter);
+        RenderHelper.enableStandardItemLighting();
+
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationItemsTexture);
+
+        bounds = new CubeRenderBounds(0, 0, 0, 1, 1, 1);
+        for(int i = 0; i < 6; i++)
+        {
+            icons[i] = SocketsMod.blankSide.getIconFromDamage(0);
+        }
+        CubeRenderer.render(x, y, z, icons, bounds, true);
+        GL11.glEnable(GL11.GL_LIGHTING);
 		
 		FMLClientHandler.instance().getClient().entityRenderer.disableLightmap(1);
 		RenderHelper.disableStandardItemLighting();
@@ -104,12 +133,12 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 			//Minecraft.getMinecraft().renderEngine.bindTexture(par1ResourceLocation)
 			//bindTextureByName("/terrain.png");
 			
-			Icon[] icons = new Icon[4];
+			IIcon[] indIcons = new IIcon[4];
 			
-			if(m.hasIndicator(0))icons[0] = b.tankIndicator[ts.tankIndicatorIndex(side)];
-			if(m.hasIndicator(1))icons[1] = b.inventoryIndicator[ts.inventoryIndicatorIndex(side)];
-			if(m.hasIndicator(2))icons[2] = b.rsIndicator[ts.rsIndicatorIndex(side)];
-			if(m.hasIndicator(3))icons[3] = b.latchIndicator[ts.latchIndicatorIndex(side)];
+			if(m.hasIndicator(0))indIcons[0] = b.tankIndicator[ts.tankIndicatorIndex(side)];
+			if(m.hasIndicator(1))indIcons[1] = b.inventoryIndicator[ts.inventoryIndicatorIndex(side)];
+			if(m.hasIndicator(2))indIcons[2] = b.rsIndicator[ts.rsIndicatorIndex(side)];
+			if(m.hasIndicator(3))indIcons[3] = b.latchIndicator[ts.latchIndicatorIndex(side)];
 			
 			if(! ts.sideLocked[side]) for(int i = 0; i < 4; i++)
 			{
@@ -117,66 +146,18 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 				{
 					tessellator.startDrawingQuads();
 					
-					tessellator.addVertexWithUV(0, 1, 0, icons[i].getMinU(), icons[i].getMaxV());
-					tessellator.addVertexWithUV(1, 1, 0, icons[i].getMaxU(), icons[i].getMaxV());
-					tessellator.addVertexWithUV(1, 0, 0, icons[i].getMaxU(), icons[i].getMinV());
-					tessellator.addVertexWithUV(0, 0, 0, icons[i].getMinU(), icons[i].getMinV());
+					tessellator.addVertexWithUV(0, 1, 0, indIcons[i].getMinU(), indIcons[i].getMaxV());
+					tessellator.addVertexWithUV(1, 1, 0, indIcons[i].getMaxU(), indIcons[i].getMaxV());
+					tessellator.addVertexWithUV(1, 0, 0, indIcons[i].getMaxU(), indIcons[i].getMinV());
+					tessellator.addVertexWithUV(0, 0, 0, indIcons[i].getMinU(), indIcons[i].getMinV());
 					
 					tessellator.draw();
 				}
 			}
 			
-			int tankToRender = m.getTankToRender(ts, ts.configs[side], ForgeDirection.getOrientation(side));
+
 			
-			if(tankToRender != -1 && ts.tanks[tankToRender].getFluid() != null)
-			{
-				//FluidStack ls = FluidDictionary.getCanonicalLiquid(ts.tanks[tankToRender].getLiquid());
-				FluidStack ls = ts.tanks[tankToRender].getFluid();
-				
-				if(ls != null)
-				{
-						int cap = 8000;
-						
-						for(int i = 0; i < 6; i++)
-						{
-							SocketModule m2 = ts.getSide(ForgeDirection.getOrientation(i));
-							if(m2 instanceof ModPressurizer)
-							{
-								cap = 32000;
-								break;
-							}
-						}
-						float scale = ts.tanks[tankToRender].getFluid().amount / (float) cap;
-						Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
-						//bindTextureByName(ls.getTextureSheet());
-						if(ls.getFluid() != null && ls.getFluid().getIcon() != null)
-						{
-							Icon fluidIcon = ls.getFluid().getIcon();//ls.getRenderingIcon();
-							
-							GL11.glTranslatef(0.25F, 0.25F, 0.0005F);
-							GL11.glScalef(0.5F, 0.5F, 0.5F);
-							GL11.glTranslatef(0.0F, 1.0F - scale, 0.0F);
-							GL11.glScalef(1.0F, scale, 1.0F);
-							
-							tessellator.startDrawingQuads();
-							
-							tessellator.addVertexWithUV(0, 1, 0, fluidIcon.getMinU(), fluidIcon.getMaxV());
-							tessellator.addVertexWithUV(1, 1, 0, fluidIcon.getMaxU(), fluidIcon.getMaxV());
-							tessellator.addVertexWithUV(1, 0, 0, fluidIcon.getMaxU(), fluidIcon.getMinV());
-							tessellator.addVertexWithUV(0, 0, 0, fluidIcon.getMinU(), fluidIcon.getMinV());
-							
-							tessellator.draw();
-							
-							GL11.glScalef(1.0F, 1.0F/scale, 1.0F);
-							GL11.glTranslatef(0.0F, -(1.0F - scale), 0.0F);
-							GL11.glScalef(2.0F, 2.0F, 2.0F);
-							GL11.glTranslatef(-0.25F, -0.25F,  -0.0005F);
-						}
-				}
-				
-			}
-			
-			Icon[] additional = m.getAdditionalOverlays(ts, ts.configs[side], ForgeDirection.getOrientation(side));
+			IIcon[] additional = m.getAdditionalOverlays(ts, ts.configs[side], ForgeDirection.getOrientation(side));
 			//bindTextureByName("/terrain.png");
 			Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
 			
@@ -201,19 +182,119 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 				
 				tessellator.draw();
 			}
-			
-			
-			String s = m.getTextToRender(ts, ts.configs[side], ForgeDirection.getOrientation(side));
-			
-			GL11.glTranslatef(0.25F, 0.25F, 0.0F);
-			
-			GL11.glScalef(0.01F, 0.01F, 1);
-			
-			if(s != null) this.getFontRenderer().drawString(s, -this.getFontRenderer().getStringWidth(s) / 2, 2, -1);
-			
-			GL11.glScalef(100, 100, 1);
-			
-			ItemStack theStack= m.getItemToRender(ts, ts.configs[side], ForgeDirection.getOrientation(side));
+
+
+            switch(side)
+            {
+                case 0:
+                    GL11.glTranslatef(0.0F, 0.0F, 0.026F);
+                    break;
+                case 1:
+                    GL11.glTranslatef(0.0F, 0.0F, 0.026F);
+                    break;
+                case 2:
+                    GL11.glTranslatef(0.0F, 0.0F, 0.026F);
+                    break;
+                case 3:
+                    GL11.glTranslatef(0.0F, 0.0F, 0.026F);
+                    break;
+                case 4:
+                    GL11.glTranslatef(0.0F, 0.0F, 0.026F);
+                    break;
+                case 5:
+                    GL11.glTranslatef(0.0F, 0.0F, 0.026F);
+                    break;
+            }
+
+            GL11.glDisable(GL11.GL_BLEND);
+
+            int tankToRender = m.getTankToRender(ts, ts.configs[side], ForgeDirection.getOrientation(side));
+
+            if(tankToRender != -1 && ts.tanks[tankToRender].getFluid() != null)
+            {
+                FluidStack ls = ts.tanks[tankToRender].getFluid();
+
+                if(ls != null)
+                {
+                    int cap = 8000;
+
+                    for(int i = 0; i < 6; i++)
+                    {
+                        SocketModule m2 = ts.getSide(ForgeDirection.getOrientation(i));
+                        if(m2 instanceof ModPressurizer)
+                        {
+                            cap = 32000;
+                            break;
+                        }
+                    }
+                    float scale = ts.tanks[tankToRender].getFluid().amount / (float) cap;
+                    Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+                    if(ls.getFluid() != null && ls.getFluid().getIcon() != null)
+                    {
+                        IIcon fluidIcon = ls.getFluid().getIcon();
+
+                        GL11.glTranslatef(0.25F, 0.25F, 0.0005F);
+                        GL11.glScalef(0.5F, 0.5F, 0.5F);
+                        GL11.glTranslatef(0.0F, 1.0F - scale, 0.0F);
+                        GL11.glScalef(1.0F, scale, 1.0F);
+
+                        tessellator.startDrawingQuads();
+
+                        tessellator.addVertexWithUV(0, 1, 0, fluidIcon.getMinU(), fluidIcon.getMaxV());
+                        tessellator.addVertexWithUV(1, 1, 0, fluidIcon.getMaxU(), fluidIcon.getMaxV());
+                        tessellator.addVertexWithUV(1, 0, 0, fluidIcon.getMaxU(), fluidIcon.getMinV());
+                        tessellator.addVertexWithUV(0, 0, 0, fluidIcon.getMinU(), fluidIcon.getMinV());
+
+                        tessellator.draw();
+
+                        GL11.glScalef(1.0F, 1.0F/scale, 1.0F);
+                        GL11.glTranslatef(0.0F, -(1.0F - scale), 0.0F);
+                        GL11.glScalef(2.0F, 2.0F, 2.0F);
+                        GL11.glTranslatef(-0.25F, -0.25F,  -0.0005F);
+                    }
+                }
+
+            }
+
+            GL11.glEnable(GL11.GL_BLEND);
+
+            if(m.renderEnergyAmount())
+            {
+                float enScale = ts.configs[side].meta / 100.0f;
+
+                GL11.glTranslatef(0.25F, 0.25F, 0.0005F);
+                GL11.glScalef(0.5F, 0.5F, 0.5F);
+                GL11.glTranslatef(0.0F, 1.0F - enScale, 0.0F);
+                GL11.glScalef(1.0F, enScale, 1.0F);
+
+                IIcon energyIcon = SocketsMod.innerTextures.get("sockets:inner_blue_tile");
+
+                tessellator.startDrawingQuads();
+
+                tessellator.addVertexWithUV(0, 1, 0, energyIcon.getMinU(), energyIcon.getMaxV());
+                tessellator.addVertexWithUV(1, 1, 0, energyIcon.getMaxU(), energyIcon.getMaxV());
+                tessellator.addVertexWithUV(1, 0, 0, energyIcon.getMaxU(), energyIcon.getMinV());
+                tessellator.addVertexWithUV(0, 0, 0, energyIcon.getMinU(), energyIcon.getMinV());
+
+                tessellator.draw();
+
+                GL11.glScalef(1.0F, 1.0F/enScale, 1.0F);
+                GL11.glTranslatef(0.0F, -(1.0F - enScale), 0.0F);
+                GL11.glScalef(2.0F, 2.0F, 2.0F);
+                GL11.glTranslatef(-0.25F, -0.25F,  -0.0005F);
+            }
+
+            String s = m.getTextToRender(ts, ts.configs[side], ForgeDirection.getOrientation(side));
+
+            GL11.glTranslatef(0.25F, 0.25F, 0.0F);
+
+            GL11.glScalef(0.01F, 0.01F, 1);
+
+            if(s != null) Minecraft.getMinecraft().fontRenderer.drawString(s, -Minecraft.getMinecraft().fontRenderer.getStringWidth(s) / 2, 2, -1);
+
+            GL11.glScalef(100, 100, 1);
+
+            ItemStack theStack= m.getItemToRender(ts, ts.configs[side], ForgeDirection.getOrientation(side));
 			
 			if(theStack != null)
 			{
@@ -225,11 +306,10 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 				
 				boolean isBlock = false;
 				
-				if(theStack.itemID < 4096 && Block.blocksList[theStack.itemID] != null && ! Block.blocksList[theStack.itemID].getUnlocalizedName().equals("tile.ForgeFiller")) isBlock = true;
+				if(Item.getIdFromItem(theStack.getItem()) < 4096 && Block.getBlockFromItem(theStack.getItem()) != null && ! Block.getBlockFromItem(theStack.getItem()).getUnlocalizedName().equals("tile.ForgeFiller")) isBlock = true;
 				
-				if(isBlock && RenderBlocks.renderItemIn3d(Block.blocksList[theItem.itemID].getRenderType()) || customRenderer != null)
+				if(isBlock && RenderBlocks.renderItemIn3d(Block.getBlockFromItem(theItem).getRenderType()) || customRenderer != null)
 				{
-					//bindTextureByName("/terrain.png");
 					Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
 					
 					boolean usesHelper = customRenderer == null ? true : customRenderer.shouldUseRenderHelper(ItemRenderType.INVENTORY, theStack, ItemRendererHelper.INVENTORY_BLOCK);
@@ -243,7 +323,7 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 					GL11.glTranslatef(0.25F, 0.25F, 0.0F);
 					GL11.glScalef(0.5F, 0.5F, 0.5F);
 					
-					if (usesHelper){
+					if(usesHelper){
 						GL11.glScalef(1, 1, 0.0001F);
 						GL11.glTranslatef(0.5F, 0.5F, 0);
 						GL11.glRotatef(210, 1, 0, 0);
@@ -252,21 +332,16 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 						GL11.glTranslatef(0, 0, -3);
 					}
 					
-					if (usesHelper) blockRender.useInventoryTint = true;
+					if(usesHelper) blockRender.useInventoryTint = true;
 					
-					if (customRenderer != null){
+					if(customRenderer != null){
 						customRenderer.renderItem(ItemRenderType.INVENTORY, theStack, blockRender);
 					}else{
-						blockRender.renderBlockAsItem(Block.blocksList[theStack.itemID], theStack.getItemDamage(), 1);
+						blockRender.renderBlockAsItem(Block.getBlockFromItem(theStack.getItem()), theStack.getItemDamage(), 1);
 					}
 				}
 				else
 				{
-					//bindTextureByName("/gui/items.png");
-					/*Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/atlas/items.png"));
-					
-					if(theItem instanceof ItemBlock) inecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/atlas/blocks.png"));//bindTextureByName("/terrain.png");*/
-					
 					Minecraft.getMinecraft().renderEngine.bindTexture(theStack.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
 						
 					if(theItem.requiresMultipleRenderPasses())
@@ -276,7 +351,7 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 						for(int i = 0; i < passes; i++)
 						{
 							Minecraft.getMinecraft().renderEngine.bindTexture(theStack.getItemSpriteNumber() == 0 ? TextureMap.locationBlocksTexture : TextureMap.locationItemsTexture);
-							Icon itemIcon = theItem.getIconFromDamageForRenderPass(theStack.getItemDamage(), i);//, FakePlayerFactory.getMinecraft(ts.worldObj), theStack, 0);
+							IIcon itemIcon = theItem.getIconFromDamageForRenderPass(theStack.getItemDamage(), i);
 							if (itemIcon != null) {
 								
 								tessellator.startDrawingQuads();
@@ -298,7 +373,7 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 					else
 					{
 					
-						Icon itemIcon = theItem.getIcon(theStack, 0);
+						IIcon itemIcon = theItem.getIcon(theStack, 0);
 						
 						tessellator.startDrawingQuads();
 						
@@ -312,10 +387,8 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 				}
 			}
 
-			
-			
-			
-			
+
+
 			FMLClientHandler.instance().getClient().entityRenderer.enableLightmap(1);
 			RenderHelper.enableStandardItemLighting();
 			
@@ -339,6 +412,8 @@ public class SocketRenderer extends TileEntitySpecialRenderer
 			module = ts.getSide(d);
 			module.doCustomRendering(ts, ts.getConfigForSide(d), d, tessellator, blockRender);
 		}
+
+
 	}
 
 }

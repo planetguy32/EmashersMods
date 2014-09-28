@@ -2,6 +2,7 @@ package emasher.core;
 
 import java.util.Random;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.*;
@@ -9,26 +10,26 @@ import net.minecraft.world.gen.feature.*;
 public class WorldGenMinableSafe extends WorldGenerator
 {
     /** The block ID of the ore to be placed using this generator. */
-    private int minableBlockId;
+    private Block minableBlockId;
     private int minableBlockMeta = 0;
 
     /** The number of blocks to generate. */
     private int numberOfBlocks;
-    private int field_94523_c;
+    private Block field_94523_c;
 
-    public WorldGenMinableSafe(int par1, int par2)
+    public WorldGenMinableSafe(Block par1, int par2)
     {
-        this(par1, par2, Block.stone.blockID);
+        this(par1, par2, Blocks.stone);
     }
 
-    public WorldGenMinableSafe(int par1, int par2, int par3)
+    public WorldGenMinableSafe(Block par1, int par2, Block par3)
     {
         this.minableBlockId = par1;
         this.numberOfBlocks = par2;
         this.field_94523_c = par3;
     }
 
-    public WorldGenMinableSafe(int id, int meta, int number, int target)
+    public WorldGenMinableSafe(Block id, int meta, int number, Block target)
     {
         this(id, number, target);
         minableBlockMeta = meta;
@@ -77,8 +78,8 @@ public class WorldGenMinableSafe extends WorldGenerator
                                 
                                 if(par1World.blockExists(k2, l2, i3))
                                 {
-	                                Block block = Block.blocksList[par1World.getBlockId(k2, l2, i3)];
-	                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && (block != null && block.isGenMineableReplaceable(par1World, k2, l2, i3, field_94523_c)))
+	                                Block block = par1World.getBlock(k2, l2, i3);
+	                                if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && (block != null && block.isReplaceableOreGen(par1World, k2, l2, i3, field_94523_c)))
 	                                {
 	                                    par1World.setBlock(k2, l2, i3, this.minableBlockId, minableBlockMeta, 2);
 	                                }

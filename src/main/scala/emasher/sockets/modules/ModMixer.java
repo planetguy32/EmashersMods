@@ -2,12 +2,19 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import cpw.mods.fml.common.Loader;
 import emasher.api.MixerRecipeRegistry;
@@ -50,8 +57,8 @@ public class ModMixer extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " h ", "udu", " b ", Character.valueOf('h'), Block.hopperBlock, Character.valueOf('u'), Item.bucketEmpty,
-				Character.valueOf('d'), Block.dispenser, Character.valueOf('b'), SocketsMod.blankSide));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " h ", "udu", " b ", Character.valueOf('h'), Blocks.hopper, Character.valueOf('u'), Items.bucket,
+				Character.valueOf('d'), Blocks.dispenser, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	@Override
@@ -138,7 +145,9 @@ public class ModMixer extends SocketModule
 				int num = ts.forceOutputFluid(f);
 				if(num < f.amount)
 				{
-					ts.sideInventory.setInventorySlotContents(side.ordinal(), new ItemStack(f.fluidID, 1, f.amount - num));
+					//TODO Check Fluid things
+					//ts.sideInventory.setInventorySlotContents(side.ordinal(), new ItemStack(f.fluidID, 1, f.amount - num));
+                    ts.sideInventory.setInventorySlotContents(side.ordinal(), new ItemStack(f.getFluid().getBlock(), 1, f.amount - num));
 				}
 				else
 				{
@@ -150,20 +159,36 @@ public class ModMixer extends SocketModule
 		}
 	}
 	
-	@Override
-	public int getCurrentTexture(SideConfig config)
-	{
-		if(config.meta == 0 || ! config.rsControl[0]) return 0;
-		return 1;
-	}
-	
 	private ItemStack fluidToItem(FluidStack f)
 	{
-		return new ItemStack(f.fluidID, 1, f.amount);
+        //TODO Check what this is used for to see if it works this way or not
+		//return new ItemStack(f.fluidID, 1, f.amount);
+        return new ItemStack(f.getFluid().getBlock(), 1, f.amount);
 	}
 	
 	private FluidStack itemToFluid(ItemStack i)
 	{
-		return new FluidStack(i.itemID, i.getItemDamage());
+        //TODO Check what this is used for to see if it works this way or not
+		//return new FluidStack(i.itemID, i.getItemDamage());
+        Block b = Block.getBlockFromItem(i.getItem());
+        if(!(b instanceof IFluidBlock))
+            return null;
+        return new FluidStack(((IFluidBlock) b).getFluid(), i.getItemDamage());
 	}
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        if(config.meta == 0 || ! config.rsControl[0]) return "sockets:inner_black";
+        return "sockets:inner_mixer";
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures()
+    {
+        System.out.println("inner mixer texture loaded");
+        return new String[] {"sockets:inner_mixer"};
+    }
 }

@@ -3,7 +3,7 @@ package emasher.sockets.items;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import emasher.sockets.SocketsMod;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.passive.EntityAnimal;
@@ -17,7 +17,7 @@ public class ItemCattleProd extends Item
 
 	public ItemCattleProd(int id)
 	{
-		super(id);
+		super();
 		this.setCreativeTab(SocketsMod.tabSockets);
 		this.setMaxDamage(64);
 		this.setMaxStackSize(1);
@@ -33,7 +33,7 @@ public class ItemCattleProd extends Item
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister ir)
+	public void registerIcons(IIconRegister ir)
 	{
 		this.itemIcon = ir.registerIcon("sockets:cattleProd");
 	}

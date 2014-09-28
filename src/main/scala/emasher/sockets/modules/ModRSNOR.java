@@ -4,11 +4,11 @@ import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import emasher.api.RSGateModule;
 import emasher.api.SideConfig;
 import emasher.api.SocketTileAccess;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 
 public class ModRSNOR extends RSGateModule
@@ -16,7 +16,7 @@ public class ModRSNOR extends RSGateModule
 
 	public ModRSNOR(int id)
 	{
-		super(id, "sockets:NOR_0", "sockets:NOR_1");
+		super(id, "sockets:NOR_0");
 	}
 
 	@Override

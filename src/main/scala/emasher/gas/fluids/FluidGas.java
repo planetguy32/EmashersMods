@@ -3,7 +3,7 @@ package emasher.gas.fluids;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
 
 public class FluidGas extends Fluid
@@ -16,7 +16,7 @@ public class FluidGas extends Fluid
 	{
 		super(fluidName);
 		internalID = iID;
-		this.setBlockID(theBlock);
+		this.setBlock(theBlock);
 		this.setStillIcon(theBlock.getBlockTextureFromSide(0));
 		this.setFlowingIcon(theBlock.getBlockTextureFromSide(0));
 		this.setGaseous(true);
@@ -27,17 +27,11 @@ public class FluidGas extends Fluid
 	}
 	
 	@Override
-	public String getLocalizedName()
-	{
-		return NAMES[internalID];
-	}
-	
-	@Override
-	public Icon getStillIcon()
+	public IIcon getStillIcon()
     {
         if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {
-            return Block.blocksList[this.blockID].getBlockTextureFromSide(0);
+            return this.getBlock().getBlockTextureFromSide(0);
         }
         else
         {
@@ -46,11 +40,11 @@ public class FluidGas extends Fluid
     }
 	
 	@Override
-    public Icon getFlowingIcon()
+    public IIcon getFlowingIcon()
     {
         if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {
-            return Block.blocksList[this.blockID].getBlockTextureFromSide(0);
+            return this.getBlock().getBlockTextureFromSide(0);
         }
         else
         {

@@ -5,20 +5,20 @@ import java.util.List;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import emasher.core.EmasherCore;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 
 public class ItemIngot extends Item
 {
 	@SideOnly(Side.CLIENT)
-	public Icon[] textures;
+	public IIcon[] textures;
 
-	public ItemIngot(int id)
+	public ItemIngot()
 	{
-		super(id);
+		super();
 		this.setCreativeTab(EmasherCore.tabEmasher);
 		setHasSubtypes(true);
 	}
@@ -26,16 +26,16 @@ public class ItemIngot extends Item
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIconFromDamage(int damage)
+	public IIcon getIconFromDamage(int damage)
 	{
 		return textures[damage];
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister ir)
+	public void registerIcons(IIconRegister ir)
 	{
-		textures = new Icon[9];
+		textures = new IIcon[9];
 		
 		textures[0] = ir.registerIcon("emashercore:ingotAluminium");
 		textures[1] = ir.registerIcon("emashercore:ingotBronze");
@@ -89,7 +89,7 @@ public class ItemIngot extends Item
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-    public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
+    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List)
 	{	
 		for(int i = 0; i < 9; i++) par3List.add(new ItemStack(par1, 1, i));
     }

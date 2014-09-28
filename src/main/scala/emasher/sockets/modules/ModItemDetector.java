@@ -4,17 +4,19 @@ import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import emasher.api.RSPulseModule;
 import emasher.api.SideConfig;
 import emasher.api.SocketTileAccess;
 import emasher.core.EmasherCore;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 import emasher.sockets.TileSocket;
 
@@ -23,7 +25,7 @@ public class ModItemDetector extends RSPulseModule
 
 	public ModItemDetector(int id)
 	{
-		super(id, "sockets:DETItem_0", "sockets:DETItem_1");
+		super(id, "sockets:DETItem_0");
 	}
 
 	@Override
@@ -54,14 +56,14 @@ public class ModItemDetector extends RSPulseModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " h ", "iui", " b ", Character.valueOf('i'), Item.ingotIron, Character.valueOf('h'), Block.pressurePlateStone,
-				Character.valueOf('u'), Block.trapdoor, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " h ", "iui", " b ", Character.valueOf('i'), Items.iron_ingot, Character.valueOf('h'), Blocks.stone_pressure_plate,
+				Character.valueOf('u'), Blocks.trapdoor, Character.valueOf('b'), SocketsMod.blankSide);
 		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " h ", "iui", " b ", Character.valueOf('i'), "ingotAluminum", Character.valueOf('h'), Block.pressurePlateStone,
-				Character.valueOf('u'), Block.trapdoor, Character.valueOf('b'), SocketsMod.blankSide));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " h ", "iui", " b ", Character.valueOf('i'), "ingotAluminum", Character.valueOf('h'), Blocks.stone_pressure_plate,
+				Character.valueOf('u'), Blocks.trapdoor, Character.valueOf('b'), SocketsMod.blankSide));
 		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " h ", "iui", " b ", Character.valueOf('i'), "ingotTin", Character.valueOf('h'), Block.pressurePlateStone,
-				Character.valueOf('u'), Block.trapdoor, Character.valueOf('b'), SocketsMod.blankSide));
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " h ", "iui", " b ", Character.valueOf('i'), "ingotTin", Character.valueOf('h'), Blocks.stone_pressure_plate,
+				Character.valueOf('u'), Blocks.trapdoor, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	@Override

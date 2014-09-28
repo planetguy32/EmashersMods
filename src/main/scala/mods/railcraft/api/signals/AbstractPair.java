@@ -102,10 +102,10 @@ public abstract class AbstractPair {
         int x = coord.x;
         int y = coord.y;
         int z = coord.z;
-        if (!tile.worldObj.blockExists(x, y, z))
+        if (!tile.getWorldObj().blockExists(x, y, z))
             return null;
 
-        TileEntity target = tile.worldObj.getBlockTileEntity(x, y, z);
+        TileEntity target = tile.getWorldObj().getTileEntity(x, y, z);
         if (isValidPair(target))
             return target;
 
@@ -117,7 +117,7 @@ public abstract class AbstractPair {
 
     public WorldCoordinate getCoords() {
         if (coords == null)
-            coords = new WorldCoordinate(tile.worldObj.provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord);
+            coords = new WorldCoordinate(tile.getWorldObj().provider.dimensionId, tile.xCoord, tile.yCoord, tile.zCoord);
         return coords;
     }
 
@@ -162,7 +162,7 @@ public abstract class AbstractPair {
     public final void writeToNBT(NBTTagCompound data) {
         NBTTagCompound tag = new NBTTagCompound();
         saveNBT(tag);
-        data.setCompoundTag(getTagName(), tag);
+        data.setTag(getTagName(), tag);
     }
 
     protected void saveNBT(NBTTagCompound data) {
@@ -181,9 +181,9 @@ public abstract class AbstractPair {
     }
 
     protected void loadNBT(NBTTagCompound data) {
-        NBTTagList list = data.getTagList("pairings");
+        NBTTagList list = data.getTagList("pairings", 10);
         for (byte entry = 0; entry < list.tagCount(); entry++) {
-            NBTTagCompound tag = (NBTTagCompound) list.tagAt(entry);
+            NBTTagCompound tag = list.getCompoundTagAt(entry);
             int[] c = tag.getIntArray("coords");
             pairings.add(new WorldCoordinate(c[0], c[1], c[2], c[3]));
         }
@@ -191,17 +191,17 @@ public abstract class AbstractPair {
 
     @SideOnly(Side.CLIENT)
     public void addPair(int x, int y, int z) {
-        pairings.add(new WorldCoordinate(0, x, y, z));
+        pairings.add(new WorldCoordinate(tile.getWorldObj().provider.dimensionId, x, y, z));
     }
 
     @SideOnly(Side.CLIENT)
     public void removePair(int x, int y, int z) {
-        pairings.remove(new WorldCoordinate(0, x, y, z));
+        pairings.remove(new WorldCoordinate(tile.getWorldObj().provider.dimensionId, x, y, z));
     }
 
     public void clearPairings() {
         pairings.clear();
-        if (!tile.worldObj.isRemote)
+        if (!tile.getWorldObj().isRemote)
             SignalTools.packetBuilder.sendPairPacketUpdate(this);
     }
 

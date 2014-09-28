@@ -3,18 +3,19 @@ package emasher.sockets.items;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import emasher.sockets.SocketsMod;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class ItemHandPiston extends Item
 {
 	public ItemHandPiston(int id)
 	{
-		super(id);
+		super();
 		
 		this.setCreativeTab(SocketsMod.tabSockets);
 		this.setMaxStackSize(1);
@@ -29,7 +30,7 @@ public class ItemHandPiston extends Item
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister ir)
+	public void registerIcons(IIconRegister ir)
 	{
 		this.itemIcon = ir.registerIcon("sockets:handPiston");
 	}
@@ -46,7 +47,7 @@ public class ItemHandPiston extends Item
 		
 		//int id == world.getBlock
 		
-		if(world.getBlockId(xo, yo, zo) == 0)
+		if(world.getBlock(xo, yo, zo) == Blocks.air)
 		{
 			
 			

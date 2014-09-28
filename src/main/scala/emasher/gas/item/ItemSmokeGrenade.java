@@ -2,24 +2,19 @@ package emasher.gas.item;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import emasher.core.EmasherCore;
-import emasher.gas.CommonProxy;
 import emasher.gas.EmasherGas;
 import emasher.gas.EntitySmokeBomb;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class ItemSmokeGrenade extends Item
 {
-	public ItemSmokeGrenade(int par1)
+	public ItemSmokeGrenade()
     {
-        super(par1);
+        super();
         this.maxStackSize = 16;
         this.setCreativeTab(EmasherGas.tabGasCraft);
         this.setUnlocalizedName("smokeGrenade");
@@ -27,7 +22,7 @@ public class ItemSmokeGrenade extends Item
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister registry)
+	public void registerIcons(IIconRegister registry)
 	{
 		this.itemIcon = registry.registerIcon("gascraft:smokeGrenade");
 	}

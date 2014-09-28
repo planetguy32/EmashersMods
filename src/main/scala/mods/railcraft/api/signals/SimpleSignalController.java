@@ -73,4 +73,9 @@ public class SimpleSignalController extends SignalController {
     public void readPacketData(DataInputStream data) throws IOException {
         aspect = SignalAspect.values()[data.readByte()];
     }
+    
+    @Override
+    public String toString(){
+        return "Controller: " + aspect.toString();
+    }
 }

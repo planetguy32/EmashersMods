@@ -1,20 +1,19 @@
 package emasher.gas.modules;
 import java.util.List;
 
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.init.Blocks;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import emasher.sockets.SocketsMod;
 import net.minecraft.block.*;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.core.EmasherCore;
-import emasher.gas.EmasherGas;
 import emasher.gas.block.*;
 
 public class ModExhaust extends SocketModule
@@ -48,7 +47,7 @@ public class ModExhaust extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "i", "b", Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('i'), Block.fenceIron,
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "i", "b", Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('i'), Blocks.iron_bars,
 				Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 5)));
 	}
 	
@@ -101,20 +100,17 @@ public class ModExhaust extends SocketModule
 			int yo = ts.yCoord + side.offsetY;
 			int zo = ts.zCoord + side.offsetZ;
 			
-			if(ts.worldObj.isAirBlock(xo, yo, zo))
+			if(ts.getWorldObj().isAirBlock(xo, yo, zo))
 			{
 				FluidStack f = ts.getFluidInTank(config.tank);
 				if(f != null && f.amount >= 4000)
 				{
 					Fluid fl = f.getFluid();
-					int bID = fl.getBlockID();
-					if(bID > 0 && bID < 4096)
+					Block b = fl.getBlock();
+					if(b != null && b instanceof BlockGasGeneric)
 					{
-						if(Block.blocksList[bID] != null && Block.blocksList[bID] instanceof BlockGasGeneric)
-						{
-							ts.worldObj.setBlock(xo, yo, zo, bID);
-							ts.drainInternal(config.tank, 4000, true);
-						}
+						ts.getWorldObj().setBlock(xo, yo, zo, b);
+						ts.drainInternal(config.tank, 4000, true);
 					}
 				}
 			}

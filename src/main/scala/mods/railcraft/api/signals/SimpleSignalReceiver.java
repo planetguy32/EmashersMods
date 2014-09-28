@@ -59,4 +59,10 @@ public class SimpleSignalReceiver extends SignalReceiver {
     public void readPacketData(DataInputStream data) throws IOException {
         aspect = SignalAspect.values()[data.readByte()];
     }
+
+    @Override
+    public String toString() {
+        return "Receiver: " + aspect.toString();
+    }
+
 }

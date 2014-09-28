@@ -6,7 +6,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPane;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.effect.EntityWeatherEffect;
@@ -14,38 +14,37 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BlockDeflector extends BlockPane
 {
-	public static Icon shieldHigh;
-	public static Icon shieldLow;
+	public static IIcon shieldHigh;
+	public static IIcon shieldLow;
 	public static Random rand;
 
-	protected BlockDeflector(int id)
+	protected BlockDeflector()
 	{
-		super(id, "emasherdefense:deflector_edge", "emasherdefense:deflector_edge", Material.circuits, false);
+		super("emasherdefense:deflector_edge", "emasherdefense:deflector_edge", Material.circuits, false);
 		rand = new Random(System.nanoTime());
-		Block.opaqueCubeLookup[id] = true;
 		this.setTickRandomly(true);
 		this.setCreativeTab(null);
 	}
 	
 	@Override
-	public void registerIcons(IconRegister register)
+	public void registerBlockIcons(IIconRegister register)
 	{
-		super.registerIcons(register);
+		super.registerBlockIcons(register);
 		this.blockIcon = register.registerIcon("emasherdefense:deflector_edge");
 		this.shieldHigh = register.registerIcon("emasherdefense:deflector_high");
 		this.shieldLow = register.registerIcon("emasherdefense:deflector_low");
 	}
 	
 	@Override
-	public Icon getIcon(int side, int meta)
+	public IIcon getIcon(int side, int meta)
 	{
-		Icon result = shieldLow;
+		IIcon result = shieldLow;
 		
 		if((meta & 8) == 8)
 		{
@@ -54,6 +53,12 @@ public class BlockDeflector extends BlockPane
 		
 		return result;
 	}
+
+    @Override
+    public boolean isOpaqueCube()
+    {
+        return false;
+    }
 	
 	@Override
 	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity)
@@ -81,13 +86,13 @@ public class BlockDeflector extends BlockPane
 	}
 	
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, int id)
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
 	{
-		int lower = world.getBlockId(x, y - 1, z);
+		Block lower = world.getBlock(x, y - 1, z);
 		
-		if(lower == this.blockID || lower == EmasherDefense.deflectorBase.blockID)
+		if(lower == this || lower == EmasherDefense.deflectorBase)
 		{
-			if(lower == this.blockID)
+			if(lower == this)
 			{
 				int meta = world.getBlockMetadata(x, y - 1, z);
 				

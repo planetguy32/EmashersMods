@@ -2,28 +2,32 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import ic2.api.energy.tile.IEnergyAcceptor;
 import buildcraft.api.power.IPowerReceptor;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.core.EmasherCore;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 
 public class ModAdvancedEnergyExpansion extends SocketModule
 {
 	public ModAdvancedEnergyExpansion(int id)
 	{
-		super(id, "sockets:advEnExpansion", "sockets:advEnExpansionIn", "sockets:advEnExpansionOut");
+		super(id, "sockets:aenergy_expansion", "sockets:energy_expansion_in", "sockets:energy_expansion_out");
 	}
 
 	@Override
@@ -44,19 +48,22 @@ public class ModAdvancedEnergyExpansion extends SocketModule
 	{
 		l.add(SocketsMod.PREF_WHITE + "Configure if input or output or neither");
 	}
-	
+
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side) { return "sockets:inner_blue_tile"; }
+
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures() { return new String[] {"sockets:inner_blue_tile"}; }
+
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "pgp", "grg", "pgp", Character.valueOf('g'), Item.redstone, Character.valueOf('p'), new ItemStack(SocketsMod.module, 1, 74),
-				Character.valueOf('r'), Block.blockGold);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "pgp", "grg", "pgp", Character.valueOf('g'), Items.redstone, Character.valueOf('p'), new ItemStack(SocketsMod.module, 1, 74),
+				Character.valueOf('r'), Blocks.gold_block);
 	}
 	
 	@Override
 	public int getCurrentTexture(SideConfig config) { return config.meta; }
-	
-	/*@Override
-	public boolean hasTankIndicator() {return true; }*/
 	
 	@Override
 	public boolean hasRSIndicator() { return true; }

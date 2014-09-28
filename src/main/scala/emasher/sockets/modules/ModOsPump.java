@@ -4,10 +4,12 @@ import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -54,12 +56,12 @@ public class ModOsPump extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "iti", " b ", Character.valueOf('t'), Block.fenceIron, Character.valueOf('i'), Item.ingotIron,
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "iti", " b ", Character.valueOf('t'), Blocks.iron_bars, Character.valueOf('i'), Items.iron_ingot,
 				Character.valueOf('b'), SocketsMod.blankSide);
 		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "iti", " b ", Character.valueOf('t'), Block.fenceIron, Character.valueOf('i'), "ingotAluminum",
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "iti", " b ", Character.valueOf('t'), Blocks.iron_bars, Character.valueOf('i'), "ingotAluminum",
 				Character.valueOf('b'), SocketsMod.blankSide));
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "iti", " b ", Character.valueOf('t'), Block.fenceIron, Character.valueOf('i'), "ingotTin",
+		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "iti", " b ", Character.valueOf('t'), Blocks.iron_bars, Character.valueOf('i'), "ingotTin",
 				Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
@@ -70,11 +72,11 @@ public class ModOsPump extends SocketModule
 		int yo = ts.yCoord + side.offsetY;
 		int zo = ts.zCoord + side.offsetZ;
 		
-		int blockID = ts.worldObj.getBlockId(xo, yo, zo);
+		Block block = ts.getWorldObj().getBlock(xo, yo, zo);
 		boolean first = false;
 		int numBlocks = 0;
 		
-		if(blockID == Block.waterStill.blockID)
+		if(block == Blocks.water)
 		{
 			config.meta = 1;
 			for(int i = 0; i < 6; i++)

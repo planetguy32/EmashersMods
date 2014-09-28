@@ -5,18 +5,18 @@ import cpw.mods.fml.relauncher.SideOnly;
 import emasher.api.SocketModule;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
-class BlockStartPipe(id: Int) extends BlockContainer(id, Material.iron)
+class BlockStartPipe() extends BlockContainer(Material.iron)
 {
-	override def createNewTileEntity(world: World):TileEntity = new TileStartPipe();
+	override def createNewTileEntity(world: World, metadata: Int):TileEntity = new TileStartPipe();
 	
-	override def registerIcons(ir: IconRegister)
+	override def registerBlockIcons(ir: IIconRegister)
 	{
 		this.blockIcon = ir.registerIcon("sockets:startPipe");
 	}

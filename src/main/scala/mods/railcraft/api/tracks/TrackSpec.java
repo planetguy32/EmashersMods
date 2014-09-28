@@ -1,9 +1,12 @@
 package mods.railcraft.api.tracks;
 
 import java.util.List;
+import java.util.Locale;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.IIcon;
 
 /**
  * Each type of Track has a single instance of TrackSpec that corresponds with
@@ -39,7 +42,7 @@ public final class TrackSpec {
      * @param trackId A unique identifier for the track type. 0-512 are reserved
      * for Railcraft. Capped at Short.MAX_VALUE
      * @param tag A unique internal string identifier (ex.
-     * "track.speed.transition")
+     * "railcraft:track.speed.transition")
      * @param iconProvider The provider for Track item icons
      * @param instanceClass The ITrackInstance class that corresponds to this
      * TrackSpec
@@ -55,7 +58,7 @@ public final class TrackSpec {
      * @param trackId A unique identifier for the track type. 0-512 are reserved
      * for Railcraft. Capped at Short.MAX_VALUE
      * @param tag A unique internal string identifier (ex.
-     * "track.speed.transition")
+     * "railcraft:track.speed.transition")
      * @param iconProvider The provider for Track item icons
      * @param instanceClass The ITrackInstance class that corresponds to this
      * TrackSpec
@@ -64,7 +67,7 @@ public final class TrackSpec {
      */
     public TrackSpec(short trackId, String tag, ITrackItemIconProvider iconProvider, Class<? extends ITrackInstance> instanceClass, List<String> tooltip) {
         this.trackId = trackId;
-        this.tag = tag;
+        this.tag = tag.toLowerCase(Locale.ENGLISH);
         this.iconProvider = iconProvider;
         this.instanceClass = instanceClass;
         this.tooltip = tooltip;
@@ -90,11 +93,16 @@ public final class TrackSpec {
     /**
      * This function will only work after the Init Phase.
      *
+     * @param qty
      * @return an ItemStack that can be used to place the track.
      */
     public ItemStack getItem(int qty) {
         if (blockTrack != null) {
-            return new ItemStack(blockTrack, qty, getTrackId());
+            ItemStack stack = new ItemStack(blockTrack, qty);
+            NBTTagCompound nbt = new NBTTagCompound();
+            nbt.setString("track", tag);
+            stack.setTagCompound(nbt);
+            return stack;
         }
         return null;
     }
@@ -103,19 +111,23 @@ public final class TrackSpec {
         try {
             return (ITrackInstance) instanceClass.newInstance();
         } catch (Exception ex) {
-            throw new RuntimeException("Improper Track Instance Constructor");
+            throw new RuntimeException("Improper Track Instance Constructor", ex);
         }
     }
 
-    public Icon getIcon() {
-        if (iconProvider == null) {
-            return Block.rail.getIcon(0, 0);
-        }
+    public IIcon getItemIcon() {
+        if (iconProvider == null)
+            return Blocks.rail.getIcon(0, 0);
         return iconProvider.getTrackItemIcon(this);
     }
 
     public List<String> getItemToolTip() {
         return tooltip;
+    }
+    
+    @Override
+    public String toString(){
+        return "Track -> " + getTrackTag();
     }
 
 }

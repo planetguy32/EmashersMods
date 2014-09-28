@@ -4,8 +4,9 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
 import emasher.api.RSPulseModule;
 import emasher.api.SideConfig;
@@ -17,7 +18,7 @@ public class ModPressurePlate extends RSPulseModule
 
 	public ModPressurePlate(int id)
 	{
-		super(id, "sockets:pressurePlate", "sockets:pressurePlateActive");
+		super(id, "sockets:pressurePlate");
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class ModPressurePlate extends RSPulseModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "i", "b", Character.valueOf('i'), Block.pressurePlateStone, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "i", "b", Character.valueOf('i'), Blocks.stone_pressure_plate, Character.valueOf('b'), SocketsMod.blankSide);
 	}
 	
 	@Override

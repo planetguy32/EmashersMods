@@ -5,8 +5,9 @@ import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import mods.railcraft.api.core.INetworkedObject;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 
 /**
@@ -61,7 +62,7 @@ public interface ITrackInstance extends INetworkedObject {
      *
      * @return
      */
-    public Icon getIcon();
+    public IIcon getIcon();
 
     public void writeToNBT(NBTTagCompound data);
 
@@ -84,7 +85,7 @@ public interface ITrackInstance extends INetworkedObject {
 
     public void onBlockPlacedBy(EntityLivingBase entity);
 
-    public void onNeighborBlockChange(int id);
+    public void onNeighborBlockChange(Block blockChanged);
 
     /**
      * Internal function that sets the Track's TileEntity so it can be

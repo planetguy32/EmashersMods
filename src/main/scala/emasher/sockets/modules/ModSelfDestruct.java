@@ -3,10 +3,12 @@ package emasher.sockets.modules;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.util.IIcon;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -50,7 +52,7 @@ public class ModSelfDestruct extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "t", "b", Character.valueOf('t'), Block.tnt, Character.valueOf('r'), Item.redstone,
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "t", "b", Character.valueOf('t'), Blocks.tnt, Character.valueOf('r'), Items.redstone,
 				Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 36));
 	}
 	
@@ -67,7 +69,7 @@ public class ModSelfDestruct extends SocketModule
 	}
 	
 	@SideOnly(Side.CLIENT)
-	public Icon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+	public IIcon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side)
 	{
 		int setting = 0;
 		int time = 0;
@@ -83,8 +85,8 @@ public class ModSelfDestruct extends SocketModule
 		
 		if(on > 0) time = 7;
 		
-		if((config.meta >> 6) != 0) return new Icon[] { ((BlockSocket)SocketsMod.socket).bar1[setting], ((BlockSocket)SocketsMod.socket).bar2[time] };
-		else return new Icon[] { ((BlockSocket)SocketsMod.socket).bar1[setting] };
+		if((config.meta >> 6) != 0) return new IIcon[] { ((BlockSocket)SocketsMod.socket).bar1[setting], ((BlockSocket)SocketsMod.socket).bar2[time] };
+		else return new IIcon[] { ((BlockSocket)SocketsMod.socket).bar1[setting] };
 	}
 	
 	@Override
@@ -139,9 +141,9 @@ public class ModSelfDestruct extends SocketModule
 				reRender = true;
 				updateAdj = true;
 				config.tank = 0;
-				ts.worldObj.setBlock(ts.xCoord, ts.yCoord, ts.zCoord, 0);
-				ts.worldObj.removeBlockTileEntity(ts.xCoord, ts.yCoord, ts.zCoord);
-				ts.worldObj.createExplosion(null, ts.xCoord, ts.yCoord, ts.zCoord, 4.0F, true);
+				ts.getWorldObj().setBlock(ts.xCoord, ts.yCoord, ts.zCoord, Blocks.air);
+				ts.getWorldObj().removeTileEntity(ts.xCoord, ts.yCoord, ts.zCoord);
+				ts.getWorldObj().createExplosion(null, ts.xCoord, ts.yCoord, ts.zCoord, 4.0F, true);
 				return;
 			}
 		}

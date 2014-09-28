@@ -8,21 +8,15 @@ import emasher.gas.Util;
 import emasher.gas.block.BlockGasGeneric;
 import emasher.sockets.SocketsMod;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.world.biome.*;
 import net.minecraft.world.*;
-import net.minecraft.world.chunk.*;
 import net.minecraft.block.*;
 import net.minecraft.item.*;
 import net.minecraft.tileentity.*;
-import net.minecraft.block.material.*;
-import net.minecraft.creativetab.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.entity.*;
-import net.minecraft.potion.*;
 import net.minecraft.nbt.*;
 
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -54,22 +48,23 @@ public class TileGas extends TileEntity
 	{
 		if(! worldObj.isRemote)
 		{
-			if(Block.blocksList[worldObj.getBlockId(xCoord, yCoord, zCoord)] instanceof BlockGasGeneric)
+			//if(Block.blocksList[worldObj.getBlockId(xCoord, yCoord, zCoord)] instanceof BlockGasGeneric)
+            if(worldObj.getBlock(xCoord, yCoord, zCoord) instanceof BlockGasGeneric)
 			{
 				if(count == 4)
 				{
-					BlockGasGeneric thisBlock = (BlockGasGeneric)Block.blocksList[worldObj.getBlockId(xCoord, yCoord, zCoord)];
+					BlockGasGeneric thisBlock = (BlockGasGeneric)worldObj.getBlock(xCoord, yCoord, zCoord);
 					for(int i = xCoord - 1; i < xCoord + 2; i++)
 						for(int j = yCoord - 1; j < yCoord + 2; j++)
 							for(int k = zCoord - 1; k < zCoord + 2; k++)
 							{
-								if(worldObj.getBlockId(i, j, k) == Block.fire.blockID || (worldObj.getBlockId(i, j, k) == Block.torchWood.blockID && worldObj.difficultySetting == 3))
+								if(worldObj.getBlock(i, j, k) == Blocks.fire || (worldObj.getBlock(i, j, k) == Blocks.torch && worldObj.difficultySetting == EnumDifficulty.HARD))
 								{
 										thisBlock.contactFire(worldObj, xCoord, yCoord, zCoord);
 								}
 							}
                     
-                    if(worldObj.getBlockId(xCoord, yCoord, zCoord) == EmasherGas.plasma.blockID) for(int i = 0; i < 6; i++)
+                    if(worldObj.getBlock(xCoord, yCoord, zCoord) == EmasherGas.plasma) for(int i = 0; i < 6; i++)
                     {
                         if(gas.amount > 1)
                         {
@@ -78,19 +73,21 @@ public class TileGas extends TileEntity
                             int yo = yCoord + d.offsetY;
                             int zo = zCoord + d.offsetZ;
                             
-                            int id = worldObj.getBlockId(xo, yo, zo);
+                            //int id = worldObj.getBlockId(xo, yo, zo);
+                            Block b = worldObj.getBlock(xo, yo, zo);
                             boolean doDamage = false;
 
-                            if(id != 0 && id != Block.stone.blockID)
+                            if(b != Blocks.air && b != Blocks.stone)
                             {
-                                ItemStack is = new ItemStack(id, 1, worldObj.getBlockMetadata(xo, yo, zo));
+                                ItemStack is = new ItemStack(b, 1, worldObj.getBlockMetadata(xo, yo, zo));
 
                                 ItemStack product = FurnaceRecipes.smelting().getSmeltingResult(is);
 
                                 if(product != null)
                                 {
 
-                                    if(Item.itemsList[product.itemID] != null && ! (product.getItem() instanceof ItemBlock))
+                                    //if(Item.itemsList[product.itemID] != null && ! (product.getItem() instanceof ItemBlock))
+                                    if(product.getItem() != null && ! (product.getItem() instanceof ItemBlock))
                                     {
                                         product = ItemStack.copyItemStack(product);
 
@@ -106,11 +103,12 @@ public class TileGas extends TileEntity
                                         doDamage = true;
                                         worldObj.setBlockToAir(xo, yo, zo);
                                     }
-                                    else if(product.itemID < Block.blocksList.length && Block.blocksList[product.itemID] != null && Block.blocksList[product.itemID] instanceof Block)
+                                    //else if(product.itemID < Block.blocksList.length && Block.blocksList[product.itemID] != null && Block.blocksList[product.itemID] instanceof Block)
+                                    else if(product.getItem() != null && product.getItem() instanceof ItemBlock)
                                     {
-                                        if(id != Block.sand.blockID || SocketsMod.smeltSand)
+                                        if(b != Blocks.sand || SocketsMod.smeltSand)
                                         {
-                                            worldObj.setBlock(xo, yo, zo, product.itemID, product.getItemDamage(), 2);
+                                            worldObj.setBlock(xo, yo, zo, Block.getBlockFromItem(product.getItem()), product.getItemDamage(), 2);
                                             fizz(worldObj, xo, yo, zo);
                                             doDamage = true;
                                         }
@@ -130,7 +128,8 @@ public class TileGas extends TileEntity
 				
 				if(count == 8)
 				{
-					BlockGasGeneric thisBlock = (BlockGasGeneric)Block.blocksList[worldObj.getBlockId(xCoord, yCoord, zCoord)];
+					//BlockGasGeneric thisBlock = (BlockGasGeneric)Block.blocksList[worldObj.getBlockId(xCoord, yCoord, zCoord)];
+                    BlockGasGeneric thisBlock = (BlockGasGeneric)worldObj.getBlock(xCoord, yCoord, zCoord);
 				
 					
 					if(gas.amount <= 8)
@@ -143,7 +142,7 @@ public class TileGas extends TileEntity
 						{
 							moveToOffset(0, 1, 0);
 						}
-                        else if(thisBlock.canDestroyBlock(worldObj.getBlockId(xCoord, yCoord + 1, zCoord), xCoord, yCoord + 1, zCoord, worldObj) && gas.amount > 1)
+                        else if(thisBlock.canDestroyBlock(worldObj.getBlock(xCoord, yCoord + 1, zCoord), xCoord, yCoord + 1, zCoord, worldObj) && gas.amount > 1)
                         {
                             gas.amount /= 2;
                             moveToOffset(0, 1, 0);
@@ -165,7 +164,7 @@ public class TileGas extends TileEntity
 									moveToOffset(x, 0, z);
 									done = true;
 								}
-                                else if(thisBlock.canDestroyBlock(worldObj.getBlockId(xCoord + x, yCoord, zCoord + z), xCoord + x, yCoord, zCoord + z, worldObj) && gas.amount > 1)
+                                else if(thisBlock.canDestroyBlock(worldObj.getBlock(xCoord + x, yCoord, zCoord + z), xCoord + x, yCoord, zCoord + z, worldObj) && gas.amount > 1)
                                 {
                                     gas.amount /= 2;
                                     moveToOffset(x, 0, z);
@@ -182,7 +181,7 @@ public class TileGas extends TileEntity
 						{
 							splitToOffset(0, 1, 0);
 						}
-                        else if(thisBlock.canDestroyBlock(worldObj.getBlockId(xCoord, yCoord + 1, zCoord), xCoord, yCoord + 1, zCoord, worldObj))
+                        else if(thisBlock.canDestroyBlock(worldObj.getBlock(xCoord, yCoord + 1, zCoord), xCoord, yCoord + 1, zCoord, worldObj))
                         {
                             gas.amount /= 2;
                             splitToOffset(0, 1, 0);
@@ -204,7 +203,7 @@ public class TileGas extends TileEntity
 									splitToOffset(x, 0, z);
 									done = true;
 								}
-                                else if(thisBlock.canDestroyBlock(worldObj.getBlockId(xCoord + x, yCoord, zCoord + z), xCoord + x, yCoord, zCoord + z, worldObj))
+                                else if(thisBlock.canDestroyBlock(worldObj.getBlock(xCoord + x, yCoord, zCoord + z), xCoord + x, yCoord, zCoord + z, worldObj))
                                 {
                                     gas.amount /= 2;
                                     splitToOffset(x, 0, z);
@@ -251,23 +250,23 @@ public class TileGas extends TileEntity
 	
 	public void moveToOffset(int x, int y, int z)
 	{
-		worldObj.setBlock(xCoord + x, yCoord + y, zCoord + z, gas.getFluid().getBlockID(), this.blockMetadata, 4);
-		TileEntity t = worldObj.getBlockTileEntity(xCoord + x, yCoord + y, zCoord + z);
+		worldObj.setBlock(xCoord + x, yCoord + y, zCoord + z, gas.getFluid().getBlock(), this.blockMetadata, 4);
+		TileEntity t = worldObj.getTileEntity(xCoord + x, yCoord + y, zCoord + z);
 		if(t != null && t instanceof TileGas)
 		{
 			((TileGas)t).setGasAmount(gas.amount);
 		}
 		
 		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
-		worldObj.removeBlockTileEntity(xCoord, yCoord, zCoord);
+		worldObj.removeTileEntity(xCoord, yCoord, zCoord);
 	}
 	
 	public void splitToOffset(int x, int y, int z)
 	{
 		int vol;
 		int meta;
-		worldObj.setBlock(xCoord + x, yCoord + y, zCoord + z, gas.getFluid().getBlockID());
-		TileEntity t = worldObj.getBlockTileEntity(xCoord + x, yCoord + y, zCoord + z);
+		worldObj.setBlock(xCoord + x, yCoord + y, zCoord + z, gas.getFluid().getBlock());
+		TileEntity t = worldObj.getTileEntity(xCoord + x, yCoord + y, zCoord + z);
 		if(t != null && t instanceof TileGas)
 		{
 			TileGas tg = (TileGas)t;

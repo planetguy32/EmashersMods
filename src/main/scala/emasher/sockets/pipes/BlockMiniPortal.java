@@ -1,9 +1,11 @@
 package emasher.sockets.pipes;
 
 import emasher.sockets.SocketsMod;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -13,9 +15,9 @@ import net.minecraft.world.WorldServer;
 public class BlockMiniPortal extends BlockAdapterBase
 {
 
-	public BlockMiniPortal(int id)
+	public BlockMiniPortal()
 	{
-		super(id, Material.rock);
+		super(Material.rock);
 		setCreativeTab(SocketsMod.tabSockets);
 	}
 	
@@ -26,13 +28,13 @@ public class BlockMiniPortal extends BlockAdapterBase
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world)
+	public TileEntity createNewTileEntity(World world, int metadata)
 	{
 		return new TileMiniPortal();
 	}
 	
 	@Override
-	public void registerIcons(IconRegister ir)
+	public void registerBlockIcons(IIconRegister ir)
 	{
 		blockIcon = ir.registerIcon("sockets:miniPortal");
 		outputIcon = ir.registerIcon("sockets:miniPortalOut");
@@ -48,15 +50,15 @@ public class BlockMiniPortal extends BlockAdapterBase
 				if(MinecraftServer.getServer().getAllowNether())
 				{
 					World nether = MinecraftServer.getServer().worldServerForDimension(-1);
-					if(nether.getBlockTileEntity(x / 8, y, z / 8) == null)
+					if(nether.getTileEntity(x / 8, y, z / 8) == null)
 					{
-						nether.setBlock(x / 8, y, z / 8, this.blockID);
+						nether.setBlock(x / 8, y, z / 8, this);
 						setTEPartners(world, x, y, z);
 					}
 					else
 					{
-						this.dropBlockAsItem_do(world, x, y, z, new ItemStack(this));
-						world.setBlock(x, y, z, 0);
+						this.dropBlockAsItem(world, x, y, z, new ItemStack(this));
+						world.setBlock(x, y, z, Blocks.air);
 					}
 				}
 			}
@@ -70,7 +72,7 @@ public class BlockMiniPortal extends BlockAdapterBase
 		if(world.provider.dimensionId == 0)
 		{
 			World nether = MinecraftServer.getServer().worldServerForDimension(-1);
-			if(nether.getBlockTileEntity(x / 8, y, z / 8) == null)
+			if(nether.getTileEntity(x / 8, y, z / 8) == null)
 			{
 				if(super.canPlaceBlockAt(world, x, y, z)) return true;
 			}
@@ -86,12 +88,12 @@ public class BlockMiniPortal extends BlockAdapterBase
 			if(MinecraftServer.getServer().getAllowNether())
 			{
 				World nether = MinecraftServer.getServer().worldServerForDimension(-1);
-				TileEntity partner = nether.getBlockTileEntity(x/8, y, z/8);
+				TileEntity partner = nether.getTileEntity(x / 8, y, z / 8);
 				if(partner != null && partner instanceof TileMiniPortal)
 				{
 					((TileMiniPortal)partner).setPartner(x, y, z);
 					
-					TileEntity te = world.getBlockTileEntity(x, y, z);
+					TileEntity te = world.getTileEntity(x, y, z);
 					if(te != null && te instanceof TileMiniPortal)
 					{
 						((TileMiniPortal)te).setPartner(x / 8, y, z / 8);
@@ -102,23 +104,23 @@ public class BlockMiniPortal extends BlockAdapterBase
 	}
 	
 	@Override
-	public void breakBlock(World world, int x, int y, int z, int id, int meta)
+	public void breakBlock(World world, int x, int y, int z, Block block, int meta)
 	{
 		if(world.provider.dimensionId == 0)
 		{
 			if(MinecraftServer.getServer().getAllowNether())
 			{
 				World nether = MinecraftServer.getServer().worldServerForDimension(-1);
-				if(nether.getBlockId(x / 8, y, z / 8) == this.blockID)
+				if(nether.getBlock(x / 8, y, z / 8) instanceof BlockMiniPortal)
 				{
-					nether.setBlock(x / 8, y, z / 8, 0);
-					nether.removeBlockTileEntity(x / 8, y, z / 8);
+					nether.setBlock(x / 8, y, z / 8, Blocks.air);
+					nether.removeTileEntity(x / 8, y, z / 8);
 				}
 			}
 		}
 		else if(world.provider.dimensionId == -1)
 		{
-			TileEntity te = world.getBlockTileEntity(x, y, z);
+			TileEntity te = world.getTileEntity(x, y, z);
 			if(te != null && te instanceof TileMiniPortal)
 			{
 				int oX = ((TileMiniPortal)te).partnerX;
@@ -126,10 +128,10 @@ public class BlockMiniPortal extends BlockAdapterBase
 				int oZ = ((TileMiniPortal)te).partnerZ;
 				
 				World over = MinecraftServer.getServer().worldServerForDimension(0);
-				if(over.getBlockId(oX, oY, oZ) == this.blockID)
+				if(over.getBlock(oX, oY, oZ) instanceof BlockMiniPortal)
 				{
-					over.setBlock(oX, oY, oZ, 0);
-					over.removeBlockTileEntity(oX, oY, oZ);
+					over.setBlock(oX, oY, oZ, Blocks.air);
+					over.removeTileEntity(oX, oY, oZ);
 				}
 			}
 		}

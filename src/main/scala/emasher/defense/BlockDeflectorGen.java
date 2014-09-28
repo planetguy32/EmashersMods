@@ -6,9 +6,9 @@ import emasher.core.EmasherCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.creativetab.*;
@@ -17,19 +17,19 @@ import net.minecraft.entity.player.EntityPlayer;
 public class BlockDeflectorGen extends BlockContainer
 {
 	
-	public static Icon topTexture;
-	public static Icon sideTexture;
-	public static Icon bottomTexture;
+	public static IIcon topTexture;
+	public static IIcon sideTexture;
+	public static IIcon bottomTexture;
 
-	protected BlockDeflectorGen(int par1, Material par2Material)
+	protected BlockDeflectorGen(Material par2Material)
 	{
-		super(par1, par2Material);
+		super(par2Material);
 		this.setCreativeTab(EmasherDefense.tabDefense);
-		this.setLightValue(5.0F);
+		this.setLightLevel(5.0F);
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world)
+	public TileEntity createNewTileEntity(World world, int metadata)
 	{
 		return new TileDeflectorGen();
 	}
@@ -43,28 +43,28 @@ public class BlockDeflectorGen extends BlockContainer
 	@Override
 	public int onBlockPlaced(World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int meta)
 	{
-		this.onNeighborBlockChange(world, x, y, z, this.blockID);
+		this.onNeighborBlockChange(world, x, y, z, this);
 		return meta;
 	}
 	
 	@Override
 	public void onBlockDestroyedByExplosion(World world, int x, int y, int z, Explosion exp)
 	{
-		this.onNeighborBlockChange(world, x, y + 1, z, this.blockID);
+		this.onNeighborBlockChange(world, x, y + 1, z, this);
 	}
 	
 	@Override
 	public void onBlockDestroyedByPlayer(World world, int x, int y, int z, int meta)
 	{
-		this.onNeighborBlockChange(world, x, y + 1, z, this.blockID);
+		this.onNeighborBlockChange(world, x, y + 1, z, this);
 	}
 	
 	
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, int id)
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
 	{
 		int str = 3;
-		TileEntity entity = world.getBlockTileEntity(x, y, z);
+		TileEntity entity = world.getTileEntity(x, y, z);
 		TileDeflectorGen castEntity = null;
 		
 		if(world.isBlockIndirectlyGettingPowered(x, y, z))
@@ -83,9 +83,9 @@ public class BlockDeflectorGen extends BlockContainer
 		
 		if(castEntity != null)
 		{
-			if(world.getBlockId(x, y - 1, z) == this.blockID)
+			if(world.getBlock(x, y - 1, z) == this)
 			{
-				TileEntity otherEntity = world.getBlockTileEntity(x, y - 1, z);
+				TileEntity otherEntity = world.getTileEntity(x, y - 1, z);
 				if(otherEntity != null && otherEntity instanceof TileDeflectorGen)
 				{
 					TileDeflectorGen otherEntityCast = (TileDeflectorGen)otherEntity;
@@ -96,16 +96,16 @@ public class BlockDeflectorGen extends BlockContainer
 		}
 		
 		
-		if(world.getBlockId(x, y + 1, z) == this.blockID)
+		if(world.getBlock(x, y + 1, z) == this)
 		{
-			onNeighborBlockChange(world, x, y + 1, z, id);
+			onNeighborBlockChange(world, x, y + 1, z, block);
 		}
 	}
 	
 	@Override
-    public void registerIcons(IconRegister par1IconRegister)
+    public void registerBlockIcons(IIconRegister par1IconRegister)
     {
-		super.registerIcons(par1IconRegister);
+		super.registerBlockIcons(par1IconRegister);
 		this.blockIcon = par1IconRegister.registerIcon("emasherdefense:deflector_base");
 		bottomTexture = this.blockIcon;
 		sideTexture = par1IconRegister.registerIcon("emasherdefense:deflector_side");
@@ -113,9 +113,9 @@ public class BlockDeflectorGen extends BlockContainer
     }
 	
 	@Override
-	public Icon getIcon(int par1, int par2)
+	public IIcon getIcon(int par1, int par2)
 	{
-		Icon result = this.sideTexture;
+		IIcon result = this.sideTexture;
 		if(par1 == 1)
 		{
 			result = this.topTexture;

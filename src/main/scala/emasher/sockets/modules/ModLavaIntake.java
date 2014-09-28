@@ -4,10 +4,11 @@ import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidStack;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
@@ -46,7 +47,7 @@ public class ModLavaIntake extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ctc", " b ", Character.valueOf('t'), Block.fenceIron, Character.valueOf('c'), new ItemStack(SocketsMod.module, 1, 80),
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ctc", " b ", Character.valueOf('t'), Blocks.iron_bars, Character.valueOf('c'), new ItemStack(SocketsMod.module, 1, 80),
 				Character.valueOf('b'), SocketsMod.blankSide);
 	}
 	
@@ -62,16 +63,16 @@ public class ModLavaIntake extends SocketModule
 			int yo = ts.yCoord + side.offsetY;
 			int zo = ts.zCoord + side.offsetZ;
 			
-			int blockID = ts.worldObj.getBlockId(xo, yo, zo);
-			Block b = Block.blocksList[blockID];
+			//int blockID = ts.getWorldObj().getBlockId(xo, yo, zo);
+			Block b = ts.getWorldObj().getBlock(xo, yo, zo);
 			Material mat = Material.water;
-			if(b != null) mat = b.blockMaterial;
+			if(b != null) mat = b.getMaterial();
 			
 			if(mat == Material.lava)
 			{
-				if(config.inventory >= 0 && config.inventory < 3 && ts.addItemInternal(new ItemStack(Block.cobblestone), false, config.inventory) == 1)
+				if(config.inventory >= 0 && config.inventory < 3 && ts.addItemInternal(new ItemStack(Blocks.cobblestone), false, config.inventory) == 1)
 				{
-					ts.addItemInternal(new ItemStack(Block.cobblestone), true, config.inventory);
+					ts.addItemInternal(new ItemStack(Blocks.cobblestone), true, config.inventory);
 				}
 			}
 		}

@@ -10,7 +10,7 @@ import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 
 public class TileEUAdapter extends TileAdapterBase implements IEnergySource, IEnergySink, IEnergyHandler
@@ -64,7 +64,7 @@ public class TileEUAdapter extends TileAdapterBase implements IEnergySource, IEn
 			int yo = yCoord + d.offsetY;
 			int zo = zCoord + d.offsetZ;
 			
-			TileEntity te = worldObj.getBlockTileEntity(xo, yo, zo);
+			TileEntity te = worldObj.getTileEntity(xo, yo, zo);
 			
 			if(te != null)
 			{
@@ -112,7 +112,7 @@ public class TileEUAdapter extends TileAdapterBase implements IEnergySource, IEn
 	}
 
 	@Override
-	public boolean canInterface(ForgeDirection from)
+	public boolean canConnectEnergy(ForgeDirection from)
 	{
 		return true;
 	}
@@ -143,7 +143,7 @@ public class TileEUAdapter extends TileAdapterBase implements IEnergySource, IEn
 		return true;
 	}
 
-	@Override
+	/*@Override
 	public double demandedEnergyUnits()
 	{
 		return (capacitor.getMaxEnergyStored() - capacitor.getEnergyStored()) / SocketsMod.RFperEU;
@@ -159,7 +159,7 @@ public class TileEUAdapter extends TileAdapterBase implements IEnergySource, IEn
 	public int getMaxSafeInput()
 	{
 		return Integer.MAX_VALUE;
-	}
+	}*/
 
 	@Override
 	public double getOfferedEnergy()
@@ -173,4 +173,23 @@ public class TileEUAdapter extends TileAdapterBase implements IEnergySource, IEn
 		capacitor.extractEnergy((int)amount * SocketsMod.RFperEU, false);
 	}
 
+    @Override
+    public int getSourceTier() {
+        return 2;//TODO Check which tier to use
+    }
+
+    @Override
+    public double getDemandedEnergy() {
+        return (capacitor.getMaxEnergyStored() - capacitor.getEnergyStored()) / SocketsMod.RFperEU;
+    }
+
+    @Override
+    public int getSinkTier() {
+        return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public double injectEnergy(ForgeDirection forgeDirection, double amount, double v2) {
+        return capacitor.receiveEnergy((int)(amount * SocketsMod.RFperEU), false);
+    }
 }

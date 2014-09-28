@@ -1,5 +1,7 @@
 package emasher.api;
 
+import com.mojang.authlib.GameProfile;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 import emasher.sockets.pipes.TileAdapterBase;
@@ -9,15 +11,15 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 
 import java.util.List;
@@ -26,12 +28,14 @@ public class Util
 {
 	public static EntityPlayer createFakePlayer(World world, int x, int y, int z)
 	{
-		EntityPlayer player = new EntityPlayer(world, "[Engineer's Toolbox]") {
-			@Override
-			public void sendChatToPlayer(ChatMessageComponent var1) {
-			}
+        EntityPlayer player = createFakePlayer(world, x, y, z);
+		/*EntityPlayer player = new EntityPlayer(world, "[Engineer's Toolbox]") {
+            @Override
+            public void addChatMessage(IChatComponent p_145747_1_) {
 
-			@Override
+            }
+
+            @Override
 			public boolean canCommandSenderUseCommand(int var1, String var2) {
 				return false;
 			}
@@ -40,7 +44,7 @@ public class Util
 			public ChunkCoordinates getPlayerCoordinates() {
 				return null;
 			}
-		};
+		};*/
 		
 		player.posX = x;
 		player.posY = y;
@@ -54,36 +58,36 @@ public class Util
 
     public static boolean swapBlocks(World world, int x, int y, int z, int nx, int ny, int nz)
     {
-        int id1 = world.getBlockId(x, y ,z);
+        Block b1 = world.getBlock(x, y ,z);
         int meta1 = world.getBlockMetadata(x, y, z);
-        int id2 = world.getBlockId(nx, ny, nz);
+        Block b2 = world.getBlock(nx, ny, nz);
         int meta2 = world.getBlockMetadata(nx, ny, nz);
 
-        if(id1 == SocketsMod.miniPortal.blockID) return false;
-        if(id2 == SocketsMod.miniPortal.blockID) return false;
+        if(b1 == SocketsMod.miniPortal) return false;
+        if(b2 == SocketsMod.miniPortal) return false;
 
-        Block b1 = Block.blocksList[id1];
-        Block b2 = Block.blocksList[id2];
+        //Block b1 = Block.blocksList[id1];
+        //Block b2 = Block.blocksList[id2];
 
-        if(b1 != null && b1.blockHardness < 0) return false;
-        if(b2 != null && b2.blockHardness < 0) return false;
+        if(b1 != null && b1.getBlockHardness(world, x, y, z) < 0) return false;
+        if(b2 != null && b2.getBlockHardness(world, nx, ny, nz) < 0) return false;
 
-        TileEntity te1 = world.getBlockTileEntity(x, y, z);
+        TileEntity te1 = world.getTileEntity(x, y, z);
         NBTTagCompound nbt1 = new NBTTagCompound();
         if(te1 != null) te1.writeToNBT(nbt1);
-        world.removeBlockTileEntity(x, y, z);
+        world.removeTileEntity(x, y, z);
         world.setBlockToAir(x, y, z);
 
-        TileEntity te2 = world.getBlockTileEntity(nx, ny, nz);
+        TileEntity te2 = world.getTileEntity(nx, ny, nz);
         NBTTagCompound nbt2 = new NBTTagCompound();
         if(te2 != null) te2.writeToNBT(nbt2);
-        world.removeBlockTileEntity(nx, ny, nz);
+        world.removeTileEntity(nx, ny, nz);
         world.setBlockToAir(nx, ny, nz);
 
-        world.setBlock(x, y, z, id2, meta2, 3);
+        world.setBlock(x, y, z, b2, meta2, 3);
         if(b2 instanceof BlockContainer)
         {
-            TileEntity te = world.getBlockTileEntity(x, y, z);
+            TileEntity te = world.getTileEntity(x, y, z);
             if(te != null)
             {
                 te.readFromNBT(nbt2);
@@ -100,10 +104,10 @@ public class Util
             }
         }
 
-        world.setBlock(nx, ny, nz, id1, meta1, 3);
+        world.setBlock(nx, ny, nz, b1, meta1, 3);
         if(b1 instanceof BlockContainer)
         {
-            TileEntity te = world.getBlockTileEntity(nx, ny, nz);
+            TileEntity te = world.getTileEntity(nx, ny, nz);
             if(te != null)
             {
                 te.readFromNBT(nbt1);
@@ -120,7 +124,7 @@ public class Util
             }
         }
 
-        TileEntity te = world.getBlockTileEntity(x, y, z);
+        TileEntity te = world.getTileEntity(x, y, z);
         if(te != null)
         {
             if(te instanceof SocketTileAccess)
@@ -155,7 +159,7 @@ public class Util
         }
 
 
-        te = world.getBlockTileEntity(nx, ny, nz);
+        te = world.getTileEntity(nx, ny, nz);
 
         if(te != null)
         {
@@ -197,10 +201,11 @@ public class Util
     {
         if(ny >= 255 || ny <= 0) return false;
         if(! isBlockReplaceable(world, nx, ny, nz)) return false;
-        int id = world.getBlockId(x, y, z);
-        if(id == SocketsMod.miniPortal.blockID) return false;
-        Block b = Block.blocksList[id];
-        return ! (b != null && b.blockHardness < 0);
+        //int id = world.getBlockId(x, y, z);
+        Block b = world.getBlock(x, y, z);
+        if(b == SocketsMod.miniPortal) return false;
+        //Block b = Block.blocksList[id];
+        return ! (b != null && b.getBlockHardness(world, x, y, z) < 0);
     }
 
     public static boolean moveBlock(World world, int x, int y, int z, int nx, int ny, int nz)
@@ -212,25 +217,26 @@ public class Util
     {
         if(ny >= 255 || ny <= 0) return false;
         if(! isBlockReplaceable(world, nx, ny, nz)) return false;
-        int id = world.getBlockId(x, y, z);
-        if(id == SocketsMod.miniPortal.blockID) return false;
-        Block b = Block.blocksList[id];
-        if(b != null && b.blockHardness < 0) return false;
+        //int id = world.getBlockId(x, y, z);
+        Block b = world.getBlock(x, y, z);
+        if(b == SocketsMod.miniPortal) return false;
+        //Block b = Block.blocksList[id];
+        if(b != null && b.getBlockHardness(world, x, y, z) < 0) return false;
         int meta = world.getBlockMetadata(x, y, z);
 
-        TileEntity te = world.getBlockTileEntity(x, y, z);
+        TileEntity te = world.getTileEntity(x, y, z);
         NBTTagCompound nbt = new NBTTagCompound();
         if(te != null)
         {
             te.writeToNBT(nbt);
-            world.removeBlockTileEntity(x, y, z);
+            world.removeTileEntity(x, y, z);
         }
 
         world.setBlockToAir(x, y, z);
 
-        world.setBlock(nx, ny, nz, id, meta, 3);
+        world.setBlock(nx, ny, nz, b, meta, 3);
 
-        List ents = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getAABBPool().getAABB(x, y, z, x + 1, y + 3, z + 1));
+        List ents = world.getEntitiesWithinAABBExcludingEntity(null, AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 3, z + 1));//.getAABBPool().getAABB(x, y, z, x + 1, y + 3, z + 1));
         for(Object e: ents) {
             if(e instanceof Entity)
             {
@@ -239,7 +245,7 @@ public class Util
             }
         }
 
-        te = world.getBlockTileEntity(nx, ny, nz);
+        te = world.getTileEntity(nx, ny, nz);
         if(te != null)
         {
             te.readFromNBT(nbt);
@@ -258,21 +264,21 @@ public class Util
         return true;
     }
 
+
     public static boolean isBlockReplaceable(World world, int x, int y, int z)
     {
-        int id = world.getBlockId(x, y, z);
+        Block b = world.getBlock(x, y, z);
         return world.isAirBlock(x, y, z) ||
-                id == Block.vine.blockID ||
-                id == Block.tallGrass.blockID ||
-                id == Block.deadBush.blockID ||
-                id == Block.fire.blockID ||
-                id == Block.waterMoving.blockID ||
-                id == Block.waterStill.blockID ||
-                id == Block.lavaMoving.blockID ||
-                id == Block.lavaStill.blockID ||
-                (Block.blocksList[id] != null &&
-                        (Block.blocksList[id].isBlockReplaceable(world, x, y, z) ||
-                        Block.blocksList[id] instanceof BlockFluidBase));
+                b == Blocks.vine ||
+                b == Blocks.tallgrass ||
+                b == Blocks.deadbush ||
+                b == Blocks.fire ||
+                b == Blocks.flowing_water ||
+                b == Blocks.water ||
+                b == Blocks.flowing_lava ||
+                b == Blocks.lava ||
+                (b.isReplaceable(world, x, y, z) ||
+                        b instanceof BlockFluidBase);
     }
 	
 

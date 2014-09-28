@@ -1,26 +1,20 @@
 package emasher.defense;
 
-import emasher.core.EmasherCore;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockSand;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.util.Icon;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.client.renderer.texture.IIconRegister;
 
-public class BlockSandBag extends BlockSand
+public class BlockSandBag extends BlockFalling
 {
 
-	public BlockSandBag(int par1, Material par2Material) 
+	public BlockSandBag(Material par2Material)
 	{
-		super(par1, par2Material);
+        super(par2Material);
 		this.setCreativeTab(EmasherDefense.tabDefense);
-		//blockIndexInblockIcon = 5;
 	}
 	
 	@Override
-    public void registerIcons(IconRegister par1IconRegister)
+    public void registerBlockIcons(IIconRegister par1IconRegister)
     {
 		this.blockIcon = par1IconRegister.registerIcon("emasherdefense:sandbag");
     }

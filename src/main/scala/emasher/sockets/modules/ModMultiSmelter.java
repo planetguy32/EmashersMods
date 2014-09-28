@@ -2,11 +2,14 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import cpw.mods.fml.common.registry.GameRegistry;
 import emasher.api.MultiSmelterRecipeRegistry;
@@ -22,7 +25,7 @@ public class ModMultiSmelter extends SocketModule
 
 	public ModMultiSmelter(int id)
 	{
-		super(id, "sockets:multiSmelter", "sockets:multiSmelter_active");
+		super(id, "sockets:multiSmelter");
 	}
 
 	@Override
@@ -49,17 +52,10 @@ public class ModMultiSmelter extends SocketModule
 	
 	@Override
 	public void addRecipe()
-	{
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " h ", "uiu", " b ", Character.valueOf('i'), "blockNickel", Character.valueOf('h'), EmasherCore.psu,
-				Character.valueOf('u'), Block.furnaceIdle, Character.valueOf('b'), SocketsMod.blankSide));
-	}
-	
-	@Override
-	public int getCurrentTexture(SideConfig config)
-	{
-		if(config.meta == 0 || ! config.rsControl[0]) return 0;
-		return 1;
-	}
+    {
+        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), " h ", "uiu", " b ", Character.valueOf('i'), "blockNickel", Character.valueOf('h'), EmasherCore.psu,
+                Character.valueOf('u'), Blocks.furnace, Character.valueOf('b'), SocketsMod.blankSide));
+    }
 	
 	@Override
 	public boolean hasTankIndicator() { return true; }
@@ -146,5 +142,20 @@ public class ModMultiSmelter extends SocketModule
 			if(updateClient) ts.sendClientSideState(side.ordinal());
 		}
 	}
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        if(config.meta == 0 || ! config.rsControl[0]) return "sockets:inner_black";
+        return "sockets:inner_fire_orange";
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures()
+    {
+        return new String[] {"sockets:inner_fire_orange"};
+    }
 
 }

@@ -4,15 +4,15 @@ import java.util.Random;
 
 import emasher.core.EmasherCore;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
 public class ItemFenceWire extends Item
 {
-	public ItemFenceWire(int i)
+	public ItemFenceWire()
 	{
-		super(i);
+		super();
 		maxStackSize = 64;
 		
 		this.setCreativeTab(EmasherDefense.tabDefense);
@@ -21,7 +21,7 @@ public class ItemFenceWire extends Item
 	}
 	
 	@Override
-	public void registerIcons(IconRegister iconRegister)
+	public void registerIcons(IIconRegister iconRegister)
 	{
 		itemIcon = iconRegister.registerIcon("EmasherDefense:wire");
 	}

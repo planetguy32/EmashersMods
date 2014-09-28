@@ -2,15 +2,15 @@ package emasher.sockets.items;
 
 import emasher.core.EmasherCore;
 import emasher.sockets.SocketsMod;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 
 public class ItemRSIngot extends ItemFood
 {
-	public ItemRSIngot(int id)
+	public ItemRSIngot()
 	{
-		super(id, 4, 4, false);
+		super(4, 4, false);
 		this.setMaxStackSize(64);
 		this.setCreativeTab(SocketsMod.tabSockets);
 		this.setUnlocalizedName("rsIngot");
@@ -19,7 +19,7 @@ public class ItemRSIngot extends ItemFood
 	}
 	
 	@Override
-	public void registerIcons(IconRegister iconRegister)
+	public void registerIcons(IIconRegister iconRegister)
 	{
 		itemIcon = iconRegister.registerIcon("sockets:ingotRed");
 	}

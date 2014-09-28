@@ -2,7 +2,7 @@ package emasher.gas;
 
 import emasher.gas.tileentity.TileGas;
 
-public abstract class Util 
+public class Util
 {
 	public static int bucketToBlock(int bucketAmount)
 	{

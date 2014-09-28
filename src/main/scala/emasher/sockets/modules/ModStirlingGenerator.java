@@ -1,5 +1,7 @@
 package emasher.sockets.modules;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import emasher.api.PhotobioReactorRecipeRegistry;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
@@ -7,11 +9,12 @@ import emasher.api.SocketTileAccess;
 import emasher.sockets.SocketsMod;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
@@ -24,8 +27,8 @@ public class ModStirlingGenerator extends SocketModule {
 
 	public ModStirlingGenerator(int id)
 	{
-		super(id, "sockets:stirlingGenIdle0", "sockets:stirlingGenActive0",
-				  "sockets:stirlingGenIdle1", "sockets:stirlingGenActive1");
+		super(id, "sockets:stirlingGenIdle0",
+				  "sockets:stirlingGenIdle1");
 	}
 
 	@Override
@@ -60,8 +63,8 @@ public class ModStirlingGenerator extends SocketModule {
 				"ggg",
 				" F ",
 				" b ",
-				Character.valueOf('g'), Block.stone,
-				Character.valueOf('F'), Block.furnaceIdle,
+				Character.valueOf('g'), Blocks.stone,
+				Character.valueOf('F'), Blocks.furnace,
 				Character.valueOf('b'), SocketsMod.blankSide));
 	}
 
@@ -109,7 +112,7 @@ public class ModStirlingGenerator extends SocketModule {
 				else
 				{
 					config.meta -= 2;
-					if(ts.worldObj.rand.nextBoolean()) config.meta--;
+					if(ts.getWorldObj().rand.nextBoolean()) config.meta--;
 					ts.addEnergy(20, false);
 				}
 				if(config.meta == 0)
@@ -144,17 +147,31 @@ public class ModStirlingGenerator extends SocketModule {
 	@Override
 	public int getCurrentTexture(SideConfig config)
 	{
-		if((config.tank & ACTIVE) == ACTIVE)
-		{
-			if((config.tank & HIGH_POWER) == HIGH_POWER)
-				return 3;
-			return 1;
-		}
-		else
-		{
-			if((config.tank & HIGH_POWER) == HIGH_POWER)
-				return 2;
-			return 0;
-		}
+        if((config.tank & HIGH_POWER) == HIGH_POWER)
+            return 1;
+        return 0;
 	}
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        if((config.tank & ACTIVE) == ACTIVE)
+        {
+            if((config.tank & HIGH_POWER) == HIGH_POWER)
+                return "sockets:inner_fire_blue";
+            return "sockets:inner_fire_orange";
+        }
+        else
+        {
+            return "sockets:inner_black";
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures()
+    {
+        return new String[] {"sockets:inner_fire_blue", "sockets:inner_fire_orange"};
+    }
 }

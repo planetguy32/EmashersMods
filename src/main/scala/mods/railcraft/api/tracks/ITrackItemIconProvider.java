@@ -8,7 +8,7 @@
  */
 package mods.railcraft.api.tracks;
 
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 
 /**
  *
@@ -16,5 +16,5 @@ import net.minecraft.util.Icon;
  */
 public interface ITrackItemIconProvider {
 
-    Icon getTrackItemIcon(TrackSpec spec);
+    IIcon getTrackItemIcon(TrackSpec spec);
 }

@@ -51,11 +51,6 @@ public abstract class SignalReceiver extends AbstractPair {
         addPairing(controller.getCoords());
     }
 
-    @Deprecated
-    public void registerLegacyController(int x, int y, int z) {
-        pairings.add(new WorldCoordinate(0, x, y, z));
-    }
-
     @Override
     public void tickServer() {
         super.tickServer();

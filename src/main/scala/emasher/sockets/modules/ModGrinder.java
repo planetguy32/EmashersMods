@@ -4,13 +4,16 @@ import java.util.List;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import emasher.api.GrinderRecipeRegistry;
@@ -19,7 +22,7 @@ import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.api.GrinderRecipeRegistry.GrinderRecipe;
 import emasher.core.EmasherCore;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 import ic2.api.recipe.*;
 
@@ -28,7 +31,7 @@ public class ModGrinder extends SocketModule
 
 	public ModGrinder(int id)
 	{
-		super(id, "sockets:grinderIdle", "sockets:grinderActive");
+		super(id, "sockets:grinderIdle");
 	}
 
 	@Override
@@ -61,7 +64,7 @@ public class ModGrinder extends SocketModule
 				//Character.valueOf('u'), Block.blockDiamond, Character.valueOf('b'), SocketsMod.blankSide);
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "ihi", "iui", "ibi", Character.valueOf('i'), "gemEmery", Character.valueOf('h'), EmasherCore.psu,
-				Character.valueOf('u'), Item.diamond, Character.valueOf('b'), SocketsMod.blankSide));
+				Character.valueOf('u'), Items.diamond, Character.valueOf('b'), SocketsMod.blankSide));
 	}
 	
 	@Override
@@ -151,13 +154,21 @@ public class ModGrinder extends SocketModule
 			if(updateClient) ts.sendClientSideState(side.ordinal());
 		}
 	}
-	
-	@Override
-	public int getCurrentTexture(SideConfig config)
-	{
-		if(config.meta == 0 || ! config.rsControl[0]) return 0;
-		return 1;
-	}
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        if(config.meta == 0 || ! config.rsControl[0]) return "sockets:inner_black";
+        return "sockets:inner_turbulance";
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures()
+    {
+        return new String[] {"sockets:inner_turbulance"};
+    }
 
 }
 

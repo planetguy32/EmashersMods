@@ -2,7 +2,9 @@ package emasher.gas.block
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister
+import net.minecraft.init.Items
+;
 import net.minecraft.world.World;
 import net.minecraft.entity._;
 import net.minecraft.entity.item.EntityItem;
@@ -16,10 +18,10 @@ import net.minecraft.block.Block
 import emasher.core.EmasherCore
 ;
 
-class BlockCorrosiveGas(id: Int) extends BlockGasGeneric(id, 0, false)
+class BlockCorrosiveGas() extends BlockGasGeneric(0, false)
 {
 	@SideOnly(Side.CLIENT)
-	override def registerIcons(ir: IconRegister)
+	override def registerBlockIcons(ir: IIconRegister)
 	{
 		blockIcon = ir.registerIcon("gascraft:corrosiveGas");
 	}
@@ -35,7 +37,7 @@ class BlockCorrosiveGas(id: Int) extends BlockGasGeneric(id, 0, false)
 			
 			for(i <- 0 to 4)
 			{
-				is(i) = ent.asInstanceOf[EntityLivingBase].getCurrentItemOrArmor(i);
+				is(i) = ent.asInstanceOf[EntityLivingBase].getEquipmentInSlot(i);
 				if(is(i) != null) is(i) = is(i).copy();
 			}
 			
@@ -69,7 +71,7 @@ class BlockCorrosiveGas(id: Int) extends BlockGasGeneric(id, 0, false)
 				var d0 = (world.rand.nextFloat() * f).asInstanceOf[Double] + (1.0F - f).asInstanceOf[Double] * 0.5D;
 				var d1 = (world.rand.nextFloat() * f).asInstanceOf[Double] + (1.0F - f).asInstanceOf[Double] * 0.5D;
 				var d2 = (world.rand.nextFloat() * f).asInstanceOf[Double] + (1.0F - f).asInstanceOf[Double] * 0.5D;
-				var entityitem = new EntityItem(world, x.asInstanceOf[Double] + d0, y.asInstanceOf[Double] + d1, z.asInstanceOf[Double] + d2, new ItemStack(Item.enderPearl, 2));
+				var entityitem = new EntityItem(world, x.asInstanceOf[Double] + d0, y.asInstanceOf[Double] + d1, z.asInstanceOf[Double] + d2, new ItemStack(Items.ender_pearl, 2));
 				entityitem.delayBeforeCanPickup = 1;
 				world.spawnEntityInWorld(entityitem);
 			}
@@ -81,14 +83,14 @@ class BlockCorrosiveGas(id: Int) extends BlockGasGeneric(id, 0, false)
 		}
 	}
 
-  override def canDestroyBlock(blockID: Int, x: Int, y: Int, z: Int, world: World): Boolean = {
-    if(world.getBlockTileEntity(x, y, z) != null) {
+  override def canDestroyBlock(block: Block, x: Int, y: Int, z: Int, world: World): Boolean = {
+    if(world.getTileEntity(x, y, z) != null) {
       false
     } else {
-      val mat = world.getBlockMaterial(x, y, z)
+      val mat = world.getBlock(x, y, z).getMaterial()
 
       if(mat == Material.cactus || mat == Material.cake || mat == Material.circuits || mat == Material.cloth || mat == Material.grass ||
-          mat == Material.leaves || mat == Material.materialCarpet || mat == Material.plants || mat == Material.pumpkin || mat == Material.vine ||
+          mat == Material.leaves || mat == Material.carpet || mat == Material.plants || mat == Material.gourd || mat == Material.vine ||
           mat == Material.web || mat == Material.wood) {
         true
       } else {

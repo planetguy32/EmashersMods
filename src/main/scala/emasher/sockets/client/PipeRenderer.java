@@ -1,40 +1,20 @@
 package emasher.sockets.client;
 
-import java.awt.image.BufferedImage;
-
 import org.lwjgl.opengl.GL11;
-
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import emasher.api.SocketModule;
-import emasher.sockets.BlockSocket;
 import emasher.sockets.SocketsMod;
-import emasher.sockets.TileSocket;
-import emasher.sockets.modules.*;
 import emasher.sockets.pipes.*;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
-//import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.IItemRenderer.ItemRenderType;
-import net.minecraftforge.client.IItemRenderer.ItemRendererHelper;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.ForgeDirection;
-//import net.minecraftforge.liquids.LiquidDictionary;
-//import net.minecraftforge.liquids.LiquidStack;
-import net.minecraftforge.fluids.FluidStack;
+
 
 @SideOnly(Side.CLIENT)
 public class PipeRenderer extends TileEntitySpecialRenderer
@@ -101,10 +81,8 @@ public class PipeRenderer extends TileEntitySpecialRenderer
 			}
 			
 			Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("textures/atlas/blocks.png"));
-			//Minecraft.getMinecraft().renderEngine.bindTexture(par1ResourceLocation)
-			//bindTextureByName("/terrain.png");
 			
-			Icon icon = bfp.getColIcon(p.colour);
+			IIcon icon = bfp.getColIcon(p.colour);
 			
 			tessellator.startDrawingQuads();
 			

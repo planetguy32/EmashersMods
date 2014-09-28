@@ -1,8 +1,9 @@
 package emasher.api;
 
-import net.minecraftforge.common.ForgeDirection;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.util.ForgeDirection;
 import emasher.api.SocketTileAccess;
-import emasher.sockets.PacketHandler;
 
 public abstract class RSPulseModule extends RSGateModule
 {
@@ -11,13 +12,29 @@ public abstract class RSPulseModule extends RSGateModule
 	{
 		super(id, textureFiles);
 	}
-	
+
 	@Override
 	public int getCurrentTexture(SideConfig config)
 	{
 		if(config.meta == 0) return 0;
 		return 1;
 	}
+
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        if(config.meta == 0) return "sockets:inner_redstone_inactive";
+        return "sockets:inner_redstone_active";
+    }
+
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures()
+    {
+        return new String[] {
+                "sockets:inner_redstone_inactive",
+                "sockets:inner_redstone_active"
+        };
+    }
 	
 	@Override
 	public boolean isOutputingRedstone(SideConfig config, SocketTileAccess ts)

@@ -3,7 +3,7 @@ package emasher.sockets.pipes
 import net.minecraft.tileentity._;
 import net.minecraft.nbt._;
 import net.minecraftforge.fluids._;
-import net.minecraftforge.common._;
+import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy._;
 
 class TileStartPipe extends TileEntity with IFluidHandler with IEnergyHandler
@@ -79,7 +79,7 @@ class TileStartPipe extends TileEntity with IFluidHandler with IEnergyHandler
 					var yo:Int = yCoord + d.offsetY;
 					var zo:Int = zCoord + d.offsetZ;
 					
-					var t:TileEntity = worldObj.getBlockTileEntity(xo, yo, zo);
+					var t:TileEntity = worldObj.getTileEntity(xo, yo, zo);
 					if(t.isInstanceOf[IFluidHandler] && ! t.isInstanceOf[TileStartPipe] && ! t.isInstanceOf[TileFluidPipe])
 					{
 						var fl:FluidStack = t.asInstanceOf[IFluidHandler].drain(d.getOpposite(), tank.getCapacity() - tank.getFluidAmount(), false);
@@ -110,7 +110,7 @@ class TileStartPipe extends TileEntity with IFluidHandler with IEnergyHandler
 							xo = xCoord + d.offsetX;
 							yo = yCoord + d.offsetY;
 							zo = zCoord + d.offsetZ;
-							var t:TileEntity = worldObj.getBlockTileEntity(xo, yo, zo);
+							var t:TileEntity = worldObj.getTileEntity(xo, yo, zo);
 							if(t.isInstanceOf[IFluidHandler] && ! t.isInstanceOf[TileStartPipe] && ! t.isInstanceOf[TileFluidPipe])
 							{
 								var amnt:Int = t.asInstanceOf[IFluidHandler].fill(d.getOpposite(), tank.drain(CAPACITY, false), true);
@@ -139,7 +139,7 @@ class TileStartPipe extends TileEntity with IFluidHandler with IEnergyHandler
 						xo = xCoord + d.offsetX;
 						yo = yCoord + d.offsetY;
 						zo = zCoord + d.offsetZ;
-						var t:TileEntity = worldObj.getBlockTileEntity(xo, yo, zo);
+						var t:TileEntity = worldObj.getTileEntity(xo, yo, zo);
 						
 						if(d != lastFrom)
 						{
@@ -174,7 +174,7 @@ class TileStartPipe extends TileEntity with IFluidHandler with IEnergyHandler
 							xo = xCoord + d.offsetX;
 							yo = yCoord + d.offsetY;
 							zo = zCoord + d.offsetZ;
-							var t:TileEntity = worldObj.getBlockTileEntity(xo, yo, zo);
+							var t:TileEntity = worldObj.getTileEntity(xo, yo, zo);
 							
 							
 							if(t.isInstanceOf[IEnergyHandler] && ! t.isInstanceOf[TileStartPipe] && ! t.isInstanceOf[TileEnergyPipe])
@@ -194,7 +194,7 @@ class TileStartPipe extends TileEntity with IFluidHandler with IEnergyHandler
 						xo = xCoord + d.offsetX;
 						yo = yCoord + d.offsetY;
 						zo = zCoord + d.offsetZ;
-						var t:TileEntity = worldObj.getBlockTileEntity(xo, yo, zo);
+						var t:TileEntity = worldObj.getTileEntity(xo, yo, zo);
 						
 						if(d != lastFrom)
 						{
@@ -248,7 +248,7 @@ class TileStartPipe extends TileEntity with IFluidHandler with IEnergyHandler
 	
 	override def extractEnergy(from: ForgeDirection, maxExtract: Int, simulate: Boolean):Int = capacitor.extractEnergy(maxExtract, simulate);
 	
-	override def canInterface(from: ForgeDirection):Boolean = true;
+	override def canConnectEnergy(from: ForgeDirection):Boolean = true;
 	
 	override def getEnergyStored(from: ForgeDirection):Int = capacitor.getEnergyStored();
 	override def getMaxEnergyStored(from: ForgeDirection):Int = capacitor.getMaxEnergyStored();

@@ -6,16 +6,16 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import emasher.core.EmasherCore;
 import emasher.sockets.SocketsMod;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 
 public class ItemDusts extends Item
 {
 	@SideOnly(Side.CLIENT)
-	public Icon[] textures;
+	public IIcon[] textures;
 	
 	public static final int NUM_ITEMS = Const.values().length;
 	
@@ -163,9 +163,9 @@ public class ItemDusts extends Item
 				"Pure Ardite Dust"
 			};
 
-	public ItemDusts(int id)
+	public ItemDusts()
 	{
-		super(id);
+		super();
 		this.setCreativeTab(SocketsMod.tabSockets);
 		this.setUnlocalizedName("e_dusts");
 		setHasSubtypes(true);
@@ -174,16 +174,18 @@ public class ItemDusts extends Item
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIconFromDamage(int damage)
+	public IIcon getIconFromDamage(int damage)
 	{
-		return textures[damage];
+        if(damage >= 0 && damage < NUM_ITEMS)
+            return textures[damage];
+        return null;
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister ir)
+	public void registerIcons(IIconRegister ir)
 	{
-		textures = new Icon[NUM_ITEMS];
+		textures = new IIcon[NUM_ITEMS];
 		
 		for(int i = 0; i < NUM_ITEMS; i++)
 		{
@@ -203,7 +205,7 @@ public class ItemDusts extends Item
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-    public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
+    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List)
 	{	
 		for(int i = 0; i < NUM_ITEMS; i++) par3List.add(new ItemStack(par1, 1, i));
     }

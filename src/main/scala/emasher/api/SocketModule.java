@@ -6,11 +6,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraft.client.renderer.*;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -130,7 +130,21 @@ public abstract class SocketModule
 	 * come in handy here.
 	 */
 	@SideOnly(Side.CLIENT)
-	public Icon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side) { return new Icon[] {}; }
+	public IIcon[] getAdditionalOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side) { return new IIcon[] {}; }
+
+    /**
+     * If there is transparency in a module's texture you will be able to see another cube rendered inside the socket.
+     * This method returns the name of the texture that should be used to render the internal cube for the side that a
+     * given module is installed on.
+     */
+    @SideOnly(Side.CLIENT)
+    public String getInternalTexture(SocketTileAccess ts, SideConfig config, ForgeDirection side) { return "sockets:inner_black"; }
+
+    /**
+     * To ensure all the inner textures are loaded, a list of all possible internal textures must be provided
+     */
+    @SideOnly(Side.CLIENT)
+    public String[] getAllInternalTextures() { return new String[] {"sockets:inner_black"}; }
 	
 	/**
 	 * For some reason Minecraft flips the textures on the bottom of blocks. Because certain additional overlays would be displayed
@@ -395,4 +409,6 @@ public abstract class SocketModule
 	public void onSocketPlaced(SideConfig config, SocketTileAccess ts, ForgeDirection side) {}
 
     public boolean canModuleBeDyed() { return false; }
+
+    public boolean renderEnergyAmount() { return false; }
 }

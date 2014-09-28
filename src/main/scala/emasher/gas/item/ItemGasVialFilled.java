@@ -2,36 +2,27 @@ package emasher.gas.item;
 
 import java.util.List;
 
-import cpw.mods.fml.common.IFuelHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import emasher.core.EmasherCore;
-import emasher.gas.CommonProxy;
 import emasher.gas.EmasherGas;
-import net.minecraft.world.biome.*;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.*;
-import net.minecraft.world.chunk.*;
 import net.minecraft.block.*;
 import net.minecraft.item.*;
-import net.minecraft.tileentity.*;
-import net.minecraft.block.material.*;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.*;
 import net.minecraft.entity.player.*;
-import net.minecraft.entity.*;
 import net.minecraft.util.*;
-import net.minecraft.potion.*;
-import net.minecraftforge.common.*;
 import net.minecraftforge.fluids.*;
 
 public class ItemGasVialFilled extends Item
 {
 	@SideOnly(Side.CLIENT)
-	public Icon[] textures;
+	public IIcon[] textures;
 	
-	public ItemGasVialFilled(int id) 
+	public ItemGasVialFilled()
 	{
-		super(id);
+		super();
 		
 		setCreativeTab(EmasherGas.tabGasCraft);
 		setMaxStackSize(1);
@@ -40,16 +31,17 @@ public class ItemGasVialFilled extends Item
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIconFromDamage(int damage)
+	public IIcon getIconFromDamage(int damage)
 	{
+        if(damage == 0) return this.itemIcon;
 		return textures[damage];
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister ir)
+	public void registerIcons(IIconRegister ir)
 	{
-		textures = new Icon[8];
+		textures = new IIcon[8];
 		
 		textures[0] = ir.registerIcon("gascraft:naturalGasVial");
 		textures[1] = ir.registerIcon("gascraft:propellentVial");
@@ -118,7 +110,7 @@ public class ItemGasVialFilled extends Item
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-    public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List)
+    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List)
 	{	
 		for(int i = 0; i < 8; i++) par3List.add(new ItemStack(par1, 1, i));
     }
@@ -137,13 +129,13 @@ public class ItemGasVialFilled extends Item
         {
             return par1ItemStack;
         }
-        else if (var12.typeOfHit == EnumMovingObjectType.TILE)
+        else if (var12.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
         {
         	int var13 = var12.blockX;
             int var14 = var12.blockY;
             int var15 = var12.blockZ;
             
-            int BlockID = par2World.getBlockId(var13, var14, var15);
+            Block block = par2World.getBlock(var13, var14, var15);
             
             
         	if (var12.sideHit == 0)
@@ -176,12 +168,13 @@ public class ItemGasVialFilled extends Item
                 ++var13;
             }
             
-            int i = par2World.getBlockId(var13, var14, var15);
+            //int i = par2World.getBlockId(var13, var14, var15);
+            Block b = par2World.getBlock(var13, var14, var15);
 
-            if (i == 0 && !(Block.blocksList[BlockID] instanceof IFluidHandler))
+            if (b == Blocks.air && !(block instanceof IFluidHandler))
             {
                 par2World.playSoundEffect((double)var13 + 0.5D, (double)var14 + 0.5D, (double)var15 + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
-                par2World.setBlock(var13, var14, var15, getFluid(par1ItemStack).getFluid().getBlockID());
+                par2World.setBlock(var13, var14, var15, getFluid(par1ItemStack).getFluid().getBlock());
                 
                 if(! par3EntityPlayer.capabilities.isCreativeMode)
                 {

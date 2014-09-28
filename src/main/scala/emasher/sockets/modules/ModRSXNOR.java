@@ -4,13 +4,15 @@ import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import emasher.api.RSGateModule;
 import emasher.api.SideConfig;
 import emasher.api.SocketTileAccess;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 
 public class ModRSXNOR extends RSGateModule
@@ -18,7 +20,7 @@ public class ModRSXNOR extends RSGateModule
 
 	public ModRSXNOR(int id)
 	{
-		super(id, "sockets:XNOR_0", "sockets:XNOR_1");
+		super(id, "sockets:XNOR_0");
 	}
 
 	@Override
@@ -45,7 +47,7 @@ public class ModRSXNOR extends RSGateModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "rtr", "trt", " b ", Character.valueOf('t'), Block.torchRedstoneActive, Character.valueOf('r'), Item.redstone,
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "rtr", "trt", " b ", Character.valueOf('t'), Blocks.redstone_torch, Character.valueOf('r'), Items.redstone,
 				Character.valueOf('b'), new ItemStack(SocketsMod.module, 1, 17));
 	}
 	

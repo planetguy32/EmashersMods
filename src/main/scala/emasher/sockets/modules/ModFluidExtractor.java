@@ -3,12 +3,16 @@ package emasher.sockets.modules;
 import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.liquids.ILiquidTank;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.FluidStack;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
@@ -48,8 +52,8 @@ public class ModFluidExtractor extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "h", "u", "b", Character.valueOf('i'), Item.ingotIron, Character.valueOf('h'), Block.hopperBlock,
-				Character.valueOf('u'), Block.fenceIron, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "h", "u", "b", Character.valueOf('i'), Items.iron_ingot, Character.valueOf('h'), Blocks.hopper,
+				Character.valueOf('u'), Blocks.iron_bars, Character.valueOf('b'), SocketsMod.blankSide);
 	}
 	
 	@Override
@@ -106,4 +110,20 @@ public class ModFluidExtractor extends SocketModule
 		
 		if(allOff) ts.tryExtractFluid(config.tank, side, 100);
 	}
+
+    @Override
+    public void onTankChange(SideConfig config, int index, SocketTileAccess ts, ForgeDirection side, boolean add)
+    {
+        if(index == config.tank)
+        {
+            ts.sendClientTankSlot(index);
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getTankToRender(SocketTileAccess ts, SideConfig config, ForgeDirection side)
+    {
+        return config.tank;
+    }
 }

@@ -1,5 +1,6 @@
 package emasher.sockets.items;
 
+import emasher.sockets.SocketsMod;
 import net.minecraft.world.biome.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.*;
@@ -15,7 +16,7 @@ import net.minecraft.potion.*;
 
 public class ItemBlockPaintedWood extends ItemBlock
 {
-	public ItemBlockPaintedWood(int par1)
+	public ItemBlockPaintedWood(Block par1)
 	{
 		super(par1);
 		setHasSubtypes(true);
@@ -29,27 +30,7 @@ public class ItemBlockPaintedWood extends ItemBlock
 	@Override
 	public String getUnlocalizedName(ItemStack itemstack) 
 	{
-		String name = "";
-		switch(itemstack.getItemDamage()) 
-		{
-		case 0: name = "blackPlanks"; break;
-		case 1: name = "redPlanks"; break;
-		case 2: name = "greenPlanks"; break;
-		case 3: name = "brownPlanks"; break;
-		case 4: name = "bluePlanks"; break;
-		case 5: name = "purplePlanks"; break;
-		case 6: name = "cyanPlanks"; break;
-		case 7: name = "lightGrayPlanks"; break;
-		case 8: name = "grayPlanks"; break;
-		case 9: name = "pinkPlanks"; break;
-		case 10: name = "limePlanks"; break;
-		case 11: name = "yellowPlanks"; break;
-		case 12: name = "lightBluePlanks"; break;
-		case 13: name = "magentaPlanks"; break;
-		case 14: name = "orangePlanks"; break;
-		case 15: name = "whitePlanks"; break;
-		}
-		return getUnlocalizedName() + "." + name;
+		return getUnlocalizedName() + "." + SocketsMod.colours[itemstack.getItemDamage()];
 	}
 	
 

@@ -4,18 +4,9 @@ import java.util.Random;
 
 import cpw.mods.fml.common.IWorldGenerator;
 import emasher.gas.EmasherGas;
-import net.minecraft.world.biome.*;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.*;
-import net.minecraft.block.*;
-import net.minecraft.item.*;
-import net.minecraft.tileentity.*;
-import net.minecraft.block.material.*;
-import net.minecraft.creativetab.*;
-import net.minecraft.entity.player.*;
-import net.minecraft.entity.*;
-import net.minecraft.util.*;
-import net.minecraft.potion.*;
 
 public class WorldGenGas implements IWorldGenerator
 {
@@ -38,11 +29,11 @@ public class WorldGenGas implements IWorldGenerator
 	    	
 	    	if(world.provider.dimensionId != -1)
 	    	{
-	    		if(world.getBlockId(x, y, z) == Block.stone.blockID) world.setBlock(x, y, z, EmasherGas.gasPocket.blockID);
+	    		if(world.getBlock(x, y, z) == Blocks.stone) world.setBlock(x, y, z, EmasherGas.gasPocket);
 	    	}
 	    	else
 	    	{
-	    		if(world.getBlockId(x, y, z) == Block.netherrack.blockID) world.setBlock(x, y, z, EmasherGas.plasmaPocket.blockID);
+	    		if(world.getBlock(x, y, z) == Blocks.netherrack) world.setBlock(x, y, z, EmasherGas.plasmaPocket);
 	    	}
 	    		
     	}

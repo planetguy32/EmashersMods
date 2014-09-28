@@ -1,22 +1,22 @@
 package emasher.gas.modules
 
-import emasher.api._;
-import emasher.core._;
-import emasher.sockets._;
-import java.util._;
-import net.minecraft.item.crafting._;
-import net.minecraftforge.oredict._;
-import net.minecraftforge.common._;
-import net.minecraftforge.fluids._;
-import net.minecraft.item._;
-import net.minecraft.block._;
-import emasher.gas.fluids.FluidGas;
+import emasher.api._
+import emasher.core._
+import emasher.sockets._
+import java.util._
+import net.minecraft.item.crafting._
+import net.minecraftforge.oredict._
+import net.minecraftforge.common._
+import net.minecraftforge.fluids._
+import net.minecraft.item._
+import net.minecraft.block._
 import emasher.gas.EmasherGas
-
+import net.minecraftforge.common.util.ForgeDirection
+import cpw.mods.fml.relauncher.{Side, SideOnly}
 
 class ModPlasmaReactor(id: Int) extends SocketModule(id, "gascraft:plasmaReactor", "gascraft:plasmaReactorActive")
 {
-	override def getLocalizedName = "Plasma Reactor";
+	override def getLocalizedName = "Plasma Reactor"
 	
 	override def getToolTip(l: List[Object])
 	{
@@ -34,17 +34,17 @@ class ModPlasmaReactor(id: Int) extends SocketModule(id, "gascraft:plasmaReactor
 	override def getCurrentTexture(config: SideConfig):
 	Int = 
 	{
-		if(config.meta != 0) 1;
-		else 0;
+		if(config.meta != 0) 1
+		else 0
 	}
 	
 	override def addRecipe
 	{
 		CraftingManager.getInstance().getRecipeList().asInstanceOf[List[Object]].add(new ShapedOreRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "scs", "rpr", "sbs", Character.valueOf('s'), EmasherCore.psu, Character.valueOf('s'), "blockSteel",
-				Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('r'), SocketsMod.rsIngot, Character.valueOf('b'), SocketsMod.blankSide));
+				Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('r'), SocketsMod.rsIngot, Character.valueOf('b'), SocketsMod.blankSide))
 	}
 	
-	override def isMachine = true;
+	override def isMachine = true
 	
 	override def canBeInstalled(ts: SocketTileAccess, side: ForgeDirection):
 	Boolean = 
@@ -54,11 +54,11 @@ class ModPlasmaReactor(id: Int) extends SocketModule(id, "gascraft:plasmaReactor
 			var m = ts.getSide(ForgeDirection.getOrientation(i))
 			if(m != null && m.isMachine)
 			{
-				return false;
+				return false
 			}
 		}
 		
-		true;
+		true
 	}
 	
 	override def updateSide(config: SideConfig, ts: SocketTileAccess, side: ForgeDirection)
@@ -105,4 +105,15 @@ class ModPlasmaReactor(id: Int) extends SocketModule(id, "gascraft:plasmaReactor
 			}
 		}
 	}
+
+  @SideOnly(Side.CLIENT)
+  override def getInternalTexture(ts: SocketTileAccess, config: SideConfig, side: ForgeDirection): String = {
+    if(config.meta != 0) "gascraft:inner_plasma"
+    else "sockets:inner_black"
+  }
+
+  @SideOnly(Side.CLIENT)
+  override def getAllInternalTextures: Array[String] = {
+    return Array[String]("gascraft:inner_plasma")
+  }
 }

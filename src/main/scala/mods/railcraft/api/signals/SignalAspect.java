@@ -12,34 +12,37 @@ public enum SignalAspect {
     /**
      * The All Clear.
      */
-    GREEN(0),
+    GREEN(0, "railcraft.gui.aspect.green.name"),
     /**
      * Typically means pairing in progress.
      */
-    BLINK_YELLOW(1),
+    BLINK_YELLOW(1, "railcraft.gui.aspect.blink.yellow.name"),
     /**
      * Caution, cart heading away.
      */
-    YELLOW(1),
+    YELLOW(1, "railcraft.gui.aspect.yellow.name"),
     /**
      * Maintenance warning, the signal is malfunctioning.
      */
-    BLINK_RED(2),
+    BLINK_RED(2, "railcraft.gui.aspect.blink.red.name"),
     /**
      * Stop!
      */
-    RED(2),
+    RED(2, "railcraft.gui.aspect.red.name"),
     /**
      * Can't happen, really it can't (or shouldn't). Only used when rendering
      * blink states (for the texture offset).
      */
-    OFF(3);
+    OFF(3, "railcraft.gui.aspect.off.name");
     private final int textureIndex;
+    private final String localizationTag;
     private static boolean blinkState;
     private static final int SIGNAL_BRIGHTNESS = 210;
+    public static final SignalAspect[] VALUES = values();
 
-    private SignalAspect(int textureIndex) {
+    private SignalAspect(int textureIndex, String localizationTag) {
         this.textureIndex = textureIndex;
+        this.localizationTag = localizationTag;
     }
 
     /**
@@ -67,9 +70,8 @@ public enum SignalAspect {
      * @return true if blinks
      */
     public boolean isBlinkAspect() {
-        if (this == BLINK_YELLOW || this == BLINK_RED) {
+        if (this == BLINK_YELLOW || this == BLINK_RED)
             return true;
-        }
         return false;
     }
 
@@ -80,12 +82,10 @@ public enum SignalAspect {
      * @return true if emitting light.
      */
     public boolean isLit() {
-        if (this == OFF) {
+        if (this == OFF)
             return false;
-        }
-        if (isBlinkAspect()) {
+        if (isBlinkAspect())
             return isBlinkOn();
-        }
         return true;
     }
 
@@ -106,6 +106,18 @@ public enum SignalAspect {
     }
 
     /**
+     * Takes an Ordinal and returns the corresponding SignalAspect.
+     *
+     * @param ordinal
+     * @return the Signal Aspect with the specified Ordinal
+     */
+    public static SignalAspect fromOrdinal(int ordinal) {
+        if (ordinal < 0 || ordinal >= VALUES.length)
+            return SignalAspect.RED;
+        return VALUES[ordinal];
+    }
+
+    /**
      * Tests two Aspects and determines which is more restrictive. The concept
      * of "most restrictive" refers to which aspect enforces the most
      * limitations of movement to a train.
@@ -117,19 +129,19 @@ public enum SignalAspect {
      * @return The most restrictive Aspect
      */
     public static SignalAspect mostRestrictive(SignalAspect first, SignalAspect second) {
-        if (first == null && second == null) {
+        if (first == null && second == null)
             return RED;
-        }
-        if (first == null) {
+        if (first == null)
             return second;
-        }
-        if (second == null) {
+        if (second == null)
             return first;
-        }
-        if (first.ordinal() > second.ordinal()) {
+        if (first.ordinal() > second.ordinal())
             return first;
-        }
         return second;
+    }
+
+    public String getLocalizationTag() {
+        return localizationTag;
     }
 
     @Override
@@ -142,4 +154,5 @@ public enum SignalAspect {
         out = out.trim();
         return out;
     }
+
 }

@@ -1,16 +1,9 @@
 package emasher.gas.tileentity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockPistonBase;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Facing;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.*;
 import emasher.api.IGasReceptor;
 import emasher.gas.EmasherGas;
@@ -35,17 +28,19 @@ public class TileDuct extends TileEntity implements IGasReceptor
 	{
 		if(! worldObj.isRemote)
 		{
-			if(tank.getFluid() != null && tank.getFluid().amount >= 4000 && worldObj.getBlockId(xCoord, yCoord + 1,  zCoord) == Block.stoneSingleSlab.blockID)
+			if(tank.getFluid() != null && tank.getFluid().amount >= 4000 && worldObj.getBlock(xCoord, yCoord + 1, zCoord) == Blocks.stone_slab)
 			{
 				outputGas();
 			}
-			else if(tank.getFluid() != null && tank.getFluid().amount > 0 && worldObj.getBlockTileEntity(xCoord, yCoord + 1, zCoord) != null && worldObj.getBlockTileEntity(xCoord, yCoord + 1, zCoord) instanceof IGasReceptor)
+			else if(tank.getFluid() != null && tank.getFluid().amount > 0 && worldObj.getTileEntity(xCoord, yCoord + 1, zCoord) != null && worldObj.getTileEntity(xCoord, yCoord + 1, zCoord) instanceof IGasReceptor)
 			{
-				int temp = ((IGasReceptor)worldObj.getBlockTileEntity(xCoord, yCoord + 1, zCoord)).recieveGas(tank.getFluid(), ForgeDirection.DOWN, true);
+				int temp = ((IGasReceptor)worldObj.getTileEntity(xCoord, yCoord + 1, zCoord)).recieveGas(tank.getFluid(), ForgeDirection.DOWN, true);
 				tank.drain(temp, true);
 			}
-			
-			if(worldObj.getBlockId(xCoord, yCoord - 1,  zCoord) == Block.furnaceBurning.blockID && worldObj.rand.nextInt(256) == 0)
+
+            //TODO Check if it is suposed to be lit_furnace or just idle_furnace
+            //if(worldObj.getBlock(xCoord, yCoord - 1,  zCoord) == Block.furnaceBurning.blockID && worldObj.rand.nextInt(256) == 0)
+			if(worldObj.getBlock(xCoord, yCoord - 1,  zCoord) == Blocks.lit_furnace && worldObj.rand.nextInt(256) == 0)
 			{
 				tank.fill(new FluidStack(EmasherGas.fluidSmoke, 4000), true);
 			}
@@ -60,11 +55,11 @@ public class TileDuct extends TileEntity implements IGasReceptor
 			int y = yCoord + 2;
 			int z = zCoord;
 			
-			if(worldObj.getBlockId(x, y, z) == 0)
+			if(worldObj.getBlock(x, y, z) == Blocks.air)
 			{
 				if(tank.getFluid() != null && tank.getFluid().amount >= 4000)
 				{
-					worldObj.setBlock(x, y, z, tank.getFluid().getFluid().getBlockID());
+					worldObj.setBlock(x, y, z, tank.getFluid().getFluid().getBlock());
 					tank.drain(4000, true);
 				}
 			}

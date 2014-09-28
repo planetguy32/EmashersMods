@@ -1,15 +1,11 @@
 package emasher.gas;
 
-import cpw.mods.fml.common.Loader;
-import emasher.defense.EmasherDefense;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.util.DamageSource;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class EntitySmokeBomb extends EntityThrowable
 {
@@ -41,22 +37,22 @@ public class EntitySmokeBomb extends EntityThrowable
     		ForgeDirection d = ForgeDirection.UP;
     		boolean set = false;
     		
-    		if(worldObj.getBlockId(mop.blockX, mop.blockY, mop.blockZ) == 0)
+    		if(worldObj.getBlock(mop.blockX, mop.blockY, mop.blockZ) == Blocks.air)
     		{
-    			worldObj.setBlock(mop.blockX, mop.blockY, mop.blockZ, EmasherGas.smoke.blockID);
+    			worldObj.setBlock(mop.blockX, mop.blockY, mop.blockZ, EmasherGas.smoke);
     		}
-    		else if(worldObj.getBlockId(mop.blockX + d.offsetX, mop.blockY + d.offsetY, mop.blockZ + d.offsetZ) == 0)
+    		else if(worldObj.getBlock(mop.blockX + d.offsetX, mop.blockY + d.offsetY, mop.blockZ + d.offsetZ) == Blocks.air)
     		{
-    			worldObj.setBlock(mop.blockX + d.offsetX, mop.blockY + d.offsetY, mop.blockZ + d.offsetZ, EmasherGas.smoke.blockID);
+    			worldObj.setBlock(mop.blockX + d.offsetX, mop.blockY + d.offsetY, mop.blockZ + d.offsetZ, EmasherGas.smoke);
     		}
     		else
     		{
     			for(int i = 2; i < 6; i++)
     			{
     				d = ForgeDirection.getOrientation(i);
-    				if(worldObj.getBlockId(mop.blockX + d.offsetX, mop.blockY + d.offsetY, mop.blockZ + d.offsetZ) == 0)
+    				if(worldObj.getBlock(mop.blockX + d.offsetX, mop.blockY + d.offsetY, mop.blockZ + d.offsetZ) == Blocks.air)
     	    		{
-    	    			worldObj.setBlock(mop.blockX + d.offsetX, mop.blockY + d.offsetY, mop.blockZ + d.offsetZ, EmasherGas.smoke.blockID);
+    	    			worldObj.setBlock(mop.blockX + d.offsetX, mop.blockY + d.offsetY, mop.blockZ + d.offsetZ, EmasherGas.smoke);
     	    			set = true;
     	    			break;
     	    		}
@@ -66,9 +62,9 @@ public class EntitySmokeBomb extends EntityThrowable
     			{
     				d = ForgeDirection.DOWN;
     				
-    				if(worldObj.getBlockId(mop.blockX + d.offsetX, mop.blockY + d.offsetY, mop.blockZ + d.offsetZ) == 0)
+    				if(worldObj.getBlock(mop.blockX + d.offsetX, mop.blockY + d.offsetY, mop.blockZ + d.offsetZ) == Blocks.air)
     	    		{
-    	    			worldObj.setBlock(mop.blockX + d.offsetX, mop.blockY + d.offsetY, mop.blockZ + d.offsetZ, EmasherGas.smoke.blockID);
+    	    			worldObj.setBlock(mop.blockX + d.offsetX, mop.blockY + d.offsetY, mop.blockZ + d.offsetZ, EmasherGas.smoke);
     	    		}
     				
     			}

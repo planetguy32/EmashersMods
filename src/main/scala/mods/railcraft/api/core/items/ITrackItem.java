@@ -1,5 +1,6 @@
 package mods.railcraft.api.core.items;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -18,6 +19,7 @@ public interface ITrackItem
     /**
      * Attempts to place a track.
      *
+     * @param stack
      * @param world The World object
      * @param i x-Coord
      * @param j y-Coord
@@ -27,11 +29,11 @@ public interface ITrackItem
     public boolean placeTrack(ItemStack stack, World world, int i, int j, int k);
 
     /**
-     * Return the block id of a placed track.
+     * Return the block of a placed track.
      *
      * @return the blockId
      */
-    public int getPlacedBlockId();
+    public Block getPlacedBlock();
 
     /**
      * Return true if the given tile entity corresponds to this Track item.

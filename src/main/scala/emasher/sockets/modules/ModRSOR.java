@@ -6,11 +6,11 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import emasher.api.RSGateModule;
 import emasher.api.SideConfig;
 import emasher.api.SocketTileAccess;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 
 public class ModRSOR extends RSGateModule
@@ -18,7 +18,7 @@ public class ModRSOR extends RSGateModule
 
 	public ModRSOR(int id)
 	{
-		super(id, "sockets:OR_0", "sockets:OR_1");
+		super(id, "sockets:OR_0");
 	}
 
 	@Override

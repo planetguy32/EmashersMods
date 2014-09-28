@@ -4,7 +4,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockBaseRailLogic;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,11 +11,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import mods.railcraft.api.core.items.IToolCrowbar;
 import net.minecraft.block.BlockRailBase;
+import net.minecraft.block.BlockRailBase.Rail;
 import net.minecraft.entity.EntityLivingBase;
 
 /**
@@ -35,10 +35,8 @@ public abstract class TrackInstanceBase implements ITrackInstance {
     public TileEntity tileEntity;
 
     private Block getBlock() {
-        if (block == null) {
-            int id = getWorld().getBlockId(getX(), getY(), getZ());
-            block = Block.blocksList[id];
-        }
+        if (block == null)
+            block = getWorld().getBlock(getX(), getY(), getZ());
         return block;
     }
 
@@ -88,9 +86,8 @@ public abstract class TrackInstanceBase implements ITrackInstance {
 
     @Override
     public void onBlockPlacedBy(EntityLivingBase entityliving) {
-        if (entityliving == null) {
+        if (entityliving == null)
             return;
-        }
         if (this instanceof ITrackReversable) {
             int dir = MathHelper.floor_double((double) ((entityliving.rotationYaw * 4F) / 360F) + 0.5D) & 3;
             ((ITrackReversable) this).setReversed(dir == 0 || dir == 1);
@@ -110,53 +107,49 @@ public abstract class TrackInstanceBase implements ITrackInstance {
         getWorld().markBlockForUpdate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
     }
 
-    protected boolean isRailValid(World world, int i, int j, int k, int meta) {
+    protected boolean isRailValid(World world, int x, int y, int z, int meta) {
         boolean valid = true;
-        if (!world.isBlockSolidOnSide(i, j - 1, k, ForgeDirection.UP)) {
+        if (!world.isSideSolid(x, y - 1, z, ForgeDirection.UP))
             valid = false;
-        }
-        if (meta == 2 && !world.isBlockSolidOnSide(i + 1, j, k, ForgeDirection.UP)) {
+        if (meta == 2 && !world.isSideSolid(x + 1, y, z, ForgeDirection.UP))
             valid = false;
-        } else if (meta == 3 && !world.isBlockSolidOnSide(i - 1, j, k, ForgeDirection.UP)) {
+        else if (meta == 3 && !world.isSideSolid(x - 1, y, z, ForgeDirection.UP))
             valid = false;
-        } else if (meta == 4 && !world.isBlockSolidOnSide(i, j, k - 1, ForgeDirection.UP)) {
+        else if (meta == 4 && !world.isSideSolid(x, y, z - 1, ForgeDirection.UP))
             valid = false;
-        } else if (meta == 5 && !world.isBlockSolidOnSide(i, j, k + 1, ForgeDirection.UP)) {
+        else if (meta == 5 && !world.isSideSolid(x, y, z + 1, ForgeDirection.UP))
             valid = false;
-        }
         return valid;
     }
 
     @Override
-    public void onNeighborBlockChange(int id) {
+    public void onNeighborBlockChange(Block blockChanged) {
         int meta = tileEntity.getBlockMetadata();
         boolean valid = isRailValid(getWorld(), tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, meta);
         if (!valid) {
             Block blockTrack = getBlock();
             blockTrack.dropBlockAsItem(getWorld(), tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, 0, 0);
-            getWorld().setBlock(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, 0);
+            getWorld().setBlockToAir(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
             return;
         }
 
-        BlockRailBase blockTrack = (BlockRailBase) getBlock();
-        if (id > 0 && Block.blocksList[id].canProvidePower() && isFlexibleRail() && (new BlockBaseRailLogic(blockTrack, getWorld(), tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord)).getNumberOfAdjacentTracks() == 3) {
+        if (blockChanged != null && blockChanged.canProvidePower()
+                && isFlexibleRail() && RailTools.countAdjecentTracks(getWorld(), tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord) == 3)
             switchTrack(false);
-        }
         testPower();
     }
 
     protected void switchTrack(boolean flag) {
-        int i = tileEntity.xCoord;
-        int j = tileEntity.yCoord;
-        int k = tileEntity.zCoord;
+        int x = tileEntity.xCoord;
+        int y = tileEntity.yCoord;
+        int z = tileEntity.zCoord;
         BlockRailBase blockTrack = (BlockRailBase) getBlock();
-        (new BlockBaseRailLogic(blockTrack, getWorld(), i, j, k)).func_94511_a(getWorld().isBlockIndirectlyGettingPowered(i, j, k), flag);
+        blockTrack.new Rail(getWorld(), x, y, z).func_150655_a(getWorld().isBlockIndirectlyGettingPowered(x, y, z), flag);
     }
 
     protected void testPower() {
-        if (!(this instanceof ITrackPowered)) {
+        if (!(this instanceof ITrackPowered))
             return;
-        }
         int i = tileEntity.xCoord;
         int j = tileEntity.yCoord;
         int k = tileEntity.zCoord;
@@ -166,11 +159,10 @@ public abstract class TrackInstanceBase implements ITrackInstance {
         if (powered != r.isPowered()) {
             r.setPowered(powered);
             Block blockTrack = getBlock();
-            getWorld().notifyBlocksOfNeighborChange(i, j, k, blockTrack.blockID);
-            getWorld().notifyBlocksOfNeighborChange(i, j - 1, k, blockTrack.blockID);
-            if (meta == 2 || meta == 3 || meta == 4 || meta == 5) {
-                getWorld().notifyBlocksOfNeighborChange(i, j + 1, k, blockTrack.blockID);
-            }
+            getWorld().notifyBlocksOfNeighborChange(i, j, k, blockTrack);
+            getWorld().notifyBlocksOfNeighborChange(i, j - 1, k, blockTrack);
+            if (meta == 2 || meta == 3 || meta == 4 || meta == 5)
+                getWorld().notifyBlocksOfNeighborChange(i, j + 1, k, blockTrack);
             sendUpdateToClient();
             // System.out.println("Setting power [" + i + ", " + j + ", " + k + "]");
         }
@@ -181,31 +173,28 @@ public abstract class TrackInstanceBase implements ITrackInstance {
     }
 
     protected boolean isConnectedRailPowered(World world, int i, int j, int k, TrackSpec spec, int meta, boolean dir, int dist, int maxDist) {
-        if (dist >= maxDist) {
+        if (dist >= maxDist)
             return false;
-        }
         boolean powered = true;
         switch (meta) {
             case 0: // '\0'
-                if (dir) {
+                if (dir)
                     k++;
-                } else {
+                else
                     k--;
-                }
                 break;
 
             case 1: // '\001'
-                if (dir) {
+                if (dir)
                     i--;
-                } else {
+                else
                     i++;
-                }
                 break;
 
             case 2: // '\002'
-                if (dir) {
+                if (dir)
                     i--;
-                } else {
+                else {
                     i++;
                     j++;
                     powered = false;
@@ -218,16 +207,15 @@ public abstract class TrackInstanceBase implements ITrackInstance {
                     i--;
                     j++;
                     powered = false;
-                } else {
+                } else
                     i++;
-                }
                 meta = 1;
                 break;
 
             case 4: // '\004'
-                if (dir) {
+                if (dir)
                     k++;
-                } else {
+                else {
                     k--;
                     j++;
                     powered = false;
@@ -240,51 +228,44 @@ public abstract class TrackInstanceBase implements ITrackInstance {
                     k++;
                     j++;
                     powered = false;
-                } else {
+                } else
                     k--;
-                }
                 meta = 0;
                 break;
         }
-        if (testPowered(world, i, j, k, spec, dir, dist, maxDist, meta)) {
+        if (testPowered(world, i, j, k, spec, dir, dist, maxDist, meta))
             return true;
-        }
         return powered && testPowered(world, i, j - 1, k, spec, dir, dist, maxDist, meta);
     }
 
     protected boolean testPowered(World world, int i, int j, int k, TrackSpec spec, boolean dir, int dist, int maxDist, int orientation) {
         // System.out.println("Testing Power at <" + i + ", " + j + ", " + k + ">");
-        int id = world.getBlockId(i, j, k);
+        Block blockToTest = world.getBlock(i, j, k);
         Block blockTrack = getBlock();
-        if (id == blockTrack.blockID) {
+        if (blockToTest == blockTrack) {
             int meta = world.getBlockMetadata(i, j, k);
-            TileEntity tile = world.getBlockTileEntity(i, j, k);
+            TileEntity tile = world.getTileEntity(i, j, k);
             if (tile instanceof ITrackTile) {
                 ITrackInstance track = ((ITrackTile) tile).getTrackInstance();
-                if (!(track instanceof ITrackPowered) || track.getTrackSpec() != spec) {
+                if (!(track instanceof ITrackPowered) || track.getTrackSpec() != spec)
                     return false;
-                }
-                if (orientation == 1 && (meta == 0 || meta == 4 || meta == 5)) {
+                if (orientation == 1 && (meta == 0 || meta == 4 || meta == 5))
                     return false;
-                }
-                if (orientation == 0 && (meta == 1 || meta == 2 || meta == 3)) {
+                if (orientation == 0 && (meta == 1 || meta == 2 || meta == 3))
                     return false;
-                }
-                if (((ITrackPowered) track).isPowered()) {
-                    if (world.isBlockIndirectlyGettingPowered(i, j, k) || world.isBlockIndirectlyGettingPowered(i, j + 1, k)) {
+                if (((ITrackPowered) track).isPowered())
+                    if (world.isBlockIndirectlyGettingPowered(i, j, k) || world.isBlockIndirectlyGettingPowered(i, j + 1, k))
                         return true;
-                    } else {
+                    else
                         return isConnectedRailPowered(world, i, j, k, spec, meta, dir, dist + 1, maxDist);
-                    }
-                }
             }
         }
         return false;
     }
 
     @Override
-    public Icon getIcon() {
-        return getTrackSpec().getIcon();
+    public IIcon getIcon() {
+        return getTrackSpec().getItemIcon();
     }
 
     @Override
@@ -324,7 +305,7 @@ public abstract class TrackInstanceBase implements ITrackInstance {
 
     @Override
     public World getWorld() {
-        return tileEntity.worldObj;
+        return tileEntity.getWorldObj();
     }
 
     @Override

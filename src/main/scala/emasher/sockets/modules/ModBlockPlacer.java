@@ -10,20 +10,20 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.api.Util;
-import emasher.sockets.PacketHandler;
+//import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
 
 public class ModBlockPlacer extends SocketModule
@@ -59,8 +59,8 @@ public class ModBlockPlacer extends SocketModule
 	@Override
 	public void addRecipe()
 	{
-		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "h", "d", "b", Character.valueOf('d'), Block.dispenser, Character.valueOf('h'), Block.pistonBase,
-				Character.valueOf('u'), Block.trapdoor, Character.valueOf('b'), SocketsMod.blankSide);
+		GameRegistry.addShapedRecipe(new ItemStack(SocketsMod.module, 1, moduleID), "h", "d", "b", Character.valueOf('d'), Blocks.dispenser, Character.valueOf('h'), Blocks.piston,
+				Character.valueOf('u'), Blocks.trapdoor, Character.valueOf('b'), SocketsMod.blankSide);
 	}
 	
 	public boolean hasInventoryIndicator() { return true; }
@@ -95,13 +95,13 @@ public class ModBlockPlacer extends SocketModule
 	
 	public void doClick(SideConfig config, SocketTileAccess ts, ForgeDirection side)
 	{
-			EntityPlayer fakePlayer = Util.createFakePlayer(ts.worldObj, ts.xCoord, ts.yCoord, ts.zCoord);
+			EntityPlayer fakePlayer = Util.createFakePlayer(ts.getWorldObj(), ts.xCoord, ts.yCoord, ts.zCoord);
 			fakePlayer.inventory.currentItem = 0;
-			fakePlayer.worldObj = ts.worldObj;
+			fakePlayer.worldObj = ts.getWorldObj();
 			int xo = ts.xCoord + side.offsetX;
 			int yo = ts.yCoord + side.offsetY;
 			int zo = ts.zCoord + side.offsetZ;
-			int bID = ts.worldObj.getBlockId(xo, yo, zo);
+			Block b = ts.getWorldObj().getBlock(xo, yo, zo);
 			
 			if(config.inventory >= 0 && config.inventory <= 2 && ts.getStackInInventorySlot(config.inventory) != null )
 			{
@@ -111,23 +111,23 @@ public class ModBlockPlacer extends SocketModule
 					
 					fakePlayer.setCurrentItemOrArmor(0, stack);
 					
-					fakePlayer.worldObj = ts.worldObj;
+					fakePlayer.worldObj = ts.getWorldObj();
 					fakePlayer.setSneaking(config.meta == 1);
 					
 					fakePlayer.posY++;
 					int useOffset = -1;
 					
-					if(! theItem.onItemUseFirst(stack, fakePlayer, ts.worldObj, ts.xCoord + side.offsetX, ts.yCoord + side.offsetY, ts.zCoord + side.offsetZ, 1, 0.5f, 0.5f, 0.5f))
+					if(! theItem.onItemUseFirst(stack, fakePlayer, ts.getWorldObj(), ts.xCoord + side.offsetX, ts.yCoord + side.offsetY, ts.zCoord + side.offsetZ, 1, 0.5f, 0.5f, 0.5f))
 					{
-						if(ts.worldObj.isAirBlock(xo, yo, zo) || (config.meta == 0 || theItem.shouldPassSneakingClickToBlock(ts.worldObj, ts.xCoord, ts.yCoord, ts.zCoord)))
+						if(ts.getWorldObj().isAirBlock(xo, yo, zo) || (config.meta == 0 || theItem.doesSneakBypassUse(ts.getWorldObj(), ts.xCoord, ts.yCoord, ts.zCoord, fakePlayer)))
 						{
-							if(! theItem.onItemUse(stack, fakePlayer, ts.worldObj, ts.xCoord + side.offsetX, ts.yCoord + side.offsetY - 1, ts.zCoord + side.offsetZ, 1, 0.5f, 0.5f, 0.5f))
+							if(! theItem.onItemUse(stack, fakePlayer, ts.getWorldObj(), ts.xCoord + side.offsetX, ts.yCoord + side.offsetY - 1, ts.zCoord + side.offsetZ, 1, 0.5f, 0.5f, 0.5f))
 							{	
 								boolean doRC = true;
-								if(ts.worldObj.isAirBlock(xo, yo, zo))
+								if(ts.getWorldObj().isAirBlock(xo, yo, zo))
 								{
 									doRC = false;
-									List<Entity> l = ts.worldObj.getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getAABBPool().getAABB(xo, yo, zo, xo + 1, yo + 1, zo + 1));
+									List<Entity> l = ts.getWorldObj().getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getBoundingBox(xo, yo, zo, xo + 1, yo + 1, zo + 1));
 									if(l.size() > 0)
 									{
 										Entity toUse = l.get(0);
@@ -146,7 +146,7 @@ public class ModBlockPlacer extends SocketModule
 									}
 								}
 								
-								if(doRC && ! theItem.onItemUse(stack, fakePlayer, ts.worldObj, ts.xCoord + side.offsetX, ts.yCoord + side.offsetY, ts.zCoord + side.offsetZ, 1, 0.5f, 0.5f, 0.5f))
+								if(doRC && ! theItem.onItemUse(stack, fakePlayer, ts.getWorldObj(), ts.xCoord + side.offsetX, ts.yCoord + side.offsetY, ts.zCoord + side.offsetZ, 1, 0.5f, 0.5f, 0.5f))
 								{
 									float ax = 0;//0F * side.offsetX;
 									float ay = 0;//0F * side.offsetY;
@@ -199,14 +199,14 @@ public class ModBlockPlacer extends SocketModule
 									}
 									
 									
-									fakePlayer.inventory.setInventorySlotContents(0, theItem.onItemRightClick(stack, ts.worldObj, fakePlayer));									
+									fakePlayer.inventory.setInventorySlotContents(0, theItem.onItemRightClick(stack, ts.getWorldObj(), fakePlayer));
 									
 								}
 							}
 						}
 						else
 						{
-							tryActivateBlock(config, ts, side, fakePlayer, xo, yo, zo, bID);
+							tryActivateBlock(config, ts, side, fakePlayer, xo, yo, zo, b);
 						}
 					}
 				
@@ -226,7 +226,7 @@ public class ModBlockPlacer extends SocketModule
 			}
 			else
 			{
-				tryActivateBlock(config, ts, side, fakePlayer, xo, yo, zo, bID);
+				tryActivateBlock(config, ts, side, fakePlayer, xo, yo, zo, b);
 				
 				for(int i = 0; i < fakePlayer.inventory.getSizeInventory(); i++)
 				{
@@ -236,19 +236,19 @@ public class ModBlockPlacer extends SocketModule
 			}
 	}
 	
-	public void tryActivateBlock(SideConfig config, SocketTileAccess ts, ForgeDirection side, EntityPlayer fakePlayer, int x, int y, int z, int blockID)
+	public void tryActivateBlock(SideConfig config, SocketTileAccess ts, ForgeDirection side, EntityPlayer fakePlayer, int x, int y, int z, Block block)
 	{
-		if(Block.blocksList[blockID] != null)
+		if(Block.blockRegistry.containsId(Block.getIdFromBlock(block)))
 		{
-			if(! Block.blocksList[blockID].onBlockActivated(ts.worldObj, x, y, z, fakePlayer, side.getOpposite().ordinal(), 0.5f, 0.5f, 0.5f))
+			if(! block.onBlockActivated(ts.getWorldObj(), x, y, z, fakePlayer, side.getOpposite().ordinal(), 0.5f, 0.5f, 0.5f))
 			{
-				Block.blocksList[blockID].onBlockClicked(ts.worldObj, x, y, z, fakePlayer);
+				block.onBlockClicked(ts.getWorldObj(), x, y, z, fakePlayer);
 			}
 		}
 		
-		if(ts.worldObj.isAirBlock(x, y, z))
+		if(ts.getWorldObj().isAirBlock(x, y, z))
 		{
-			List<Entity> l = ts.worldObj.getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getAABBPool().getAABB(x, y, z, x + 1, y + 1, z + 1));
+			List<Entity> l = ts.getWorldObj().getEntitiesWithinAABBExcludingEntity((Entity)null, AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 1, z + 1));
 			if(l.size() > 0)
 			{
 				Entity toUse = l.get(0);

@@ -14,6 +14,8 @@ import net.minecraft.item._
 import net.minecraftforge.fluids._
 import net.minecraft.init.{Blocks, Items}
 import cpw.mods.fml.relauncher.{Side, SideOnly}
+import buildcraft.api.recipes.IRefineryRecipeManager.IRefineryRecipe
+import emasher.gas.EmasherGas
 
 class ModRefinery(id: Int) extends SocketModule(id, "gascraft:refinery")
 {
@@ -68,29 +70,37 @@ class ModRefinery(id: Int) extends SocketModule(id, "gascraft:refinery")
 	{
 		if(config.tank >= 0 && config.tank < 3)
 		{
-			if(config.meta <= 0)
-			{
-				if(config.rsControl(0)) ts.sendClientSideState(side.ordinal)
-				config.rsControl(0) = false
-				
-				var fluid = ts.getFluidInTank(config.tank)
+			if(config.meta <= 0) {
+        if (config.rsControl(0)) ts.sendClientSideState(side.ordinal)
+        config.rsControl(0) = false
 
-        var rec = BuildcraftRecipes.refinery.findRefineryRecipe(fluid, null)
-				ts.sideInventory.setInventorySlotContents(side.ordinal, null)
-				
-				if(rec != null)
-				{
-					if(ts.getEnergyStored() > rec.getEnergyCost * 5 && ts.getFluidInTank(config.tank).amount >= rec.getIngredient1.amount)
-					{
-						ts.useEnergy(rec.getEnergyCost * 5, false)
-						ts.drainInternal(config.tank, rec.getIngredient1.amount, true)
-						ts.sideInventory.setInventorySlotContents(side.ordinal, new ItemStack(Blocks.cobblestone, 1, rec.getResult.amount))
-            config.inventory = rec.getResult.fluidID
-						config.meta = rec.getTimeRequired
-						ts.sendClientSideState(side.ordinal)
-						config.rsControl(0) = true
-					}
-				}
+        var fluid = ts.getFluidInTank(config.tank)
+        var rec: IRefineryRecipe = null
+
+        if(fluid != null) {
+
+          if (BuildcraftRecipes.refinery != null) {
+            rec = BuildcraftRecipes.refinery.findRefineryRecipe(fluid, null)
+          }
+
+          if (rec == null && fluid.isFluidEqual(new FluidStack(EmasherGas.fluidNaturalGas, 1000))) {
+            rec = PropellentRecipe
+          }
+
+          ts.sideInventory.setInventorySlotContents(side.ordinal, null)
+
+          if (rec != null) {
+            if (ts.getEnergyStored() > rec.getEnergyCost * 5 && ts.getFluidInTank(config.tank).amount >= rec.getIngredient1.amount) {
+              ts.useEnergy(rec.getEnergyCost * 5, false)
+              ts.drainInternal(config.tank, rec.getIngredient1.amount, true)
+              ts.sideInventory.setInventorySlotContents(side.ordinal, new ItemStack(Blocks.cobblestone, 1, rec.getResult.amount))
+              config.inventory = rec.getResult.fluidID
+              config.meta = rec.getTimeRequired
+              ts.sendClientSideState(side.ordinal)
+              config.rsControl(0) = true
+            }
+          }
+        }
 				
 			}
 			else
@@ -127,5 +137,27 @@ class ModRefinery(id: Int) extends SocketModule(id, "gascraft:refinery")
   @SideOnly(Side.CLIENT)
   override def getAllInternalTextures: Array[String] = {
     return Array[String]("gascraft:inner_refinery")
+  }
+}
+
+object PropellentRecipe extends IRefineryRecipe {
+  def getIngredient1: FluidStack = {
+    new FluidStack(EmasherGas.fluidNaturalGas, 2)
+  }
+
+  def getIngredient2: FluidStack = {
+    null
+  }
+
+  def getResult: FluidStack = {
+    new FluidStack(EmasherGas.fluidPropellent, 1)
+  }
+
+  def getEnergyCost: Int = {
+    1
+  }
+
+  def getTimeRequired: Int = {
+    1
   }
 }

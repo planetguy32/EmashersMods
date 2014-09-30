@@ -16,8 +16,7 @@ public abstract class RSPulseModule extends RSGateModule
 	@Override
 	public int getCurrentTexture(SideConfig config)
 	{
-		if(config.meta == 0) return 0;
-		return 1;
+		return 0;
 	}
 
     @SideOnly(Side.CLIENT)

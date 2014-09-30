@@ -1,8 +1,9 @@
 package emasher.sockets.pipes;
 
-//import emasher.sockets.PacketHandler;
-import emasher.sockets.PacketHandler;
-import emasher.sockets.client.ClientPacketHandler;
+import emasher.sockets.SocketsMod;
+import emasher.sockets.packethandling.AdapterSideMessage;
+import emasher.sockets.packethandling.ChangerSideMessage;
+import emasher.sockets.packethandling.RequestInfoFromServerMessage;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -18,7 +19,10 @@ public class TileDirectionChanger extends TileEntity
         super.validate();
         if(this.worldObj.isRemote)
         {
-            ClientPacketHandler.instance.requestDirectionData(this);
+            for(int i = 0; i < 6; i++)
+            {
+                SocketsMod.network.sendToServer(new RequestInfoFromServerMessage(this, (byte)i, (byte)5));
+            }
         }
     }
 
@@ -66,7 +70,7 @@ public class TileDirectionChanger extends TileEntity
 
         if(side != ForgeDirection.DOWN)
         {
-            PacketHandler.instance.sendClientChangerSide(this, index);
+            SocketsMod.network.sendToDimension(new ChangerSideMessage(this, (byte)index), worldObj.provider.dimensionId);
         }
     }
 

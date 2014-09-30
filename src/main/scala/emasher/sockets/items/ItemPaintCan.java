@@ -1,27 +1,18 @@
 package emasher.sockets.items;
 
-import emasher.sockets.PacketHandler;
+import emasher.sockets.packethandling.ChangerSideMessage;
+import emasher.sockets.packethandling.PipeColourMessage;
 import net.minecraft.init.Blocks;
-import net.minecraft.world.biome.*;
 import net.minecraft.world.*;
-import net.minecraft.world.chunk.*;
 import net.minecraft.block.*;
 import net.minecraft.item.*;
-import net.minecraft.tileentity.*;
-import net.minecraft.block.material.*;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.*;
 import net.minecraft.entity.player.*;
-import net.minecraft.entity.*;
 import net.minecraft.util.*;
-import net.minecraft.potion.*;
-import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.*;
 
-//import emasher.sockets.PacketHandler;
-import emasher.core.EmasherCore;
 import emasher.sockets.SocketsMod;
 import emasher.sockets.pipes.*;
 
@@ -36,7 +27,6 @@ public class ItemPaintCan extends Item
 		super();
 		this.paintColour = paintColour;
 		this.setMaxDamage(64);
-		//this.setIconIndex(32 + paintColour);
 		this.setCreativeTab(SocketsMod.tabSockets);
 		this.setUnlocalizedName("paintCan");
 		this.setHasSubtypes(true);
@@ -143,7 +133,7 @@ public class ItemPaintCan extends Item
             	if(! par2World.isRemote)
             	{
 	            	((TilePipeBase)par2World.getTileEntity(var13, var14, var15)).colour = this.paintColour;
-                    PacketHandler.instance.sendClientPipeColour((TilePipeBase)par2World.getTileEntity(var13, var14, var15));
+                    SocketsMod.network.sendToDimension(new PipeColourMessage((TilePipeBase)par2World.getTileEntity(var13, var14, var15)), par2World.provider.dimensionId);
             	}
             	par2World.playSoundEffect((double)var13 + 0.5D, (double)var14 + 0.5D, (double)var15 + 0.5D, "step.cloth", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
             	for(int i = 0; i < 16; i++)

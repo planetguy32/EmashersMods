@@ -1,6 +1,7 @@
 package emasher.gas.item;
 
 import emasher.gas.EmasherGas;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.*;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import org.lwjgl.Sys;
@@ -16,11 +17,11 @@ public class ItemGasMask extends ItemArmor
 
 	}
 
-//	@Override
-//	public String getArmorTexture(ItemStack itemstack, Entity entity, int slot, int layer)
-//	{
-//		return "emasher:gasmask.png";
-//	}
+    @Override
+    public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type)
+    {
+        return "emasher:textures/models/armour/gasmask.png";
+    }
 	
 	public void registerIcons(IIconRegister registry)
 	{

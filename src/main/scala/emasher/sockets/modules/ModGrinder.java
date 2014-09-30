@@ -24,7 +24,7 @@ import emasher.api.GrinderRecipeRegistry.GrinderRecipe;
 import emasher.core.EmasherCore;
 //import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
-import ic2.api.recipe.*;
+//import ic2.api.recipe.*;
 
 public class ModGrinder extends SocketModule
 {
@@ -108,11 +108,11 @@ public class ModGrinder extends SocketModule
 					GrinderRecipe r = GrinderRecipeRegistry.getRecipe(toIntake);
 					if(r != null) product = r.getOutput();
 					
-					if(product == null && Loader.isModLoaded("IC2"))
-					{
-						RecipeOutput o = Recipes.macerator.getOutputFor(toIntake, false);
-						if(o != null) product = o.items.get(0);
-					}
+//					if(product == null && Loader.isModLoaded("IC2"))
+//					{
+//						RecipeOutput o = Recipes.macerator.getOutputFor(toIntake, false);
+//						if(o != null) product = o.items.get(0);
+//					}
 					
 					if(product != null)
 					{

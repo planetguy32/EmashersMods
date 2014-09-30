@@ -103,6 +103,9 @@ public class EmasherGas
 	public static int minGasInVent;
 	public static boolean infiniteGasInVent;
 
+    public static boolean gasBlocksInWorld;
+    public static boolean gasBlocksCanExplode;
+
     public static CreativeTabs tabGasCraft = new CreativeTabs("tabGasCraft")
     {
         @Override
@@ -152,6 +155,8 @@ public class EmasherGas
 		spawnMineGas = config.get(Configuration.CATEGORY_GENERAL, "Spawn Gas Pockets in the world", false).getBoolean(false);
 		flatBedrock = config.get(Configuration.CATEGORY_GENERAL, "Flat Bedrock Compatibility Mode", false).getBoolean(false);
 		flatBedrockTop = config.get(Configuration.CATEGORY_GENERAL, "Flat Bedrock Top Layer", 0).getInt();
+        gasBlocksInWorld = config.get(Configuration.CATEGORY_GENERAL, "Allow gas blocks", true).getBoolean(true);
+        gasBlocksCanExplode = config.get(Configuration.CATEGORY_GENERAL, "Allow gas blocks to explode", true).getBoolean(true);
 
 		if(config.hasChanged())
 			config.save();
@@ -323,8 +328,9 @@ public class EmasherGas
 		toSend.setInteger("energy", 30000);
 		FMLInterModComms.sendMessage("ThermalExpansion", "CompressionFuel", toSend);
 
-        BuildcraftRecipes.refinery.addRecipe(new FluidStack(fluidNaturalGas, 2), new FluidStack(fluidPropellent, 1), 1, 1);
-
+        if(BuildcraftRecipes.refinery != null) {
+            BuildcraftRecipes.refinery.addRecipe(new FluidStack(fluidNaturalGas, 2), new FluidStack(fluidPropellent, 1), 1, 1);
+        }
         FurnaceRecipes.smelting().func_151394_a(new ItemStack(vialFilled, 0, 1), new ItemStack(vialFilled, 1, 1), 1.0F);
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(vial, 8), "s", "g", "g", Character.valueOf('g'), Blocks.glass, Character.valueOf('s'), Items.string));

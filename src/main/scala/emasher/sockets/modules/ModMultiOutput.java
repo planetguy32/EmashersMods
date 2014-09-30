@@ -2,7 +2,6 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
-import ic2.api.energy.tile.IEnergyAcceptor;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;

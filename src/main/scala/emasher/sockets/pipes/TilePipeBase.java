@@ -1,7 +1,7 @@
 package emasher.sockets.pipes;
 
-//import emasher.sockets.client.ClientPacketHandler;
-import emasher.sockets.client.ClientPacketHandler;
+import emasher.sockets.SocketsMod;
+import emasher.sockets.packethandling.RequestInfoFromServerMessage;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.*;
 
@@ -16,7 +16,10 @@ public abstract class TilePipeBase extends TileEntity
 		
 		if(worldObj.isRemote)
         {
-            ClientPacketHandler.instance.requestPipeColourData(this);
+            for(int i = 0; i < 6; i++)
+            {
+                SocketsMod.network.sendToServer(new RequestInfoFromServerMessage(this, (byte)i, (byte)3));
+            }
         }
 	}
 	

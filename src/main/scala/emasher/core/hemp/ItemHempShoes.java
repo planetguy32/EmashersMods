@@ -20,11 +20,11 @@ public class ItemHempShoes extends ItemArmor
 		setUnlocalizedName("hempShoes");
 	}
 
-	/*@Override
-	public String getArmorTexture(ItemStack itemstack, Entity entity, int slot, int layer)
-	{
-		return "emasher:hemp_1.png";
-	}*/
+    @Override
+    public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type)
+    {
+        return "emasher:textures/models/armour/hemp_1.png";
+    }
 	
 	@Override
 	public void registerIcons(IIconRegister iconRegister)

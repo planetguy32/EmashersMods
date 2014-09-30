@@ -65,7 +65,7 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
 	
 	public void contactFire(World world, int x, int y, int z)
 	{
-		if(canExplode)
+		if(canExplode && EmasherGas.gasBlocksCanExplode)
 		{
 			world.setBlockToAir(x, y, z);
 			world.removeTileEntity(x, y, z);
@@ -99,6 +99,11 @@ public abstract class BlockGasGeneric extends BlockContainer implements IFluidBl
 	public void onBlockAdded(World world, int x, int y, int z)
     {
 		super.onBlockAdded(world, x, y, z);
+
+        if(! EmasherGas.gasBlocksInWorld) {
+            world.setBlockToAir(x, y, z);
+            return;
+        }
 		
 		TileEntity t = world.getTileEntity(x, y, z);
 		

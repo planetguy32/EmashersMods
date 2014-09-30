@@ -4,19 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.NetworkCheckHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import emasher.sockets.packethandling.PacketPipeline;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.relauncher.Side;
+import emasher.sockets.packethandling.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -27,7 +24,6 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 import net.minecraftforge.fluids.*;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Loader;
@@ -37,7 +33,6 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import emasher.api.CentrifugeRecipeRegistry;
 import emasher.api.GrinderRecipeRegistry;
 import emasher.api.IModuleRegistrationManager;
@@ -48,11 +43,9 @@ import emasher.api.Registry;
 import emasher.api.Util;
 import emasher.core.EmasherCore;
 import emasher.core.item.ItemEmasherGeneric;
-import emasher.core.item.ItemPondScum;
 //import emasher.sockets.client.ClientPacketHandler;
 import emasher.sockets.items.*;
 import emasher.sockets.modules.*;
-import emasher.sockets.client.ClientProxy;
 import emasher.sockets.pipes.*;
 
 @Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.2.0.0", dependencies = "required-after:emashercore")
@@ -63,8 +56,6 @@ public class SocketsMod
 	
 	@SidedProxy(clientSide="emasher.sockets.client.ClientProxy", serverSide="emasher.sockets.CommonProxy")
 	public static CommonProxy proxy;
-
-    public static final PacketPipeline packetPipeline = new PacketPipeline();
 	
 	//Blocks
 	public static Block socket;
@@ -175,6 +166,8 @@ public class SocketsMod
 	public static Object PREF_YELLOW = EnumChatFormatting.YELLOW;
 	public static Object PREF_AQUA = EnumChatFormatting.AQUA;
 	public static Object PREF_WHITE = EnumChatFormatting.WHITE;
+
+    public static SimpleNetworkWrapper network;
 	
 	public static CreativeTabs tabSockets = new CreativeTabs("tabSockets")
 	{
@@ -235,64 +228,69 @@ public class SocketsMod
 		}
 		
 		proxy.registerRenderers();
-		
-	}
+
+        network = NetworkRegistry.INSTANCE.newSimpleChannel("engineers_toolbox");
+        network.registerMessage(SocketStateMessage.Handler.class, SocketStateMessage.class, 0, Side.CLIENT);
+        network.registerMessage(SocketItemMessage.Handler.class, SocketItemMessage.class, 1, Side.CLIENT);
+        network.registerMessage(SocketFluidMessage.Handler.class, SocketFluidMessage.class, 2, Side.CLIENT);
+        network.registerMessage(PipeColourMessage.Handler.class, PipeColourMessage.class, 3, Side.CLIENT);
+        network.registerMessage(AdapterSideMessage.Handler.class, AdapterSideMessage.class, 4, Side.CLIENT);
+        network.registerMessage(ChangerSideMessage.Handler.class, ChangerSideMessage.class, 5, Side.CLIENT);
+        network.registerMessage(RequestInfoFromServerMessage.Handler.class, RequestInfoFromServerMessage.class, 6, Side.SERVER);
+    }
 	
 	@EventHandler
-	public void load(FMLInitializationEvent event) 
-	{
-        packetPipeline.initialise();
-
-		MinecraftForge.EVENT_BUS.register(new Util());
-		MinecraftForge.EVENT_BUS.register(new BucketEventHandler());
+	public void load(FMLInitializationEvent event) {
+        MinecraftForge.EVENT_BUS.register(new Util());
+        MinecraftForge.EVENT_BUS.register(new BucketEventHandler());
 
         innerTextures = new HashMap<String, IIcon>();
-		
-		GameRegistry.registerTileEntity(TileStartPipe.class, "emasherstartpipe");
-		GameRegistry.registerTileEntity(TileFluidPipe.class, "emasherfluidpipe");
-		GameRegistry.registerTileEntity(TileEnergyPipe.class, "emasherenergypipe");
-		GameRegistry.registerTileEntity(TileSocket.class, "modular_socket");
-		GameRegistry.registerTileEntity(TileTempRS.class, "TempRS");
-		GameRegistry.registerTileEntity(TilePipeBase.class, "emasherbasepipe");
-		GameRegistry.registerTileEntity(TileMJAdapter.class, "emashermjadapter");
-		GameRegistry.registerTileEntity(TileEUAdapter.class, "emashereuAdapter");
-		GameRegistry.registerTileEntity(TileMiniPortal.class, "emasherminiportal");
+
+        GameRegistry.registerTileEntity(TileStartPipe.class, "emasherstartpipe");
+        GameRegistry.registerTileEntity(TileFluidPipe.class, "emasherfluidpipe");
+        GameRegistry.registerTileEntity(TileEnergyPipe.class, "emasherenergypipe");
+        GameRegistry.registerTileEntity(TileSocket.class, "modular_socket");
+        GameRegistry.registerTileEntity(TileTempRS.class, "TempRS");
+        GameRegistry.registerTileEntity(TilePipeBase.class, "emasherbasepipe");
+        GameRegistry.registerTileEntity(TileMJAdapter.class, "emashermjadapter");
+        //GameRegistry.registerTileEntity(TileEUAdapter.class, "emashereuAdapter");
+        GameRegistry.registerTileEntity(TileMiniPortal.class, "emasherminiportal");
         GameRegistry.registerTileEntity(TileDirectionChanger.class, "emasherdirectionchanger");
         GameRegistry.registerTileEntity(TileFrame.class, "emasherframe");
-		
-		ModuleRegistry.registerModule(new ModBlank(0));
-		ModuleRegistry.registerModule(new ModItemInput(1));
-		ModuleRegistry.registerModule(new ModItemOutput(2));
-		ModuleRegistry.registerModule(new ModItemExtractor(3));
-		ModuleRegistry.registerModule(new ModFluidInput(4));
-		ModuleRegistry.registerModule(new ModFluidOutput(5));
-		ModuleRegistry.registerModule(new ModFluidExtractor(6));
-		ModuleRegistry.registerModule(new ModEnergyInput(7));
-		ModuleRegistry.registerModule(new ModEnergyOutput(8));
-		ModuleRegistry.registerModule(new ModMultiInput(9));
-		ModuleRegistry.registerModule(new ModMultiOutput(10));
-		ModuleRegistry.registerModule(new ModItemDetector(11));
-		ModuleRegistry.registerModule(new ModFluidDetector(12));
-		ModuleRegistry.registerModule(new ModItemDistributor(13));
-		ModuleRegistry.registerModule(new ModFluidDistributor(14));
-		ModuleRegistry.registerModule(new ModItemEjector(15));
-		ModuleRegistry.registerModule(new ModRSInput(16));
-		ModuleRegistry.registerModule(new ModRSOutput(17));
-		ModuleRegistry.registerModule(new ModRSAND(18));
-		ModuleRegistry.registerModule(new ModRSOR(19));
-		ModuleRegistry.registerModule(new ModRSNOT(20));
-		ModuleRegistry.registerModule(new ModRSNAND(21));
-		ModuleRegistry.registerModule(new ModRSNOR(22));
-		ModuleRegistry.registerModule(new ModRSXOR(23));
-		ModuleRegistry.registerModule(new ModRSXNOR(24));
-		ModuleRegistry.registerModule(new ModLatchToggle(32));
-		ModuleRegistry.registerModule(new ModLatchSet(33));
-		ModuleRegistry.registerModule(new ModLatchReset(34));
-		ModuleRegistry.registerModule(new ModTimer(35));
-		ModuleRegistry.registerModule(new ModDelayer(36));
-		ModuleRegistry.registerModule(new ModStateCell(37));
-		ModuleRegistry.registerModule(new ModPressurePlate(38));
-		ModuleRegistry.registerModule(new ModSpinningWheel(39));
+
+        ModuleRegistry.registerModule(new ModBlank(0));
+        ModuleRegistry.registerModule(new ModItemInput(1));
+        ModuleRegistry.registerModule(new ModItemOutput(2));
+        ModuleRegistry.registerModule(new ModItemExtractor(3));
+        ModuleRegistry.registerModule(new ModFluidInput(4));
+        ModuleRegistry.registerModule(new ModFluidOutput(5));
+        ModuleRegistry.registerModule(new ModFluidExtractor(6));
+        ModuleRegistry.registerModule(new ModEnergyInput(7));
+        ModuleRegistry.registerModule(new ModEnergyOutput(8));
+        ModuleRegistry.registerModule(new ModMultiInput(9));
+        ModuleRegistry.registerModule(new ModMultiOutput(10));
+        ModuleRegistry.registerModule(new ModItemDetector(11));
+        ModuleRegistry.registerModule(new ModFluidDetector(12));
+        ModuleRegistry.registerModule(new ModItemDistributor(13));
+        ModuleRegistry.registerModule(new ModFluidDistributor(14));
+        ModuleRegistry.registerModule(new ModItemEjector(15));
+        ModuleRegistry.registerModule(new ModRSInput(16));
+        ModuleRegistry.registerModule(new ModRSOutput(17));
+        ModuleRegistry.registerModule(new ModRSAND(18));
+        ModuleRegistry.registerModule(new ModRSOR(19));
+        ModuleRegistry.registerModule(new ModRSNOT(20));
+        ModuleRegistry.registerModule(new ModRSNAND(21));
+        ModuleRegistry.registerModule(new ModRSNOR(22));
+        ModuleRegistry.registerModule(new ModRSXOR(23));
+        ModuleRegistry.registerModule(new ModRSXNOR(24));
+        ModuleRegistry.registerModule(new ModLatchToggle(32));
+        ModuleRegistry.registerModule(new ModLatchSet(33));
+        ModuleRegistry.registerModule(new ModLatchReset(34));
+        ModuleRegistry.registerModule(new ModTimer(35));
+        ModuleRegistry.registerModule(new ModDelayer(36));
+        ModuleRegistry.registerModule(new ModStateCell(37));
+        ModuleRegistry.registerModule(new ModPressurePlate(38));
+        ModuleRegistry.registerModule(new ModSpinningWheel(39));
         ModuleRegistry.registerModule(new ModHinge(40));
         ModuleRegistry.registerModule(new ModEnderHinge(41));
         ModuleRegistry.registerModule(new ModLazySusan(42));
@@ -303,66 +301,65 @@ public class SocketsMod
         ModuleRegistry.registerModule(new ModMagnet(47, "sockets:magnet"));
         ModuleRegistry.registerModule(new ModMagnetInput(48));
         ModuleRegistry.registerModule(new ModMagnetOutput(49));
-		ModuleRegistry.registerModule(new ModBurner(64));
-		ModuleRegistry.registerModule(new ModBreaker(65));
-		if(enableWaterIntake) ModuleRegistry.registerModule(new ModOsPump(66));
-		ModuleRegistry.registerModule(new ModSpring(67));
-		ModuleRegistry.registerModule(new ModDFBlade(68));
-		ModuleRegistry.registerModule(new ModVacuum(69));
-		ModuleRegistry.registerModule(new ModAdvancedBreaker(70));
-		ModuleRegistry.registerModule(new ModFurnace(71));
-		if(enableGrinder) ModuleRegistry.registerModule(new ModGrinder(72));
-		ModuleRegistry.registerModule(new ModEnergyIndicator(73));
-		ModuleRegistry.registerModule(new ModEnergyExpansion(74));
-		if(enableSolars) ModuleRegistry.registerModule(new ModSolar(75));
-		ModuleRegistry.registerModule(new ModButton(76));
-		ModuleRegistry.registerModule(new ModBUD(78));
-		ModuleRegistry.registerModule(new ModAdvancedEnergyExpansion(79));
-		ModuleRegistry.registerModule(new ModWaterCooler(80));
-		ModuleRegistry.registerModule(new ModFreezer(81));
-		ModuleRegistry.registerModule(new ModLavaIntake(82));
-		if(enablePiezo) ModuleRegistry.registerModule(new ModPiezo(83));
-		if(enableHydro) ModuleRegistry.registerModule(new ModWaterMill(84));
-		ModuleRegistry.registerModule(new ModSelfDestruct(85));
-		ModuleRegistry.registerModule(new ModItemDisplay(86));
-		ModuleRegistry.registerModule(new ModTankDisplay(87));
-		ModuleRegistry.registerModule(new ModCharger(88));
-		ModuleRegistry.registerModule(new ModBlockPlacer(89));
-		ModuleRegistry.registerModule(new ModMachineOutput(90));
-		if(enableKiln) ModuleRegistry.registerModule(new ModKiln(91));
-		if(enableMultiSmelter) ModuleRegistry.registerModule(new ModMultiSmelter(92));
-		if(enableCentrifuge) ModuleRegistry.registerModule(new ModCentrifuge(93));
-		ModuleRegistry.registerModule(new ModMixer(94));
-		ModuleRegistry.registerModule(new ModPressurizer(95));
-		ModuleRegistry.registerModule(new ModRangeSelector(96));
-		if(enableHusher) ModuleRegistry.registerModule(new ModHusher(97));
-		ModuleRegistry.registerModule(new ModStirlingGenerator(98));
-		ModuleRegistry.registerModule(new ModPump(99));
-		
-		//Register 3rd party modules
-		for(IModuleRegistrationManager reg : ModuleRegistry.registers)
-		{
-			reg.registerModules();
-		}
-		
-		socket = new BlockSocket().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("modular_socket");
-        GameRegistry.registerBlock(socket, ItemBlockSocket.class, "modular_socket");
-		
-		tempRS = new BlockTempRS().setBlockUnbreakable();
-		GameRegistry.registerBlock(tempRS, "tempRS");
+        ModuleRegistry.registerModule(new ModBurner(64));
+        ModuleRegistry.registerModule(new ModBreaker(65));
+        if (enableWaterIntake) ModuleRegistry.registerModule(new ModOsPump(66));
+        ModuleRegistry.registerModule(new ModSpring(67));
+        ModuleRegistry.registerModule(new ModDFBlade(68));
+        ModuleRegistry.registerModule(new ModVacuum(69));
+        ModuleRegistry.registerModule(new ModAdvancedBreaker(70));
+        ModuleRegistry.registerModule(new ModFurnace(71));
+        if (enableGrinder) ModuleRegistry.registerModule(new ModGrinder(72));
+        ModuleRegistry.registerModule(new ModEnergyIndicator(73));
+        ModuleRegistry.registerModule(new ModEnergyExpansion(74));
+        if (enableSolars) ModuleRegistry.registerModule(new ModSolar(75));
+        ModuleRegistry.registerModule(new ModButton(76));
+        ModuleRegistry.registerModule(new ModBUD(78));
+        ModuleRegistry.registerModule(new ModAdvancedEnergyExpansion(79));
+        ModuleRegistry.registerModule(new ModWaterCooler(80));
+        ModuleRegistry.registerModule(new ModFreezer(81));
+        ModuleRegistry.registerModule(new ModLavaIntake(82));
+        if (enablePiezo) ModuleRegistry.registerModule(new ModPiezo(83));
+        if (enableHydro) ModuleRegistry.registerModule(new ModWaterMill(84));
+        ModuleRegistry.registerModule(new ModSelfDestruct(85));
+        ModuleRegistry.registerModule(new ModItemDisplay(86));
+        ModuleRegistry.registerModule(new ModTankDisplay(87));
+        ModuleRegistry.registerModule(new ModCharger(88));
+        ModuleRegistry.registerModule(new ModBlockPlacer(89));
+        ModuleRegistry.registerModule(new ModMachineOutput(90));
+        if (enableKiln) ModuleRegistry.registerModule(new ModKiln(91));
+        if (enableMultiSmelter) ModuleRegistry.registerModule(new ModMultiSmelter(92));
+        if (enableCentrifuge) ModuleRegistry.registerModule(new ModCentrifuge(93));
+        ModuleRegistry.registerModule(new ModMixer(94));
+        ModuleRegistry.registerModule(new ModPressurizer(95));
+        ModuleRegistry.registerModule(new ModRangeSelector(96));
+        if (enableHusher) ModuleRegistry.registerModule(new ModHusher(97));
+        ModuleRegistry.registerModule(new ModStirlingGenerator(98));
+        ModuleRegistry.registerModule(new ModPump(99));
 
-		blockStartPipe = new BlockStartPipe().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("start_pipe");
-		GameRegistry.registerBlock(blockStartPipe, "start_pipe");
-		blockStartPipe.setCreativeTab(tabSockets);
-		
-		blockFluidPipe = new BlockFluidPipe().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("fluid_pipe");
-		GameRegistry.registerBlock(blockFluidPipe, "fluid_pipe");
-		blockFluidPipe.setCreativeTab(tabSockets);
-		
-		blockEnergyPipe = new BlockEnergyPipe().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("energy_pipe");
-		GameRegistry.registerBlock(blockEnergyPipe, "energy_pipe");
-		blockEnergyPipe.setCreativeTab(tabSockets);
-		
+        //Register 3rd party modules
+        for (IModuleRegistrationManager reg : ModuleRegistry.registers) {
+            reg.registerModules();
+        }
+
+        socket = new BlockSocket().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("modular_socket");
+        GameRegistry.registerBlock(socket, ItemBlockSocket.class, "modular_socket");
+
+        tempRS = new BlockTempRS().setBlockUnbreakable();
+        GameRegistry.registerBlock(tempRS, "tempRS");
+
+        blockStartPipe = new BlockStartPipe().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("start_pipe");
+        GameRegistry.registerBlock(blockStartPipe, "start_pipe");
+        blockStartPipe.setCreativeTab(tabSockets);
+
+        blockFluidPipe = new BlockFluidPipe().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("fluid_pipe");
+        GameRegistry.registerBlock(blockFluidPipe, "fluid_pipe");
+        blockFluidPipe.setCreativeTab(tabSockets);
+
+        blockEnergyPipe = new BlockEnergyPipe().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("energy_pipe");
+        GameRegistry.registerBlock(blockEnergyPipe, "energy_pipe");
+        blockEnergyPipe.setCreativeTab(tabSockets);
+
 //		mjAdapter = new BlockMJAdapter().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("emasher_MJ_adapter");
 //		GameRegistry.registerBlock(mjAdapter, "emasher_MJ_adapter");
 //		LanguageRegistry.addName(mjAdapter, "MJ Adapter");
@@ -370,24 +367,23 @@ public class SocketsMod
 //		euAdapter = new BlockEUAdapter().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeMetal).setBlockName("emasher_EU_adapter");
 //		GameRegistry.registerBlock(euAdapter, "emasher_EU_adapter");
 //		LanguageRegistry.addName(euAdapter, "EU Adapter");
-		
-		rsIngot = new ItemRSIngot();
+
+        rsIngot = new ItemRSIngot();
         GameRegistry.registerItem(rsIngot, "rsIngot", "eng_toolbox");
-		
-		if(enableMiniPortal)
-		{
-			miniPortal = new BlockMiniPortal().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeStone).setBlockName("emasher_mini_portal");
-			GameRegistry.registerBlock(miniPortal, "emasher_mini_portal");
-			
-			GameRegistry.addRecipe(new ItemStack(miniPortal), new Object[]
-					{
-						"ooo", "oso", "ooo", Character.valueOf('o'), Blocks.obsidian, Character.valueOf('s'), rsIngot
-					});
-			
-		}
+
+        if (enableMiniPortal) {
+            miniPortal = new BlockMiniPortal().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeStone).setBlockName("emasher_mini_portal");
+            GameRegistry.registerBlock(miniPortal, "emasher_mini_portal");
+
+            GameRegistry.addRecipe(new ItemStack(miniPortal), new Object[]
+                    {
+                            "ooo", "oso", "ooo", Character.valueOf('o'), Blocks.obsidian, Character.valueOf('s'), rsIngot
+                    });
+
+        }
 
         directionChanger = new BlockDirectionChanger().setResistance(8.0F).setHardness(2.0F).setStepSound(Block.soundTypeGlass).setBlockName("emasher_direction_changer");
-		GameRegistry.registerBlock(directionChanger, "emasher_direction_changer");
+        GameRegistry.registerBlock(directionChanger, "emasher_direction_changer");
 
         GameRegistry.addShapelessRecipe(new ItemStack(directionChanger, 4), new Object[]
                 {
@@ -404,17 +400,6 @@ public class SocketsMod
                 "s  ",
                 Character.valueOf('s'), "ingotSteel"));
 
-        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(frame, 4),
-                "s s",
-                " s ",
-                "s  ",
-                Character.valueOf('s'), "ingotAluminum"));
-
-        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(frame, 4),
-                "s s",
-                " s ",
-                "s  ",
-                Character.valueOf('s'), "ingotAluminium"));
 
         CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(frame, 4),
                 "s s",
@@ -423,46 +408,44 @@ public class SocketsMod
                 Character.valueOf('s'), "ingotBronze"));
 
 
-		paintedPlanks = (new BlockPaintedWood(0, Material.wood))
-				.setHardness(2.0F).setResistance(5.0F).setStepSound(Block.soundTypeWood)
-				.setBlockName("paintedPlanks");
+        paintedPlanks = (new BlockPaintedWood(0, Material.wood))
+                .setHardness(2.0F).setResistance(5.0F).setStepSound(Block.soundTypeWood)
+                .setBlockName("paintedPlanks");
 
         GameRegistry.registerBlock(paintedPlanks, ItemBlockPaintedWood.class, "paintedPlanks");
         Blocks.fire.setFireInfo(paintedPlanks, 5, 20);
-		
-		for(int i = 0; i < 16; i++)
-		{
-			OreDictionary.registerOre("plankWood", new ItemStack(this.paintedPlanks, 1, i));
-		}
-		
-		groundLimestone = new BlockGroundLimestone().setHardness(0.6F).setStepSound(Block.soundTypeGravel).setBlockName("groundLimestone");
-		GameRegistry.registerBlock(groundLimestone, "groundLimestone");
-		
-		handboiler = new ItemHandboiler("", "");
-        GameRegistry.registerItem(handboiler, "handBoiler");
-		
-		for(int i = 0; i<16; i++)
-		{
-			paintCans[i] = new ItemPaintCan(i);
-            GameRegistry.registerItem(paintCans[i], "item.paintCan." + colours[i] + ".name", colours[i] + " Spray Paint");
-			
-		}
-		
-		remote = new ItemSocketRemote();
-        GameRegistry.registerItem(remote, "Socket Remote", "eng_toolbox");
-		
-		rsWand = new ItemRSWand();
-        GameRegistry.registerItem(rsWand, "Redstone Wand", "eng_toolbox");
-		
-		fluidSlickwater = new FluidSlickwater();
-		FluidRegistry.registerFluid(fluidSlickwater);
-		
-		blockSlickwater = new BlockSlickwater(fluidSlickwater);
-		GameRegistry.registerBlock(blockSlickwater, "slickwater");
 
-		slickBucket = new ItemSlickBucket();
-		slickBucket.setMaxStackSize(1);
-		slickBucket.setCreativeTab(this.tabSockets);
+        for (int i = 0; i < 16; i++) {
+            OreDictionary.registerOre("plankWood", new ItemStack(this.paintedPlanks, 1, i));
+        }
+
+        groundLimestone = new BlockGroundLimestone().setHardness(0.6F).setStepSound(Block.soundTypeGravel).setBlockName("groundLimestone");
+        GameRegistry.registerBlock(groundLimestone, "groundLimestone");
+
+        handboiler = new ItemHandboiler("", "");
+        GameRegistry.registerItem(handboiler, "handBoiler");
+
+        for (int i = 0; i < 16; i++) {
+            paintCans[i] = new ItemPaintCan(i);
+            GameRegistry.registerItem(paintCans[i], "item.paintCan." + colours[i] + ".name", colours[i] + " Spray Paint");
+
+        }
+
+        remote = new ItemSocketRemote();
+        GameRegistry.registerItem(remote, "Socket Remote", "eng_toolbox");
+
+        rsWand = new ItemRSWand();
+        GameRegistry.registerItem(rsWand, "Redstone Wand", "eng_toolbox");
+
+        fluidSlickwater = new FluidSlickwater();
+        FluidRegistry.registerFluid(fluidSlickwater);
+
+        blockSlickwater = new BlockSlickwater(fluidSlickwater);
+        GameRegistry.registerBlock(blockSlickwater, "slickwater");
+
+        slickBucket = new ItemSlickBucket();
+        slickBucket.setMaxStackSize(1);
+        slickBucket.setCreativeTab(this.tabSockets);
         GameRegistry.registerItem(slickBucket, "Slickwater Bucket", "eng_toolbox");
 
         FluidContainerRegistry.registerFluidContainer(new FluidStack(fluidSlickwater, FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(slickBucket), new ItemStack(Items.bucket));
@@ -476,14 +459,14 @@ public class SocketsMod
 
         //cattleProd = new ItemCattleProd(cattleProdID);
         //GameRegistry.registerItem(cattleProd, "Cattle Prod", "eng_toolbox");
-		//LanguageRegistry.addName(cattleProd, "Cattle Prod");
-		
-		blankSide = new ItemEmasherGeneric("sockets:blankmod", "blankSide");
-		blankSide.setCreativeTab(tabSockets);
+        //LanguageRegistry.addName(cattleProd, "Cattle Prod");
+
+        blankSide = new ItemEmasherGeneric("sockets:blankmod", "blankSide");
+        blankSide.setCreativeTab(tabSockets);
         GameRegistry.registerItem(blankSide, "Blank Module", "eng_toolbox");
-		
-		module = new ItemModule();
-		
+
+        module = new ItemModule();
+
 //		for(int i = 0; i < ModuleRegistry.numModules; i++)
 //		{
 //			if(ModuleRegistry.getModule(i) != null)
@@ -493,106 +476,97 @@ public class SocketsMod
 //			}
 //		}
         GameRegistry.registerItem(module, "Module", "eng_toolbox");
-		
-		engWrench = new ItemEngWrench();
+
+        engWrench = new ItemEngWrench();
         GameRegistry.registerItem(engWrench, "Engineer's Wrench", "eng_toolbox");
-		
-		dusts = new ItemDusts();
-		for(int i = 0; i < ItemDusts.NUM_ITEMS; i++)
-        {
-			OreDictionary.registerOre(ItemDusts.ORE_NAMES[i], new ItemStack(dusts, 1, i));
-		}
+
+        dusts = new ItemDusts();
+        for (int i = 0; i < ItemDusts.NUM_ITEMS; i++) {
+            OreDictionary.registerOre(ItemDusts.ORE_NAMES[i], new ItemStack(dusts, 1, i));
+        }
         GameRegistry.registerItem(dusts, "Dust", "eng_toolbox");
 
-		registerOreRecipes();
-		
-		GameRegistry.addRecipe(new ItemStack(socket), new Object[]
-				{
-					" b ", "pmc", " h ", Character.valueOf('m'), EmasherCore.machine, Character.valueOf('h'), Blocks.chest,
-					Character.valueOf('b'), Items.bucket, Character.valueOf('p'), EmasherCore.psu,
-					Character.valueOf('i'), Items.iron_ingot, Character.valueOf('c'), EmasherCore.circuit
-				});
-		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blankSide, 12), "ggg", "reb", "sms", Character.valueOf('m'), EmasherCore.machine,
-				Character.valueOf('g'), Blocks.glass_pane, Character.valueOf('s'), Items.glowstone_dust, Character.valueOf('r'), "dyeRed", Character.valueOf('e'), "dyeGreen", Character.valueOf('b'), "dyeBlue"));
-		
-		GameRegistry.addRecipe(new ItemStack(remote), new Object[]
-				{
-					"e", "c", "s", Character.valueOf('e'), Items.ender_pearl, Character.valueOf('c'), EmasherCore.circuit,
-					Character.valueOf('s'), blankSide
-				});
-		
-		GameRegistry.addRecipe(new ItemStack(engWrench), new Object[]
-				{
-					" i ", "ii ", "  b", Character.valueOf('i'), Items.iron_ingot, Character.valueOf('b'), Blocks.stone_button
-				});
-		
-		GameRegistry.addRecipe(new ItemStack(rsWand), new Object[]
-				{
-					"rt ", "tc ", "  w", Character.valueOf('r'), Blocks.redstone_block, Character.valueOf('t'), Blocks.redstone_torch,
-					Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('w'), engWrench
-				});
-		
-		if(! Loader.isModLoaded("gascraft"))for(int i = 0; i < 16; i++)
-		{
-			CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(paintCans[i], 1),
-						"i", "p", "d", Character.valueOf('i'), Blocks.stone_button, Character.valueOf('p'), Items.glass_bottle, Character.valueOf('d'), dyes[i])
-					);
-		}
-		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockFluidPipe, 16),
-				"sss", "ccc", "sss", Character.valueOf('s'), Blocks.stone, Character.valueOf('c'), "ingotCopper")
-			);
-		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockEnergyPipe, 16),
-				"sgs", "rcr", "sgs", Character.valueOf('s'), Blocks.stone, Character.valueOf('g'), Blocks.glass_pane, Character.valueOf('c'), "ingotCopper",
-				Character.valueOf('r'), new ItemStack(rsIngot))
-			);
-		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockEnergyPipe, 16),
-				"sgs", "rcr", "sgs", Character.valueOf('s'), Blocks.stone, Character.valueOf('g'), Blocks.glass_pane, Character.valueOf('c'), Items.gold_nugget,
-				Character.valueOf('r'), new ItemStack(rsIngot))
-			);
-		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockStartPipe, 1),
-				"sss", " l ", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('l'), Blocks.lever)
-			);
-		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(mjAdapter, 1),
-				"sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
-				Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), Items.redstone)
-			);
-		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(euAdapter, 1),
-				"sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
-				Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), "ingotCopper")
-			);
-		
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(euAdapter, 1),
-				"sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
-				Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), Items.gold_nugget)
-			);
-		
-		GameRegistry.addRecipe(new ItemStack(handboiler, 1), new Object[]
-				{
-					"bbb", "ici", " n ", Character.valueOf('b'), Items.blaze_rod, Character.valueOf('c'), Items.fire_charge,
-					Character.valueOf('i'), Items.iron_ingot, Character.valueOf('n'), EmasherCore.circuit
-				});
-		
-		for(int i = 0; i < ModuleRegistry.numModules; i++)
-		{
-			if(ModuleRegistry.getModule(i) != null)
-			{
-				ModuleRegistry.getModule(i).addRecipe();
-			}
-		}
-		
-		registerInRegistry();
-	}
+        registerOreRecipes();
 
-    @EventHandler
-    public void postInitialise(FMLPostInitializationEvent event) {
-        packetPipeline.postInitialise();
+        GameRegistry.addRecipe(new ItemStack(socket), new Object[]
+                {
+                        " b ", "pmc", " h ", Character.valueOf('m'), EmasherCore.machine, Character.valueOf('h'), Blocks.chest,
+                        Character.valueOf('b'), Items.bucket, Character.valueOf('p'), EmasherCore.psu,
+                        Character.valueOf('i'), Items.iron_ingot, Character.valueOf('c'), EmasherCore.circuit
+                });
+
+        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blankSide, 12), "ggg", "reb", "sms", Character.valueOf('m'), EmasherCore.machine,
+                Character.valueOf('g'), Blocks.glass_pane, Character.valueOf('s'), Items.glowstone_dust, Character.valueOf('r'), "dyeRed", Character.valueOf('e'), "dyeGreen", Character.valueOf('b'), "dyeBlue"));
+
+        GameRegistry.addRecipe(new ItemStack(remote), new Object[]
+                {
+                        "e", "c", "s", Character.valueOf('e'), Items.ender_pearl, Character.valueOf('c'), EmasherCore.circuit,
+                        Character.valueOf('s'), blankSide
+                });
+
+        GameRegistry.addRecipe(new ItemStack(engWrench), new Object[]
+                {
+                        " i ", "ii ", "  b", Character.valueOf('i'), Items.iron_ingot, Character.valueOf('b'), Blocks.stone_button
+                });
+
+        GameRegistry.addRecipe(new ItemStack(rsWand), new Object[]
+                {
+                        "rt ", "tc ", "  w", Character.valueOf('r'), Blocks.redstone_block, Character.valueOf('t'), Blocks.redstone_torch,
+                        Character.valueOf('c'), EmasherCore.circuit, Character.valueOf('w'), engWrench
+                });
+
+        if (!Loader.isModLoaded("gascraft")) for (int i = 0; i < 16; i++) {
+            CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(paintCans[i], 1),
+                            "i", "p", "d", Character.valueOf('i'), Blocks.stone_button, Character.valueOf('p'), Items.glass_bottle, Character.valueOf('d'), dyes[i])
+            );
+        }
+
+        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockFluidPipe, 16),
+                        "sss", "ccc", "sss", Character.valueOf('s'), Blocks.stone, Character.valueOf('c'), "ingotCopper")
+        );
+
+        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockEnergyPipe, 16),
+                        "sgs", "rcr", "sgs", Character.valueOf('s'), Blocks.stone, Character.valueOf('g'), Blocks.glass_pane, Character.valueOf('c'), "ingotCopper",
+                        Character.valueOf('r'), new ItemStack(rsIngot))
+        );
+
+        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockEnergyPipe, 16),
+                        "sgs", "rcr", "sgs", Character.valueOf('s'), Blocks.stone, Character.valueOf('g'), Blocks.glass_pane, Character.valueOf('c'), Items.gold_nugget,
+                        Character.valueOf('r'), new ItemStack(rsIngot))
+        );
+
+        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(blockStartPipe, 1),
+                        "sss", " l ", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('l'), Blocks.lever)
+        );
+
+        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(mjAdapter, 1),
+                        "sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
+                        Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), Items.redstone)
+        );
+
+        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(euAdapter, 1),
+                        "sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
+                        Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), "ingotCopper")
+        );
+
+        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(euAdapter, 1),
+                        "sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
+                        Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), Items.gold_nugget)
+        );
+
+        GameRegistry.addRecipe(new ItemStack(handboiler, 1), new Object[]
+                {
+                        "bbb", "ici", " n ", Character.valueOf('b'), Items.blaze_rod, Character.valueOf('c'), Items.fire_charge,
+                        Character.valueOf('i'), Items.iron_ingot, Character.valueOf('n'), EmasherCore.circuit
+                });
+
+        for (int i = 0; i < ModuleRegistry.numModules; i++) {
+            if (ModuleRegistry.getModule(i) != null) {
+                ModuleRegistry.getModule(i).addRecipe();
+            }
+        }
+
+        registerInRegistry();
     }
 	
 	private void registerOreRecipes()

@@ -10,17 +10,15 @@ import emasher.api.ModuleRegistry;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
-import emasher.sockets.client.ClientPacketHandler;
-import emasher.sockets.modules.ModItemInput;
-import emasher.sockets.modules.ModItemOutput;
 import emasher.sockets.modules.ModMachineOutput;
-import buildcraft.api.core.Position;
 import buildcraft.api.inventory.ISpecialInventory;
-import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
+import emasher.sockets.packethandling.RequestInfoFromServerMessage;
+import emasher.sockets.packethandling.SocketFluidMessage;
+import emasher.sockets.packethandling.SocketItemMessage;
+import emasher.sockets.packethandling.SocketStateMessage;
 import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -29,18 +27,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fluids.IFluidTank;
 
 public class TileSocket extends SocketTileAccess implements ISpecialInventory, ISidedInventory, IFluidHandler, IEnergyHandler, IGasReceptor
 {
@@ -64,8 +58,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	public int[] facMeta;
 	
 	public boolean isRSShared;
-	
-	public int updateCoolDown = 0;
+
 	
 	public TileSocket()
 	{
@@ -105,17 +98,18 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	}
 	
 	public void updateEntity()
-	{
-		if(worldObj.isRemote)
-		{
-			updateCoolDown++;
-			
-			if(updateCoolDown == 600)
-			{
-				this.validate();
-				updateCoolDown = 0;
-			}
-		}
+    {
+        super.updateEntity();
+//		if(worldObj.isRemote)
+//		{
+//			updateCoolDown++;
+//
+//			if(updateCoolDown == 600)
+//			{
+//				this.validate();
+//				updateCoolDown = 0;
+//			}
+//		}
 		
 		
 		if(! worldObj.isRemote)
@@ -233,7 +227,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		configs[side] = new SideConfig();
 		sideLocked[side] = false;
 		sideInventory.setInventorySlotContents(side, null);
-        PacketHandler.instance.SendClientSideState(this, (byte)side);
+        SocketsMod.network.sendToDimension(new SocketStateMessage(this, (byte) side), worldObj.provider.dimensionId);
 	}
 	
 	@Override
@@ -243,14 +237,23 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		if(this.worldObj.isRemote)
 		{
 			for(int i = 0; i < 6; i++) {
-                ClientPacketHandler.instance.requestSideData(this, (byte)i);
+                SocketsMod.network.sendToServer(new RequestInfoFromServerMessage(this, (byte)i, (byte)0));
             }
 			for(int i = 0; i < 3; i++)
 			{
-                ClientPacketHandler.instance.requestInventoryData(this, (byte)i);
-				ClientPacketHandler.instance.requestTankData(this, (byte)i);
+                SocketsMod.network.sendToServer(new RequestInfoFromServerMessage(this, (byte)i, (byte)1));
+                SocketsMod.network.sendToServer(new RequestInfoFromServerMessage(this, (byte)i, (byte)2));
 			}
-		}
+		} else {
+            for(int i = 0; i < 6; i++) {
+                sendClientSideState(i);
+            }
+            for(int i = 0; i < 3; i++)
+            {
+                sendClientInventorySlot(i);
+                sendClientTankSlot(i);
+            }
+        }
 	}
 	
 	@Override
@@ -331,8 +334,6 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	    if(data.hasKey("powerCap2")) this.setMaxEnergyStored((int)data.getInteger("powerCap2"));
         if(data.hasKey("realPower")) power = data.getInteger("realPower");
 	    capacitor.setEnergyStored(power);
-	    
-	    
 	}
 	
 
@@ -423,7 +424,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	public void lockSide(int side)
 	{
 		sideLocked[side] = ! sideLocked[side];
-        PacketHandler.instance.SendClientSideState(this, (byte)side);
+        SocketsMod.network.sendToDimension(new SocketStateMessage(this, (byte) side), worldObj.provider.dimensionId);
 	}
 	
 	public void checkSideForChange(int side)
@@ -494,7 +495,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		configs[side].tank++;
 		if(configs[side].tank == 3) configs[side].tank = -1;
 		getSide(ForgeDirection.getOrientation(side)).indicatorUpdated(this, configs[side], ForgeDirection.getOrientation(side));
-        PacketHandler.instance.SendClientSideState(this, (byte)side);
+        SocketsMod.network.sendToDimension(new SocketStateMessage(this, (byte) side), worldObj.provider.dimensionId);
 	}
 	
 	public void nextInventory(int side)
@@ -502,7 +503,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		configs[side].inventory++;
 		if(configs[side].inventory == 3) configs[side].inventory = -1;
 		getSide(ForgeDirection.getOrientation(side)).indicatorUpdated(this, configs[side], ForgeDirection.getOrientation(side));
-        PacketHandler.instance.SendClientSideState(this, (byte)side);
+        SocketsMod.network.sendToDimension(new SocketStateMessage(this, (byte) side), worldObj.provider.dimensionId);
 	}
 	
 	public void nextRS(int side)
@@ -531,7 +532,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		
 		if(! reset) configs[side].rsControl[0] = ! configs[side].rsControl[0];
 		getSide(ForgeDirection.getOrientation(side)).indicatorUpdated(this, configs[side], ForgeDirection.getOrientation(side));
-        PacketHandler.instance.SendClientSideState(this, (byte)side);
+        SocketsMod.network.sendToDimension(new SocketStateMessage(this, (byte) side), worldObj.provider.dimensionId);
 	}
 	
 	public void nextLatch(int side)
@@ -560,7 +561,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		
 		if(! reset) configs[side].rsLatch[0] = ! configs[side].rsLatch[0];
 		getSide(ForgeDirection.getOrientation(side)).indicatorUpdated(this, configs[side], ForgeDirection.getOrientation(side));
-        PacketHandler.instance.SendClientSideState(this, (byte)side);
+        SocketsMod.network.sendToDimension(new SocketStateMessage(this, (byte) side), worldObj.provider.dimensionId);
 	}
 	
 	public void modifyRS(int cell, boolean on)
@@ -642,6 +643,11 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	public void setInventorySlotContents(int slot, ItemStack item)
 	{
 		inventory.setInventorySlotContents(slot, item);
+        for(int i = 0; i < 6; i++)
+        {
+            SocketModule m = getSide(ForgeDirection.getOrientation(i));
+            m.onInventoryChange(configs[i], slot, this, ForgeDirection.getOrientation(i), true);
+        }
 	}
 
     @Override
@@ -696,18 +702,18 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		return true;
 	}
 	
-	/*@Override
-	public void onInventoryChanged()
-	{
-		for(int i = 0; i < 6; i++)
-		{
-			for(int j = 0; j < 3; j++)
-			{
-				SocketModule m = getSide(ForgeDirection.getOrientation(i));
-				m.onInventoryChange(configs[i], j, this, ForgeDirection.getOrientation(i), false);
-			}
-		}
-	}*/
+//	@Override
+//	public void onInventoryChanged()
+//	{
+//		for(int i = 0; i < 6; i++)
+//		{
+//			for(int j = 0; j < 3; j++)
+//			{
+//				SocketModule m = getSide(ForgeDirection.getOrientation(i));
+//				m.onInventoryChange(configs[i], j, this, ForgeDirection.getOrientation(i), false);
+//			}
+//		}
+//	}
 	
 	// ISidedInventory
 	
@@ -1097,18 +1103,18 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		return false;
 	}
 
-	/*@Override
-	public int recieveGas(FluidStack gas, ForgeDirection direction)
-	{
-		SocketModule m = getSide(direction);
-		
-		if(m.isGasInterface())
-		{
-			return m.gasFill(gas, this);
-		}
-		
-		return 0;
-	}*/
+//	@Override
+//	public int recieveGas(FluidStack gas, ForgeDirection direction)
+//	{
+//		SocketModule m = getSide(direction);
+//
+//		if(m.isGasInterface())
+//		{
+//			return m.gasFill(gas, this);
+//		}
+//
+//		return 0;
+//	}
 
 	/*@Override
 	public void setPowerHandler(IPowerHandler provider)
@@ -1328,19 +1334,19 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 	@Override
 	public void sendClientSideState(int side)
 	{
-        PacketHandler.instance.SendClientSideState(this, (byte)side);
+        SocketsMod.network.sendToDimension(new SocketStateMessage(this, (byte) side), worldObj.provider.dimensionId);
 	}
 	
 	@Override
 	public void sendClientInventorySlot(int inv)
 	{
-        PacketHandler.instance.SendClientInventorySlot(this, inv);
+        SocketsMod.network.sendToDimension(new SocketItemMessage(this, (byte) inv), worldObj.provider.dimensionId);
 	}
 	
 	@Override
 	public void sendClientTankSlot(int tank)
 	{
-        PacketHandler.instance.SendClientTankSlot(this, tank);
+        SocketsMod.network.sendToDimension(new SocketFluidMessage(this, (byte) tank), worldObj.provider.dimensionId);
 	}
 
 	@Override
@@ -1418,9 +1424,6 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
     {
         return new FluidTankInfo[] { tanks[0].getInfo(), tanks[1].getInfo(), tanks[2].getInfo() };
     }
-	
-
-	
 
 	@Override
 	public FluidStack getFluidInTank(int tank)

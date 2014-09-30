@@ -12,6 +12,7 @@ import net.minecraft.block.Block
 import emasher.sockets.pipes.{TileDirectionChanger, TileAdapterBase, TileFrame}
 import net.minecraft.nbt.NBTTagCompound
 import scala.util.control.Breaks._
+import emasher.sockets.packethandling.{ChangerSideMessage, AdapterSideMessage}
 
 object UtilScala {
   def moveGroup(world: World, root: Coords, dir: ForgeDirection): Boolean = {
@@ -110,14 +111,14 @@ object UtilScala {
                 if(te != null && te.isInstanceOf[TileAdapterBase]) {
                   val ta = te.asInstanceOf[TileAdapterBase]
                   for(i <- 0 to 5) {
-                    PacketHandler.instance.sendClientAdapterSide(ta, i)
+                    SocketsMod.network.sendToDimension(new AdapterSideMessage(ta, i.asInstanceOf[Byte]), world.provider.dimensionId)
                   }
                 }
 
                 if(te != null && te.isInstanceOf[TileDirectionChanger]) {
                   val td = te.asInstanceOf[TileDirectionChanger]
                   for(i <- 0 to 5) {
-                    PacketHandler.instance.sendClientChangerSide(td, i)
+                    SocketsMod.network.sendToDimension(new ChangerSideMessage(td, i.asInstanceOf[Byte]), world.provider.dimensionId)
                   }
                 }
 

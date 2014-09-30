@@ -1,23 +1,18 @@
 package emasher.api;
 
-import com.mojang.authlib.GameProfile;
-//import emasher.sockets.PacketHandler;
-import emasher.sockets.PacketHandler;
 import emasher.sockets.SocketsMod;
+import emasher.sockets.packethandling.AdapterSideMessage;
+import emasher.sockets.packethandling.ChangerSideMessage;
 import emasher.sockets.pipes.TileAdapterBase;
 import emasher.sockets.pipes.TileDirectionChanger;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -144,7 +139,7 @@ public class Util
                 TileAdapterBase ta = (TileAdapterBase)te;
                 for(int i = 0; i < 6; i++)
                 {
-                    PacketHandler.instance.sendClientAdapterSide(ta, i);
+                    SocketsMod.network.sendToDimension(new AdapterSideMessage(ta, (byte) i), world.provider.dimensionId);
                 }
             }
 
@@ -153,7 +148,7 @@ public class Util
                 TileDirectionChanger td = (TileDirectionChanger)te;
                 for(int i = 0; i < 6; i++)
                 {
-                    PacketHandler.instance.sendClientChangerSide(td, i);
+                    SocketsMod.network.sendToDimension(new ChangerSideMessage(td, (byte) i), world.provider.dimensionId);
                 }
             }
         }
@@ -180,7 +175,7 @@ public class Util
                 TileAdapterBase ta = (TileAdapterBase)te;
                 for(int i = 0; i < 6; i++)
                 {
-                    PacketHandler.instance.sendClientAdapterSide(ta, i);
+                    SocketsMod.network.sendToDimension(new AdapterSideMessage(ta, (byte) i), world.provider.dimensionId);
                 }
             }
 
@@ -189,7 +184,7 @@ public class Util
                 TileDirectionChanger td = (TileDirectionChanger)te;
                 for(int i = 0; i < 6; i++)
                 {
-                    PacketHandler.instance.sendClientChangerSide(td, i);
+                    SocketsMod.network.sendToDimension(new ChangerSideMessage(td, (byte) i), world.provider.dimensionId);
                 }
             }
         }

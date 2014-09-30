@@ -1,28 +1,18 @@
 package emasher.sockets;
 
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.network.FMLEmbeddedChannel;
-import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import emasher.sockets.packethandling.PacketPipeline;
-import emasher.sockets.packethandling.PacketTileEntity;
-import io.netty.channel.ChannelHandlerContext;
+import emasher.sockets.packethandling.SocketStateMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.play.client.C17PacketCustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -32,7 +22,6 @@ import net.minecraftforge.oredict.OreDictionary;
 import emasher.api.ModuleRegistry;
 import emasher.api.SideConfig;
 import emasher.api.SocketModule;
-import emasher.core.EmasherCore;
 import emasher.sockets.items.*;
 import buildcraft.api.tools.IToolWrench;
 
@@ -124,7 +113,7 @@ public class BlockSocket extends BlockContainer
 				case 6:
 					ts.facID[side] = 0;
 					ts.facMeta[side] = 0;
-                    PacketHandler.instance.SendClientSideState(ts, (byte)side);
+                    SocketsMod.network.sendToDimension(new SocketStateMessage(ts, (byte) side), ts.getWorldObj().provider.dimensionId);
                     break;
 				}
 			}
@@ -490,7 +479,7 @@ public class BlockSocket extends BlockContainer
 				{	
 					ts.sideRS[opposite.ordinal()] = rs;
 					m.updateRestone(rs, ts.configs[opposite.ordinal()], ts);
-                    PacketHandler.instance.SendClientSideState(ts, (byte)opposite.ordinal());
+                    SocketsMod.network.sendToDimension(new SocketStateMessage(ts, (byte) opposite.ordinal()), ts.getWorldObj().provider.dimensionId);
 				}
 			}
 		}

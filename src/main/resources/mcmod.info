@@ -1,0 +1,16 @@
+[
+{
+  "modid": "emashersmods",
+  "name": "Engineer's Toolbox",
+  "description": "Emasher Resource, Engineer's Toolbox, Defense, and GasCraft",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Emasher", "Berknam"],
+  "credits": "Contributors",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

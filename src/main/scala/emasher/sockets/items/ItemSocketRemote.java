@@ -7,6 +7,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import emasher.core.EmasherCore;
 import emasher.sockets.SocketsMod;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -55,11 +57,34 @@ public class ItemSocketRemote extends Item
     {
 		if(player.isSneaking() && ! world.isRemote)
 		{
-			item.setItemDamage(item.getItemDamage() + 1);
+            item.setItemDamage(item.getItemDamage() + 1);
 			if(item.getItemDamage() == 7) item.setItemDamage(0);
 		}
 		
 		return item;
+    }
+
+    @Override
+    public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack)
+    {
+        if(!entityLiving.worldObj.isRemote)
+        {
+            if(entityLiving instanceof EntityPlayer)
+            {
+                EntityPlayer player = (EntityPlayer) entityLiving;
+
+                if(player.isSneaking() && !player.isSwingInProgress)
+                {
+                    System.out.println(player.swingProgressInt);
+                    int damage = stack.getItemDamage();
+                    damage--;
+                    if(damage < 0) damage = 6;
+                    stack.setItemDamage(damage);
+                }
+            }
+        }
+
+        return false;
     }
 	
 	@Override

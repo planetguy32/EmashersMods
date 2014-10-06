@@ -408,6 +408,17 @@ public abstract class SocketModule
 	 */
 	public void onSocketPlaced(SideConfig config, SocketTileAccess ts, ForgeDirection side) {}
 
+    /**
+     * Called whenever a socket is removed
+     */
+    public void onSocketRemoved(SideConfig config, SocketTileAccess ts, ForgeDirection side, boolean wrenched)
+    {
+        if(!wrenched)
+        {
+            onRemoved(ts, config, side);
+        }
+    }
+
     public boolean canModuleBeDyed() { return false; }
 
     public boolean renderEnergyAmount() { return false; }

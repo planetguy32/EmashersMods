@@ -78,7 +78,30 @@ public class ModKiln extends SocketModule
 		{
 			ts.getWorldObj().setBlockMetadataWithNotify(xo, yo, zo, 0, 3);
 		}
+
+        this.setMeta(ts.getWorldObj(), ts, side, 2);
 	}
+
+    @Override
+    public void onSocketRemoved(SideConfig config, SocketTileAccess ts, ForgeDirection side, boolean wrenched)
+    {
+        super.onSocketRemoved(config, ts, side, wrenched);
+
+        if(wrenched)
+        {
+            int xo = ts.xCoord + side.offsetX;
+            int yo = ts.yCoord;
+            int zo = ts.zCoord + side.offsetZ;
+            if(ts.getWorldObj().getBlock(xo, yo, zo) == SocketsMod.groundLimestone)
+            {
+                ts.getWorldObj().setBlockMetadataWithNotify(xo, yo, zo, 0, 3);
+            }
+
+            this.setMeta(ts.getWorldObj(), ts, side, 2);
+            ItemStack stack = ts.sideInventory.getStackInSlot(side.ordinal());
+            stack.setItemDamage(0);
+        }
+    }
 	
 	@Override
 	public void updateSide(SideConfig config, SocketTileAccess ts, ForgeDirection side)

@@ -8,6 +8,7 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -45,6 +46,8 @@ public class BlockSocket extends BlockContainer
 	public IIcon[] chargeInd;
 	@SideOnly(Side.CLIENT)
 	public IIcon hasData;
+
+    private boolean wrenched = false;
 	
 	public static final String[] dyes =
         {
@@ -139,8 +142,14 @@ public class BlockSocket extends BlockContainer
 				            EntityItem entityitem = new EntityItem(world, (double)x + d0, (double)y + d1, (double)z + d2, theStack);
 				            entityitem.delayBeforeCanPickup = 10;
 				            world.spawnEntityInWorld(entityitem);
+
+                            for(int i=0;i<6;i++)
+                            {
+                                ts.getSide(ForgeDirection.getOrientation(i)).onSocketRemoved(ts.configs[i], ts, ForgeDirection.getOrientation(side), true);
+                            }
 				        }
-						
+
+                        wrenched = true;
 						world.setBlockToAir(x, y, z);
 					}
 					else
@@ -192,8 +201,14 @@ public class BlockSocket extends BlockContainer
 			            EntityItem entityitem = new EntityItem(world, (double)x + d0, (double)y + d1, (double)z + d2, theStack);
 			            entityitem.delayBeforeCanPickup = 10;
 			            world.spawnEntityInWorld(entityitem);
+
+                        for(int i=0;i<6;i++)
+                        {
+                            ts.getSide(ForgeDirection.getOrientation(i)).onSocketRemoved(ts.configs[i], ts, ForgeDirection.getOrientation(side), true);
+                        }
 			        }
-					
+
+                    wrenched = true;
 					world.setBlockToAir(x, y, z);
 					world.removeTileEntity(x, y, z);
 				}
@@ -317,7 +332,47 @@ public class BlockSocket extends BlockContainer
 			}
 		}
 	}
-	
+
+    @Override
+    public void onBlockPreDestroy(World world, int x, int y, int z, int oldmeta)
+    {
+        if(wrenched) return;
+
+        TileEntity te = world.getTileEntity(x, y, z);
+
+        if(te != null && te instanceof TileSocket)
+        {
+            TileSocket ts = (TileSocket) te;
+            int sideID;
+
+            for(int side = 0;side < 6;side++)
+            {
+                sideID = ts.sides[side];
+
+                if(sideID != 0 && ! ts.sideLocked[side])
+                {
+                    ItemStack theStack = new ItemStack(SocketsMod.module, 1, sideID);
+
+                    if (! world.isRemote)
+                    {
+                        float f = 0.7F;
+                        double d0 = (double)(world.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+                        double d1 = (double)(world.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+                        double d2 = (double)(world.rand.nextFloat() * f) + (double)(1.0F - f) * 0.5D;
+                        EntityItem entityitem = new EntityItem(world, (double)x + d0, (double)y + d1, (double)z + d2, theStack);
+                        entityitem.delayBeforeCanPickup = 10;
+                        world.spawnEntityInWorld(entityitem);
+                        ts.getSide(ForgeDirection.getOrientation(side))
+                                .onSocketRemoved(ts.configs[side], ts, ForgeDirection.getOrientation(side), false);
+                    }
+
+
+                    ts.sides[side] = 0;
+                    ts.resetConfig(side);
+                }
+            }
+        }
+    }
 	
 	@Override
 	public void breakBlock(World par1World, int par2, int par3, int par4, Block par5, int par6)
@@ -326,7 +381,12 @@ public class BlockSocket extends BlockContainer
 		super.breakBlock(par1World, par2, par3, par4, par5, par6);
 		par1World.removeTileEntity(par2, par3, par4);
 	}
-	
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack)
+    {
+        wrenched = false;
+    }
 	
 	@Override
 	@SideOnly(Side.CLIENT)

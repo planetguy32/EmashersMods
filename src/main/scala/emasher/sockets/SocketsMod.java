@@ -230,13 +230,14 @@ public class SocketsMod
 		proxy.registerRenderers();
 
         network = NetworkRegistry.INSTANCE.newSimpleChannel("engineers_toolbox");
-        network.registerMessage(SocketStateMessage.Handler.class, SocketStateMessage.class, 0, Side.CLIENT);
+        proxy.registerMessages();
+        /*network.registerMessage(SocketStateMessage.Handler.class, SocketStateMessage.class, 0, Side.CLIENT);
         network.registerMessage(SocketItemMessage.Handler.class, SocketItemMessage.class, 1, Side.CLIENT);
         network.registerMessage(SocketFluidMessage.Handler.class, SocketFluidMessage.class, 2, Side.CLIENT);
         network.registerMessage(PipeColourMessage.Handler.class, PipeColourMessage.class, 3, Side.CLIENT);
         network.registerMessage(AdapterSideMessage.Handler.class, AdapterSideMessage.class, 4, Side.CLIENT);
         network.registerMessage(ChangerSideMessage.Handler.class, ChangerSideMessage.class, 5, Side.CLIENT);
-        network.registerMessage(RequestInfoFromServerMessage.Handler.class, RequestInfoFromServerMessage.class, 6, Side.SERVER);
+        network.registerMessage(RequestInfoFromServerMessage.Handler.class, RequestInfoFromServerMessage.class, 6, Side.SERVER);*/
     }
 	
 	@EventHandler

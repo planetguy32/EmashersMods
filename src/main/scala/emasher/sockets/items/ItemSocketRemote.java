@@ -75,7 +75,6 @@ public class ItemSocketRemote extends Item
 
                 if(player.isSneaking() && !player.isSwingInProgress)
                 {
-                    System.out.println(player.swingProgressInt);
                     int damage = stack.getItemDamage();
                     damage--;
                     if(damage < 0) damage = 6;

@@ -1,0 +1,31 @@
+itemGroup.tabGasCraft=Emasher's GasCraft
+
+tile.shaleResource.gas.name=Gaz de schiste
+tile.shaleResource.oil.name=Huile de schiste
+tile.shaleResource.plasma.name=Plasma de schiste
+tile.chimney.name=Cheminée
+tile.gasPocket.name=Poche de gaz
+tile.plasmaPocket.name=Poche de plasma du Nether
+
+tile.naturalGas.name=Gaz naturel
+tile.propellent.name=Gaz propulseur
+tile.hydrogen.name=Hydrogène
+tile.smoke.name=Fumée
+tile.toxicGas.name=Gaz toxique
+tile.neurotoxin.name=Neurotoxine mortelle
+tile.corrosiveGas.name=Gaz corrosif
+tile.plasma.name=Plasma du Nether
+
+item.gasVial.name=Fiole de gaz vide
+item.gasmask.name=Masque à gaz
+item.smokeGrenade.name=Grenade fumigène
+item.ash.name=Cendre
+
+item.gasVialFilled.naturalGas.name=Fiole de gaz naturel
+item.gasVialFilled.propellent.name=Fiole de gaz propulseur
+item.gasVialFilled.hydrogen.name=Fiole d'hydrogène
+item.gasVialFilled.smoke.name=Fiole de fumée
+item.gasVialFilled.toxicGas.name=Fiole de gaz toxique
+item.gasVialFilled.neurotoxin.name=Fiole de neurotoxine mortelle
+item.gasVialFilled.corrosiveGas.name=Fiole de gaz corrosif
+item.gasVialFilled.plasma.name=Fiole de plasma du Nether

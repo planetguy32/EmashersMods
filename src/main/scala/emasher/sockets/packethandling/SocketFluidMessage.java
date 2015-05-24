@@ -72,27 +72,7 @@ public class SocketFluidMessage implements IMessage
         @Override
         public IMessage onMessage(SocketFluidMessage message, MessageContext ctx)
         {
-            //if(message.msg.length == 0) return null;
-            World world = Minecraft.getMinecraft().theWorld;
-
-            int x = NetworkUtilities.toInteger(message.msg, 1);
-            int y = NetworkUtilities.toInteger(message.msg, 5);
-            int z = NetworkUtilities.toInteger(message.msg, 9);
-            int id = NetworkUtilities.toInteger(message.msg, 13);
-            int meta = NetworkUtilities.toInteger(message.msg, 17);
-            int amnt = NetworkUtilities.toInteger(message.msg, 22);
-            int tank = (int)message.msg[26];
-
-            TileEntity te = world.getTileEntity(x, y, z);
-            if(te != null && te instanceof TileSocket)
-            {
-                TileSocket ts = (TileSocket)te;
-
-                ts.tanks[tank].setFluid(new FluidStack(id, amnt));
-
-                world.markBlockForUpdate(x, y, z);
-                world.notifyBlockChange(x, y, z, SocketsMod.socket);
-            }
+            Handlers.onSocketFluidMessage(message, ctx);
 
             return null;
         }

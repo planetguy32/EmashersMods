@@ -87,3 +87,9 @@ processResources
 }
 
 reobf {deobfFile = new net.minecraftforge.gradle.delayed.DelayedFile(project, "build/tmp/deobfBinJar/deobfed.jar") }
+
+sourceSets {
+    main {
+        output.resourcesDir = output.classesDir
+    }
+}

@@ -89,49 +89,7 @@ public class SocketItemMessage implements IMessage
         @Override
         public IMessage onMessage(SocketItemMessage message, MessageContext ctx)
         {
-            //if(message.msg.length == 0) return null;
-            World world = Minecraft.getMinecraft().theWorld;
-
-            int x = NetworkUtilities.toInteger(message.msg, 9);
-            int y = NetworkUtilities.toInteger(message.msg, 13);
-            int z = NetworkUtilities.toInteger(message.msg, 17);
-            int id = NetworkUtilities.toInteger(message.msg, 1);
-            int damage = NetworkUtilities.toInteger(message.msg, 5);
-            int inventory = message.msg[22];
-            int size = NetworkUtilities.toInteger(message.msg, 23);
-
-            ItemStack s = null;
-
-            if(id != -1) {
-                s = new ItemStack(Item.getItemById(id), size, damage);
-                if (message.msg.length > 27) {
-                    NBTTagCompound NBTData = null;
-                    byte[] NBTArray = new byte[message.msg.length - 27];
-
-                    for (int i = 0; i < message.msg.length - 27; i++) {
-                        NBTArray[i] = message.msg[i + 27];
-                    }
-
-                    try {
-                        NBTData = CompressedStreamTools.func_152457_a(NBTArray, NBTSizeTracker.field_152451_a);
-                        if (NBTData != null) s.setTagCompound(NBTData);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            TileEntity te = world.getTileEntity(x, y, z);
-            if(te != null && te instanceof TileSocket)
-            {
-                TileSocket ts = (TileSocket)te;
-
-                if(id != -1) ts.inventory.setInventorySlotContents(inventory, new ItemStack(Item.getItemById(id), size, damage));
-                else ts.inventory.setInventorySlotContents(inventory, null);
-
-                world.markBlockForUpdate(x, y, z);
-                world.notifyBlockChange(x, y, z, SocketsMod.socket);
-            }
+            Handlers.onSocketItemMessage(message, ctx);
 
             return null;
         }

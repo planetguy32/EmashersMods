@@ -1,5 +1,6 @@
 package emasher.api;
 
+import com.mojang.authlib.GameProfile;
 import emasher.sockets.SocketsMod;
 import emasher.sockets.packethandling.AdapterSideMessage;
 import emasher.sockets.packethandling.ChangerSideMessage;
@@ -13,18 +14,20 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 
 import java.util.List;
+import java.util.UUID;
 
 public class Util
 {
 	public static EntityPlayer createFakePlayer(World world, int x, int y, int z)
 	{
-        EntityPlayer player = createFakePlayer(world, x, y, z);
-		/*EntityPlayer player = new EntityPlayer(world, "[Engineer's Toolbox]") {
+		EntityPlayer player = new EntityPlayer(world, new GameProfile(UUID.randomUUID(), "Engineer's Toolbox")) {
             @Override
             public void addChatMessage(IChatComponent p_145747_1_) {
 
@@ -39,7 +42,7 @@ public class Util
 			public ChunkCoordinates getPlayerCoordinates() {
 				return null;
 			}
-		};*/
+		};
 		
 		player.posX = x;
 		player.posY = y;

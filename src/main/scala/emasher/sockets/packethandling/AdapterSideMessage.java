@@ -58,28 +58,7 @@ public class AdapterSideMessage implements IMessage
         @Override
         public IMessage onMessage(AdapterSideMessage message, MessageContext ctx)
         {
-            //if(message.msg.length == 0) return null;
-            World world = Minecraft.getMinecraft().theWorld;
-
-            int x = NetworkUtilities.toInteger(message.msg, 1);
-            int y = NetworkUtilities.toInteger(message.msg, 5);
-            int z = NetworkUtilities.toInteger(message.msg, 9);
-            int id = NetworkUtilities.toInteger(message.msg, 13);
-            boolean output = false;
-            if(message.msg[17] != 0) output = true;
-            int side = (int)message.msg[18];
-
-            TileEntity te = world.getTileEntity(x, y, z);
-            if(te != null && te instanceof TileAdapterBase)
-            {
-                TileAdapterBase t = (TileAdapterBase)te;
-
-                t.outputs[side] = output;
-
-                world.markBlockForUpdate(x, y, z);
-                world.notifyBlockChange(x, y, z, world.getBlock(x, y, z));
-            }
-
+            Handlers.onAdapterSideMessage(message, ctx);
             return null;
         }
     }

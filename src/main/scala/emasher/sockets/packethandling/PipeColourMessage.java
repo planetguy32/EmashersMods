@@ -53,26 +53,7 @@ public class PipeColourMessage implements IMessage
         @Override
         public IMessage onMessage(PipeColourMessage message, MessageContext ctx)
         {
-            //if(message.msg.length == 0) return null;
-            World world = Minecraft.getMinecraft().theWorld;
-
-            int x = NetworkUtilities.toInteger(message.msg, 1);
-            int y = NetworkUtilities.toInteger(message.msg, 5);
-            int z = NetworkUtilities.toInteger(message.msg, 9);
-            int id = NetworkUtilities.toInteger(message.msg, 13);
-            int colour = message.msg[17];
-
-            TileEntity te = world.getTileEntity(x, y, z);
-            if(te != null && te instanceof TilePipeBase)
-            {
-                TilePipeBase p = (TilePipeBase)te;
-
-                p.colour = colour;
-
-                world.markBlockForUpdate(x, y, z);
-                world.notifyBlockChange(x, y, z, world.getBlock(x, y, z));
-            }
-
+            Handlers.onPipeColourMessage(message, ctx);
             return null;
         }
     }

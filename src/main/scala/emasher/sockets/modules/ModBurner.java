@@ -72,8 +72,8 @@ public class ModBurner extends SocketModule
 	@Override
 	public void indicatorUpdated(SocketTileAccess ts, SideConfig config, ForgeDirection side) { updateFire(ts, config, side); }
 	
-	@Override
-	public void onAdjChange(SocketTileAccess ts, SideConfig config, ForgeDirection side) { updateFire(ts, config, side); }
+	//@Override
+	//public void onAdjChange(SocketTileAccess ts, SideConfig config, ForgeDirection side) { updateFire(ts, config, side); }
 	
 	@Override
 	public void onRSInterfaceChange(SideConfig config, int index, SocketTileAccess ts, ForgeDirection side, boolean on) { updateFire(ts, config, side); }
@@ -101,6 +101,12 @@ public class ModBurner extends SocketModule
 		if(block == Blocks.fire && ! canBurn) ts.getWorldObj().setBlockToAir(xo, yo, zo);
 		else if(ts.getWorldObj().isAirBlock(xo, yo, zo) && canBurn) ts.getWorldObj().setBlock(xo, yo, zo, Blocks.fire);
 		else if(block == Blocks.portal && ! canBurn) ts.getWorldObj().setBlockToAir(xo, yo, zo);
+	}
+
+	@Override
+	public void updateSide(SideConfig config, SocketTileAccess ts, ForgeDirection side)
+	{
+		updateFire(ts, config, side);
 	}
 	
 }

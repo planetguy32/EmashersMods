@@ -23,6 +23,8 @@ public class ClientProxy extends CommonProxy
     @Override
     public void registerMessages()
     {
+        SocketsMod.network.registerMessage(RequestInfoFromServerMessage.Handler.class, RequestInfoFromServerMessage.class, 6, Side.SERVER);
+
         SocketsMod.network.registerMessage(SocketStateMessage.Handler.class, SocketStateMessage.class, 0, Side.CLIENT);
         SocketsMod.network.registerMessage(SocketItemMessage.Handler.class, SocketItemMessage.class, 1, Side.CLIENT);
         SocketsMod.network.registerMessage(SocketFluidMessage.Handler.class, SocketFluidMessage.class, 2, Side.CLIENT);

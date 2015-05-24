@@ -58,25 +58,7 @@ public class ChangerSideMessage implements IMessage
         @Override
         public IMessage onMessage(ChangerSideMessage message, MessageContext ctx)
         {
-            World world = Minecraft.getMinecraft().theWorld;
-
-            int x = NetworkUtilities.toInteger(message.msg, 1);
-            int y = NetworkUtilities.toInteger(message.msg, 5);
-            int z = NetworkUtilities.toInteger(message.msg, 9);
-            int id = NetworkUtilities.toInteger(message.msg, 13);
-            ForgeDirection dir = ForgeDirection.getOrientation(message.msg[17]);
-            int side = (int)message.msg[18];
-
-            TileEntity te = world.getTileEntity(x, y, z);
-            if(te != null && te instanceof TileDirectionChanger)
-            {
-                TileDirectionChanger t = (TileDirectionChanger)te;
-
-                t.directions[side] = dir;
-
-                world.markBlockForUpdate(x, y, z);
-                world.notifyBlockChange(x, y, z, world.getBlock(x, y, z));
-            }
+            Handlers.onChangeSideMessage(message, ctx);
 
             return null;
         }

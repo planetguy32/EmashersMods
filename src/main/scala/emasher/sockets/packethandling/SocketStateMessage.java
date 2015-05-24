@@ -69,40 +69,7 @@ public class SocketStateMessage implements IMessage {
         @Override
         public IMessage onMessage(SocketStateMessage message, MessageContext ctx)
         {
-            //if(message.msg.length == 0) return null;
-            World world = Minecraft.getMinecraft().theWorld;
-
-            int x = NetworkUtilities.toInteger(message.msg, 10);
-            int y = NetworkUtilities.toInteger(message.msg, 14);
-            int z = NetworkUtilities.toInteger(message.msg, 18);
-            int side = message.msg[1];
-
-            TileEntity te = world.getTileEntity(x, y, z);
-            if(te != null && te instanceof TileSocket)
-            {
-                TileSocket ts = (TileSocket)te;
-
-                SideConfig c = ts.configs[side];
-
-                c.meta = NetworkUtilities.toInteger(message.msg, 6);
-
-                ts.sides[side] = NetworkUtilities.toInteger(message.msg, 22);
-                c.tank = (int)message.msg[2];
-                c.inventory = (int)message.msg[3];
-                c.rsControl[0] = (message.msg[4] & 1) != 0;
-                c.rsControl[1] = (message.msg[4] & 2) != 0;
-                c.rsControl[2] = (message.msg[4] & 4) != 0;
-                c.rsLatch[0] = (message.msg[5] & 1) != 0;
-                c.rsLatch[1] = (message.msg[5] & 2) != 0;
-                c.rsLatch[2] = (message.msg[5] & 4) != 0;
-                ts.sides[side] = NetworkUtilities.toInteger(message.msg, 22);
-                ts.sideLocked[side] = NetworkUtilities.byteToBool(message.msg[26]);
-                ts.facID[side] = NetworkUtilities.toInteger(message.msg, 27);
-                ts.facMeta[side] = NetworkUtilities.toInteger(message.msg, 31);
-
-                world.markBlockForUpdate(x, y, z);
-                world.notifyBlockChange(x, y, z, SocketsMod.socket);
-            }
+            Handlers.onSocketStateMessage(message, ctx);
 
             return null;
         }

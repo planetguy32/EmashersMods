@@ -1,3 +1,11 @@
+/*
+ * ******************************************************************************
+ *  Copyright 2011-2015 CovertJaguar
+ *
+ *  This work (the API) is licensed under the "MIT" License, see LICENSE.md for details.
+ * ***************************************************************************
+ */
+
 package mods.railcraft.api.helpers;
 
 import java.util.List;
@@ -28,5 +36,7 @@ public interface StructureHelper {
     void placeSteelTank(World world, int x, int y, int z, int patternIndex, FluidStack fluid);
 
     void placeWaterTank(World world, int x, int y, int z, int water);
+    
+    void placeFluxTransformer(World world, int x, int y, int z);
 
 }

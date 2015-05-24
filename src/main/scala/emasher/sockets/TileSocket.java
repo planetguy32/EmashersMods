@@ -11,7 +11,6 @@ import emasher.api.SideConfig;
 import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.sockets.modules.ModMachineOutput;
-import buildcraft.api.inventory.ISpecialInventory;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import emasher.sockets.packethandling.RequestInfoFromServerMessage;
@@ -36,7 +35,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class TileSocket extends SocketTileAccess implements ISpecialInventory, ISidedInventory, IFluidHandler, IEnergyHandler, IGasReceptor
+public class TileSocket extends SocketTileAccess implements ISidedInventory, IFluidHandler, IEnergyHandler, IGasReceptor
 {
 	public FluidTank[] tanks;
 	public EnergyStorage capacitor;
@@ -788,13 +787,14 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		
 		if(t instanceof IInventory)
 		{		
-			if(t instanceof ISpecialInventory)
-			{
-				ISpecialInventory isi = (ISpecialInventory)t;
-				ItemStack[] items = isi.extractItem(doPull, side.getOpposite(), 1);
-				if(items != null && items.length > 0) return items[0];
-			}
-			else if(t instanceof ISidedInventory)
+//			if(t instanceof ISpecialInventory)
+//			{
+//				ISpecialInventory isi = (ISpecialInventory)t;
+//				ItemStack[] items = isi.extractItem(doPull, side.getOpposite(), 1);
+//				if(items != null && items.length > 0) return items[0];
+//			}
+//			else
+			if(t instanceof ISidedInventory)
 			{
 				ISidedInventory isi = (ISidedInventory)t;
 				int[] slots = isi.getAccessibleSlotsFromSide(side.getOpposite().ordinal());
@@ -811,8 +811,8 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 						if(doPull)
 						{
 							result = isi.decrStackSize(slots[i], 1);
-                            //TODO Check if it was needed
-                            // isi.onInventoryChanged();
+
+                            //isi.onInventoryChanged();
 						}
 						else
 						{
@@ -967,7 +967,7 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		return 0;
 	}
 
-	@Override
+	//@Override
 	public ItemStack[] extractItem(boolean doRemove, ForgeDirection direction, int maxItemCount)
 	{
 		if(direction.ordinal() > 0 && direction.ordinal() < 6)
@@ -996,15 +996,16 @@ public class TileSocket extends SocketTileAccess implements ISpecialInventory, I
 		
 		if(t instanceof IInventory)
 		{
-			if(t instanceof ISpecialInventory)
-			{
-				ISpecialInventory isi = (ISpecialInventory)t;
-				ItemStack ghost = stack.copy().splitStack(1);
-				int used = isi.addItem(ghost, true, side.getOpposite());
-				if(used > 0) return true;
-				
-			}
-			else if(t instanceof ISidedInventory)
+//			if(t instanceof ISpecialInventory)
+//			{
+//				ISpecialInventory isi = (ISpecialInventory)t;
+//				ItemStack ghost = stack.copy().splitStack(1);
+//				int used = isi.addItem(ghost, true, side.getOpposite());
+//				if(used > 0) return true;
+//
+//			}
+//			else
+			if(t instanceof ISidedInventory)
 			{
 				ISidedInventory isi = (ISidedInventory)t;
 				ItemStack ghost = stack.copy().splitStack(1);

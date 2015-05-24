@@ -205,5 +205,20 @@ public class ModItemDisplay extends SocketModule
 	{
 		if(config.inventory != -1) ts.sendClientInventorySlot(config.inventory);
 	}
+
+	@Override
+	public void updateSide(SideConfig config, SocketTileAccess ts, ForgeDirection side)
+	{
+		if(config.inventory != -1)
+		{
+			config.tank++;
+			if( config.tank >= 60 )
+			{
+				config.tank = 0;
+				ts.sendClientInventorySlot(config.inventory);
+			}
+		}
+
+	}
 	
 }

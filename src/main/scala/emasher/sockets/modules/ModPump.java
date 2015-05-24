@@ -224,7 +224,7 @@ public class ModPump extends SocketModule
 		{
 			FluidStack fs = new FluidStack(FluidRegistry.WATER, 1000);
 			
-			if(fs != null && ts.fillInternal(config.tank, fs, false) == fs.amount && (filterID == -1 || filterID == fs.fluidID) )
+			if(fs != null && ts.fillInternal(config.tank, fs, false) == fs.amount && (filterID == -1 || filterID == fs.getFluidID()) )
 			{
 				ts.fillInternal(config.tank, fs, true);
 				ts.getWorldObj().setBlock(x, y, z, Blocks.air);
@@ -236,7 +236,7 @@ public class ModPump extends SocketModule
 		{
 			FluidStack fs = new FluidStack(FluidRegistry.LAVA, 1000);
 			
-			if(fs != null && ts.fillInternal(config.tank, fs, false) == fs.amount && (filterID == -1 || filterID == fs.fluidID) )
+			if(fs != null && ts.fillInternal(config.tank, fs, false) == fs.amount && (filterID == -1 || filterID == fs.getFluidID()) )
 			{
 				ts.fillInternal(config.tank, fs, true);
 				ts.getWorldObj().setBlock(x, y, z, Blocks.stone);
@@ -248,7 +248,7 @@ public class ModPump extends SocketModule
 		{
 			IFluidBlock fb = (IFluidBlock)b;
 			FluidStack fs = fb.drain(ts.getWorldObj(), x, y, z, false);
-			if(fs != null && ts.fillInternal(config.tank, fs, false) == fs.amount && (filterID == -1 || filterID == fs.fluidID) )
+			if(fs != null && ts.fillInternal(config.tank, fs, false) == fs.amount && (filterID == -1 || filterID == fs.getFluidID()) )
 			{
 				ts.fillInternal(config.tank, fb.drain(ts.getWorldObj(), x, y, z, true), true);
 				ts.getWorldObj().setBlock(x, y, z, Blocks.air);

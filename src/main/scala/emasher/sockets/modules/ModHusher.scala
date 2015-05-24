@@ -79,14 +79,14 @@ class ModHusher(id: Int) extends SocketModule(id, "sockets:husher")
 					
 					if(block != null)
 					{
-						if(f.fluidID == FluidRegistry.WATER.getID)
+						if(f.isFluidEqual(new FluidStack(FluidRegistry.WATER, 1000)))
 						{
 							if(block.getBlockHardness(ts.getWorldObj(), tile.x, tile.y, tile.z) < Blocks.stone.getBlockHardness(ts.getWorldObj(), tile.x, tile.y, tile.z)) canExtractBlock = true;
 							else if(pressure && tile.y > 32) canExtractBlock = true;
 							
 							if(block.getBlockHardness(ts.getWorldObj(), tile.x, tile.y, tile.z) >= Blocks.obsidian.getBlockHardness(ts.getWorldObj(), tile.x, tile.y, tile.z)) canExtractBlock = false;
 						}
-						else if(f.fluidID == SocketsMod.fluidSlickwater.getID)
+						else if(f.isFluidEqual(new FluidStack(SocketsMod.fluidSlickwater, 1000)))
 						{
 							if(block.getBlockHardness(ts.getWorldObj(), tile.x, tile.y, tile.z) < Blocks.obsidian.getBlockHardness(ts.getWorldObj(), tile.x, tile.y, tile.z)) canExtractBlock = true;
 							else if(pressure) canExtractBlock = true;
@@ -112,7 +112,7 @@ class ModHusher(id: Int) extends SocketModule(id, "sockets:husher")
 							
 							if(pressure) ts.useEnergy(240, false);
 							ts.getWorldObj().removeTileEntity(tile.x, tile.y, tile.z);
-							if(f.fluidID == FluidRegistry.WATER.getID) ts.getWorldObj().setBlock(tile.x, tile.y, tile.z, Blocks.water);
+							if(f.isFluidEqual(new FluidStack(FluidRegistry.WATER, 1000))) ts.getWorldObj().setBlock(tile.x, tile.y, tile.z, Blocks.water);
 							else ts.getWorldObj().setBlock(tile.x, tile.y, tile.z, SocketsMod.blockSlickwater);
 							ts.drainInternal(config.tank, 1000, true);
 						}

@@ -48,7 +48,7 @@ import emasher.sockets.items.*;
 import emasher.sockets.modules.*;
 import emasher.sockets.pipes.*;
 
-@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.2.0.0", dependencies = "required-after:emashercore")
+@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.2.0.2", dependencies = "required-after:emashercore")
 public class SocketsMod
 {
 	@Instance("Sockets")
@@ -253,7 +253,7 @@ public class SocketsMod
         GameRegistry.registerTileEntity(TileSocket.class, "modular_socket");
         GameRegistry.registerTileEntity(TileTempRS.class, "TempRS");
         GameRegistry.registerTileEntity(TilePipeBase.class, "emasherbasepipe");
-        GameRegistry.registerTileEntity(TileMJAdapter.class, "emashermjadapter");
+        //GameRegistry.registerTileEntity(TileMJAdapter.class, "emashermjadapter");
         //GameRegistry.registerTileEntity(TileEUAdapter.class, "emashereuAdapter");
         GameRegistry.registerTileEntity(TileMiniPortal.class, "emasherminiportal");
         GameRegistry.registerTileEntity(TileDirectionChanger.class, "emasherdirectionchanger");

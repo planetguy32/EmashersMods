@@ -1,3 +1,11 @@
+/*
+ * ******************************************************************************
+ *  Copyright 2011-2015 CovertJaguar
+ *
+ *  This work (the API) is licensed under the "MIT" License, see LICENSE.md for details.
+ * ***************************************************************************
+ */
+
 package mods.railcraft.api.core;
 // TODO: Add NBT functions
 
@@ -70,6 +78,10 @@ public class WorldCoordinate {
             return new WorldCoordinate(dim, x, y, z);
         }
         return null;
+    }
+
+    public boolean isEqual(int dim, int x, int y, int z) {
+        return this.x == x && this.y == y && this.z == z && this.dimension == dim;
     }
 
     @Override

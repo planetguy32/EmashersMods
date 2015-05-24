@@ -50,7 +50,7 @@ public class SocketFluidMessage implements IMessage
 
         if(l != null)
         {
-            id = l.fluidID;
+            id = l.getFluidID();
             meta = 0;
             amnt = l.amount;
         }

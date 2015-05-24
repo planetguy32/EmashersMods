@@ -1,52 +1,48 @@
 /*
- * This code is the property of CovertJaguar
- * and may only be used with explicit written
- * permission unless otherwise specified on the
- * license page at railcraft.wikispaces.com.
+ * ******************************************************************************
+ *  Copyright 2011-2015 CovertJaguar
+ *
+ *  This work (the API) is licensed under the "MIT" License, see LICENSE.md for details.
+ * ***************************************************************************
  */
 package mods.railcraft.api.signals;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Random;
-import java.util.Set;
+import mods.railcraft.api.core.WorldCoordinate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import mods.railcraft.api.core.WorldCoordinate;
+
+import java.util.*;
 
 /**
- *
  * @author CovertJaguar <http://www.railcraft.info>
  */
 public abstract class AbstractPair {
-
+    protected static final Random rand = new Random();
     private static final int SAFE_TIME = 32;
     private static final int PAIR_CHECK_INTERVAL = 128;
-    protected static final Random rand = new Random();
     public final TileEntity tile;
-    private WorldCoordinate coords;
-    public final String name;
+    public final String locTag;
     public final int maxPairings;
-    private boolean isBeingPaired;
     protected Deque<WorldCoordinate> pairings = new LinkedList<WorldCoordinate>();
     protected Set<WorldCoordinate> invalidPairings = new HashSet<WorldCoordinate>();
+    private WorldCoordinate coords;
+    private boolean isBeingPaired;
     private int update = rand.nextInt();
     private int ticksExisted;
     private boolean needsInit = true;
 
-    public AbstractPair(String name, TileEntity tile, int maxPairings) {
+    public AbstractPair(String locTag, TileEntity tile, int maxPairings) {
         this.tile = tile;
         this.maxPairings = maxPairings;
-        this.name = name;
+        this.locTag = locTag;
     }
 
     protected void addPairing(WorldCoordinate other) {
+        if (pairings.contains(other))
+            pairings.remove(other);
         pairings.add(other);
         while (pairings.size() > getMaxPairings()) {
             pairings.remove();
@@ -106,14 +102,21 @@ public abstract class AbstractPair {
             return null;
 
         TileEntity target = tile.getWorldObj().getTileEntity(x, y, z);
-        if (isValidPair(target))
+        if (isValidPair(coord, target))
             return target;
 
         clearPairing(coord);
         return null;
     }
 
-    public abstract boolean isValidPair(TileEntity tile);
+    @Deprecated
+    public boolean isValidPair(TileEntity otherTile) {
+        return false;
+    }
+
+    public boolean isValidPair(WorldCoordinate otherCoord, TileEntity otherTile) {
+        return isValidPair(otherTile);
+    }
 
     public WorldCoordinate getCoords() {
         if (coords == null)
@@ -121,8 +124,13 @@ public abstract class AbstractPair {
         return coords;
     }
 
+    @Deprecated
     public String getName() {
-        return name;
+        return getLocalizationTag();
+    }
+
+    public String getLocalizationTag() {
+        return locTag;
     }
 
     public int getMaxPairings() {
@@ -204,5 +212,4 @@ public abstract class AbstractPair {
         if (!tile.getWorldObj().isRemote)
             SignalTools.packetBuilder.sendPairPacketUpdate(this);
     }
-
 }

@@ -5,8 +5,6 @@ import net.minecraft.init.Items;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import buildcraft.api.fuels.IronEngineFuel;
-import buildcraft.api.recipes.BuildcraftRecipes;
 import mods.railcraft.api.fuel.*;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -304,8 +302,8 @@ public class EmasherGas
 		FuelManager.addBoilerFuel(fluidHydrogen, 20000);
 		FuelManager.addBoilerFuel(fluidPlasma, 100000);
 		
-		IronEngineFuel.addFuel(fluidNaturalGas, 5, 40000);
-		IronEngineFuel.addFuel(fluidHydrogen, 5, 40000);
+		//IronEngineFuel.addFuel(fluidNaturalGas, 5, 40000);
+		//IronEngineFuel.addFuel(fluidHydrogen, 5, 40000);
 		
 		GeneratorFuelRegistry.registerFuel(new FluidStack(fluidNaturalGas, 1000), 500, 60, true);
 		GeneratorFuelRegistry.registerFuel(new FluidStack(fluidHydrogen, 1000), 500, 60, false);
@@ -328,9 +326,9 @@ public class EmasherGas
 		toSend.setInteger("energy", 30000);
 		FMLInterModComms.sendMessage("ThermalExpansion", "CompressionFuel", toSend);
 
-        if(BuildcraftRecipes.refinery != null) {
-            BuildcraftRecipes.refinery.addRecipe(new FluidStack(fluidNaturalGas, 2), new FluidStack(fluidPropellent, 1), 1, 1);
-        }
+//        if(BuildcraftRecipes.refinery != null) {
+//            BuildcraftRecipes.refinery.addRecipe(new FluidStack(fluidNaturalGas, 2), new FluidStack(fluidPropellent, 1), 1, 1);
+//        }
         FurnaceRecipes.smelting().func_151394_a(new ItemStack(vialFilled, 0, 1), new ItemStack(vialFilled, 1, 1), 1.0F);
 		
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(vial, 8), "s", "g", "g", Character.valueOf('g'), Blocks.glass, Character.valueOf('s'), Items.string));

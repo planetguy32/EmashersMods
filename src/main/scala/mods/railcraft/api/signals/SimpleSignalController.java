@@ -1,37 +1,44 @@
 /*
- * This code is the property of CovertJaguar
- * and may only be used with explicit written
- * permission unless otherwise specified on the
- * license page at railcraft.wikispaces.com.
+ * ******************************************************************************
+ *  Copyright 2011-2015 CovertJaguar
+ *
+ *  This work (the API) is licensed under the "MIT" License, see LICENSE.md for details.
+ * ***************************************************************************
  */
 package mods.railcraft.api.signals;
+
+import mods.railcraft.api.core.WorldCoordinate;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import mods.railcraft.api.core.WorldCoordinate;
 
 /**
- *
  * @author CovertJaguar <http://www.railcraft.info>
  */
 public class SimpleSignalController extends SignalController {
-
     private SignalAspect aspect = SignalAspect.BLINK_RED;
 
-    public SimpleSignalController(String desc, TileEntity tile) {
-        super(desc, tile, 1);
+    public SimpleSignalController(String locTag, TileEntity tile) {
+        super(locTag, tile, 1);
     }
 
     public SignalAspect getAspect() {
         return aspect;
     }
 
+    public void setAspect(SignalAspect aspect) {
+        if (this.aspect != aspect) {
+            this.aspect = aspect;
+            updateReceiver();
+        }
+    }
+
     @Override
     public SignalAspect getAspectFor(WorldCoordinate receiver) {
-        if(!pairings.contains(receiver)){
+        if (!pairings.contains(receiver)) {
             return null;
         }
         return aspect;
@@ -45,13 +52,6 @@ public class SimpleSignalController extends SignalController {
             }
         }
         cleanPairings();
-    }
-
-    public void setAspect(SignalAspect aspect) {
-        if (this.aspect != aspect) {
-            this.aspect = aspect;
-            updateReceiver();
-        }
     }
 
     @Override
@@ -73,9 +73,9 @@ public class SimpleSignalController extends SignalController {
     public void readPacketData(DataInputStream data) throws IOException {
         aspect = SignalAspect.values()[data.readByte()];
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         return "Controller: " + aspect.toString();
     }
 }

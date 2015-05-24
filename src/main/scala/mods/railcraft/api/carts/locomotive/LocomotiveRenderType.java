@@ -1,11 +1,11 @@
 /*
- * Copyright (c) CovertJaguar, 2011 http://railcraft.info
- * 
- * This code is the property of CovertJaguar
- * and may only be used with explicit written
- * permission unless otherwise specified on the
- * license page at railcraft.wikispaces.com.
+ * ******************************************************************************
+ *  Copyright 2011-2015 CovertJaguar
+ *
+ *  This work (the API) is licensed under the "MIT" License, see LICENSE.md for details.
+ * ***************************************************************************
  */
+
 package mods.railcraft.api.carts.locomotive;
 
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -22,7 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
  *
  * Usage example: LocomotiveRenderType.STEAM_SOLID.registerRenderer(new
  * MyRenderer());
- * 
+ *
  * Registration must be done in the Client side initialization.
  *
  * @author CovertJaguar <http://www.railcraft.info/>
@@ -84,6 +84,8 @@ public enum LocomotiveRenderType {
      */
     public ItemStack getItemWithRenderer(String rendererTag) {
         ItemStack stack = GameRegistry.findItemStack("Railcraft", cartTag, 1);
+        if (stack == null)
+            return null;
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setString("model", rendererTag);
         stack.setTagCompound(nbt);

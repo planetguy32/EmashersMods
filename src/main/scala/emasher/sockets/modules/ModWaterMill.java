@@ -2,7 +2,6 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
-import buildcraft.api.power.PowerHandler;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;

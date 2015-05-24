@@ -17,6 +17,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 public class Handlers {
@@ -119,8 +121,9 @@ public class Handlers {
         if(te != null && te instanceof TileSocket)
         {
             TileSocket ts = (TileSocket)te;
-
-            ts.tanks[tank].setFluid(new FluidStack(id, amnt));
+            if( id != -1 ) {
+                ts.tanks[tank].setFluid(new FluidStack(FluidRegistry.getFluid(id), amnt));
+            }
 
             world.markBlockForUpdate(x, y, z);
             world.notifyBlockChange(x, y, z, SocketsMod.socket);

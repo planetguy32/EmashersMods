@@ -1,11 +1,11 @@
 /*
- * Copyright (c) CovertJaguar, 2011 http://railcraft.info
- * 
- * This code is the property of CovertJaguar
- * and may only be used with explicit written
- * permission unless otherwise specified on the
- * license page at railcraft.wikispaces.com.
+ * ******************************************************************************
+ *  Copyright 2011-2015 CovertJaguar
+ *
+ *  This work (the API) is licensed under the "MIT" License, see LICENSE.md for details.
+ * ***************************************************************************
  */
+
 package mods.railcraft.api.electricity;
 
 import java.util.*;
@@ -106,7 +106,7 @@ public interface IElectricGrid {
                             Map<WorldCoordinate, EnumSet<ConnectType>> positions = new HashMap<WorldCoordinate, EnumSet<ConnectType>>();
 
                             EnumSet<ConnectType> all = EnumSet.allOf(ConnectType.class);
-                            
+
                             positions.put(new WorldCoordinate(dim, x + 1, y, z), all);
                             positions.put(new WorldCoordinate(dim, x - 1, y, z), all);
                             positions.put(new WorldCoordinate(dim, x, y + 1, z), all);
@@ -125,7 +125,7 @@ public interface IElectricGrid {
         private final IElectricGrid gridObject;
         private final ConnectType type;
         private final Set<ChargeHandler> neighbors = new HashSet<ChargeHandler>();
-        private double charge = 0;
+        private double charge, draw, lastTickDraw;
         private final double lossPerTick;
         private int clock = rand.nextInt();
 
@@ -150,9 +150,13 @@ public interface IElectricGrid {
         public double getCapacity() {
             return MAX_CHARGE;
         }
-        
-        public double getLosses(){
+
+        public double getLosses() {
             return lossPerTick;
+        }
+
+        public double getDraw() {
+            return draw;
         }
 
         public ConnectType getType() {
@@ -171,6 +175,10 @@ public interface IElectricGrid {
             other.charge = half;
         }
 
+        public void setCharge(double charge) {
+            this.charge = charge;
+        }
+
         public void addCharge(double charge) {
             this.charge += charge;
         }
@@ -185,11 +193,21 @@ public interface IElectricGrid {
         public double removeCharge(double request) {
             if (charge >= request) {
                 charge -= request;
+                lastTickDraw += request;
                 return request;
             }
             double ret = charge;
             charge = 0.0;
+            lastTickDraw += ret;
             return ret;
+        }
+
+        private void removeLosses() {
+            if (lossPerTick > 0.0)
+                if (charge >= lossPerTick)
+                    charge -= lossPerTick;
+                else
+                    charge = 0.0;
         }
 
         /**
@@ -197,8 +215,10 @@ public interface IElectricGrid {
          */
         public void tick() {
             clock++;
-            if (lossPerTick > 0.0)
-                removeCharge(lossPerTick);
+            removeLosses();
+
+            draw = (draw * 49.0 + lastTickDraw) / 50.0;
+            lastTickDraw = 0.0;
 
             if (charge <= 0.0)
                 return;

@@ -2,9 +2,7 @@ package emasher.sockets.modules;
 
 import java.util.List;
 
-import buildcraft.api.power.PowerHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -13,7 +11,6 @@ import emasher.api.SocketModule;
 import emasher.api.SocketTileAccess;
 import emasher.core.EmasherCore;
 import emasher.sockets.SocketsMod;
-import emasher.sockets.TileSocket;
 
 public class ModSolar extends SocketModule
 {

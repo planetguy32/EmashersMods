@@ -1,5 +1,6 @@
 package emasher.gas.modules
 
+import buildcraft.api.recipes.{RecipeRegistry, IFlexibleRecipe}
 import emasher.api._
 import emasher.sockets._
 import emasher.core._
@@ -8,13 +9,9 @@ import net.minecraft.item.crafting._
 import net.minecraftforge.oredict._
 import net.minecraftforge.common.util.ForgeDirection
 import net.minecraft.item._
-import net.minecraft.block._
-import buildcraft.api.recipes._
-import net.minecraft.item._
 import net.minecraftforge.fluids._
 import net.minecraft.init.{Blocks, Items}
 import cpw.mods.fml.relauncher.{Side, SideOnly}
-import buildcraft.api.recipes.IRefineryRecipeManager.IRefineryRecipe
 import emasher.gas.EmasherGas
 
 class ModRefinery(id: Int) extends SocketModule(id, "gascraft:refinery")
@@ -74,18 +71,22 @@ class ModRefinery(id: Int) extends SocketModule(id, "gascraft:refinery")
         if (config.rsControl(0)) ts.sendClientSideState(side.ordinal)
         config.rsControl(0) = false
 
-        var fluid = ts.getFluidInTank(config.tank)
-        var rec: IRefineryRecipe = null
+        val fluid = ts.getFluidInTank(config.tank)
+        val rec = PropellentRecipe
 
         if(fluid != null) {
 
-          if (BuildcraftRecipes.refinery != null) {
-            rec = BuildcraftRecipes.refinery.findRefineryRecipe(fluid, null)
-          }
-
-          if (rec == null && fluid.isFluidEqual(new FluidStack(EmasherGas.fluidNaturalGas, 1000))) {
-            rec = PropellentRecipe
-          }
+//          if (RecipeRegistry.refinery != null) {
+//            //rec = RecipeRegistry.refinery.getRecipe(fluid, null)
+//						val recipies = RecipeRegistry.refinery.getRecipes
+//						for( i <- 0 to recipies.size() - 1 ) {
+//							if(recipies.toArray())
+//						}
+//          }
+//
+//          if (rec == null && fluid.isFluidEqual(new FluidStack(EmasherGas.fluidNaturalGas, 1000))) {
+//            rec = PropellentRecipe
+//          }
 
           ts.sideInventory.setInventorySlotContents(side.ordinal, null)
 
@@ -94,7 +95,7 @@ class ModRefinery(id: Int) extends SocketModule(id, "gascraft:refinery")
               ts.useEnergy(rec.getEnergyCost * 5, false)
               ts.drainInternal(config.tank, rec.getIngredient1.amount, true)
               ts.sideInventory.setInventorySlotContents(side.ordinal, new ItemStack(Blocks.cobblestone, 1, rec.getResult.amount))
-              config.inventory = rec.getResult.fluidID
+              //config.inventory = rec.getResult.fluidID
               config.meta = rec.getTimeRequired
               ts.sendClientSideState(side.ordinal)
               config.rsControl(0) = true
@@ -109,7 +110,7 @@ class ModRefinery(id: Int) extends SocketModule(id, "gascraft:refinery")
 				if(config.meta == 0)
 				{
 					var is = ts.sideInventory.getStackInSlot(side.ordinal)
-					var fs = new FluidStack(config.inventory, is.getItemDamage())
+					var fs = new FluidStack(EmasherGas.fluidPropellent, is.getItemDamage())
 					var amnt = ts.forceOutputFluid(fs, false)
 					if(amnt == fs.amount) ts.forceOutputFluid(fs, true)
 					else
@@ -140,7 +141,7 @@ class ModRefinery(id: Int) extends SocketModule(id, "gascraft:refinery")
   }
 }
 
-object PropellentRecipe extends IRefineryRecipe {
+object PropellentRecipe {
   def getIngredient1: FluidStack = {
     new FluidStack(EmasherGas.fluidNaturalGas, 2)
   }

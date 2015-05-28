@@ -6,11 +6,9 @@ import emasher.gas.EmasherGas;
 import emasher.gas.EntitySmokeBomb;
 import net.minecraft.client.renderer.entity.RenderSnowball;
 
-public class ClientProxy extends CommonProxy
-{
+public class ClientProxy extends CommonProxy {
 	@Override
-	public void registerRenderers() 
-	{
-		RenderingRegistry.registerEntityRenderingHandler(EntitySmokeBomb.class, new RenderSnowball(EmasherGas.smokeGrenade));
+	public void registerRenderers() {
+		RenderingRegistry.registerEntityRenderingHandler( EntitySmokeBomb.class, new RenderSnowball( EmasherGas.smokeGrenade ) );
 	}
 }

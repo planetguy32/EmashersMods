@@ -1,29 +1,22 @@
 package emasher.sockets;
 
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 
-public class TileTempRS extends TileEntity
-{
+public class TileTempRS extends TileEntity {
 	int timer;
 	
-	public TileTempRS()
-	{
+	public TileTempRS() {
 		timer = 0;
 	}
 	
 	@Override
-	public void updateEntity()
-	{
-		if(! worldObj.isRemote)
-		{
+	public void updateEntity() {
+		if( !worldObj.isRemote ) {
 			timer++;
-			if(timer >= 25)
-			{
-				worldObj.setBlock(xCoord, yCoord, zCoord, Blocks.air);
-				worldObj.removeTileEntity(xCoord, yCoord, zCoord);
+			if( timer >= 25 ) {
+				worldObj.setBlock( xCoord, yCoord, zCoord, Blocks.air );
+				worldObj.removeTileEntity( xCoord, yCoord, zCoord );
 			}
 		}
 	}

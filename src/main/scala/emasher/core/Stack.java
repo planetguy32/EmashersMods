@@ -1,28 +1,23 @@
 package emasher.core;
 
-public class Stack<E>
-{
+public class Stack<E> {
 	private int count;
 	private SNode<E> head;
 	
-	public Stack()
-	{
+	public Stack() {
 		head = null;
 		count = 0;
 	}
 	
-	public void push(E data)
-	{	
-		head = new SNode<E>(data, head);
+	public void push( E data ) {
+		head = new SNode<E>( data, head );
 		count++;
 	}
 	
-	public E pop()
-	{
+	public E pop() {
 		E result = null;
 		
-		if(head != null)
-		{
+		if( head != null ) {
 			result = head.data;
 			head = head.next;
 			count--;
@@ -31,30 +26,25 @@ public class Stack<E>
 		return result;
 	}
 	
-	public E peek()
-	{
+	public E peek() {
 		E result = null;
 		
-		if(head != null)
-		{
+		if( head != null ) {
 			result = head.data;
 		}
 		
 		return result;
 	}
 	
-	public int getCount()
-	{
+	public int getCount() {
 		return count;
 	}
 	
-	private class SNode<T>
-	{
+	private class SNode<T> {
 		public SNode<T> next;
 		public T data;
 		
-		public SNode(T data, SNode<T> next)
-		{
+		public SNode( T data, SNode<T> next ) {
 			this.data = data;
 			this.next = next;
 		}

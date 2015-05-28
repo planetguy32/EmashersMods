@@ -1,6 +1,5 @@
 package emasher.api;
 
-public interface IModuleRegistrationManager
-{
+public interface IModuleRegistrationManager {
 	void registerModules();
 }

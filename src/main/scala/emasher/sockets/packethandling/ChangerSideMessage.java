@@ -5,62 +5,50 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import emasher.sockets.pipes.TileDirectionChanger;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
-public class ChangerSideMessage implements IMessage
-{
-    TileDirectionChanger p;
+public class ChangerSideMessage implements IMessage {
+	public byte[] msg;
+	TileDirectionChanger p;
+	byte side;
 
-    public byte[] msg;
+	public ChangerSideMessage() {
+	}
 
-    byte side;
+	public ChangerSideMessage( TileDirectionChanger p, byte side ) {
+		this.p = p;
+		this.side = side;
+	}
 
-    public ChangerSideMessage()
-    {
-    }
+	@Override
+	public void fromBytes( ByteBuf buf ) {
+		msg = new byte[buf.capacity()];
+		buf.readBytes( msg );
+	}
 
-    public ChangerSideMessage(TileDirectionChanger p, byte side)
-    {
-        this.p = p;
-        this.side = side;
-    }
+	@Override
+	public void toBytes( ByteBuf buf ) {
+		buf.capacity( 19 );
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        msg = new byte[buf.capacity()];
-        buf.readBytes(msg);
-    }
+		byte[] out = new byte[19];
 
-    @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.capacity(19);
+		out[0] = 5;
+		NetworkUtilities.toByte( out, p.xCoord, 1 );
+		NetworkUtilities.toByte( out, p.yCoord, 5 );
+		NetworkUtilities.toByte( out, p.zCoord, 9 );
+		NetworkUtilities.toByte( out, p.getWorldObj().provider.dimensionId, 13 );
+		out[17] = ( byte ) p.directions[side].ordinal();
+		out[18] = ( byte ) side;
 
-        byte[] out = new byte[19];
+		buf.writeBytes( out );
+		msg = out;
+	}
 
-        out[0] = 5;
-        NetworkUtilities.toByte(out, p.xCoord, 1);
-        NetworkUtilities.toByte(out, p.yCoord, 5);
-        NetworkUtilities.toByte(out, p.zCoord, 9);
-        NetworkUtilities.toByte(out, p.getWorldObj().provider.dimensionId, 13);
-        out[17] = (byte)p.directions[side].ordinal();
-        out[18] = (byte)side;
+	public static class Handler implements IMessageHandler<ChangerSideMessage, IMessage> {
+		@Override
+		public IMessage onMessage( ChangerSideMessage message, MessageContext ctx ) {
+			Handlers.onChangeSideMessage( message, ctx );
 
-        buf.writeBytes(out);
-        msg = out;
-    }
-
-    public static class Handler implements IMessageHandler<ChangerSideMessage, IMessage>
-    {
-        @Override
-        public IMessage onMessage(ChangerSideMessage message, MessageContext ctx)
-        {
-            Handlers.onChangeSideMessage(message, ctx);
-
-            return null;
-        }
-    }
+			return null;
+		}
+	}
 }

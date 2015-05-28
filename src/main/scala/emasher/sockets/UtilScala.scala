@@ -1,95 +1,97 @@
 package emasher.sockets
 
-import emasher.api.{Util, SocketTileAccess}
-import net.minecraft.init.Blocks
-import net.minecraft.world.World
-import emasher.sockets.SocketsMod
-import net.minecraftforge.common.util.ForgeDirection
-import scala.collection.mutable.ListBuffer
+import emasher.api.{SocketTileAccess, Util}
 import emasher.sockets.modules.ModMagnet
-import scala.collection.mutable
+import emasher.sockets.packethandling.{AdapterSideMessage, ChangerSideMessage}
+import emasher.sockets.pipes.{TileAdapterBase, TileDirectionChanger, TileFrame}
 import net.minecraft.block.Block
-import emasher.sockets.pipes.{TileDirectionChanger, TileAdapterBase, TileFrame}
+import net.minecraft.init.Blocks
 import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.world.World
+import net.minecraftforge.common.util.ForgeDirection
+
+import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 import scala.util.control.Breaks._
-import emasher.sockets.packethandling.{ChangerSideMessage, AdapterSideMessage}
 
 object UtilScala {
-  def moveGroup(world: World, root: Coords, dir: ForgeDirection): Boolean = {
-    val rb = world.getBlock(root.x, root.y, root.z)
-    if(rb == SocketsMod.socket) {
-      val te = world.getTileEntity(root.x, root.y, root.z)
+  def moveGroup( world: World, root: Coords, dir: ForgeDirection ): Boolean = {
+    val rb = world.getBlock( root.x, root.y, root.z )
+    if( rb == SocketsMod.socket ) {
+      val te = world.getTileEntity( root.x, root.y, root.z )
 
       te match {
         case ts: SocketTileAccess =>
-          val magnetDirs = getMagnetDirs(ts)
+          val magnetDirs = getMagnetDirs( ts )
 
-          if(magnetDirs.length == 0) {
+          if( magnetDirs.length == 0 ) {
             val nx = root.x + dir.offsetX
             val ny = root.y + dir.offsetY
             val nz = root.z + dir.offsetZ
-            Util.moveBlock(world, root.x, root.y, root.z, nx, ny, nz)
+            Util.moveBlock( world, root.x, root.y, root.z, nx, ny, nz )
           } else {
-            val moveSet = new mutable.ListBuffer[Coords]()
-            val nonNormalSet = new mutable.ListBuffer[NonNormalBlock]()
-            val checkQueue = new mutable.Queue[Coords]()
+            val moveSet = new mutable.ListBuffer[ Coords ]( )
+            val nonNormalSet = new mutable.ListBuffer[ NonNormalBlock ]( )
+            val checkQueue = new mutable.Queue[ Coords ]( )
 
             moveSet += root
-            addToQueueForBlock(checkQueue, moveSet, root, world)
+            addToQueueForBlock( checkQueue, moveSet, root, world )
 
-            while(checkQueue.length > 0) {
-              val curr = checkQueue.dequeue()
-              if(shouldBlockBeMovable(world, curr.x, curr.y, curr.z)) {
+            while( checkQueue.length > 0 ) {
+              val curr = checkQueue.dequeue( )
+              if( shouldBlockBeMovable( world, curr.x, curr.y, curr.z ) ) {
                 moveSet += curr
                 //val bId = world.getBlockId(curr.x, curr.y, curr.z)
                 //val theBlock = Block.blocksList(bId)
-                val theBlock = world.getBlock(curr.x, curr.y, curr.z)
-                if(theBlock != null) {
-                  if(! theBlock.isOpaqueCube) {
-                    val t = world.getTileEntity(curr.x, curr.y, curr.z)
-                    val data = new NBTTagCompound()
-                    if(t != null) t.writeToNBT(data)
-                    val theBlockId = Block.getIdFromBlock(world.getBlock(curr.x, curr.y, curr.z))
-                    val theBlockMeta = world.getBlockMetadata(curr.x, curr.y, curr.z)
-                    nonNormalSet += NonNormalBlock(curr, theBlockId, theBlockMeta, data)
-                    world.removeTileEntity(curr.x, curr.y, curr.z)
-                    world.setBlock(curr.x, curr.y, curr.z, Blocks.air, 0, 3)
+                val theBlock = world.getBlock( curr.x, curr.y, curr.z )
+                if( theBlock != null ) {
+                  if( !theBlock.isOpaqueCube ) {
+                    val t = world.getTileEntity( curr.x, curr.y, curr.z )
+                    val data = new NBTTagCompound( )
+                    if( t != null ) t.writeToNBT( data )
+                    val theBlockId = Block.getIdFromBlock( world.getBlock( curr.x, curr.y, curr.z ) )
+                    val theBlockMeta = world.getBlockMetadata( curr.x, curr.y, curr.z )
+                    nonNormalSet += NonNormalBlock( curr, theBlockId, theBlockMeta, data )
+                    world.removeTileEntity( curr.x, curr.y, curr.z )
+                    world.setBlock( curr.x, curr.y, curr.z, Blocks.air, 0, 3 )
                   }
                 }
-                addToQueueForBlock(checkQueue, moveSet, curr, world)
+                addToQueueForBlock( checkQueue, moveSet, curr, world )
               }
             }
 
             var failure = false
-            breakable { for(el <- moveSet) {
-              if(! Util.isBlockReplaceable(world, el.x + dir.offsetX, el.y + dir.offsetY, el.z + dir.offsetZ)) {
-                var found = false
-                moveSet.map { u =>
-                  if(u.x == el.x + dir.offsetX && u.y == el.y + dir.offsetY && u.z == el.z + dir.offsetZ) {
-                    found = true
+            breakable {
+              for( el <- moveSet ) {
+                if( !Util.isBlockReplaceable( world, el.x + dir.offsetX, el.y + dir.offsetY, el.z + dir.offsetZ ) ) {
+                  var found = false
+                  moveSet.map { u =>
+                    if( u.x == el.x + dir.offsetX && u.y == el.y + dir.offsetY && u.z == el.z + dir.offsetZ ) {
+                      found = true
+                    }
+                  }
+
+                  if( !found ) {
+                    failure = true
+                    break( )
                   }
                 }
-
-                if(! found) {
-                  failure = true
-                  break()
-                }
               }
-            }}
+            }
 
-            if(! failure) {
-              val ordering = getOrdering(dir)
-              val sorted = moveSet.sorted(ordering)
+            if( !failure ) {
+              val ordering = getOrdering( dir )
+              val sorted = moveSet.sorted( ordering )
 
               sorted.map { u =>
-                Util.moveBlock(world, u.x, u.y, u.z, u.x + dir.offsetX, u.y + dir.offsetY, u.z + dir.offsetZ, false)
+                Util.moveBlock( world, u.x, u.y, u.z, u.x + dir.offsetX, u.y + dir.offsetY, u.z + dir.offsetZ, false )
               }
 
-              for(n <- nonNormalSet) {
-                world.setBlock(n.t.x + dir.offsetX, n.t.y + dir.offsetY, n.t.z + dir.offsetZ, n.asInstanceOf[Block], n.meta, 3)
-                val tileEntity = world.getTileEntity(n.t.x + dir.offsetX, n.t.y + dir.offsetY, n.t.z + dir.offsetZ)
-                if(tileEntity != null && n.data != null) {
-                  tileEntity.readFromNBT(n.data)
+              for( n <- nonNormalSet ) {
+                world.setBlock( n.t.x + dir.offsetX, n.t.y + dir.offsetY, n.t.z + dir.offsetZ, n.asInstanceOf[ Block ], n.meta, 3 )
+                val tileEntity = world.getTileEntity( n.t.x + dir.offsetX, n.t.y + dir.offsetY, n.t.z + dir.offsetZ )
+                if( tileEntity != null && n.data != null ) {
+                  tileEntity.readFromNBT( n.data )
                   tileEntity.xCoord = n.t.x + dir.offsetX
                   tileEntity.yCoord = n.t.y + dir.offsetY
                   tileEntity.zCoord = n.t.z + dir.offsetZ
@@ -97,150 +99,150 @@ object UtilScala {
               }
 
               sorted.map { u =>
-                val te = world.getTileEntity(u.x + dir.offsetX, u.y + dir.offsetY, u.z + dir.offsetZ)
-                if(te != null && te.isInstanceOf[SocketTileAccess]) {
-                  val ts = te.asInstanceOf[SocketTileAccess]
-                  for(i <- 0 to 5) {
-                    val side = ForgeDirection.getOrientation(i)
-                    val m = ts.getSide(side)
-                    m.onSocketPlaced(ts.getConfigForSide(side), ts, side)
-                    ts.sendClientSideState(i)
+                val te = world.getTileEntity( u.x + dir.offsetX, u.y + dir.offsetY, u.z + dir.offsetZ )
+                if( te != null && te.isInstanceOf[ SocketTileAccess ] ) {
+                  val ts = te.asInstanceOf[ SocketTileAccess ]
+                  for( i <- 0 to 5 ) {
+                    val side = ForgeDirection.getOrientation( i )
+                    val m = ts.getSide( side )
+                    m.onSocketPlaced( ts.getConfigForSide( side ), ts, side )
+                    ts.sendClientSideState( i )
                   }
                 }
 
-                if(te != null && te.isInstanceOf[TileAdapterBase]) {
-                  val ta = te.asInstanceOf[TileAdapterBase]
-                  for(i <- 0 to 5) {
-                    SocketsMod.network.sendToDimension(new AdapterSideMessage(ta, i.asInstanceOf[Byte]), world.provider.dimensionId)
+                if( te != null && te.isInstanceOf[ TileAdapterBase ] ) {
+                  val ta = te.asInstanceOf[ TileAdapterBase ]
+                  for( i <- 0 to 5 ) {
+                    SocketsMod.network.sendToDimension( new AdapterSideMessage( ta, i.asInstanceOf[ Byte ] ), world.provider.dimensionId )
                   }
                 }
 
-                if(te != null && te.isInstanceOf[TileDirectionChanger]) {
-                  val td = te.asInstanceOf[TileDirectionChanger]
-                  for(i <- 0 to 5) {
-                    SocketsMod.network.sendToDimension(new ChangerSideMessage(td, i.asInstanceOf[Byte]), world.provider.dimensionId)
+                if( te != null && te.isInstanceOf[ TileDirectionChanger ] ) {
+                  val td = te.asInstanceOf[ TileDirectionChanger ]
+                  for( i <- 0 to 5 ) {
+                    SocketsMod.network.sendToDimension( new ChangerSideMessage( td, i.asInstanceOf[ Byte ] ), world.provider.dimensionId )
                   }
                 }
 
               }
             } else {
-              for(n <- nonNormalSet) {
-                world.setBlock(n.t.x, n.t.y, n.t.z, n.asInstanceOf[Block], n.meta, 3)
-                val tileEntity = world.getTileEntity(n.t.x, n.t.y, n.t.z)
-                if(tileEntity != null && n.data != null) {
-                  tileEntity.readFromNBT(n.data)
+              for( n <- nonNormalSet ) {
+                world.setBlock( n.t.x, n.t.y, n.t.z, n.asInstanceOf[ Block ], n.meta, 3 )
+                val tileEntity = world.getTileEntity( n.t.x, n.t.y, n.t.z )
+                if( tileEntity != null && n.data != null ) {
+                  tileEntity.readFromNBT( n.data )
                 }
               }
             }
 
-            ! failure
+            !failure
           }
 
         case _ =>
           val nx = root.x + dir.offsetX
           val ny = root.y + dir.offsetY
           val nz = root.z + dir.offsetZ
-          Util.moveBlock(world, root.x, root.y, root.z, nx, ny, nz)
+          Util.moveBlock( world, root.x, root.y, root.z, nx, ny, nz )
       }
     } else {
       val nx = root.x + dir.offsetX
       val ny = root.y + dir.offsetY
       val nz = root.z + dir.offsetZ
-      Util.moveBlock(world, root.x, root.y, root.z, nx, ny, nz)
+      Util.moveBlock( world, root.x, root.y, root.z, nx, ny, nz )
     }
 
   }
 
-  def getMagnetDirs(ts: SocketTileAccess): ListBuffer[ForgeDirection] = {
-    val result = new ListBuffer[ForgeDirection]()
+  def getMagnetDirs( ts: SocketTileAccess ): ListBuffer[ ForgeDirection ] = {
+    val result = new ListBuffer[ ForgeDirection ]( )
 
-    for(i <- 0 to 5) {
-      val d = ForgeDirection.getOrientation(i)
-      val m = ts.getSide(d)
-      if(m.isInstanceOf[ModMagnet]) {
-        result.append(d)
+    for( i <- 0 to 5 ) {
+      val d = ForgeDirection.getOrientation( i )
+      val m = ts.getSide( d )
+      if( m.isInstanceOf[ ModMagnet ] ) {
+        result.append( d )
       }
     }
 
     result
   }
 
-  def getOrdering(dir: ForgeDirection): Ordering[Coords] = {
+  def getOrdering( dir: ForgeDirection ): Ordering[ Coords ] = {
     (dir.offsetX, dir.offsetY, dir.offsetZ) match {
-      case (-1, 0, 0) => new Ordering[Coords] {
-        def compare(t1: Coords, t2: Coords):Int = {
+      case (-1, 0, 0) => new Ordering[ Coords ] {
+        def compare( t1: Coords, t2: Coords ): Int = {
           t1.x - t2.x
         }
       }
-      case (1, 0, 0) => new Ordering[Coords] {
-        def compare(t1: Coords, t2: Coords):Int = {
+      case (1, 0, 0) => new Ordering[ Coords ] {
+        def compare( t1: Coords, t2: Coords ): Int = {
           t2.x - t1.x
         }
       }
-      case (0, -1, 0) => new Ordering[Coords] {
-        def compare(t1: Coords, t2: Coords):Int = {
+      case (0, -1, 0) => new Ordering[ Coords ] {
+        def compare( t1: Coords, t2: Coords ): Int = {
           t1.y - t2.y
         }
       }
-      case (0, 1, 0) => new Ordering[Coords] {
-        def compare(t1: Coords, t2: Coords):Int = {
+      case (0, 1, 0) => new Ordering[ Coords ] {
+        def compare( t1: Coords, t2: Coords ): Int = {
           t2.y - t1.y
         }
       }
-      case (0, 0, -1) => new Ordering[Coords] {
-        def compare(t1: Coords, t2: Coords):Int = {
+      case (0, 0, -1) => new Ordering[ Coords ] {
+        def compare( t1: Coords, t2: Coords ): Int = {
           t1.z - t2.z
         }
       }
-      case (0, 0, 1) => new Ordering[Coords] {
-        def compare(t1: Coords, t2: Coords):Int = {
+      case (0, 0, 1) => new Ordering[ Coords ] {
+        def compare( t1: Coords, t2: Coords ): Int = {
           t2.z - t1.z
         }
       }
     }
   }
 
-  def shouldBlockBeMovable(world: World, x: Int, y: Int, z: Int): Boolean = {
-    val b: Block = world.getBlock(x, y, z)
-    if(SocketsMod.miniPortal != null && b == SocketsMod.miniPortal) return false
+  def shouldBlockBeMovable( world: World, x: Int, y: Int, z: Int ): Boolean = {
+    val b: Block = world.getBlock( x, y, z )
+    if( SocketsMod.miniPortal != null && b == SocketsMod.miniPortal ) return false
     //val b: Block = Block.blocksList(id)
-    !(b != null && b.getBlockHardness(world, x, y, z) < 0)
+    !( b != null && b.getBlockHardness( world, x, y, z ) < 0 )
   }
 
-  def addToQueueForBlock(q: mutable.Queue[Coords], s: mutable.ListBuffer[Coords], t: Coords, world: World) {
+  def addToQueueForBlock( q: mutable.Queue[ Coords ], s: mutable.ListBuffer[ Coords ], t: Coords, world: World ) {
 
-    val te = world.getTileEntity(t.x, t.y, t.z)
+    val te = world.getTileEntity( t.x, t.y, t.z )
     te match {
       case tile: SocketTileAccess =>
 
-        for(i <- 0 to 5) {
-          val d = ForgeDirection.getOrientation(i)
-          val m = tile.getSide(d)
+        for( i <- 0 to 5 ) {
+          val d = ForgeDirection.getOrientation( i )
+          val m = tile.getSide( d )
 
-          if(m.isInstanceOf[ModMagnet]) {
-            val config = tile.getConfigForSide(d)
+          if( m.isInstanceOf[ ModMagnet ] ) {
+            val config = tile.getConfigForSide( d )
             var allOff = true
             var isOn = false
 
-            for(j <- 0 to 2) {
-              if(config.rsControl(j)) {
+            for( j <- 0 to 2 ) {
+              if( config.rsControl( j ) ) {
                 allOff = false
-                if(tile.getRSControl(j)) isOn = true
+                if( tile.getRSControl( j ) ) isOn = true
               }
 
-              if(config.rsLatch(j)) {
+              if( config.rsLatch( j ) ) {
                 allOff = false
-                if(tile.getRSLatch(j)) isOn = true
+                if( tile.getRSLatch( j ) ) isOn = true
               }
             }
 
-            if(isOn || allOff) {
+            if( isOn || allOff ) {
               val xo = t.x + d.offsetX
               val yo = t.y + d.offsetY
               val zo = t.z + d.offsetZ
 
-              if(! Util.isBlockReplaceable(world, xo, yo, zo) && ! s.contains(Coords(xo, yo, zo))) {
-                q.enqueue(Coords(xo, yo, zo))
+              if( !Util.isBlockReplaceable( world, xo, yo, zo ) && !s.contains( Coords( xo, yo, zo ) ) ) {
+                q.enqueue( Coords( xo, yo, zo ) )
               }
             }
           }
@@ -248,16 +250,16 @@ object UtilScala {
 
       case tile: TileFrame =>
 
-        for(i <- 0 to 5) {
-          val d = ForgeDirection.getOrientation(i)
-          val isOn = tile.outputs(i)
+        for( i <- 0 to 5 ) {
+          val d = ForgeDirection.getOrientation( i )
+          val isOn = tile.outputs( i )
           val xo = t.x + d.offsetX
           val yo = t.y + d.offsetY
           val zo = t.z + d.offsetZ
 
-          if(isOn || world.getBlock(xo, yo, zo) == SocketsMod.frame) {
-            if(! Util.isBlockReplaceable(world, xo, yo, zo) && ! s.contains(Coords(xo, yo, zo))) {
-              q.enqueue(Coords(xo, yo, zo))
+          if( isOn || world.getBlock( xo, yo, zo ) == SocketsMod.frame ) {
+            if( !Util.isBlockReplaceable( world, xo, yo, zo ) && !s.contains( Coords( xo, yo, zo ) ) ) {
+              q.enqueue( Coords( xo, yo, zo ) )
             }
           }
         }
@@ -269,6 +271,6 @@ object UtilScala {
   }
 }
 
-case class Coords(x: Int, y: Int, z: Int)
+case class Coords( x: Int, y: Int, z: Int )
 
-case class NonNormalBlock(t: Coords, id: Int, meta: Int, data: NBTTagCompound)
+case class NonNormalBlock( t: Coords, id: Int, meta: Int, data: NBTTagCompound )

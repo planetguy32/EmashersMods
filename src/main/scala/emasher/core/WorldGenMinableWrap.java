@@ -1,29 +1,25 @@
 package emasher.core;
 
-import java.util.ArrayList;
-
-import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.common.BiomeDictionary;
 
-public class WorldGenMinableWrap
-{
+import java.util.ArrayList;
+
+public class WorldGenMinableWrap {
 	public WorldGenMinableSafe gen;
 	public int num;
 	public int min;
 	public int max;
 	public ArrayList<BiomeDictionary.Type> biomes = new ArrayList<BiomeDictionary.Type>();
 	
-	public WorldGenMinableWrap(WorldGenMinableSafe g, int n, int mi, int ma)
-	{
+	public WorldGenMinableWrap( WorldGenMinableSafe g, int n, int mi, int ma ) {
 		gen = g;
 		num = n;
 		min = mi;
 		max = ma;
 	}
 	
-	public WorldGenMinableWrap add(BiomeDictionary.Type theBiome)
-	{
-		biomes.add(theBiome);
+	public WorldGenMinableWrap add( BiomeDictionary.Type theBiome ) {
+		biomes.add( theBiome );
 		return this;
 	}
 }

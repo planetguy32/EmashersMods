@@ -11,34 +11,29 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class ItemHandPiston extends Item
-{
-	public ItemHandPiston(int id)
-	{
+public class ItemHandPiston extends Item {
+	public ItemHandPiston( int id ) {
 		super();
 		
-		this.setCreativeTab(SocketsMod.tabSockets);
-		this.setMaxStackSize(1);
-		this.setUnlocalizedName("eng_handPiston");
+		this.setCreativeTab( SocketsMod.tabSockets );
+		this.setMaxStackSize( 1 );
+		this.setUnlocalizedName( "eng_handPiston" );
 	}
 
 	@Override
-	public boolean isItemTool(ItemStack par1ItemStack)
-    {
+	public boolean isItemTool( ItemStack par1ItemStack ) {
 		return true;
-    }
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister ir)
-	{
-		this.itemIcon = ir.registerIcon("sockets:handPiston");
 	}
 	
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float par8, float par9, float par10)
-    {
-		ForgeDirection d = ForgeDirection.getOrientation(side);
+	@SideOnly( Side.CLIENT )
+	public void registerIcons( IIconRegister ir ) {
+		this.itemIcon = ir.registerIcon( "sockets:handPiston" );
+	}
+	
+	@Override
+	public boolean onItemUse( ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float par8, float par9, float par10 ) {
+		ForgeDirection d = ForgeDirection.getOrientation( side );
 		ForgeDirection o = d.getOpposite();
 		
 		int xo = x + o.offsetX;
@@ -47,14 +42,13 @@ public class ItemHandPiston extends Item
 		
 		//int id == world.getBlock
 		
-		if(world.getBlock(xo, yo, zo) == Blocks.air)
-		{
+		if( world.getBlock( xo, yo, zo ) == Blocks.air ) {
 			
 			
 			return true;
 		}
 		
 		return false;
-    }
+	}
 	
 }

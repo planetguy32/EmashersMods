@@ -1,13 +1,10 @@
 package emasher.core.client;
 
-import net.minecraftforge.client.MinecraftForgeClient;
 import emasher.core.CommonProxy;
 
-public class ClientProxy extends CommonProxy 
-{
+public class ClientProxy extends CommonProxy {
 	@Override
-	public void registerRenderers() 
-	{
+	public void registerRenderers() {
 		//MinecraftForgeClient.preloadTexture(ARMOR1_PNG);
 		//MinecraftForgeClient.preloadTexture(ARMOR2_PNG);
 		

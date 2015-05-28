@@ -208,3 +208,4 @@ pip-log.txt
 /build
 /gradle
 /run
+/.gitconfig

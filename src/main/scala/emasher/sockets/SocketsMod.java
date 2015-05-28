@@ -48,7 +48,7 @@ import emasher.sockets.items.*;
 import emasher.sockets.modules.*;
 import emasher.sockets.pipes.*;
 
-@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.2.0.2", dependencies = "required-after:emashercore")
+@Mod(modid="eng_toolbox", name="Engineer's Toolbox", version="1.2.0.3", dependencies = "required-after:emashercore")
 public class SocketsMod
 {
 	@Instance("Sockets")
@@ -231,13 +231,6 @@ public class SocketsMod
 
         network = NetworkRegistry.INSTANCE.newSimpleChannel("engineers_toolbox");
         proxy.registerMessages();
-        /*network.registerMessage(SocketStateMessage.Handler.class, SocketStateMessage.class, 0, Side.CLIENT);
-        network.registerMessage(SocketItemMessage.Handler.class, SocketItemMessage.class, 1, Side.CLIENT);
-        network.registerMessage(SocketFluidMessage.Handler.class, SocketFluidMessage.class, 2, Side.CLIENT);
-        network.registerMessage(PipeColourMessage.Handler.class, PipeColourMessage.class, 3, Side.CLIENT);
-        network.registerMessage(AdapterSideMessage.Handler.class, AdapterSideMessage.class, 4, Side.CLIENT);
-        network.registerMessage(ChangerSideMessage.Handler.class, ChangerSideMessage.class, 5, Side.CLIENT);
-        network.registerMessage(RequestInfoFromServerMessage.Handler.class, RequestInfoFromServerMessage.class, 6, Side.SERVER);*/
     }
 	
 	@EventHandler
@@ -540,20 +533,20 @@ public class SocketsMod
                         "sss", " l ", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('l'), Blocks.lever)
         );
 
-        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(mjAdapter, 1),
-                        "sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
-                        Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), Items.redstone)
-        );
+//        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(mjAdapter, 1),
+//                        "sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
+//                        Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), Items.redstone)
+//        );
+//
+//        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(euAdapter, 1),
+//                        "sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
+//                        Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), "ingotCopper")
+//        );
 
-        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(euAdapter, 1),
-                        "sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
-                        Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), "ingotCopper")
-        );
-
-        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(euAdapter, 1),
-                        "sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
-                        Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), Items.gold_nugget)
-        );
+//        CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(new ItemStack(euAdapter, 1),
+//                        "sss", "wpr", "sss", Character.valueOf('s'), Blocks.stone_slab, Character.valueOf('w'), rsIngot,
+//                        Character.valueOf('p'), EmasherCore.psu, Character.valueOf('r'), Items.gold_nugget)
+//        );
 
         GameRegistry.addRecipe(new ItemStack(handboiler, 1), new Object[]
                 {

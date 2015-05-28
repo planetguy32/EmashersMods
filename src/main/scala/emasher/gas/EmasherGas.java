@@ -172,15 +172,12 @@ public class EmasherGas
         proxy.registerRenderers();
 
         registerInRegistry();
-
-        registerRecipes();
     }
 	
 	@EventHandler
 	public void load(FMLInitializationEvent event) 
 	{
         registerRecipes();
-
 	}
 	
 	private void registerTileEntities()
@@ -346,8 +343,7 @@ public class EmasherGas
 					);
 		}
 	}
-	
-	
+
 	private void registerEvents()
 	{
 		MinecraftForge.EVENT_BUS.register(new WorldGenerationUpdater());

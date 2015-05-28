@@ -29,7 +29,7 @@ public class BlockNaturalGas extends BlockGasGeneric
 	@SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister ir)
     {
-		this.blockIcon = ir.registerIcon("gascraft:naturalgas");
+		this.blockIcon = ir.registerIcon("gascraft:naturalGas");
     }
 	
     @Override

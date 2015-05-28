@@ -1,0 +1,16 @@
+itemGroup.tabDefense=Emasher's Defense
+
+tile.deflector.name=Déflecteur
+tile.deflectorGenerator.name=Générateur de déflecteur
+tile.emeryTile.name=Tuile d'émeri
+tile.sandbag.name=Sacs de sable
+
+tile.chainFence.chainFence.name=Clôture en mailles de chaîne
+tile.chainFence.chainPost.name=Clôture en mailles de chaîne avec poteau en fer
+tile.chainFence.barbWireFence.name=Clôture en fils barbelés
+tile.chainFence.barbPostWood.name=Clôture en fils barbelés avec poteau en bois
+tile.chainFence.barbPost.name=Clôture en fils barbelés avec poteau en fer
+tile.chainFence.razorWireFence.name=Clôture en barbelés tranchants
+
+item.chainSheet.name=Feuille de chaînes
+item.fenceWire.name=Fil barbelé de clôture

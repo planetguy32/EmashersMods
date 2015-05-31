@@ -4,6 +4,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import emasher.api.RSPulseModule;
 import emasher.api.SideConfig;
 import emasher.api.SocketTileAccess;
+import emasher.core.EmasherCore;
 import emasher.sockets.SocketsMod;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -38,7 +39,9 @@ public class ModPressurePlate extends RSPulseModule {
 	
 	@Override
 	public void addRecipe() {
-		GameRegistry.addShapedRecipe( new ItemStack( SocketsMod.module, 1, moduleID ), "i", "b", Character.valueOf( 'i' ), Blocks.stone_pressure_plate, Character.valueOf( 'b' ), SocketsMod.blankSide );
+		GameRegistry.addShapedRecipe( new ItemStack( SocketsMod.module, 1, moduleID ), "eie", " b ",
+				Character.valueOf( 'i' ), Blocks.stone_pressure_plate, Character.valueOf( 'b' ), SocketsMod.blankSide,
+				'e', new ItemStack( EmasherCore.gem, 1, 0 ));
 	}
 	
 	@Override

@@ -160,7 +160,7 @@ public class ModEnergyExpansion extends SocketModule {
 			}
 			
 			if( allOff ) {
-				return ts.addEnergy( amount, simulate );
+				return ts.useEnergy( amount, simulate );
 				
 			}
 		}

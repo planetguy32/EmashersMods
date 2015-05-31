@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod( modid = "eng_toolbox", name = "Engineer's Toolbox", version = "1.2.0.4", dependencies = "required-after:emashercore" )
+@Mod( modid = "eng_toolbox", name = "Engineer's Toolbox", version = "1.2.0.5", dependencies = "required-after:emashercore" )
 public class SocketsMod {
 	@Instance( "Sockets" )
 	public static SocketsMod instance;
@@ -346,15 +346,15 @@ public class SocketsMod {
 		CraftingManager.getInstance().getRecipeList().add( new ShapedOreRecipe( new ItemStack( frame, 4 ),
 				"s s",
 				" s ",
-				"s  ",
-				's', "ingotSteel" ) );
+				"s e",
+				's', "ingotSteel", 'e', new ItemStack( EmasherCore.gem, 1, 0 ) ) );
 
 
 		CraftingManager.getInstance().getRecipeList().add( new ShapedOreRecipe( new ItemStack( frame, 4 ),
 				"s s",
 				" s ",
-				"s  ",
-				's', "ingotBronze" ) );
+				"s e",
+				's', "ingotBronze", 'e', new ItemStack( EmasherCore.gem, 1, 0 ) ) );
 
 
 		paintedPlanks = ( new BlockPaintedWood( 0, Material.wood ) )

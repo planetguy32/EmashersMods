@@ -1,6 +1,7 @@
 package emasher.sockets.modules
 
 import emasher.api.{SideConfig, SocketModule, SocketTileAccess, Util}
+import emasher.core.EmasherCore
 import emasher.sockets.SocketsMod
 import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
@@ -14,7 +15,8 @@ class ModHinge( id: Int ) extends SocketModule( id, "sockets:hinge" ) {
 
   override def addRecipe( ): Unit = {
     CraftingManager.getInstance( ).getRecipeList.asInstanceOf[ java.util.List[ Object ] ]
-      .add( new ShapedOreRecipe( new ItemStack( SocketsMod.module, 1, moduleID ), "p", "m",
+      .add( new ShapedOreRecipe( new ItemStack( SocketsMod.module, 1, moduleID ), "epe", " m ",
+      Character.valueOf( 'e' ), new ItemStack( EmasherCore.gem, 1, 0 ),
       Character.valueOf( 'p' ), Blocks.piston,
       Character.valueOf( 'm' ), new ItemStack( SocketsMod.blankSide ) ) )
   }

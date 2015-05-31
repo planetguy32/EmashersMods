@@ -1,7 +1,7 @@
 package emasher.sockets.modules
 
 import emasher.api.{SideConfig, SocketModule, SocketTileAccess, Util}
-import emasher.core.Tuple
+import emasher.core.{EmasherCore, Tuple}
 import emasher.sockets.SocketsMod
 import emasher.sockets.modules.Orientation.Orientation
 import net.minecraft.init.Items
@@ -21,9 +21,10 @@ class ModLazySusan( id: Int ) extends SocketModule( id, "sockets:lazySusan" ) {
 
   override def addRecipe( ): Unit = {
     CraftingManager.getInstance( ).getRecipeList.asInstanceOf[ java.util.List[ Object ] ]
-      .add( new ShapedOreRecipe( new ItemStack( SocketsMod.module, 4, moduleID ), " m ", "mpm", " m ",
+      .add( new ShapedOreRecipe( new ItemStack( SocketsMod.module, 4, moduleID ), "eme", "mpm", "eme",
       Character.valueOf( 'p' ), Items.iron_ingot,
-      Character.valueOf( 'm' ), new ItemStack( SocketsMod.module, 1, 40 ) ) )
+      Character.valueOf( 'm' ), new ItemStack( SocketsMod.module, 1, 40 ),
+      Character.valueOf( 'e' ), new ItemStack( EmasherCore.gem, 1, 0 ) ) )
   }
 
   override def getToolTip( l: java.util.List[ Object ] ): Unit = {

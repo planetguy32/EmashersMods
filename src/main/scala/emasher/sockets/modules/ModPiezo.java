@@ -41,8 +41,8 @@ public class ModPiezo extends SocketModule {
 	
 	@Override
 	public void addRecipe() {
-		GameRegistry.addShapedRecipe( new ItemStack( SocketsMod.module, 1, moduleID ), "pip", " b ", Character.valueOf( 'i' ), Blocks.stone_pressure_plate, Character.valueOf( 'p' ), EmasherCore.psu,
-				Character.valueOf( 'b' ), SocketsMod.blankSide );
+		GameRegistry.addShapedRecipe( new ItemStack( SocketsMod.module, 1, moduleID ), "eie", "pbp", Character.valueOf( 'i' ), Blocks.stone_pressure_plate, Character.valueOf( 'p' ), EmasherCore.psu,
+				Character.valueOf( 'b' ), SocketsMod.blankSide, 'e', new ItemStack( EmasherCore.gem, 1, 0 ) );
 	}
 	
 	@Override

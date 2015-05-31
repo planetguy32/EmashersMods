@@ -205,7 +205,7 @@ public class ModMultiOutput extends SocketModule {
 		}
 
 		if( allOff ) {
-			return ts.addEnergy( amount, simulate );
+			return ts.useEnergy( amount, simulate );
 
 		}
 		

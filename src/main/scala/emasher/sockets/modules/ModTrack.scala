@@ -1,6 +1,7 @@
 package emasher.sockets.modules
 
 import emasher.api.{SideConfig, SocketModule, SocketTileAccess}
+import emasher.core.EmasherCore
 import emasher.sockets.pipes.TileDirectionChanger
 import emasher.sockets.{Coords, SocketsMod, UtilScala}
 import net.minecraft.init.{Blocks, Items}
@@ -16,7 +17,7 @@ class ModTrack( id: Int ) extends SocketModule( id, "sockets:trackUp", "sockets:
   override def addRecipe( ): Unit = {
     CraftingManager.getInstance( ).getRecipeList.asInstanceOf[ java.util.List[ Object ] ]
       .add( new ShapedOreRecipe( new ItemStack( SocketsMod.module, 2, moduleID ), "pmp", "iii",
-      Character.valueOf( 'i' ), Items.iron_ingot,
+      Character.valueOf( 'i' ), new ItemStack( EmasherCore.gem, 1, 0 ),
       Character.valueOf( 'p' ), Blocks.piston,
       Character.valueOf( 'm' ), new ItemStack( SocketsMod.blankSide ) ) )
   }

@@ -19,7 +19,7 @@ public abstract class TileAdapterBase extends TileEntity {
 		super.validate();
 		if( this.worldObj.isRemote ) {
 			for( int i = 0; i < 6; i++ ) {
-				SocketsMod.network.sendToServer( new RequestInfoFromServerMessage( this, ( byte ) i, ( byte ) 3 ) );
+				SocketsMod.network.sendToServer( new RequestInfoFromServerMessage( this, ( byte ) i, ( byte ) 4 ) );
 			}
 		}
 	}

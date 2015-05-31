@@ -24,7 +24,7 @@ object UtilScala {
         case ts: SocketTileAccess =>
           val magnetDirs = getMagnetDirs( ts )
 
-          if( magnetDirs.length == 0 ) {
+          if( magnetDirs.isEmpty ) {
             val nx = root.x + dir.offsetX
             val ny = root.y + dir.offsetY
             val nz = root.z + dir.offsetZ
@@ -37,21 +37,19 @@ object UtilScala {
             moveSet += root
             addToQueueForBlock( checkQueue, moveSet, root, world )
 
-            while( checkQueue.length > 0 ) {
+            while( checkQueue.nonEmpty ) {
               val curr = checkQueue.dequeue( )
               if( shouldBlockBeMovable( world, curr.x, curr.y, curr.z ) ) {
                 moveSet += curr
-                //val bId = world.getBlockId(curr.x, curr.y, curr.z)
-                //val theBlock = Block.blocksList(bId)
                 val theBlock = world.getBlock( curr.x, curr.y, curr.z )
                 if( theBlock != null ) {
                   if( !theBlock.isOpaqueCube ) {
                     val t = world.getTileEntity( curr.x, curr.y, curr.z )
                     val data = new NBTTagCompound( )
                     if( t != null ) t.writeToNBT( data )
-                    val theBlockId = Block.getIdFromBlock( world.getBlock( curr.x, curr.y, curr.z ) )
+                    val theBlock = world.getBlock( curr.x, curr.y, curr.z )
                     val theBlockMeta = world.getBlockMetadata( curr.x, curr.y, curr.z )
-                    nonNormalSet += NonNormalBlock( curr, theBlockId, theBlockMeta, data )
+                    nonNormalSet += NonNormalBlock( curr, theBlock, theBlockMeta, data )
                     world.removeTileEntity( curr.x, curr.y, curr.z )
                     world.setBlock( curr.x, curr.y, curr.z, Blocks.air, 0, 3 )
                   }
@@ -65,7 +63,7 @@ object UtilScala {
               for( el <- moveSet ) {
                 if( !Util.isBlockReplaceable( world, el.x + dir.offsetX, el.y + dir.offsetY, el.z + dir.offsetZ ) ) {
                   var found = false
-                  moveSet.map { u =>
+                  moveSet.foreach{ u =>
                     if( u.x == el.x + dir.offsetX && u.y == el.y + dir.offsetY && u.z == el.z + dir.offsetZ ) {
                       found = true
                     }
@@ -83,12 +81,12 @@ object UtilScala {
               val ordering = getOrdering( dir )
               val sorted = moveSet.sorted( ordering )
 
-              sorted.map { u =>
+              sorted.foreach { u =>
                 Util.moveBlock( world, u.x, u.y, u.z, u.x + dir.offsetX, u.y + dir.offsetY, u.z + dir.offsetZ, false )
               }
 
               for( n <- nonNormalSet ) {
-                world.setBlock( n.t.x + dir.offsetX, n.t.y + dir.offsetY, n.t.z + dir.offsetZ, n.asInstanceOf[ Block ], n.meta, 3 )
+                world.setBlock( n.t.x + dir.offsetX, n.t.y + dir.offsetY, n.t.z + dir.offsetZ, n.block, n.meta, 3 )
                 val tileEntity = world.getTileEntity( n.t.x + dir.offsetX, n.t.y + dir.offsetY, n.t.z + dir.offsetZ )
                 if( tileEntity != null && n.data != null ) {
                   tileEntity.readFromNBT( n.data )
@@ -98,7 +96,7 @@ object UtilScala {
                 }
               }
 
-              sorted.map { u =>
+              sorted.foreach { u =>
                 val te = world.getTileEntity( u.x + dir.offsetX, u.y + dir.offsetY, u.z + dir.offsetZ )
                 if( te != null && te.isInstanceOf[ SocketTileAccess ] ) {
                   val ts = te.asInstanceOf[ SocketTileAccess ]
@@ -119,15 +117,15 @@ object UtilScala {
 
                 if( te != null && te.isInstanceOf[ TileDirectionChanger ] ) {
                   val td = te.asInstanceOf[ TileDirectionChanger ]
-                  for( i <- 0 to 5 ) {
-                    SocketsMod.network.sendToDimension( new ChangerSideMessage( td, i.asInstanceOf[ Byte ] ), world.provider.dimensionId )
+                  for (i <- 0 to 5) {
+                    SocketsMod.network.sendToDimension( new ChangerSideMessage(td, i.asInstanceOf[ Byte ] ), world.provider.dimensionId )
                   }
                 }
 
               }
             } else {
               for( n <- nonNormalSet ) {
-                world.setBlock( n.t.x, n.t.y, n.t.z, n.asInstanceOf[ Block ], n.meta, 3 )
+                world.setBlock( n.t.x, n.t.y, n.t.z, n.block, n.meta, 3 )
                 val tileEntity = world.getTileEntity( n.t.x, n.t.y, n.t.z )
                 if( tileEntity != null && n.data != null ) {
                   tileEntity.readFromNBT( n.data )
@@ -205,7 +203,6 @@ object UtilScala {
   def shouldBlockBeMovable( world: World, x: Int, y: Int, z: Int ): Boolean = {
     val b: Block = world.getBlock( x, y, z )
     if( SocketsMod.miniPortal != null && b == SocketsMod.miniPortal ) return false
-    //val b: Block = Block.blocksList(id)
     !( b != null && b.getBlockHardness( world, x, y, z ) < 0 )
   }
 
@@ -273,4 +270,4 @@ object UtilScala {
 
 case class Coords( x: Int, y: Int, z: Int )
 
-case class NonNormalBlock( t: Coords, id: Int, meta: Int, data: NBTTagCompound )
+case class NonNormalBlock( t: Coords, block: Block, meta: Int, data: NBTTagCompound )

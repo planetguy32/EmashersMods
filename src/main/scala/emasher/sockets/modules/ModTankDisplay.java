@@ -20,8 +20,6 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.List;
 
-//import emasher.sockets.PacketHandler;
-
 public class ModTankDisplay extends SocketModule {
 
 	public ModTankDisplay( int id ) {

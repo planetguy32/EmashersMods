@@ -114,8 +114,12 @@ public class Handlers {
 		TileEntity te = world.getTileEntity( x, y, z );
 		if( te != null && te instanceof TileSocket ) {
 			TileSocket ts = ( TileSocket ) te;
-			if( id != -1 ) {
-				ts.tanks[tank].setFluid( new FluidStack( FluidRegistry.getFluid( id ), amnt ) );
+			if( tank > -1 && tank < 3 ) {
+				if (id != -1) {
+					ts.tanks[tank].setFluid(new FluidStack(FluidRegistry.getFluid(id), amnt));
+				} else {
+					ts.tanks[tank].setFluid( null );
+				}
 			}
 
 			world.markBlockForUpdate( x, y, z );
@@ -153,7 +157,6 @@ public class Handlers {
 		boolean output = false;
 		if( message.msg[17] != 0 ) output = true;
 		int side = ( int ) message.msg[18];
-
 		TileEntity te = world.getTileEntity( x, y, z );
 		if( te != null && te instanceof TileAdapterBase ) {
 			TileAdapterBase t = ( TileAdapterBase ) te;

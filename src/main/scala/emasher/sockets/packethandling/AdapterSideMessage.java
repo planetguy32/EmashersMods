@@ -35,6 +35,7 @@ public class AdapterSideMessage implements IMessage {
 		NetworkUtilities.toByte( out, p.xCoord, 1 );
 		NetworkUtilities.toByte( out, p.yCoord, 5 );
 		NetworkUtilities.toByte( out, p.zCoord, 9 );
+
 		NetworkUtilities.toByte( out, p.getWorldObj().provider.dimensionId, 13 );
 		if( p.outputs[side] ) out[17] = 1;
 		else out[17] = 0;

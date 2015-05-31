@@ -189,10 +189,8 @@ public class Util {
 	public static boolean moveBlock( World world, int x, int y, int z, int nx, int ny, int nz, boolean updateSocket ) {
 		if( ny >= 255 || ny <= 0 ) return false;
 		if( !isBlockReplaceable( world, nx, ny, nz ) ) return false;
-		//int id = world.getBlockId(x, y, z);
 		Block b = world.getBlock( x, y, z );
 		if( b == SocketsMod.miniPortal ) return false;
-		//Block b = Block.blocksList[id];
 		if( b != null && b.getBlockHardness( world, x, y, z ) < 0 ) return false;
 		int meta = world.getBlockMetadata( x, y, z );
 

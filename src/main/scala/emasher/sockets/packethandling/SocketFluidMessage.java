@@ -43,6 +43,10 @@ public class SocketFluidMessage implements IMessage {
 			id = l.getFluidID();
 			meta = 0;
 			amnt = l.amount;
+		} else {
+			id = -1;
+			meta = 0;
+			amnt = 0;
 		}
 
 		NetworkUtilities.toByte( out, ts.xCoord, 1 );

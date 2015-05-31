@@ -83,7 +83,6 @@ public class BlockDeflectorGen extends BlockContainer {
 	
 	@Override
 	public void registerBlockIcons( IIconRegister par1IconRegister ) {
-		super.registerBlockIcons( par1IconRegister );
 		this.blockIcon = par1IconRegister.registerIcon( "emasherdefense:deflector_base" );
 		bottomTexture = this.blockIcon;
 		sideTexture = par1IconRegister.registerIcon( "emasherdefense:deflector_side" );

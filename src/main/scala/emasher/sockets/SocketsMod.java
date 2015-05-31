@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod( modid = "eng_toolbox", name = "Engineer's Toolbox", version = "1.2.0.3", dependencies = "required-after:emashercore" )
+@Mod( modid = "eng_toolbox", name = "Engineer's Toolbox", version = "1.2.0.4", dependencies = "required-after:emashercore" )
 public class SocketsMod {
 	@Instance( "Sockets" )
 	public static SocketsMod instance;

@@ -15,10 +15,11 @@ import java.util.Random;
 public class BlockTempRS extends BlockContainer {
 
 	public BlockTempRS() {
-		super( Material.redstoneLight );
+		super( Material.iron );
 		this.setCreativeTab( null );
 		this.setBlockName( "tempRS" );
 		this.setLightLevel( 5.0F );
+		setBlockBounds( 0.4f, 0.4f, 0.4f, 0.6f, 0.6f, 0.6f );
 	}
 	
 	@Override
@@ -40,11 +41,6 @@ public class BlockTempRS extends BlockContainer {
 	public boolean isOpaqueCube() {
 		return false;
 	}
-	
-	@Override
-	public int getRenderBlockPass() {
-		return 0;
-	}
 
 	@Override
 	public int getRenderType() {
@@ -52,30 +48,25 @@ public class BlockTempRS extends BlockContainer {
 	}
 
 	@Override
-	public boolean canBeReplacedByLeaves( IBlockAccess world, int x, int y, int z ) {
-		return true;
-	}
-
-	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
 	}
-	
+
 	@Override
 	public int isProvidingStrongPower( IBlockAccess world, int x, int y, int z, int side ) {
 		return 15;
 	}
-	
+
 	@Override
 	public int isProvidingWeakPower( IBlockAccess world, int x, int y, int z, int side ) {
 		return 15;
 	}
-	
+
 	@Override
 	public boolean canProvidePower() {
 		return true;
 	}
-	
+
 	@Override
 	@SideOnly( Side.CLIENT )
 	public void randomDisplayTick( World par1World, int par2, int par3, int par4, Random par5Random ) {
@@ -83,9 +74,8 @@ public class BlockTempRS extends BlockContainer {
 		double d1 = ( double ) ( ( float ) par3 + 0.0625F );
 		double d2 = ( double ) par4 + 0.5D + ( ( double ) par5Random.nextFloat() - 0.5D ) * 0.2D;
 		float f = 1.0F;
-		float f1 = f * 0.6F + 0.4F;
 
-		f1 = 0.0F;
+		float f1 = 0.0F;
 
 		float f2 = f * f * 0.7F - 0.5F;
 		float f3 = f * f * 0.6F - 0.7F;

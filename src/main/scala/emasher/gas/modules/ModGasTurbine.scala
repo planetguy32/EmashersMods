@@ -151,8 +151,6 @@ class ModGasTurbine( id: Int ) extends SocketModule( id, "gascraft:gasTurbine", 
         config.rsControl( 0 ) = false
         ts.sendClientSideState( side.ordinal )
       }
-
-
     }
 
   }

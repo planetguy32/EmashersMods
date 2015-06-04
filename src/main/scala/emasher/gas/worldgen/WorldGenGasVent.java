@@ -31,8 +31,15 @@ public class WorldGenGasVent implements IWorldGenerator {
 						x = i * 16;
 						z = k * 16;
 
-						int y = EmasherGas.flatBedrockTop;
-						if( !EmasherGas.flatBedrock ) y = random.nextInt( 2 ) + 3;
+						int y;
+
+						if( world.provider.dimensionId == -1 ) {
+							y = EmasherGas.flatNetherBedrockTop;
+							if( !EmasherGas.flatNetherBedrock ) y = random.nextInt( 2 ) + 3;
+						} else {
+							y = EmasherGas.flatBedrockTop;
+							if( !EmasherGas.flatBedrock ) y = random.nextInt( 2 ) + 3;
+						}
 
 						x += random.nextInt( 16 );
 						z += random.nextInt( 16 );
@@ -40,8 +47,6 @@ public class WorldGenGasVent implements IWorldGenerator {
 						if( world.provider.dimensionId != -1 ) {
 							if( random.nextInt( 8 ) == 0 ) {
 								world.setBlock( x, y, z, EmasherGas.shaleResource, 0, 2 );
-								//System.out.println("Gen: " + x + ", " + y + ", " + z);
-
 							} else if( Loader.isModLoaded( "BuildCraft|Energy" ) && random.nextInt( 12 ) == 0 ) {
 								world.setBlock( x, y, z, EmasherGas.shaleResource, 1, 2 );
 							}

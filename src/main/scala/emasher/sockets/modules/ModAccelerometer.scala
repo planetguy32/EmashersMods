@@ -28,7 +28,7 @@ class ModAccelerometer( id: Int ) extends RSPulseModule( id, "sockets:accelerome
       Character.valueOf( 'm' ), new ItemStack( SocketsMod.blankSide ) ) )
   }
 
-  override def isOutputingRedstone( config: SideConfig, ts: SocketTileAccess ): Boolean = false
+  override def isOutputtingRedstone( config: SideConfig, ts: SocketTileAccess ): Boolean = false
 
   override def onSocketPlaced( config: SideConfig, ts: SocketTileAccess, side: ForgeDirection ): Unit = {
     config.meta = 1

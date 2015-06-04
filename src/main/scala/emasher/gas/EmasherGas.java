@@ -96,7 +96,9 @@ public class EmasherGas {
 	public static boolean smeltSand;
 	public static boolean spawnMineGas;
 	public static boolean flatBedrock;
+	public static boolean flatNetherBedrock;
 	public static int flatBedrockTop;
+	public static int flatNetherBedrockTop;
 	
 	public static int maxGasInVent;
 	public static int minGasInVent;
@@ -149,7 +151,9 @@ public class EmasherGas {
 		infiniteGasInVent = config.get( Configuration.CATEGORY_GENERAL, "Infinite Gas In Vents", false ).getBoolean( false );
 		spawnMineGas = config.get( Configuration.CATEGORY_GENERAL, "Spawn Gas Pockets in the world", false ).getBoolean( false );
 		flatBedrock = config.get( Configuration.CATEGORY_GENERAL, "Flat Bedrock Compatibility Mode", false ).getBoolean( false );
+		flatNetherBedrock = config.get( Configuration.CATEGORY_GENERAL, "Nether Flat Bedrock Compatibility Mode", false ).getBoolean( false );
 		flatBedrockTop = config.get( Configuration.CATEGORY_GENERAL, "Flat Bedrock Top Layer", 0 ).getInt();
+		flatNetherBedrockTop = config.get( Configuration.CATEGORY_GENERAL, "Flat Nether Bedrock Top Layer", 0 ).getInt();
 		gasBlocksInWorld = config.get( Configuration.CATEGORY_GENERAL, "Allow gas blocks", true ).getBoolean( true );
 		gasBlocksCanExplode = config.get( Configuration.CATEGORY_GENERAL, "Allow gas blocks to explode", true ).getBoolean( true );
 

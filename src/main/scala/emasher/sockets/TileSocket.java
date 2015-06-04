@@ -85,16 +85,6 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 	
 	public void updateEntity() {
 		super.updateEntity();
-//		if(worldObj.isRemote)
-//		{
-//			updateCoolDown++;
-//
-//			if(updateCoolDown == 600)
-//			{
-//				this.validate();
-//				updateCoolDown = 0;
-//			}
-//		}
 		
 		
 		if( !worldObj.isRemote ) {
@@ -105,45 +95,13 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 				d = ForgeDirection.getOrientation( i );
 				m = getSide( d );
 				c = configs[i];
-				
-				/*if(m.pullsFromHopper())
-				{
-					int xo = xCoord + d.offsetX;
-					int yo = yCoord + d.offsetY;
-					int zo = zCoord + d.offsetZ;
-					
-					TileEntity t = worldObj.getBlockTileEntity(xo, yo, zo);
-					
-					if(t != null && t instanceof TileEntityHopper)
-					{	
-						TileEntityHopper th = (TileEntityHopper)t;
-						
-						for (int j = 0; j < th.getSizeInventory(); ++j)
-			            {
-			                if (th.getStackInSlot(j) != null)
-			                {
-			                    ItemStack itemstack = th.getStackInSlot(j).copy();
-			                    itemstack.stackSize = 1;
-			                    int added =  addItem(itemstack, true, d);
-			                    
-			                    itemstack.stackSize = th.getStackInSlot(j).stackSize - added;
-			                    if(itemstack.stackSize <= 0) itemstack = null;
-			                    
-			                    th.setInventorySlotContents(j, itemstack);
-			                    break;
-			                }
-			            }
-			        }
-				}*/
+
 				m.updateSide( c, this, d );
 			}
 		}
 		
 		if( !initialized && worldObj != null ) {
 			if( !worldObj.isRemote ) {
-				/*EnergyTileLoadEvent loadEvent = new EnergyTileLoadEvent(this);
-				MinecraftForge.EVENT_BUS.post(loadEvent);
-				this.addedToEnergyNet = true;*/
 				
 				sideID = new int[6];
 				sideMeta = new int[6];
@@ -161,21 +119,6 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		}
 	}
 	
-	/*@Override
-	public void invalidate()
-	{
-		super.invalidate();
-		MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
-		addedToEnergyNet = false;
-	}*/
-
-	@Override
-	public void onChunkUnload() {
-		super.onChunkUnload();
-		/*MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
-		addedToEnergyNet = false;*/
-	}
-	
 	public void updateAllAdj() {
 		ForgeDirection d;
 		for( int i = 0; i < 6; i++ ) {
@@ -185,12 +128,10 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 	}
 	
 	public void updateAdj( ForgeDirection d ) {
-		//int id = worldObj.getBlockId(xCoord, yCoord, zCoord);
 		Block nblock = worldObj.getBlock( xCoord, yCoord, zCoord );
 		int xo = xCoord + d.offsetX;
 		int yo = yCoord + d.offsetY;
 		int zo = zCoord + d.offsetZ;
-		//Block b = Block.blocksList[worldObj.getBlockId(xo, yo, zo)];
 		Block b = worldObj.getBlock( xo, yo, zo );
 		if( b != null ) {
 			b.onNeighborBlockChange( worldObj, xo, yo, zo, nblock );
@@ -257,7 +198,14 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 
 		for( int i = 0; i < 6; i++ ) {
 			if( data.hasKey( "side" + i ) ) {
-				sides[i] = data.getInteger( "side" + i );
+				int loadedSide = data.getInteger( "side" + i );
+
+				//Don't load item and fluid detectors
+				if( loadedSide != 11 && loadedSide != 12) {
+					sides[i] = loadedSide;
+				} else {
+					sides[i] = 0;
+				}
 			}
 			if( data.hasKey( "config" + i ) ) {
 				configs[i] = new SideConfig();

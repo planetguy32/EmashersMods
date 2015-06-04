@@ -17,7 +17,7 @@ public abstract class RSPulseModule extends RSGateModule {
 
 	@SideOnly( Side.CLIENT )
 	public String getInternalTexture( SocketTileAccess ts, SideConfig config, ForgeDirection side ) {
-		if( config.meta == 0 ) return "sockets:inner_redstone_inactive";
+		if( ( config.meta & 1 ) == 0 ) return "sockets:inner_redstone_inactive";
 		return "sockets:inner_redstone_active";
 	}
 
@@ -30,7 +30,7 @@ public abstract class RSPulseModule extends RSGateModule {
 	}
 	
 	@Override
-	public boolean isOutputingRedstone( SideConfig config, SocketTileAccess ts ) {
+	public boolean isOutputtingRedstone( SideConfig config, SocketTileAccess ts ) {
 		return config.meta >= 1;
 	}
 	

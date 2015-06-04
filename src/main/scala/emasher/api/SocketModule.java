@@ -471,7 +471,7 @@ public abstract class SocketModule {
 	/**
 	 * Returns true iff this module is currently outputing a restone signal to the world.
 	 */
-	public boolean isOutputingRedstone( SideConfig config, SocketTileAccess ts ) {
+	public boolean isOutputtingRedstone( SideConfig config, SocketTileAccess ts ) {
 		return false;
 	}
 	

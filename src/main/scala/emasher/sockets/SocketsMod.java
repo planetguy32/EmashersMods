@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod( modid = "eng_toolbox", name = "Engineer's Toolbox", version = "1.2.0.5", dependencies = "required-after:emashercore" )
+@Mod( modid = "eng_toolbox", name = "Engineer's Toolbox", version = "1.2.0.6", dependencies = "required-after:emashercore" )
 public class SocketsMod {
 	@Instance( "Sockets" )
 	public static SocketsMod instance;
@@ -229,8 +229,8 @@ public class SocketsMod {
 		ModuleRegistry.registerModule( new ModEnergyOutput( 8 ) );
 		ModuleRegistry.registerModule( new ModMultiInput( 9 ) );
 		ModuleRegistry.registerModule( new ModMultiOutput( 10 ) );
-		ModuleRegistry.registerModule( new ModItemDetector( 11 ) );
-		ModuleRegistry.registerModule( new ModFluidDetector( 12 ) );
+		//ModuleRegistry.registerModule( new ModItemDetector( 11 ) );
+		//ModuleRegistry.registerModule( new ModFluidDetector( 12 ) );
 		ModuleRegistry.registerModule( new ModItemDistributor( 13 ) );
 		ModuleRegistry.registerModule( new ModFluidDistributor( 14 ) );
 		ModuleRegistry.registerModule( new ModItemEjector( 15 ) );

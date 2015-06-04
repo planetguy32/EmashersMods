@@ -104,7 +104,7 @@ public class ModTimer extends SocketModule {
 	}
 	
 	@Override
-	public boolean isOutputingRedstone( SideConfig config, SocketTileAccess ts ) {
+	public boolean isOutputtingRedstone( SideConfig config, SocketTileAccess ts ) {
 		boolean result = ( config.meta & 7 ) >= 1;
 		return result;
 	}

@@ -97,7 +97,7 @@ public class ModBUD extends RSPulseModule {
 	}
 
 	@Override
-	public boolean isOutputingRedstone( SideConfig config, SocketTileAccess ts ) {
+	public boolean isOutputtingRedstone( SideConfig config, SocketTileAccess ts ) {
 		return false;
 	}
 

@@ -49,7 +49,7 @@ public class ModButton extends RSPulseModule {
 	}
 	
 	@Override
-	public boolean isOutputingRedstone( SideConfig config, SocketTileAccess ts ) {
+	public boolean isOutputtingRedstone( SideConfig config, SocketTileAccess ts ) {
 		return false;
 	}
 	
@@ -101,10 +101,7 @@ public class ModButton extends RSPulseModule {
 				}
 				
 				ts.sendClientSideState( side.ordinal() );
-				
 			}
-			
-			
 		}
 	}
 	

@@ -20,11 +20,6 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.List;
 
-//import ic2.api.item.ElectricItem;
-//import ic2.api.item.IElectricItem;
-//import ic2.api.item.IElectricItemManager;
-//import emasher.sockets.PacketHandler;
-
 public class ModCharger extends SocketModule {
 	public ModCharger( int id ) {
 		super( id, "sockets:charger", "sockets:discharger" );
@@ -108,22 +103,9 @@ public class ModCharger extends SocketModule {
 					int amnt = ts.addEnergy( ieci.extractEnergy( is, 100, true ), false );
 					ieci.extractEnergy( is, amnt, false );
 				}
+
+				updateMeta(ts, config, side);
 			}
-//			else if(is.getItem() instanceof IElectricItem)
-//			{
-//				IElectricItem iei = (IElectricItem)is.getItem();
-//				if(config.tank == -1)
-//				{
-//					int used = (int)ElectricItem.manager.charge(is, (ts.getEnergyStored() / 4), 3, false, false);
-//					ts.useEnergy(used * 4, false);
-//				}
-//				else
-//				{
-//					int used = (int)ElectricItem.manager.discharge(is, ((ts.getMaxEnergyStored() - ts.getEnergyStored()) / 4), 3, false, false, false);
-//					ts.addEnergy(used * 4, false);
-//				}
-//				updateMeta(ts, config, side);
-//			}
 		}
 	}
 	
@@ -172,8 +154,6 @@ public class ModCharger extends SocketModule {
 				
 				dropItemsOnSide( ts, config, side, xo, yo, zo, dropStack );
 				ts.extractItemInternal( true, config.inventory, dropped );
-				//stack.stackSize -= dropped;
-				//if(stack.stackSize <= 0) ts.inventory.setInventorySlotContents(config.inventory, null);
 			}
 			ts.sendClientInventorySlot( config.inventory );
 		}
@@ -194,19 +174,6 @@ public class ModCharger extends SocketModule {
 	public void updateMeta( SocketTileAccess ts, SideConfig config, ForgeDirection side ) {
 		if( config.inventory != -1 && ts.getStackInInventorySlot( config.inventory ) != null ) {
 			ItemStack is = ts.getStackInInventorySlot( config.inventory );
-//			if(is.getItem() instanceof IElectricItem)
-//			{
-//				IElectricItem iei = (IElectricItem)is.getItem();
-//				int maxCharge = (int)iei.getMaxCharge(is);
-//				int currCharge = (int)ElectricItem.manager.getCharge(is);
-//
-//				int oldMeta = config.meta;
-//				int newMeta = (int)(((float)currCharge/(float)maxCharge) * 12);
-//				config.meta = newMeta;
-//				if(oldMeta != newMeta) ts.sendClientSideState(side.ordinal());
-//				return;
-//			}
-//			else
 			if( is.getItem() instanceof IEnergyContainerItem ) {
 				IEnergyContainerItem ieci = ( IEnergyContainerItem ) is.getItem();
 				int maxCharge = ieci.getMaxEnergyStored( is );

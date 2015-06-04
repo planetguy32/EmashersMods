@@ -107,7 +107,7 @@ public class ModStateCell extends SocketModule {
 	}
 	
 	@Override
-	public boolean isOutputingRedstone( SideConfig config, SocketTileAccess ts ) {
+	public boolean isOutputtingRedstone( SideConfig config, SocketTileAccess ts ) {
 		return config.tank == 1;
 	}
 	

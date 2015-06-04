@@ -17,6 +17,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -240,25 +241,22 @@ public class BlockSocket extends BlockContainer {
 //			}
 			else {
 				SocketModule m = ts.getSide( ForgeDirection.getOrientation( side ) );
-				boolean wasDye = false;
 
 				if( m.canModuleBeDyed() ) {
 
 					if( player.getCurrentEquippedItem() != null ) {
-						int oreId = OreDictionary.getOreID( player.getCurrentEquippedItem() );
-						for( int i = 0; i < dyes.length; i++ ) {
-							if( oreId == OreDictionary.getOreID( dyes[i] ) ) {
-								wasDye = true;
+
+						for( int i = 0; i < 16; ++i ) {
+							if( OreDictionary.itemMatches( player.getCurrentEquippedItem(), new ItemStack( Items.dye, 1, i ), true ) ) {
 								m.changeColour( i, ts.configs[side], ts, ForgeDirection.getOrientation( side ) );
 								player.getCurrentEquippedItem().stackSize--;
-								break;
+								return true;
 							}
 						}
 					}
 				}
-				
-				if( !wasDye )
-					m.onSideActivated( ts, ts.configs[side], ForgeDirection.getOrientation( side ), player, subX, subY, subZ );
+
+				m.onSideActivated( ts, ts.configs[side], ForgeDirection.getOrientation( side ), player, subX, subY, subZ );
 			}
 			
 		}
@@ -492,7 +490,7 @@ public class BlockSocket extends BlockContainer {
 			SocketModule m = ts.getSide( ForgeDirection.getOrientation( side ) );
 			SideConfig c = ts.configs[side];
 			
-			if( m.isOutputingRedstone( c, ts ) ) return 15;
+			if( m.isOutputtingRedstone( c, ts ) ) return 15;
 		}
 		
 		return 0;
@@ -508,7 +506,7 @@ public class BlockSocket extends BlockContainer {
 			SocketModule m = ts.getSide( ForgeDirection.getOrientation( side ) );
 			SideConfig c = ts.configs[side];
 			
-			if( m.isOutputingRedstone( c, ts ) ) return 15;
+			if( m.isOutputtingRedstone( c, ts ) ) return 15;
 		}
 		
 		return 0;

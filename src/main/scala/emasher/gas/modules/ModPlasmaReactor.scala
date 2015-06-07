@@ -43,7 +43,7 @@ class ModPlasmaReactor( id: Int ) extends SocketModule( id, "gascraft:plasmaReac
   override def canBeInstalled( ts: SocketTileAccess, side: ForgeDirection ):
   Boolean = {
     for( i <- 0 to 5 ) {
-      var m = ts.getSide( ForgeDirection.getOrientation( i ) )
+      val m = ts.getSide( ForgeDirection.getOrientation( i ) )
       if( m != null && m.isMachine ) {
         return false
       }

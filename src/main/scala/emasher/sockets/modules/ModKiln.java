@@ -84,7 +84,9 @@ public class ModKiln extends SocketModule {
 
 			this.setMeta( ts.getWorldObj(), ts, side, 2 );
 			ItemStack stack = ts.sideInventory.getStackInSlot( side.ordinal() );
-			stack.setItemDamage( 0 );
+			if( stack != null ) {
+				stack.setItemDamage( 0 );
+			}
 		}
 	}
 	

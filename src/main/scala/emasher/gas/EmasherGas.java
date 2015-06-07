@@ -310,7 +310,7 @@ public class EmasherGas {
 		toSend.setString( "fluidName", "gasCraft_naturalGas" );
 		toSend.setInteger( "energy", 30000 );
 		FMLInterModComms.sendMessage( "ThermalExpansion", "CompressionFuel", toSend );
-		//Natural Gas
+		//Hydrogen
 		toSend = new NBTTagCompound();
 		toSend.setString( "fluidName", "gasCraft_hydrogen" );
 		toSend.setInteger( "energy", 30000 );

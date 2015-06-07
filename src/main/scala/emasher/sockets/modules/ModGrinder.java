@@ -17,9 +17,6 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.List;
 
-//import emasher.sockets.PacketHandler;
-//import ic2.api.recipe.*;
-
 public class ModGrinder extends SocketModule {
 
 	public ModGrinder( int id ) {
@@ -91,7 +88,9 @@ public class ModGrinder extends SocketModule {
 					ItemStack product = null;
 					
 					GrinderRecipe r = GrinderRecipeRegistry.getRecipe( toIntake );
-					if( r != null ) product = r.getOutput();
+					if( r != null ) {
+						product = r.getOutput().get( 0 );
+					}
 
 //					if(product == null && Loader.isModLoaded("IC2"))
 //					{

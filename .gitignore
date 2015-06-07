@@ -209,3 +209,5 @@ pip-log.txt
 /gradle
 /run
 /.gitconfig
+/projectFilesBackup/.idea/libraries/Gradle__org_scala_lang_scala_library_2_11_1.xml
+/projectFilesBackup2/.idea/libraries/Gradle__org_scala_lang_scala_library_2_11_1.xml

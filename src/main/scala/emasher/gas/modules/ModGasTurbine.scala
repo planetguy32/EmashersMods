@@ -115,11 +115,10 @@ class ModGasTurbine( id: Int ) extends SocketModule( id, "gascraft:gasTurbine", 
           }
 
         }
-      }
-      else  {
-        var is = ts.sideInventory.getStackInSlot( side.ordinal )
+      } else {
+        val is = ts.sideInventory.getStackInSlot( side.ordinal )
         if( is == null ) {
-          var theFluid = ts.getFluidInTank( config.tank )
+          val theFluid = ts.getFluidInTank( config.tank )
           if( theFluid != null && theFluid.getFluid.isGaseous( ) ) {
             if( theFluid.amount >= 1000 && ts.getMaxEnergyStored( ) - ts.getEnergyStored( ) >= 10 ) {
               var newStack = new ItemStack( Blocks.cobblestone, 1, 80 )

@@ -4,9 +4,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GrinderRecipeRegistry {
-	private static ArrayList<GrinderRecipe> recipes = new ArrayList<GrinderRecipe>();
+	public static ArrayList<GrinderRecipe> recipes = new ArrayList<GrinderRecipe>();
 
 	public static void registerRecipe( GrinderRecipe recipe ) {
 		recipes.add( recipe );
@@ -30,12 +31,19 @@ public class GrinderRecipeRegistry {
 
 	public static GrinderRecipe getRecipe( Object input ) {
 		if( input instanceof ItemStack ) {
-			int oreID = OreDictionary.getOreID( ( ItemStack ) input );
+			int[] oreIDs = OreDictionary.getOreIDs( ( ItemStack ) input );
+			int oreID = -1;
+			if( oreIDs.length > 0 ) {
+				oreID = oreIDs[0];
+			}
 			for( GrinderRecipe r : recipes ) {
 				int otherID = -1;
 
 				if( r.getInput() instanceof ItemStack ) {
-					otherID = OreDictionary.getOreID( ( ItemStack ) r.getInput() );
+					int[] otherIDs = OreDictionary.getOreIDs( ( ItemStack ) r.getInput() );
+					if( otherIDs.length > 0 ) {
+						otherID = otherIDs[0];
+					}
 				} else if( r.getInput() instanceof String ) {
 					otherID = OreDictionary.getOreID( ( String ) r.getInput() );
 				}
@@ -101,16 +109,16 @@ public class GrinderRecipeRegistry {
 			return input;
 		}
 
-		public ItemStack getOutput() {
-			// convert to ItemStack on the first getOutput call
+		public List<ItemStack> getOutput() {
 			if( this.output instanceof String ) {
-				ArrayList<ItemStack> ores = OreDictionary.getOres( ( String ) this.output );
-				if( ores.size() > 0 )
-					this.output = ores.get( 0 );
-				else
-					return null;
+				return OreDictionary.getOres( ( String ) this.output );
+			} else {
+				ArrayList<ItemStack> result = new ArrayList<ItemStack>();
+				result.add( ( ItemStack )output );
+				return result;
 			}
-			return ( ItemStack ) output;
+
+
 		}
 
 	}

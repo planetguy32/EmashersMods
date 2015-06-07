@@ -84,12 +84,12 @@ class ModGasGenerator( id: Int ) extends SocketModule( id, "gascraft:gasGenerato
     }
 
     if( config.tank >= 0 && config.tank < 3 ) {
-      var initState = config.rsControl( 0 )
+      val initState = config.rsControl( 0 )
       var newState = initState
 
       if( initState || config.rsControl( 1 ) ) {
         //Check to see if there's still fuel
-        var is = ts.sideInventory.getStackInSlot( side.ordinal )
+        val is = ts.sideInventory.getStackInSlot( side.ordinal )
 
         if( config.rsControl( 2 ) && ( ts.getWorldObj.rand.nextInt( 200 ) == 0 || config.rsControl( 1 ) ) ) {
           if( !outputSmoke( ts ) ) {
@@ -107,10 +107,10 @@ class ModGasGenerator( id: Int ) extends SocketModule( id, "gascraft:gasGenerato
         if( is != null && newState ) {
           //Check if the internal capacitor can hold any more energy
 
-          if( ts.getMaxEnergyStored( ) - ts.getEnergyStored( ) >= config.inventory ) {
+          if( ts.getMaxEnergyStored - ts.getEnergyStored >= config.inventory ) {
             ts.addEnergy( config.inventory, false )
             is.setItemDamage( is.getItemDamage - 1 )
-            if( is.getItemDamage( ) <= 0 ) {
+            if( is.getItemDamage <= 0 ) {
               ts.sideInventory.setInventorySlotContents( side.ordinal, null )
               newState = false
             }
@@ -121,13 +121,13 @@ class ModGasGenerator( id: Int ) extends SocketModule( id, "gascraft:gasGenerato
         }
 
         if( is == null && !newState && !config.rsControl( 1 ) ) {
-          var theFluid = ts.getFluidInTank( config.tank )
+          val theFluid = ts.getFluidInTank( config.tank )
           var fluidRec = null.asInstanceOf[ FluidStack ]
           if( theFluid != null ) {
             fluidRec = GeneratorFuelRegistry.getFuel( theFluid.getFluid.getName )
             if( GeneratorFuelRegistry.isFuel( theFluid.getFluid.getName ) && theFluid.amount >= fluidRec.amount
-              && ts.getMaxEnergyStored( ) - ts.getEnergyStored( ) >= GeneratorFuelRegistry.getEnergyPerTick( theFluid.getFluid.getName ) ) {
-              var newStack = new ItemStack( Blocks.cobblestone, 1, GeneratorFuelRegistry.getBurnTime( theFluid.getFluid.getName ) )
+              && ts.getMaxEnergyStored - ts.getEnergyStored >= GeneratorFuelRegistry.getEnergyPerTick( theFluid.getFluid.getName ) ) {
+              val newStack = new ItemStack( Blocks.cobblestone, 1, GeneratorFuelRegistry.getBurnTime( theFluid.getFluid.getName ) )
               config.inventory = GeneratorFuelRegistry.getEnergyPerTick( theFluid.getFluid.getName )
               ts.sideInventory.setInventorySlotContents( side.ordinal, newStack )
               config.rsControl( 2 ) = GeneratorFuelRegistry.producesSmoke( theFluid.getFluid.getName )
@@ -139,15 +139,15 @@ class ModGasGenerator( id: Int ) extends SocketModule( id, "gascraft:gasGenerato
         }
       }
       else if( !config.rsControl( 1 ) )  {
-        var is = ts.sideInventory.getStackInSlot( side.ordinal )
+        val is = ts.sideInventory.getStackInSlot( side.ordinal )
         if( is == null ) {
-          var theFluid = ts.getFluidInTank( config.tank )
+          val theFluid = ts.getFluidInTank( config.tank )
           var fluidRec = null.asInstanceOf[ FluidStack ]
           if( theFluid != null ) {
             fluidRec = GeneratorFuelRegistry.getFuel( theFluid.getFluid.getName )
             if( GeneratorFuelRegistry.isFuel( theFluid.getFluid.getName ) && theFluid.amount >= fluidRec.amount
-              && ts.getMaxEnergyStored( ) - ts.getEnergyStored( ) >= GeneratorFuelRegistry.getEnergyPerTick( theFluid.getFluid.getName ) ) {
-              var newStack = new ItemStack( Blocks.cobblestone, 1, GeneratorFuelRegistry.getBurnTime( theFluid.getFluid.getName ) )
+              && ts.getMaxEnergyStored - ts.getEnergyStored >= GeneratorFuelRegistry.getEnergyPerTick( theFluid.getFluid.getName ) ) {
+              val newStack = new ItemStack( Blocks.cobblestone, 1, GeneratorFuelRegistry.getBurnTime( theFluid.getFluid.getName ) )
               config.inventory = GeneratorFuelRegistry.getEnergyPerTick( theFluid.getFluid.getName )
               ts.sideInventory.setInventorySlotContents( side.ordinal, newStack )
               config.rsControl( 2 ) = GeneratorFuelRegistry.producesSmoke( theFluid.getFluid.getName )
@@ -157,7 +157,7 @@ class ModGasGenerator( id: Int ) extends SocketModule( id, "gascraft:gasGenerato
           }
         }
         else {
-          if( ts.getMaxEnergyStored( ) - ts.getEnergyStored( ) >= config.inventory ) newState = true
+          if( ts.getMaxEnergyStored - ts.getEnergyStored >= config.inventory ) newState = true
         }
       }
 

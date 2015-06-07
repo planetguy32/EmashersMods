@@ -15,6 +15,7 @@ import emasher.core.EmasherCore;
 import emasher.core.item.ItemEmasherGeneric;
 import emasher.sockets.items.*;
 import emasher.sockets.modules.*;
+import emasher.sockets.nei.NEIHandler;
 import emasher.sockets.pipes.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -40,7 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod( modid = "eng_toolbox", name = "Engineer's Toolbox", version = "1.2.0.6", dependencies = "required-after:emashercore" )
+@Mod( modid = "eng_toolbox", name = "Engineer's Toolbox", version = "1.2.0.7", dependencies = "required-after:emashercore" )
 public class SocketsMod {
 	@Instance( "Sockets" )
 	public static SocketsMod instance;
@@ -49,7 +50,7 @@ public class SocketsMod {
 	public static CommonProxy proxy;
 	
 	//Blocks
-	public static Block socket;
+	public static BlockSocket socket;
 	public static Block tempRS;
 	public static Block paintedPlanks;
 	public static Block groundLimestone;
@@ -302,7 +303,7 @@ public class SocketsMod {
 			reg.registerModules();
 		}
 
-		socket = new BlockSocket().setResistance( 8.0F ).setHardness( 2.0F ).setStepSound( Block.soundTypeMetal ).setBlockName( "modular_socket" );
+		socket = ( BlockSocket ) new BlockSocket().setResistance( 8.0F ).setHardness( 2.0F ).setStepSound( Block.soundTypeMetal ).setBlockName( "modular_socket" );
 		GameRegistry.registerBlock( socket, ItemBlockSocket.class, "modular_socket" );
 
 		tempRS = new BlockTempRS().setBlockUnbreakable();
@@ -475,6 +476,12 @@ public class SocketsMod {
 
 		registerInRegistry();
 	}
+
+	@EventHandler
+	public void postInit( FMLInitializationEvent event ) {
+		NEIHandler handler = new NEIHandler();
+		handler.loadConfig();
+	}
 	
 	private void registerOreRecipes() {
 		//Grinder
@@ -506,7 +513,7 @@ public class SocketsMod {
 		GrinderRecipeRegistry.registerRecipe( new ItemStack( Blocks.cobblestone ), new ItemStack( Blocks.sand ) );
 		GrinderRecipeRegistry.registerRecipe( new ItemStack( Blocks.stone ), new ItemStack( Blocks.gravel ) );
 		GrinderRecipeRegistry.registerRecipe( new ItemStack( Items.blaze_rod ), new ItemStack( Items.blaze_powder, 5 ) );
-		GrinderRecipeRegistry.registerRecipe( new ItemStack( Items.bone ), new ItemStack( Items.dye, 5, 3 ) );
+		GrinderRecipeRegistry.registerRecipe( new ItemStack( Items.bone ), new ItemStack( Items.dye, 5, 15 ) );
 		GrinderRecipeRegistry.registerRecipe( new ItemStack( Blocks.obsidian ), "dustObsidian" );
 		GrinderRecipeRegistry.registerRecipe( new ItemStack( Blocks.netherrack ), "dustNetherrack" );
 		GrinderRecipeRegistry.registerRecipe( new ItemStack( Items.coal ), "dustCoal" );

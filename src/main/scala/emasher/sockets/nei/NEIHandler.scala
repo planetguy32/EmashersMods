@@ -7,6 +7,7 @@ class NEIHandler extends IConfigureNEI {
 
   override def loadConfig(): Unit = {
     NEIHandler.registerHandler( new GrinderRecipeHandler )
+    NEIHandler.registerHandler( new MultiSmelterRecipeHandler )
   }
 
   override def getName: String = "eng_toolbox"

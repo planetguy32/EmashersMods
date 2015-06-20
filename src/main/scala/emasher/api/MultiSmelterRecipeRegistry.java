@@ -4,9 +4,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MultiSmelterRecipeRegistry {
-	private static ArrayList<MultiSmelterRecipe> list = new ArrayList<MultiSmelterRecipe>();
+	public static ArrayList<MultiSmelterRecipe> list = new ArrayList<MultiSmelterRecipe>();
 	
 	public static void registerRecipe( String input1, String input2, ItemStack output ) {
 		list.add( new MultiSmelterRecipe( input1, input2, output ) );
@@ -182,16 +183,14 @@ public class MultiSmelterRecipeRegistry {
 			return input2;
 		}
 
-		public ItemStack getOutput() {
-			// convert to ItemStack on the first getOutput call
+		public List<ItemStack> getOutput() {
 			if( this.output instanceof String ) {
-				ArrayList<ItemStack> ores = OreDictionary.getOres( ( String ) this.output );
-				if( ores.size() > 0 )
-					this.output = ores.get( 0 );
-				else
-					return null;
+				return OreDictionary.getOres( ( String ) this.output );
+			} else {
+				ArrayList<ItemStack> result = new ArrayList<ItemStack>();
+				result.add( ( ItemStack )output );
+				return result;
 			}
-			return ( ItemStack ) output;
 		}
 	}
 }

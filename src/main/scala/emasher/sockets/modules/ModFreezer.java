@@ -66,7 +66,8 @@ public class ModFreezer extends SocketModule {
 	
 	@Override
 	public void addRecipe() {
-		GameRegistry.addShapedRecipe( new ItemStack( SocketsMod.module, 1, moduleID ), "wpw", " b ", Character.valueOf( 'w' ), Items.bucket, Character.valueOf( 'p' ), EmasherCore.psu, Character.valueOf( 'b' ), SocketsMod.blankSide );
+		GameRegistry.addShapedRecipe( new ItemStack( SocketsMod.module, 1, moduleID ), "wpw", " b ", 'w', Items.bucket,
+				'p', EmasherCore.psu, 'b', SocketsMod.blankSide );
 	}
 	
 	@Override

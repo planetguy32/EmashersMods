@@ -1,24 +1,15 @@
 package emasher.sockets.nei
 
-import java.awt.Rectangle
-
-import codechicken.lib.gui.GuiDraw
 import codechicken.nei.{NEIServerUtils, PositionedStack}
-import codechicken.nei.recipe.TemplateRecipeHandler
-import codechicken.nei.recipe.TemplateRecipeHandler.RecipeTransferRect
-import emasher.sockets.SocketsMod
-import net.minecraft.client.renderer.texture.TextureMap
-import net.minecraft.init.Blocks
 import net.minecraft.item.ItemStack
-import net.minecraft.util.{IIcon, StatCollector}
+import net.minecraft.util.StatCollector
 import emasher.api.GrinderRecipeRegistry._
 import emasher.api.GrinderRecipeRegistry
 import net.minecraftforge.oredict.OreDictionary
-import org.lwjgl.opengl.GL11
 import scala.collection.JavaConverters._
 import scala.collection.JavaConversions._
 
-class GrinderRecipeHandler extends TemplateRecipeHandler {
+class GrinderRecipeHandler extends BaseRecipeHandler {
 
   final val recipeId = "sockets.grinder"
 
@@ -60,10 +51,6 @@ class GrinderRecipeHandler extends TemplateRecipeHandler {
 
   override def getGuiTexture: String = "sockets:textures/gui/nei-grinder.png"
 
-  override def loadTransferRects(): Unit = {
-    transferRects.add( new RecipeTransferRect( new Rectangle( 68, 20, 22, 15 ), recipeId ) )
-  }
-
   override def loadCraftingRecipes( result: ItemStack ): Unit = {
     GrinderRecipeRegistry.recipes.toList.filter { recipe =>
       val rec = recipe.getOutput
@@ -100,9 +87,5 @@ class GrinderRecipeHandler extends TemplateRecipeHandler {
     } flatMap makeCached foreach arecipes.add
   }
 
-  override def drawBackground( recipe: Int ): Unit = {
-    GL11.glColor4f( 1.0F, 1.0F, 1.0F, 1.0F )
-    GuiDraw.changeTexture( getGuiTexture() )
-    GuiDraw.drawTexturedModalRect( 0, 0, 0, 0, 160, 65 )
-  }
+
 }

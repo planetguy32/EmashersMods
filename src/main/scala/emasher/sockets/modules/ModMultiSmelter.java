@@ -87,8 +87,8 @@ public class ModMultiSmelter extends SocketModule {
 					ItemStack input1 = ts.getStackInInventorySlot( config.tank );
 					ItemStack input2 = ts.getStackInInventorySlot( config.inventory );
 					MultiSmelterRecipe recipe = MultiSmelterRecipeRegistry.getRecipeFor( input1, input2 );
-					if( recipe != null ) {
-						ItemStack product = recipe.getOutput();
+					if( recipe != null && recipe.getOutput().size() > 0 ) {
+						ItemStack product = recipe.getOutput().get( 0 );
 						if( product != null ) {
 							ts.extractItemInternal( true, config.tank, 1 );
 							ts.extractItemInternal( true, config.inventory, 1 );

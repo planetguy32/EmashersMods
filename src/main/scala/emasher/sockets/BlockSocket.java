@@ -516,6 +516,11 @@ public class BlockSocket extends BlockContainer {
 	public boolean isBlockSolid( IBlockAccess world, int x, int y, int z, int side ) {
 		return true;
 	}
+
+	@Override
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		return true;
+	}
 	
 	@Override
 	public boolean shouldSideBeRendered( IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5 ) {

@@ -65,12 +65,33 @@ public class ModDFBlade extends SocketModule {
 	
 	@Override
 	public void updateSide( SideConfig config, SocketTileAccess ts, ForgeDirection side ) {
+
+		if( config.tank == 0 && ts.getEnergyStored() >= 10 ) {
+			for( int i = 0; i < 3; i++ ) {
+				if( config.rsControl[i] && ts.getRSControl( i ) ) {
+					config.tank = 1;
+					ts.sendClientSideState( side.ordinal() );
+					break;
+				}
+				if( config.rsLatch[i] && ts.getRSLatch( i ) ) {
+					config.tank = 1;
+					ts.sendClientSideState( side.ordinal() );
+					break;
+				}
+			}
+		}
+
 		if( config.tank == 1 ) {
 			config.meta++;
 			if( config.meta == 20 ) {
 				config.meta = 0;
 				
-				if( ts.getEnergyStored() < 10 ) config.tank = 0;
+				if( ts.getEnergyStored() < 10 ) {
+					config.tank = 0;
+					ts.sendClientSideState( side.ordinal() );
+					return;
+				}
+
 				ts.useEnergy( 10, false );
 				
 				double x = ts.xCoord + side.offsetX;

@@ -15,8 +15,6 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.List;
 
-//import emasher.sockets.PacketHandler;
-
 public class ModSpinningWheel extends SocketModule {
 
 	public ModSpinningWheel( int id ) {

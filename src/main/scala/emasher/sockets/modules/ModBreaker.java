@@ -87,12 +87,11 @@ public class ModBreaker extends SocketModule {
 		int zo = ts.zCoord + side.offsetZ;
 
 		Block b = ts.getWorldObj().getBlock( xo, yo, zo );
-		;
 		int blockID = Block.getIdFromBlock( b );
 
 		//if(blockID != 0) b = Block.blocksList[blockID];
 		
-		if( canBreak && b != null && b.getBlockHardness( ts.getWorldObj(), xo, yo, zo ) < 50F && b.getBlockHardness( ts.getWorldObj(), xo, yo, zo ) >= 0 ) //50F is obsidian's hardness
+		if( canBreak && b != null && b.getBlockHardness( ts.getWorldObj(), xo, yo, zo ) < 50.0f && b.getBlockHardness( ts.getWorldObj(), xo, yo, zo ) >= 0 ) //50F is obsidian's hardness
 		{
 			ArrayList<ItemStack> items = b.getDrops( ts.getWorldObj(), xo, yo, zo, ts.getWorldObj().getBlockMetadata( xo, yo, zo ), 0 );
 			for( ItemStack item : items ) {

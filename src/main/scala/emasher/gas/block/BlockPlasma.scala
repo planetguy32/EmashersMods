@@ -33,7 +33,6 @@ class BlockPlasma( ) extends BlockGasGeneric( 0, false ) {
 
     }
 
-    var i: Int = 0
     breakable {
       for( i <- 0 to 5 ) {
         val dir: ForgeDirection = ForgeDirection.getOrientation( i )
@@ -52,25 +51,24 @@ class BlockPlasma( ) extends BlockGasGeneric( 0, false ) {
 
   override def onEntityCollidedWithBlock( world: World, x: Int, y: Int, z: Int, ent: Entity ) {
     if( ( !world.isRemote ) && ent.isInstanceOf[ EntityLivingBase ] ) {
-      var xe = ent.posX
-      var ye = ent.posY
-      var ze = ent.posZ
-      var is: Array[ ItemStack ] = new Array[ ItemStack ]( 5 )
+      val xe = ent.posX
+      val ye = ent.posY
+      val ze = ent.posZ
 
       if( !ent.isInstanceOf[ EntityPlayer ] ) {
-        var f = 0.7F;
-        var d0 = ( world.rand.nextFloat( ) * f ).asInstanceOf[ Double ] + ( 1.0F - f ).asInstanceOf[ Double ] * 0.5D;
-        var d1 = ( world.rand.nextFloat( ) * f ).asInstanceOf[ Double ] + ( 1.0F - f ).asInstanceOf[ Double ] * 0.5D;
-        var d2 = ( world.rand.nextFloat( ) * f ).asInstanceOf[ Double ] + ( 1.0F - f ).asInstanceOf[ Double ] * 0.5D;
-        var entityitem = new EntityItem( world, xe.asInstanceOf[ Double ] + d0, ye.asInstanceOf[ Double ] + d1, ze.asInstanceOf[ Double ] + d2, new ItemStack( EmasherGas.ash ) );
-        entityitem.delayBeforeCanPickup = 1;
-        world.spawnEntityInWorld( entityitem );
+        val f = 0.7F
+        val d0 = ( world.rand.nextFloat( ) * f ).asInstanceOf[ Double ] + ( 1.0F - f ).asInstanceOf[ Double ] * 0.5D
+        val d1 = ( world.rand.nextFloat( ) * f ).asInstanceOf[ Double ] + ( 1.0F - f ).asInstanceOf[ Double ] * 0.5D
+        val d2 = ( world.rand.nextFloat( ) * f ).asInstanceOf[ Double ] + ( 1.0F - f ).asInstanceOf[ Double ] * 0.5D
+        val entityitem = new EntityItem( world, xe.asInstanceOf[ Double ] + d0, ye.asInstanceOf[ Double ] + d1, ze.asInstanceOf[ Double ] + d2, new ItemStack( EmasherGas.ash ) )
+        entityitem.delayBeforeCanPickup = 1
+        world.spawnEntityInWorld( entityitem )
 
         ent.setDead( )
       }
       else {
-        ent.setFire( 10 );
-        ent.asInstanceOf[ EntityLivingBase ].attackEntityFrom( DamageSource.inFire, 3 );
+        ent.setFire( 10 )
+        ent.asInstanceOf[ EntityLivingBase ].attackEntityFrom( DamageSource.inFire, 3 )
       }
 
 

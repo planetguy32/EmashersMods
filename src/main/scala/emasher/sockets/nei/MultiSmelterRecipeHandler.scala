@@ -13,7 +13,7 @@ class MultiSmelterRecipeHandler extends BaseRecipeHandler {
 
   override def getRecipeName: String = StatCollector.translateToLocal( "item.socket_module.92.name" ) + " Module"
 
-  override def getGuiTexture: String = "sockets:textures/gui/nei-grinder.png"
+  override def getGuiTexture: String = "sockets:textures/gui/nei-multi-smelter.png"
 
   case class CachedMultiSmelterRecipe( input: List[Object], output: List[ItemStack] ) extends CachedRecipe {
 
@@ -27,7 +27,7 @@ class MultiSmelterRecipeHandler extends BaseRecipeHandler {
           val ores = OreDictionary.getOres( s )
           new PositionedStack( ores, 44, 26, true )
         case i: ItemStack =>
-          new PositionedStack( i, 44, 26, false )
+          new PositionedStack( i, 44, 26, true )
       }
 
       val input2 = input.last match {
@@ -35,12 +35,11 @@ class MultiSmelterRecipeHandler extends BaseRecipeHandler {
           val ores = OreDictionary.getOres( s )
           new PositionedStack( ores, 44, 10, true )
         case i: ItemStack =>
-          new PositionedStack( i, 44, 10, false )
+          new PositionedStack( i, 44, 10, true )
       }
 
-      List( List( input1 ), List( input2 ) ) flatMap { ingredients =>
-        getCycledIngredients( cycleticks / 20, ingredients )
-      }
+      val inputs = List( input1, input2 )
+      getCycledIngredients( cycleticks / 20, inputs )
     }
   }
 
@@ -70,14 +69,18 @@ class MultiSmelterRecipeHandler extends BaseRecipeHandler {
     MultiSmelterRecipeRegistry.list.toList.filter { recipe =>
       val rec = recipe.getOutput
       ! rec.isEmpty && NEIServerUtils.areStacksSameTypeCrafting( recipe.getOutput()( 0 ), result )
-    } flatMap makeCached foreach arecipes.add
+    }.flatMap( makeCached ).view.zipWithIndex.foreach {
+      case ( r, i ) if i % 2 == 0 =>
+        arecipes.add( r )
+      case _ =>
+    }
   }
 
   override def loadCraftingRecipes( id: String, result: Object* ): Unit = {
     if( id == recipeId && this.getClass == classOf[MultiSmelterRecipeHandler] ) {
       MultiSmelterRecipeRegistry.list.toList.flatMap( makeCached ).filter { cached =>
         cached.getIngredients.nonEmpty
-      }.zipWithIndex.foreach {
+      }.view.zipWithIndex.foreach {
         case( r, i ) if i % 2 == 0 =>
           arecipes.add( r )
         case _ =>

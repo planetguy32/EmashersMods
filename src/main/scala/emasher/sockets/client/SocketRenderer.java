@@ -341,15 +341,17 @@ public class SocketRenderer extends TileEntitySpecialRenderer {
 					} else {
 
 						IIcon itemIcon = theItem.getIcon( theStack, 0 );
-						
-						tessellator.startDrawingQuads();
-						
-						tessellator.addVertexWithUV( 0, 1, 0, itemIcon.getMinU(), itemIcon.getMaxV() );
-						tessellator.addVertexWithUV( 1, 1, 0, itemIcon.getMaxU(), itemIcon.getMaxV() );
-						tessellator.addVertexWithUV( 1, 0, 0, itemIcon.getMaxU(), itemIcon.getMinV() );
-						tessellator.addVertexWithUV( 0, 0, 0, itemIcon.getMinU(), itemIcon.getMinV() );
-						
-						tessellator.draw();
+
+						if( itemIcon != null ) {
+							tessellator.startDrawingQuads();
+
+							tessellator.addVertexWithUV( 0, 1, 0, itemIcon.getMinU(), itemIcon.getMaxV() );
+							tessellator.addVertexWithUV( 1, 1, 0, itemIcon.getMaxU(), itemIcon.getMaxV() );
+							tessellator.addVertexWithUV( 1, 0, 0, itemIcon.getMaxU(), itemIcon.getMinV() );
+							tessellator.addVertexWithUV( 0, 0, 0, itemIcon.getMinU(), itemIcon.getMinV() );
+
+							tessellator.draw();
+						}
 					}
 				}
 			}

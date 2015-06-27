@@ -11,7 +11,7 @@ import scala.collection.JavaConversions._
 class MultiSmelterRecipeHandler extends BaseRecipeHandler {
   final val recipeId = "sockets.multismelter"
 
-  override def getRecipeName: String = StatCollector.translateToLocal( "item.socket_module.92.name" ) + " Module"
+  override def getRecipeName: String = StatCollector.translateToLocal( "item.socket_module.93.name" ) + " Module"
 
   override def getGuiTexture: String = "sockets:textures/gui/nei-multi-smelter.png"
 
@@ -49,7 +49,7 @@ class MultiSmelterRecipeHandler extends BaseRecipeHandler {
       val input1 = extractItemStackList( recipe.getInput1 )
       val input2 = extractItemStackList( recipe.getInput2 )
       if( input1.nonEmpty && input2.nonEmpty ) {
-        Option( CachedMultiSmelterRecipe( List( input1.head, input2.head ), recipe.getOutput.toList ) )
+        Option( CachedMultiSmelterRecipe( List( recipe.getInput1, recipe.getInput2 ), recipe.getOutput.toList ) )
       } else {
         None
       }
@@ -115,7 +115,11 @@ class MultiSmelterRecipeHandler extends BaseRecipeHandler {
       }
 
       input1 || input2
-    } flatMap makeCached foreach arecipes.add
+    }.flatMap( makeCached ).view.zipWithIndex.foreach {
+      case( r, i ) if i % 2 == 0 =>
+        arecipes.add( r )
+      case _ =>
+    }
   }
 
 }

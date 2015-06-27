@@ -341,7 +341,7 @@ public class EmasherGas {
 	}
 	
 	private void registerWorldGen() {
-		if( this.spawnMineGas ) GameRegistry.registerWorldGenerator( gasGenerator, 1 );
+		if( spawnMineGas ) GameRegistry.registerWorldGenerator( gasGenerator, 1 );
 	}
 	
 	@EventHandler
@@ -351,21 +351,21 @@ public class EmasherGas {
 	}
 	
 	private void registerInRegistry() {
-		Registry.addBlock( "shaleResource", this.shaleResource );
-		Registry.addBlock( "chimney", this.chimney );
-		Registry.addBlock( "naturalGas", this.naturalGas );
-		Registry.addBlock( "propellent", this.propellent );
-		Registry.addBlock( "hydrogen", this.hydrogen );
-		Registry.addBlock( "smoke", this.smoke );
-		Registry.addBlock( "toxicGas", this.toxicGas );
-		Registry.addBlock( "neurotoxin", this.neurotoxin );
-		Registry.addBlock( "plasma", this.plasma );
+		Registry.addBlock( "shaleResource", shaleResource );
+		Registry.addBlock( "chimney", chimney );
+		Registry.addBlock( "naturalGas", naturalGas );
+		Registry.addBlock( "propellent", propellent );
+		Registry.addBlock( "hydrogen", hydrogen );
+		Registry.addBlock( "smoke", smoke );
+		Registry.addBlock( "toxicGas", toxicGas );
+		Registry.addBlock( "neurotoxin", neurotoxin );
+		Registry.addBlock( "plasma", plasma );
 		
-		Registry.addItem( "vialEmpty", this.vial );
-		Registry.addItem( "vialFilled", this.vialFilled );
-		Registry.addItem( "gasMask", this.gasMask );
-		Registry.addItem( "smokeGrenade", this.smokeGrenade );
-		Registry.addItem( "ash", this.ash );
+		Registry.addItem( "vialEmpty", vial );
+		Registry.addItem( "vialFilled", vialFilled );
+		Registry.addItem( "gasMask", gasMask );
+		Registry.addItem( "smokeGrenade", smokeGrenade );
+		Registry.addItem( "ash", ash );
 		
 		
 	}

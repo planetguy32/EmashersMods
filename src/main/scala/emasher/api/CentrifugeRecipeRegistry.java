@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class CentrifugeRecipeRegistry {
-	private static ArrayList<CentrifugeRecipe> recipes = new ArrayList<CentrifugeRecipe>();
+	public static ArrayList<CentrifugeRecipe> recipes = new ArrayList<CentrifugeRecipe>();
 	
 	public static void registerRecipe( CentrifugeRecipe recipe ) {
 		recipes.add( recipe );
@@ -130,6 +130,10 @@ public class CentrifugeRecipeRegistry {
 					return null;
 			}
 			return ( ItemStack ) secondaryOutput;
+		}
+
+		public int getPercent() {
+			return percent;
 		}
 
 		public boolean shouldOuputSecondary( Random r ) {

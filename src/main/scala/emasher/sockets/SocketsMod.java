@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod( modid = "eng_toolbox", name = "Engineer's Toolbox", version = "1.2.0.7", dependencies = "required-after:emashercore" )
+@Mod( modid = "eng_toolbox", name = "Engineer's Toolbox", version = "1.2.1.0", dependencies = "required-after:emashercore" )
 public class SocketsMod {
 	@Instance( "Sockets" )
 	public static SocketsMod instance;
@@ -126,15 +126,15 @@ public class SocketsMod {
 		}
 	};
 	public int slickwaterAmount;
-	public boolean enableGrinder;
-	public boolean enableSolars;
-	public boolean enableWaterIntake;
-	public boolean enableHydro;
-	public boolean enablePiezo;
-	public boolean enableMultiSmelter;
-	public boolean enableKiln;
-	public boolean enableCentrifuge;
-	public boolean enableHusher;
+	public static boolean enableGrinder;
+	public static boolean enableSolars;
+	public static boolean enableWaterIntake;
+	public static boolean enableHydro;
+	public static boolean enablePiezo;
+	public static boolean enableMultiSmelter;
+	public static boolean enableKiln;
+	public static boolean enableCentrifuge;
+	public static boolean enableHusher;
 	String[] dyes =
 			{
 					"dyeBlack",

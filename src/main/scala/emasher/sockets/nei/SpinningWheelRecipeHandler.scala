@@ -7,26 +7,30 @@ import net.minecraft.util.StatCollector
 import scala.collection.JavaConversions._
 
 class SpinningWheelRecipeHandler extends BaseRecipeHandler {
-  final val recipeId = "sockets.grinder"
+  final val recipeId = "sockets.spinningWheel"
 
-  override def getRecipeName: String = StatCollector.translateToLocal( "item.socket_module.72.name" ) + " Module"
+  override def getRecipeName: String = StatCollector.translateToLocal( "item.socket_module.39.name" ) + " Module"
 
   case object CachedSpinningWheelRecipe extends CachedRecipe {
+    lazy val wools = List.tabulate(16) { i =>
+      new ItemStack( Blocks.wool, 1, i )
+    }
 
     override def getResult: PositionedStack = {
-      new PositionedStack( Items.string, 98, 18, false )
+      new PositionedStack( new ItemStack( Items.string ), 98, 18, false )
     }
 
     override def getIngredients: java.util.List[PositionedStack] = {
-      val all = List( new PositionedStack( Blocks.wool, 44, 18, true ) )
+
+      val all = List( new PositionedStack( wools, 44, 18, true ) )
       getCycledIngredients( cycleticks / 20, all )
     }
   }
 
-  override def getGuiTexture: String = "sockets:textures/gui/nei-grinder.png"
+  override def getGuiTexture: String = "sockets:textures/gui/nei-spinning-wheel.png"
 
   override def loadCraftingRecipes( result: ItemStack ): Unit = {
-    if( NEIServerUtils.areStacksSameTypeCrafting( new ItemStack( Blocks.wool ), result ) ) {
+    if( NEIServerUtils.areStacksSameTypeCrafting( new ItemStack( Items.string ), result ) ) {
       arecipes.add( CachedSpinningWheelRecipe )
     }
   }
@@ -44,7 +48,7 @@ class SpinningWheelRecipeHandler extends BaseRecipeHandler {
   }
 
   override def loadUsageRecipes( ingredient: ItemStack ): Unit = {
-    if( NEIServerUtils.areStacksSameTypeCrafting( new ItemStack( Items.string ), ingredient) ) {
+    if( ingredient.getItem == new ItemStack( Blocks.wool ).getItem ){
       arecipes.add( CachedSpinningWheelRecipe )
     }
   }

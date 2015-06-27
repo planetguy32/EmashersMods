@@ -2,18 +2,22 @@ package emasher.sockets.nei
 
 import codechicken.nei.api.{API, IConfigureNEI}
 import codechicken.nei.recipe.TemplateRecipeHandler
+import emasher.sockets.SocketsMod
 
 class NEIHandler extends IConfigureNEI {
 
   override def loadConfig(): Unit = {
-    NEIHandler.registerHandler( new GrinderRecipeHandler )
-    NEIHandler.registerHandler( new MultiSmelterRecipeHandler )
+    if( SocketsMod.enableGrinder ) NEIHandler.registerHandler( new GrinderRecipeHandler )
+    if( SocketsMod.enableMultiSmelter ) NEIHandler.registerHandler( new MultiSmelterRecipeHandler )
     NEIHandler.registerHandler( new SpinningWheelRecipeHandler )
+    if( SocketsMod.enableKiln ) NEIHandler.registerHandler( new KilnRecipeHandler )
+    if( SocketsMod.enableCentrifuge ) NEIHandler.registerHandler( new CentrifugeRecipeHandler )
+    NEIHandler.registerHandler( new RefineryRecipeHandler )
   }
 
   override def getName: String = "eng_toolbox"
 
-  override def getVersion: String = "1.2.0.7"
+  override def getVersion: String = "1.2.1.0"
 }
 
 object NEIHandler {

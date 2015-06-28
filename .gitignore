@@ -1,9 +1,6 @@
 ## gradle
 /.gradle
 /build
-/gradle
-/gradlew
-/gradlew.bat
 
 ## ForgeGradle
 /run
@@ -27,13 +24,10 @@
 
 eclipse
 .gradle
-gradle
 out
 EmashersMods.iml
 EmashersMods.ipr
 EmashersMods.iws
-gradlew
-gradlew.bat
 makearchives.bat
 
 #################
@@ -200,13 +194,10 @@ pip-log.txt
 # Mac crap
 .DS_Store
 
-/gradlew
-/gradlew.bat
 /EmashersMods.iml
 /.gradle
 /.idea
 /build
-/gradle
 /run
 /.gitconfig
 /projectFilesBackup/.idea/libraries/Gradle__org_scala_lang_scala_library_2_11_1.xml

@@ -15,6 +15,7 @@ public class BlockNutrientWater extends BlockFluidClassic {
 	public BlockNutrientWater( Fluid fluid ) {
 		super( fluid, Material.water );
 		this.setCreativeTab( null );
+		this.setBlockName( "nutrientWater" );
 	}
 
 	@Override

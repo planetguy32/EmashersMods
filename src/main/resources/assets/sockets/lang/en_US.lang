@@ -27,7 +27,7 @@ tile.paintedPlanks.Magenta.name=Magenta Planks
 tile.paintedPlanks.Orange.name=Orange Planks
 tile.paintedPlanks.White.name=White Planks
 
-tile.slickwater.name=Slickwater
+tile.slickWater.name=Slickwater
 
 item.rsIngot.name=Sweet Redstone Ingot
 item.handboiler.name=Hand Boiler

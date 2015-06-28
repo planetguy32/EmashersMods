@@ -34,7 +34,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.ArrayList;
 
-@Mod( modid = "emashercore", name = "ET Resources", version = "1.3.0.0" )
+@Mod( modid = "emashercore", name = "ET Resources", version = "1.2.1.0" )
 public class EmasherCore {
 	// The instance of your mod that Forge uses.
 	@Instance( "EmasherResource" )

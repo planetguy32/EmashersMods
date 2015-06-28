@@ -1,5 +1,6 @@
 package emasher.sockets.nei
 
+import codechicken.lib.gui.GuiDraw
 import codechicken.nei.{NEIServerUtils, PositionedStack}
 import emasher.gas.EmasherGas
 import net.minecraft.item.ItemStack
@@ -13,6 +14,9 @@ class RefineryRecipeHandler extends BaseRecipeHandler {
   override def getRecipeName: String = StatCollector.translateToLocal( "item.socket_module.107.name" ) + " Module"
 
   case object CachedRefineryRecipe extends CachedRecipe {
+    final val inputAmount = 2
+    final val outputAmount = 1
+
     override def getResult: PositionedStack = {
       new PositionedStack( new ItemStack( EmasherGas.propellent ), 98, 18, false )
     }
@@ -48,5 +52,10 @@ class RefineryRecipeHandler extends BaseRecipeHandler {
       NEIServerUtils.areStacksSameTypeCrafting( new ItemStack( EmasherGas.vialFilled, 1, 0), ingredient ) ){
       arecipes.add( CachedRefineryRecipe )
     }
+  }
+
+  override def drawExtras( recipe: Int ): Unit = {
+    GuiDraw.drawString( CachedRefineryRecipe.outputAmount + " mB", 116, 23, 0x808080, false )
+    GuiDraw.drawString( CachedRefineryRecipe.inputAmount + " mB", 16, 23, 0x808080, false )
   }
 }

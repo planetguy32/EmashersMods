@@ -20,7 +20,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-@Mod( modid = "emasherdefense", name = "ET Defense", version = "1.3.0.0", dependencies = "required-after:emashercore" )
+@Mod( modid = "emasherdefense", name = "ET Defense", version = "1.2.1.0", dependencies = "required-after:emashercore" )
 public class EmasherDefense {
 
 	// The instance of your mod that Forge uses.

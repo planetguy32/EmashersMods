@@ -7,7 +7,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import java.util.ArrayList;
 
 public class MixerRecipeRegistry {
-	private static ArrayList<MixerRecipe> recipes = new ArrayList<MixerRecipe>();
+	public static ArrayList<MixerRecipe> recipes = new ArrayList<MixerRecipe>();
 	
 	public static void registerRecipe( MixerRecipe recipe ) {
 		recipes.add( recipe );

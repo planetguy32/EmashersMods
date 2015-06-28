@@ -47,7 +47,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 
-@Mod( modid = "gascraft", name = "GasCraft", version = "2.1.0.0", dependencies = "required-after:eng_toolbox" )
+@Mod( modid = "gascraft", name = "GasCraft", version = "1.2.1.0", dependencies = "required-after:eng_toolbox" )
 public class EmasherGas {
 	@Instance( "gascraft" )
 	public static EmasherGas instance;

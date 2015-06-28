@@ -11,7 +11,7 @@ import scala.collection.JavaConversions._
 class MultiSmelterRecipeHandler extends BaseRecipeHandler {
   final val recipeId = "sockets.multismelter"
 
-  override def getRecipeName: String = StatCollector.translateToLocal( "item.socket_module.93.name" ) + " Module"
+  override def getRecipeName: String = StatCollector.translateToLocal( "item.socket_module.92.name" ) + " Module"
 
   override def getGuiTexture: String = "sockets:textures/gui/nei-multi-smelter.png"
 
@@ -56,13 +56,6 @@ class MultiSmelterRecipeHandler extends BaseRecipeHandler {
     } else {
       None
     }
-  }
-
-  private def extractItemStackList( in: Object ): List[ItemStack] = in match {
-    case s: String =>
-      OreDictionary.getOres( s ).toList
-    case i: ItemStack =>
-      List( i )
   }
 
   override def loadCraftingRecipes( result: ItemStack ): Unit = {

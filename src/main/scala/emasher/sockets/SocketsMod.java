@@ -479,8 +479,10 @@ public class SocketsMod {
 
 	@EventHandler
 	public void postInit( FMLInitializationEvent event ) {
-		NEIHandler handler = new NEIHandler();
-		handler.loadConfig();
+		if( Loader.isModLoaded( "NotEnoughItems" ) ) {
+			NEIHandler handler = new NEIHandler();
+			handler.loadConfig();
+		}
 	}
 	
 	private void registerOreRecipes() {

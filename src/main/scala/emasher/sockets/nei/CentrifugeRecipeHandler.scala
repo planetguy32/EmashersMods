@@ -54,13 +54,6 @@ class CentrifugeRecipeHandler extends BaseRecipeHandler {
     }
   }
 
-  private def extractItemStackList( in: Object ): List[ItemStack] = in match {
-    case s: String =>
-      OreDictionary.getOres( s ).toList
-    case i: ItemStack =>
-      List( i )
-  }
-
   override def loadCraftingRecipes( result: ItemStack ): Unit = {
     CentrifugeRecipeRegistry.recipes.toList.filter { recipe =>
        NEIServerUtils.areStacksSameTypeCrafting( recipe.getOutput, result ) || nei.NEIServerUtils.areStacksSameTypeCrafting( recipe.getSecondaryOutput, result )

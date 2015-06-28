@@ -7,7 +7,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import java.util.ArrayList;
 
 public class PhotobioReactorRecipeRegistry {
-	private static ArrayList<PhotobioReactorRecipe> recipes = new ArrayList<PhotobioReactorRecipe>();
+	public static ArrayList<PhotobioReactorRecipe> recipes = new ArrayList<PhotobioReactorRecipe>();
 	
 	public static void registerRecipe( PhotobioReactorRecipe recipe ) {
 		recipes.add( recipe );

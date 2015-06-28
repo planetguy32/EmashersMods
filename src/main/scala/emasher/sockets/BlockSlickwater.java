@@ -15,6 +15,7 @@ public class BlockSlickwater extends BlockFluidClassic {
 	public BlockSlickwater( Fluid fluid ) {
 		super( fluid, Material.water );
 		this.setCreativeTab( null );
+		this.setBlockName( "slickWater" );
 	}
 	
 	@Override

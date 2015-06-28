@@ -13,6 +13,8 @@ class NEIHandler extends IConfigureNEI {
     if( SocketsMod.enableKiln ) NEIHandler.registerHandler( new KilnRecipeHandler )
     if( SocketsMod.enableCentrifuge ) NEIHandler.registerHandler( new CentrifugeRecipeHandler )
     NEIHandler.registerHandler( new RefineryRecipeHandler )
+    NEIHandler.registerHandler( new MixerRecipeHandler )
+    NEIHandler.registerHandler( new PhotobioreactorRecipeHandler )
   }
 
   override def getName: String = "eng_toolbox"

@@ -1,0 +1,296 @@
+itemGroup.tabEmasher=ET Resources
+
+tile.redSandstone.name=Red Sandstone
+tile.limestone.name=Limestone
+tile.mixedDirt.name=Mixed Dirt
+tile.mixedsand.name=Mixed Sand
+tile.machine.name=Machine Chassis
+tile.algae.name=Algae
+tile.superAlgae.name=Super Algae
+tile.deadAlgae.name=Dead Algae
+tile.hemp.name=Hemp
+
+tile.normalCube.litchenStone.name=Lichen Stone
+tile.normalCube.redSandstoneBricks.name=Red Sandstone Bricks
+tile.normalCube.limestoneBricks.name=Limestone Bricks
+tile.normalCube.roadWay.name=Roadway
+tile.normalCube.dirtyCobblestone.name=Dirty Cobblestone
+
+tile.e_metal.e_blockAluminium.name=Aluminium Block
+tile.e_metal.e_blockBronze.name=Bronze Block
+tile.e_metal.e_blockCopper.name=Copper Block
+tile.e_metal.e_blockLead.name=Lead Block
+tile.e_metal.e_blockNickel.name=Nickel Block
+tile.e_metal.e_blockPlatinum.name=Platinum Block
+tile.e_metal.e_blockSilver.name=Silver Block
+tile.e_metal.e_blockSteel.name=Steel Block
+tile.e_metal.e_blockTin.name=Tin Block
+
+tile.e_ore.e_oreBauxite.name=Bauxite Ore
+tile.e_ore.e_oreCassiterite.name=Cassiterite Ore
+tile.e_ore.e_oreEmery.name=Emery Ore
+tile.e_ore.e_oreGalena.name=Galena Ore
+tile.e_ore.e_oreNativeCopper.name=Native Copper Ore
+tile.e_ore.e_orePentlandite.name=Pentlandite Ore
+tile.e_ore.e_oreRuby.name=Ruby Ore
+tile.e_ore.e_oreSapphire.name=Sapphire Ore
+
+tile.nutrientWater.name=Nutrient Water
+
+item.e_ingot.e_ingotAluminium.name=Aluminium Ingot
+item.e_ingot.e_ingotBronze.name=Bronze Ingot
+item.e_ingot.e_ingotCopper.name=Copper Ingot
+item.e_ingot.e_ingotLead.name=Lead Ingot
+item.e_ingot.e_ingotNickel.name=Nickel Ingot
+item.e_ingot.e_ingotPlatinum.name=Platinum Ingot
+item.e_ingot.e_ingotSilver.name=Silver Ingot
+item.e_ingot.e_ingotSteel.name=Steel Ingot
+item.e_ingot.e_ingotTin.name=Tin Ingot
+
+item.e_gem.e_gemEmery.name=Emery
+item.e_gem.e_gemRuby.name=Ruby
+item.e_gem.e_gemSapphire.name=Sapphire
+
+item.psu.name=Power Management Device
+item.circuit.name=Electronic Circuit
+item.bluestone.name=Bluestone
+
+item.hempPlant.name=Hemp
+item.hempSeeds.name=Hemp Seeds
+item.hempOil.name=Hemp Seed Oil
+item.hempCap.name=Hemp Cap
+item.hempTunic.name=Hemp Tunic
+item.hempPants.name=Hemp Pants
+item.hempShoes.name=Hemp Shoes
+
+itemGroup.tabDefense=ET Defence
+
+tile.deflector.name=Deflector
+tile.deflectorGenerator.name=Deflector Generator
+tile.emeryTile.name=Emery Tile
+tile.sandbag.name=Sandbags
+
+tile.chainFence.chainFence.name=Chain Link Fence
+tile.chainFence.chainPost.name=Chain Link Fence Post
+tile.chainFence.barbWireFence.name=Barbed Wire Fence
+tile.chainFence.barbPostWood.name=Barbed Wire Fence Wood Post
+tile.chainFence.barbPost.name=Barbed Wire Fence Post
+tile.chainFence.razorWireFence.name=Razor Wire Fence
+
+item.chainSheet.name=Chain Sheet
+item.fenceWire.name=Fence Wire
+
+itemGroup.tabGasCraft=ET GasCraft
+
+tile.shaleResource.gas.name=Shale Gas
+tile.shaleResource.oil.name=Shale Oil
+tile.shaleResource.plasma.name=Shale Plasma
+tile.chimney.name=Chimney
+tile.gasPocket.name=Gas Pocket
+tile.plasmaPocket.name=Nether Plasma Pocket
+
+tile.naturalGas.name=Natural Gas
+tile.propellent.name=Propellent
+tile.hydrogen.name=Hydrogen
+tile.smoke.name=Smoke
+tile.toxicGas.name=Weaponized Gas
+tile.neurotoxin.name=Deadly Neurotoxin
+tile.corrosiveGas.name=Corrosive Gas
+tile.plasma.name=Nether Plasma
+
+item.gasVial.name=Empty Gas Vial
+item.gasmask.name=Gas Mask
+item.smokeGrenade.name=Smoke Grenade
+item.ash.name=Ash
+
+item.gasVialFilled.naturalGas.name=Natural Gas Vial
+item.gasVialFilled.propellent.name=Propellent Vial
+item.gasVialFilled.hydrogen.name=Hydrogen Vial
+item.gasVialFilled.smoke.name=Smoke Vial
+item.gasVialFilled.toxicGas.name=Toxic Gas Vial
+item.gasVialFilled.neurotoxin.name=Neurotoxin Vial
+item.gasVialFilled.corrosiveGas.name=Corrosive Gas Vial
+item.gasVialFilled.plasma.name=Nether Plasma Vial
+
+itemGroup.tabSockets=Engineer's Toolbox
+
+itemGroup.tabBlocks=Engineer's Toolbox Blocks
+itemGroup.tabItems=Engineer's Toolbox Items
+itemGroup.tabModules=Engineer's Toolbox Modules
+
+tile.modular_socket.name=Modular Socket
+tile.tempRS.name=Redstone Orb
+tile.start_pipe.name=Universal Extractor
+tile.fluid_pipe.name=Fluid Pipe
+tile.energy_pipe.name=Flux Pipe
+tile.emasher_mini_portal.name=Fluidic Nether Portal
+tile.emasher_direction_changer.name=Direction Changer
+tile.emasher_frame.name=Socket Frame
+tile.groundLimestone.name=Ground Limestone
+
+tile.paintedPlanks.Black.name=Black Planks
+tile.paintedPlanks.Red.name=Red Planks
+tile.paintedPlanks.Green.name=Green Planks
+tile.paintedPlanks.Brown.name=Brown Planks
+tile.paintedPlanks.Blue.name=Blue Planks
+tile.paintedPlanks.Purple.name=Purple Planks
+tile.paintedPlanks.Cyan.name=Cyan Planks
+tile.paintedPlanks.Light Gray.name=Light Gray Planks
+tile.paintedPlanks.Gray.name=Gray Planks
+tile.paintedPlanks.Pink.name=Pink Planks
+tile.paintedPlanks.Lime.name=Lime Planks
+tile.paintedPlanks.Yellow.name=Yellow Planks
+tile.paintedPlanks.Light Blue.name=Light Blue Planks
+tile.paintedPlanks.Magenta.name=Magenta Planks
+tile.paintedPlanks.Orange.name=Orange Planks
+tile.paintedPlanks.White.name=White Planks
+
+tile.slickWater.name=Slickwater
+
+item.rsIngot.name=Sweet Redstone Ingot
+item.handboiler.name=Hand Boiler
+item.socket_remote.name=Socket Remote
+item.redstone_wand.name=Redstone Wand
+item.slickwaterBucket.name=Slickwater Bucket
+item.nutWaterBucket.name=Nutrient Water Bucket
+item.blankSide.name=Blank Module
+item.eng_wrench.name=Engineer's Wrench
+
+item.paintCan.Black.name=Black Spray Paint
+item.paintCan.Red.name=Red Spray Paint
+item.paintCan.Green.name=Green Spray Paint
+item.paintCan.Brown.name=Brown Spray Paint
+item.paintCan.Blue.name=Blue Spray Paint
+item.paintCan.Purple.name=Purple Spray Paint
+item.paintCan.Cyan.name=Cyan Spray Paint
+item.paintCan.Light Gray.name=Light Gray Spray Paint
+item.paintCan.Gray.name=Gray Spray Paint
+item.paintCan.Pink.name=Pink Spray Paint
+item.paintCan.Lime.name=Lime Spray Paint
+item.paintCan.Yellow.name=Yellow Spray Paint
+item.paintCan.Light Blue.name=Light Blue Spray Paint
+item.paintCan.Magenta.name=Magenta Spray Paint
+item.paintCan.Orange.name=Orange Spray Paint
+item.paintCan.White.name=White Spray Paint
+
+item.e_dusts.e_lime.name=Quicklime
+item.e_dusts.e_groundBauxite.name=Ground Bauxite Ore
+item.e_dusts.e_groundCassiterite.name=Ground Cassiterite Ore
+item.e_dusts.e_groundGalena.name=Ground Galena Ore
+item.e_dusts.e_groundGold.name=Ground Gold Ore
+item.e_dusts.e_groundIron.name=Ground Iron Ore
+item.e_dusts.e_groundNativeCopper.name=Ground Native Coppper Ore
+item.e_dusts.e_groundPentlandite.name=Ground Pentlandite Ore
+item.e_dusts.e_groundSilver.name=Ground Silver Ore
+item.e_dusts.e_impureAluminiumDust.name=Impure Aluminium Dust
+item.e_dusts.e_impureCopperDust.name=Impure Copper Dust
+item.e_dusts.e_impureLeadDust.name=Impure Lead Dust
+item.e_dusts.e_impureNickelDust.name=Impure Nickel Dust
+item.e_dusts.e_impureGoldDust.name=Impure Gold Dust
+item.e_dusts.e_impureIronDust.name=Impure Iron Dust
+item.e_dusts.e_impureSilverDust.name=Impure Silver Dust
+item.e_dusts.e_impureTinDust.name=Impure Tin Dust
+item.e_dusts.e_pureAluminiumDust.name=Pure Aluminium Dust
+item.e_dusts.e_pureCopperDust.name=Pure Copper Dust
+item.e_dusts.e_pureGoldDust.name=Pure Gold Dust
+item.e_dusts.e_pureIronDust.name=Pure Iron Dust
+item.e_dusts.e_pureLeadDust.name=Pure Lead Dust
+item.e_dusts.e_pureNickelDust.name=Pure Nickel Dust
+item.e_dusts.e_purePlatinumDust.name=Pure Platinum Dust
+item.e_dusts.e_pureSilverDust.name=Pure Silver Dust
+item.e_dusts.e_pureTinDust.name=Pure Tin Dust
+item.e_dusts.e_groundCobalt.name=Ground Cobalt Ore
+item.e_dusts.e_groundArdite.name=Ground Ardite Ore
+item.e_dusts.e_impureCobaltDust.name=Impure Cobalt Dust
+item.e_dusts.e_impureArditeDust.name=Impure Ardite Dust
+item.e_dusts.e_pureCobaltDust.name=Pure Cobalt Dust
+item.e_dusts.e_pureArditeDust.name=Pure Ardite Dust
+
+item.socket_module.0.name=Blank
+item.socket_module.1.name=Item Input
+item.socket_module.2.name=Item Output
+item.socket_module.3.name=Item Extractor
+item.socket_module.4.name=Fluid Input
+item.socket_module.5.name=Fluid Output
+item.socket_module.6.name=Fluid Extractor
+item.socket_module.7.name=Energy Input
+item.socket_module.8.name=Energy Output
+item.socket_module.9.name=Multi Input
+item.socket_module.10.name=Multi Output
+item.socket_module.11.name=Item Detector
+item.socket_module.12.name=Fluid Detector
+item.socket_module.13.name=Item Distributor
+item.socket_module.14.name=Fluid Distributor
+item.socket_module.15.name=Item Ejector
+item.socket_module.16.name=Redstone Input
+item.socket_module.17.name=Redstone Output
+item.socket_module.18.name=AND Gate
+item.socket_module.19.name=OR Gate
+item.socket_module.20.name=NOT Gate
+item.socket_module.21.name=NAND Gate
+item.socket_module.22.name=NOR Gate
+item.socket_module.23.name=XOR Gate
+item.socket_module.24.name=XNOR Gate
+item.socket_module.32.name=Latch Toggle
+item.socket_module.33.name=Latch Set
+item.socket_module.34.name=Latch Reset
+item.socket_module.35.name=Timer
+item.socket_module.36.name=Delayer
+item.socket_module.37.name=State Cell
+item.socket_module.38.name=Pressure Plate
+item.socket_module.39.name=Spinning Wheel
+item.socket_module.40.name=Hinge
+item.socket_module.41.name=Ender Hinge
+item.socket_module.42.name=Lazy Susan
+item.socket_module.43.name=Elevator
+item.socket_module.44.name=Internal Clock
+item.socket_module.45.name=Track
+item.socket_module.46.name=Accelerometer
+item.socket_module.47.name=Magnet
+item.socket_module.48.name=Magnet Input
+item.socket_module.49.name=Magnet Output
+item.socket_module.64.name=Burner
+item.socket_module.65.name=Breaker
+item.socket_module.66.name=Water Intake
+item.socket_module.67.name=Catapult
+item.socket_module.68.name=Deadly Flashing Blade
+item.socket_module.69.name=Vacuum
+item.socket_module.70.name=Advanced Breaker
+item.socket_module.71.name=Furnace
+item.socket_module.72.name=Grinder
+item.socket_module.73.name=Energy Indicator
+item.socket_module.74.name=Energy Expansion
+item.socket_module.75.name=Solar Panel
+item.socket_module.76.name=Button
+item.socket_module.78.name=Block Update Sensor
+item.socket_module.79.name=Advanced Energy Expansion
+item.socket_module.80.name=Water Cooler
+item.socket_module.81.name=Freezer
+item.socket_module.82.name=Lava Intake
+item.socket_module.83.name=Piezo Electric Tile
+item.socket_module.84.name=Hydroelectric Turbine
+item.socket_module.85.name=Self Destruct System
+item.socket_module.86.name=Inventory Interface
+item.socket_module.87.name=Tank Interface
+item.socket_module.88.name=Charger
+item.socket_module.89.name=Activator
+item.socket_module.90.name=Machine Output
+item.socket_module.91.name=Kiln
+item.socket_module.92.name=Multi Smelter
+item.socket_module.93.name=Centrifuge
+item.socket_module.94.name=Mixer
+item.socket_module.95.name=Pressurizer
+item.socket_module.96.name=Range Selector
+item.socket_module.97.name=Husher
+item.socket_module.98.name=Stirling Generator
+item.socket_module.99.name=Enderic Fluid Pump
+
+item.socket_module.100.name=Fracker
+item.socket_module.101.name=Photobioreactor
+item.socket_module.102.name=Fan
+item.socket_module.103.name=Vent
+item.socket_module.104.name=Exhaust
+item.socket_module.105.name=Gas Generator
+item.socket_module.106.name=Gas Turbine
+item.socket_module.107.name=Refinery
+item.socket_module.108.name=Nether Plasma Reactor

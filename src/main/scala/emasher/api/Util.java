@@ -1,11 +1,11 @@
 package emasher.api;
 
 import com.mojang.authlib.GameProfile;
-import emasher.sockets.SocketsMod;
-import emasher.sockets.packethandling.AdapterSideMessage;
-import emasher.sockets.packethandling.ChangerSideMessage;
-import emasher.sockets.pipes.TileAdapterBase;
-import emasher.sockets.pipes.TileDirectionChanger;
+import emasher.EngineersToolbox;
+import emasher.packethandling.AdapterSideMessage;
+import emasher.packethandling.ChangerSideMessage;
+import emasher.tileentities.TileAdapterBase;
+import emasher.tileentities.TileDirectionChanger;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.entity.Entity;
@@ -58,11 +58,8 @@ public class Util {
 		Block b2 = world.getBlock( nx, ny, nz );
 		int meta2 = world.getBlockMetadata( nx, ny, nz );
 
-		if( b1 == SocketsMod.miniPortal ) return false;
-		if( b2 == SocketsMod.miniPortal ) return false;
-
-		//Block b1 = Block.blocksList[id1];
-		//Block b2 = Block.blocksList[id2];
+		if( b1 == emasher.blocks.Blocks.miniPortal() ) return false;
+		if( b2 == emasher.blocks.Blocks.miniPortal() ) return false;
 
 		if( b1 != null && b1.getBlockHardness( world, x, y, z ) < 0 ) return false;
 		if( b2 != null && b2.getBlockHardness( world, nx, ny, nz ) < 0 ) return false;
@@ -128,14 +125,14 @@ public class Util {
 			if( te instanceof TileAdapterBase ) {
 				TileAdapterBase ta = ( TileAdapterBase ) te;
 				for( int i = 0; i < 6; i++ ) {
-					SocketsMod.network.sendToDimension( new AdapterSideMessage( ta, ( byte ) i ), world.provider.dimensionId );
+					EngineersToolbox.network().sendToDimension(new AdapterSideMessage(ta, (byte) i), world.provider.dimensionId);
 				}
 			}
 
 			if( te instanceof TileDirectionChanger ) {
 				TileDirectionChanger td = ( TileDirectionChanger ) te;
 				for( int i = 0; i < 6; i++ ) {
-					SocketsMod.network.sendToDimension( new ChangerSideMessage( td, ( byte ) i ), world.provider.dimensionId );
+					EngineersToolbox.network().sendToDimension(new ChangerSideMessage(td, (byte) i), world.provider.dimensionId);
 				}
 			}
 		}
@@ -157,14 +154,14 @@ public class Util {
 			if( te instanceof TileAdapterBase ) {
 				TileAdapterBase ta = ( TileAdapterBase ) te;
 				for( int i = 0; i < 6; i++ ) {
-					SocketsMod.network.sendToDimension( new AdapterSideMessage( ta, ( byte ) i ), world.provider.dimensionId );
+					EngineersToolbox.network().sendToDimension(new AdapterSideMessage(ta, (byte) i), world.provider.dimensionId);
 				}
 			}
 
 			if( te instanceof TileDirectionChanger ) {
 				TileDirectionChanger td = ( TileDirectionChanger ) te;
 				for( int i = 0; i < 6; i++ ) {
-					SocketsMod.network.sendToDimension( new ChangerSideMessage( td, ( byte ) i ), world.provider.dimensionId );
+					EngineersToolbox.network().sendToDimension(new ChangerSideMessage(td, (byte) i), world.provider.dimensionId);
 				}
 			}
 		}
@@ -175,10 +172,8 @@ public class Util {
 	public static boolean canMoveBlock( World world, int x, int y, int z, int nx, int ny, int nz ) {
 		if( ny >= 255 || ny <= 0 ) return false;
 		if( !isBlockReplaceable( world, nx, ny, nz ) ) return false;
-		//int id = world.getBlockId(x, y, z);
 		Block b = world.getBlock( x, y, z );
-		if( b == SocketsMod.miniPortal ) return false;
-		//Block b = Block.blocksList[id];
+		if( b == emasher.blocks.Blocks.miniPortal() ) return false;
 		return !( b != null && b.getBlockHardness( world, x, y, z ) < 0 );
 	}
 
@@ -190,7 +185,7 @@ public class Util {
 		if( ny >= 255 || ny <= 0 ) return false;
 		if( !isBlockReplaceable( world, nx, ny, nz ) ) return false;
 		Block b = world.getBlock( x, y, z );
-		if( b == SocketsMod.miniPortal ) return false;
+		if( b == emasher.blocks.Blocks.miniPortal() ) return false;
 		if( b != null && b.getBlockHardness( world, x, y, z ) < 0 ) return false;
 		int meta = world.getBlockMetadata( x, y, z );
 

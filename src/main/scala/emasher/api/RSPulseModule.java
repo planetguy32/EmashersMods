@@ -17,15 +17,15 @@ public abstract class RSPulseModule extends RSGateModule {
 
 	@SideOnly( Side.CLIENT )
 	public String getInternalTexture( SocketTileAccess ts, SideConfig config, ForgeDirection side ) {
-		if( ( config.meta & 1 ) == 0 ) return "sockets:inner_redstone_inactive";
-		return "sockets:inner_redstone_active";
+		if( ( config.meta & 1 ) == 0 ) return "eng_toolbox:inner_redstone_inactive";
+		return "eng_toolbox:inner_redstone_active";
 	}
 
 	@SideOnly( Side.CLIENT )
 	public String[] getAllInternalTextures() {
 		return new String[] {
-				"sockets:inner_redstone_inactive",
-				"sockets:inner_redstone_active"
+				"eng_toolbox:inner_redstone_inactive",
+				"eng_toolbox:inner_redstone_active"
 		};
 	}
 	

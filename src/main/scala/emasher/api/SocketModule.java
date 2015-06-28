@@ -157,7 +157,7 @@ public abstract class SocketModule {
 	 */
 	@SideOnly( Side.CLIENT )
 	public String getInternalTexture( SocketTileAccess ts, SideConfig config, ForgeDirection side ) {
-		return "sockets:inner_black";
+		return "eng_toolbox:inner_black";
 	}
 
 	/**
@@ -165,7 +165,7 @@ public abstract class SocketModule {
 	 */
 	@SideOnly( Side.CLIENT )
 	public String[] getAllInternalTextures() {
-		return new String[] {"sockets:inner_black"};
+		return new String[] {"eng_toolbox:inner_black"};
 	}
 	
 	/**

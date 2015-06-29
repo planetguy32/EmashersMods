@@ -103,7 +103,6 @@ object Recipes {
 
     for( i <- 0 to 15 ) {
       CraftingManager.getInstance.getRecipeList.asInstanceOf[java.util.List[IRecipe]].add(new ShapedOreRecipe(new ItemStack(paintCans(i), 1), "i", "p", "d", Character.valueOf('i'), Blocks.stone_button, Character.valueOf('p'), new ItemStack(vialFilled, 1, 1), Character.valueOf('d'), dyes(i)))
-      CraftingManager.getInstance.getRecipeList.asInstanceOf[java.util.List[IRecipe]].add(new ShapedOreRecipe(new ItemStack(paintCans(i), 1), "i", "p", "d", Character.valueOf('i'), Blocks.stone_button, Character.valueOf('p'), Items.glass_bottle, Character.valueOf('d'), dyes(i)))
     }
 
     if( enableMiniPortal ) {

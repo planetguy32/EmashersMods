@@ -17,4 +17,8 @@ class CommonProxy {
   def registerRenderers(): Unit = {
 
   }
+
+  def registerNEI(): Unit = {
+
+  }
 }

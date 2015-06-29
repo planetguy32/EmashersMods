@@ -20,8 +20,8 @@ public class CoreWorldGenUpdater {
 			
 			try {
 				if( world.getBlock( x + 14, 0, z + 14 ) == Blocks.bedrock ) {
-					if( world.getBlockMetadata( x + 14, 0, z + 14 ) == 0 ) {
-						world.setBlockMetadataWithNotify( x + 14, 0, z + 14, 0x1, 2 );
+					if( world.getBlockMetadata( x + 14, 0, z + 14 ) != emasher.util.Config.oreRetrogenValue() ) {
+						world.setBlockMetadataWithNotify( x + 14, 0, z + 14, emasher.util.Config.oreRetrogenValue(), 2 );
 						emasher.worldgeneration.WorldGenerators.gen().generate( new Random( System.nanoTime() ), chunk.xPosition, chunk.zPosition, chunk.worldObj, null, null );
 					}
 				}

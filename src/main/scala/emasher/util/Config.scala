@@ -93,6 +93,8 @@ object Config {
   var enableKiln: Boolean = false
   var enableCentrifuge: Boolean = false
   var enableHusher: Boolean = false
+  var oreRetrogenValue: Int = 1
+  var shaleRetrogenValue: Int = 1
 
   var PREF_BLUE: AnyRef = EnumChatFormatting.BLUE
   var PREF_GREEN: AnyRef = EnumChatFormatting.GREEN
@@ -202,6 +204,17 @@ object Config {
     enableMiniPortal = config.get( Configuration.CATEGORY_GENERAL, "Enable Fluidic Nether Portal", true ).getBoolean( true )
     miniPortalLava = config.get( Configuration.CATEGORY_GENERAL, "Allow Lava In Fluidic Nether Portal", true ).getBoolean( true )
     slickwaterAmount = config.get( Configuration.CATEGORY_GENERAL, "Amount of slickwater produced per operation ( mb )", 1000 ).getInt
+
+    oreRetrogenValue = config.get( Configuration.CATEGORY_GENERAL, "Change to a different value between 1 and 15 inclusive to re-generate ores", 1 ).getInt
+    shaleRetrogenValue = config.get( Configuration.CATEGORY_GENERAL, "Change to a different value between 1 and 15 inclusive to re-generate shale resources", 1 ).getInt
+
+    if( oreRetrogenValue < 1 || oreRetrogenValue > 15 ) {
+      oreRetrogenValue = 1
+    }
+
+    if( shaleRetrogenValue < 1 || oreRetrogenValue > 15 ) {
+      shaleRetrogenValue = 1
+    }
 
     if (slickwaterAmount > 32000 || slickwaterAmount <= 0) {
       System.err.println("[Engineer's Toolbox] slickwaterAmount is not between (0..32000]")

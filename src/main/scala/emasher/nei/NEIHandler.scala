@@ -18,7 +18,7 @@ class NEIHandler extends IConfigureNEI {
 
   override def getName: String = "eng_toolbox"
 
-  override def getVersion: String = "1.2.1.0"
+  override def getVersion: String = "1.2.2.0"
 }
 
 object NEIHandler {

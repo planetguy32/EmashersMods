@@ -103,10 +103,7 @@ object EngineersToolbox {
     Recipes.registerGasGenerator()
     Recipes.register3rdPartyRecipes()
 
-    if (Loader.isModLoaded("NotEnoughItems")) {
-      val handler: NEIHandler = new NEIHandler
-      handler.loadConfig()
-    }
+    proxy.registerNEI()
   }
 
 }

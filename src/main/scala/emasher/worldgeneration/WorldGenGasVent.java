@@ -14,18 +14,16 @@ public class WorldGenGasVent implements IWorldGenerator {
 
 	}
 
-
 	public void generate( Random random, int i, int k, World world, IChunkProvider provider, IChunkProvider provider2 ) {
 		int x = i * 16;
 		int z = k * 16;
-		
-		
+
 		try {
 			if( world.getBlock( x + 4, 0, z ) == Blocks.bedrock && world.getWorldInfo().getTerrainType() != WorldType.FLAT ) {
-				if( world.getBlockMetadata( x + 4, 0, z ) == 0 ) {
+				if( world.getBlockMetadata( x + 4, 0, z ) != emasher.util.Config.shaleRetrogenValue() ) {
 					for( int it = 0; it < 1; it++ ) {
 
-						world.setBlockMetadataWithNotify( x + 4, 0, z, 0x1, 2 );
+						world.setBlockMetadataWithNotify( x + 4, 0, z, emasher.util.Config.shaleRetrogenValue(), 2 );
 
 						x = i * 16;
 						z = k * 16;
@@ -52,11 +50,7 @@ public class WorldGenGasVent implements IWorldGenerator {
 						} else {
 							if( random.nextInt( 6 ) == 0 ) world.setBlock( x, y, z, emasher.blocks.Blocks.shaleResource(), 2, 2 );
 						}
-
-
 					}
-
-
 				}
 			}
 		} catch( Exception e ) {

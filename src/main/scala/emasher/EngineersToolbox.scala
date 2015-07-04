@@ -1,17 +1,17 @@
 package emasher
 
+import akka.actor.ActorSystem
 import cpw.mods.fml.common.Mod.EventHandler
 import cpw.mods.fml.common.event.{FMLPreInitializationEvent, FMLPostInitializationEvent, FMLInitializationEvent}
 import cpw.mods.fml.common.network.NetworkRegistry
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper
-import cpw.mods.fml.common.{Loader, SidedProxy, Mod}
+import cpw.mods.fml.common.{SidedProxy, Mod}
 import emasher.api.Util
 import emasher.blocks.Blocks
 import emasher.entities.Entities
 import emasher.fluids.Fluids
 import emasher.items.{ItemEngWrench, Items}
 import emasher.modules.Modules
-import emasher.nei.NEIHandler
 import emasher.tileentities.TileEntities
 import emasher.util.{Recipes, BucketEventHandler, Config}
 import emasher.worldgeneration.{WorldGenerators, WorldGenerationUpdater}
@@ -52,6 +52,8 @@ object EngineersToolbox {
     }
   }
 
+  val system = ActorSystem( "microcontrollers" )
+
   var innerTextures: java.util.Map[String, IIcon] = null
 
   @SidedProxy(clientSide = "emasher.client.ClientProxy", serverSide = "emasher.CommonProxy")
@@ -62,6 +64,8 @@ object EngineersToolbox {
   @EventHandler
   def preInit( event: FMLPreInitializationEvent ): Unit = {
     Config.load( event )
+
+
 
     EngineersToolbox.innerTextures = new java.util.HashMap[String, IIcon]
 

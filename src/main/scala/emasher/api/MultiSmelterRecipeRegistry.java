@@ -39,10 +39,6 @@ public class MultiSmelterRecipeRegistry {
 		boolean firstMatch, secondMatch;
 
 		for( MultiSmelterRecipe r : list ) {
-			rID1 = -1;
-			rID2 = -1;
-			id1 = -1;
-			id2 = -1;
 			firstMatch = false;
 			secondMatch = false;
 

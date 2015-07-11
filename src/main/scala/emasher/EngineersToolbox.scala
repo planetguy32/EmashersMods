@@ -20,7 +20,7 @@ import net.minecraft.item.{ItemStack, Item}
 import net.minecraft.util.IIcon
 import net.minecraftforge.common.MinecraftForge
 
-@Mod( modid = "eng_toolbox", name = "Engineer's Toolbox", version = "1.2.2.0", modLanguage="scala" )
+@Mod( modid = "eng_toolbox", name = "Engineer's Toolbox", version = "1.2.2.1", modLanguage="scala" )
 object EngineersToolbox {
   val tabItems = new CreativeTabs( "tabItems" ) {
     def getTabIconItem: Item = {
@@ -52,7 +52,7 @@ object EngineersToolbox {
     }
   }
 
-  val system = ActorSystem( "microcontrollers" )
+  //val system = ActorSystem( "microcontrollers" )
 
   var innerTextures: java.util.Map[String, IIcon] = null
 
@@ -65,14 +65,11 @@ object EngineersToolbox {
   def preInit( event: FMLPreInitializationEvent ): Unit = {
     Config.load( event )
 
-
-
     EngineersToolbox.innerTextures = new java.util.HashMap[String, IIcon]
 
     network = NetworkRegistry.INSTANCE.newSimpleChannel("engineers_toolbox")
 
     EngineersToolbox.proxy.registerMessages()
-    EngineersToolbox.proxy.registerRenderers()
 
     Fluids.init()
     Blocks.init()
@@ -100,6 +97,8 @@ object EngineersToolbox {
     Recipes.registerCentrifuge()
     Recipes.registerMixer()
     Recipes.registerPhotobioreactor()
+
+    EngineersToolbox.proxy.registerRenderers()
   }
 
   @EventHandler

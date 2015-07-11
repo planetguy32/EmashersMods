@@ -23,34 +23,33 @@ public class MixerRecipeRegistry {
 
 	public static MixerRecipe getRecipe( Object input, FluidStack fluidInput ) {
 		if( input instanceof ItemStack ) {
-			int oreID = OreDictionary.getOreID( ( ItemStack ) input );
+			int[] oreIDs = OreDictionary.getOreIDs((ItemStack) input);
 			for( MixerRecipe r : recipes ) {
-				int otherID = -1;
+				int[] otherIDs = null;
 
 				if( r.getInput() instanceof ItemStack ) {
-					otherID = OreDictionary.getOreID( ( ItemStack ) r.getInput() );
+					otherIDs = OreDictionary.getOreIDs( ( ItemStack ) r.getInput() );
 				} else if( r.getInput() instanceof String ) {
-					otherID = OreDictionary.getOreID( ( String ) r.getInput() );
+					otherIDs = new int[] { OreDictionary.getOreID( ( String ) r.getInput() ) };
 				}
 
-				if( ( otherID != -1 && otherID == oreID ) || ( r.getInput() instanceof ItemStack && ( ( ItemStack ) input ).isItemEqual( ( ItemStack ) r.getInput() ) ) ) {
-					if( fluidInput.isFluidEqual( r.fluidInput ) )
+				if( ( Util.checkArrays( oreIDs, otherIDs ) ) || ( r.getInput() instanceof ItemStack && ( ( ItemStack ) input ).isItemEqual( ( ItemStack ) r.getInput() ) ) ) {
+					if (fluidInput.isFluidEqual(r.fluidInput))
 						return r;
 				}
-
 			}
 		} else if( input instanceof String ) {
-			int oreID = OreDictionary.getOreID( ( String ) input );
+			int[] oreIDs = new int[] { OreDictionary.getOreID( ( String ) input ) };
 			for( MixerRecipe r : recipes ) {
-				int otherID = -1;
+				int[] otherIDs = null;
 
 				if( r.getInput() instanceof ItemStack ) {
-					otherID = OreDictionary.getOreID( ( ItemStack ) r.getInput() );
+					otherIDs = OreDictionary.getOreIDs( ( ItemStack ) r.getInput() );
 				} else if( r.getInput() instanceof String ) {
-					otherID = OreDictionary.getOreID( ( String ) r.getInput() );
+					otherIDs = new int [] { OreDictionary.getOreID( ( String ) r.getInput() ) };
 				}
 
-				if( otherID != -1 && otherID == oreID ) {
+				if( Util.checkArrays( oreIDs, otherIDs) ) {
 					if( fluidInput.isFluidEqual( r.fluidInput ) )
 						return r;
 				}

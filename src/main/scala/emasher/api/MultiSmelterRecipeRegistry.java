@@ -35,7 +35,7 @@ public class MultiSmelterRecipeRegistry {
 	}
 
 	public static MultiSmelterRecipe getRecipeFor( Object input1, Object input2 ) {
-		int rID1, rID2, id1, id2;
+		int[] rID1, rID2, id1, id2;
 		boolean firstMatch, secondMatch;
 
 		for( MultiSmelterRecipe r : list ) {
@@ -44,18 +44,19 @@ public class MultiSmelterRecipeRegistry {
 
 			if( input1 instanceof ItemStack ) {
 				if( input2 instanceof ItemStack ) {
-					id1 = OreDictionary.getOreID( ( ItemStack ) input1 );
-					id2 = OreDictionary.getOreID( ( ItemStack ) input2 );
 
-					if( r.input1 instanceof ItemStack ) rID1 = OreDictionary.getOreID( ( ItemStack ) r.input1 );
-					else rID1 = OreDictionary.getOreID( ( String ) r.input1 );
-					if( r.input2 instanceof ItemStack ) rID2 = OreDictionary.getOreID( ( ItemStack ) r.input2 );
-					else rID2 = OreDictionary.getOreID( ( String ) r.input2 );
+					id1 = OreDictionary.getOreIDs( ( ItemStack ) input1 );
+					id2 = OreDictionary.getOreIDs( ( ItemStack ) input2 );
 
-					if( id1 == rID1 && id1 != -1 ) firstMatch = true;
+					if( r.input1 instanceof ItemStack ) rID1 = OreDictionary.getOreIDs((ItemStack) r.input1);
+					else rID1 = new int[] { OreDictionary.getOreID( ( String ) r.input1 ) };
+					if( r.input2 instanceof ItemStack ) rID2 = OreDictionary.getOreIDs( ( ItemStack ) r.input2 );
+					else rID2 = new int[] { OreDictionary.getOreID( ( String ) r.input2 ) };
+
+					if( Util.checkArrays( id1, rID1 ) ) firstMatch = true;
 					else if( r.input1 instanceof ItemStack && ( ( ItemStack ) r.input1 ).isItemEqual( ( ItemStack ) input1 ) )
 						firstMatch = true;
-					if( id2 == rID2 && id2 != -1 ) secondMatch = true;
+					if( Util.checkArrays( id2, rID2 ) ) secondMatch = true;
 					else if( r.input2 instanceof ItemStack && ( ( ItemStack ) r.input2 ).isItemEqual( ( ItemStack ) input2 ) )
 						secondMatch = true;
 
@@ -64,18 +65,18 @@ public class MultiSmelterRecipeRegistry {
 							return r;
 					}
 				} else if( input2 instanceof String ) {
-					id1 = OreDictionary.getOreID( ( ItemStack ) input1 );
-					id2 = OreDictionary.getOreID( ( String ) input2 );
+					id1 = OreDictionary.getOreIDs( ( ItemStack ) input1 );
+					id2 = new int[] { OreDictionary.getOreID( ( String ) input2 ) };
 
-					if( r.input1 instanceof ItemStack ) rID1 = OreDictionary.getOreID( ( ItemStack ) r.input1 );
-					else rID1 = OreDictionary.getOreID( ( String ) r.input1 );
-					if( r.input2 instanceof ItemStack ) rID2 = OreDictionary.getOreID( ( ItemStack ) r.input2 );
-					else rID2 = OreDictionary.getOreID( ( String ) r.input2 );
+					if( r.input1 instanceof ItemStack ) rID1 = OreDictionary.getOreIDs( ( ItemStack ) r.input1 );
+					else rID1 = new int[] { OreDictionary.getOreID( ( String ) r.input1 ) };
+					if( r.input2 instanceof ItemStack ) rID2 = OreDictionary.getOreIDs( ( ItemStack ) r.input2 );
+					else rID2 = new int[] { OreDictionary.getOreID( ( String ) r.input2 ) };
 
-					if( id1 == rID1 && id1 != -1 ) firstMatch = true;
+					if( Util.checkArrays( id1, rID1 ) ) firstMatch = true;
 					else if( r.input1 instanceof ItemStack && ( ( ItemStack ) r.input1 ).isItemEqual( ( ItemStack ) input1 ) )
 						firstMatch = true;
-					if( id2 == rID2 && id2 != -1 ) secondMatch = true;
+					if( Util.checkArrays( id2, rID2 ) ) secondMatch = true;
 
 					if( firstMatch && secondMatch ) {
 						if( r.getOutput() != null )
@@ -84,16 +85,16 @@ public class MultiSmelterRecipeRegistry {
 				}
 			} else if( input1 instanceof String ) {
 				if( input2 instanceof ItemStack ) {
-					id1 = OreDictionary.getOreID( ( String ) input1 );
-					id2 = OreDictionary.getOreID( ( ItemStack ) input2 );
+					id1 = new int[] { OreDictionary.getOreID( ( String ) input1 ) };
+					id2 = OreDictionary.getOreIDs( ( ItemStack ) input2 );
 
-					if( r.input1 instanceof ItemStack ) rID1 = OreDictionary.getOreID( ( ItemStack ) r.input1 );
-					else rID1 = OreDictionary.getOreID( ( String ) r.input1 );
-					if( r.input2 instanceof ItemStack ) rID2 = OreDictionary.getOreID( ( ItemStack ) r.input2 );
-					else rID2 = OreDictionary.getOreID( ( String ) r.input2 );
+					if( r.input1 instanceof ItemStack ) rID1 = OreDictionary.getOreIDs( ( ItemStack ) r.input1 );
+					else rID1 = new int[] { OreDictionary.getOreID( ( String ) r.input1 ) };
+					if( r.input2 instanceof ItemStack ) rID2 = OreDictionary.getOreIDs( ( ItemStack ) r.input2 );
+					else rID2 = new int[] { OreDictionary.getOreID( ( String ) r.input2 ) };
 
-					if( id1 == rID1 && id1 != -1 ) firstMatch = true;
-					if( id2 == rID2 && id2 != -1 ) secondMatch = true;
+					if( Util.checkArrays( id1, rID1 ) ) firstMatch = true;
+					if( Util.checkArrays( id2, rID2 ) ) secondMatch = true;
 					else if( r.input2 instanceof ItemStack && ( ( ItemStack ) r.input2 ).isItemEqual( ( ItemStack ) input2 ) )
 						secondMatch = true;
 
@@ -102,16 +103,16 @@ public class MultiSmelterRecipeRegistry {
 							return r;
 					}
 				} else if( input2 instanceof String ) {
-					id1 = OreDictionary.getOreID( ( String ) input1 );
-					id2 = OreDictionary.getOreID( ( String ) input2 );
+					id1 = new int[] { OreDictionary.getOreID( ( String ) input1 ) };
+					id2 = new int[] { OreDictionary.getOreID( ( String ) input2 ) };
 
-					if( r.input1 instanceof ItemStack ) rID1 = OreDictionary.getOreID( ( ItemStack ) r.input1 );
-					else rID1 = OreDictionary.getOreID( ( String ) r.input1 );
-					if( r.input2 instanceof ItemStack ) rID2 = OreDictionary.getOreID( ( ItemStack ) r.input2 );
-					else rID2 = OreDictionary.getOreID( ( String ) r.input2 );
+					if( r.input1 instanceof ItemStack ) rID1 = OreDictionary.getOreIDs( ( ItemStack ) r.input1 );
+					else rID1 = new int[] { OreDictionary.getOreID( ( String ) r.input1 ) };
+					if( r.input2 instanceof ItemStack ) rID2 = OreDictionary.getOreIDs( ( ItemStack ) r.input2 );
+					else rID2 = new int[] { OreDictionary.getOreID( ( String ) r.input2 ) };
 
-					if( id1 == rID1 && id1 != -1 ) firstMatch = true;
-					if( id2 == rID2 && id2 != -1 ) secondMatch = true;
+					if( Util.checkArrays( id1, rID1) ) firstMatch = true;
+					if( Util.checkArrays( id2, rID2 ) ) secondMatch = true;
 
 					if( firstMatch && secondMatch ) {
 						if( r.getOutput() != null )

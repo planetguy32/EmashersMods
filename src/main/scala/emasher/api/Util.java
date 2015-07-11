@@ -24,6 +24,19 @@ import java.util.List;
 import java.util.UUID;
 
 public class Util {
+	static boolean checkArrays( int[] arr1, int[] arr2 ) {
+		if( arr1 == null || arr2 == null ) return false;
+		for( int i = 0; i < arr1.length; ++i ) {
+			for( int j = 0; j < arr2.length; ++j ) {
+				if( arr1[i] == arr2[j] ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	public static EntityPlayer createFakePlayer( World world, int x, int y, int z ) {
 		EntityPlayer player = new EntityPlayer( world, new GameProfile( UUID.randomUUID(), "Engineer's Toolbox" ) ) {
 			@Override

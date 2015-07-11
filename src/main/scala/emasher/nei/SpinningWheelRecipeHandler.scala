@@ -5,6 +5,7 @@ import net.minecraft.init.{Blocks, Items}
 import net.minecraft.item.ItemStack
 import net.minecraft.util.StatCollector
 import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class SpinningWheelRecipeHandler extends BaseRecipeHandler {
   final val recipeId = "sockets.spinningWheel"
@@ -21,8 +22,7 @@ class SpinningWheelRecipeHandler extends BaseRecipeHandler {
     }
 
     override def getIngredients: java.util.List[PositionedStack] = {
-
-      val all = List( new PositionedStack( wools, 44, 18, true ) )
+      val all = List( new PositionedStack( wools.asJava, 44, 18, true ) )
       getCycledIngredients( cycleticks / 20, all )
     }
   }

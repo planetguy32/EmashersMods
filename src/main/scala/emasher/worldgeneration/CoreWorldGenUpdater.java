@@ -22,7 +22,7 @@ public class CoreWorldGenUpdater {
 				if( world.getBlock( x + 14, 0, z + 14 ) == Blocks.bedrock ) {
 					if( world.getBlockMetadata( x + 14, 0, z + 14 ) != emasher.util.Config.oreRetrogenValue() ) {
 						world.setBlockMetadataWithNotify( x + 14, 0, z + 14, emasher.util.Config.oreRetrogenValue(), 2 );
-						emasher.worldgeneration.WorldGenerators.gen().generate( new Random( System.nanoTime() ), chunk.xPosition, chunk.zPosition, chunk.worldObj, null, null );
+						emasher.worldgeneration.WorldGenerators.gen().generate( chunk.worldObj.rand, chunk.xPosition, chunk.zPosition, chunk.worldObj, null, null );
 					}
 				}
 			} catch( Exception e ) {

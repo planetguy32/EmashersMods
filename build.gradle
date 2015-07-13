@@ -27,7 +27,7 @@ group= "emasher" // http://maven.apache.org/guides/mini/guide-naming-conventions
 archivesBaseName = "EngineersToolbox"
 
 minecraft {
-    version = "1.7.10-10.13.3.1373-1.7.10"
+    version = "1.7.10-10.13.4.1490-1.7.10"
 }
 
 repositories {
@@ -41,7 +41,6 @@ dependencies {
     provided "codechicken:CodeChickenLib:1.7.10-1.1.3.138:dev"
     provided "codechicken:CodeChickenCore:1.7.10-1.0.7.46:dev"
     provided "codechicken:NotEnoughItems:1.7.10-1.0.5.110:dev"
-    compile 'org.luaj:luaj-jse:3.0.1'
 }
 
 sourceSets {

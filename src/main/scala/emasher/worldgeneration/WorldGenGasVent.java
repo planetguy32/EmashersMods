@@ -48,7 +48,8 @@ public class WorldGenGasVent implements IWorldGenerator {
 								world.setBlock( x, y, z, emasher.blocks.Blocks.shaleResource(), 1, 2 );
 							}
 						} else {
-							if( random.nextInt( 6 ) == 0 ) world.setBlock( x, y, z, emasher.blocks.Blocks.shaleResource(), 2, 2 );
+							if (random.nextInt(6) == 0)
+								world.setBlock(x, y, z, emasher.blocks.Blocks.shaleResource(), 2, 2);
 						}
 					}
 				}

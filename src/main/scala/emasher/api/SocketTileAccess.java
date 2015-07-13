@@ -2,6 +2,7 @@ package emasher.api;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import emasher.microcontrollers.LuaScript;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -278,4 +279,6 @@ public abstract class SocketTileAccess extends TileEntity {
 	public World getWorldObj() {
 		return worldObj;
 	}
+
+	public abstract void addGenericScript( LuaScript script );
 }

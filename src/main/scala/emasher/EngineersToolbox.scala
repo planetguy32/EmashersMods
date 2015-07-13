@@ -5,12 +5,13 @@ import cpw.mods.fml.common.Mod.EventHandler
 import cpw.mods.fml.common.event.{FMLPreInitializationEvent, FMLPostInitializationEvent, FMLInitializationEvent}
 import cpw.mods.fml.common.network.NetworkRegistry
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper
-import cpw.mods.fml.common.{SidedProxy, Mod}
+import cpw.mods.fml.common.{Loader, SidedProxy, Mod}
 import emasher.api.Util
 import emasher.blocks.Blocks
 import emasher.entities.Entities
 import emasher.fluids.Fluids
 import emasher.items.{ItemEngWrench, Items}
+import emasher.microcontrollers.LuaScript
 import emasher.modules.Modules
 import emasher.tileentities.TileEntities
 import emasher.util.{Recipes, BucketEventHandler, Config}
@@ -52,7 +53,7 @@ object EngineersToolbox {
     }
   }
 
-  //val system = ActorSystem( "microcontrollers" )
+  val system = ActorSystem( "microcontrollers" )
 
   var innerTextures: java.util.Map[String, IIcon] = null
 
@@ -64,6 +65,10 @@ object EngineersToolbox {
   @EventHandler
   def preInit( event: FMLPreInitializationEvent ): Unit = {
     Config.load( event )
+
+    if( Loader.isModLoaded( "ComputerCraft") ) {
+      LuaScript.init()
+    }
 
     EngineersToolbox.innerTextures = new java.util.HashMap[String, IIcon]
 

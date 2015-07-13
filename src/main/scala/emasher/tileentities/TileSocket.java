@@ -10,6 +10,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import emasher.EngineersToolbox;
 import emasher.api.*;
 import emasher.blocks.BlockSocket;
+import emasher.microcontrollers.LuaScript;
 import emasher.modules.ModMachineOutput;
 import emasher.packethandling.RequestInfoFromServerMessage;
 import emasher.packethandling.SocketFluidMessage;
@@ -50,6 +51,7 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 	
 	public boolean isRSShared;
 
+	public LuaScript genericScript;
 	
 	public TileSocket() {
 		tanks = new FluidTank[3];
@@ -1267,5 +1269,10 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 	@Override
 	public int getMaxEnergyStored( ForgeDirection from ) {
 		return capacitor.getMaxEnergyStored();
+	}
+
+	@Override
+	public void addGenericScript( LuaScript script ) {
+		genericScript = script;
 	}
 }

@@ -13,7 +13,7 @@ public class WorldGenerationUpdater {
 		Chunk chunk = event.getChunk();
 		
 		if( chunk.isChunkLoaded ) {
-			emasher.worldgeneration.WorldGenerators.gasVentGenerator().generate( chunk.worldObj.rand, chunk.xPosition, chunk.zPosition, chunk.worldObj, null, null );
+			emasher.worldgeneration.WorldGenerators.gasVentGenerator().generate( new Random( System.nanoTime() ), chunk.xPosition, chunk.zPosition, chunk.worldObj, null, null );
 		}
 	}
 

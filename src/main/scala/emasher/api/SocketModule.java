@@ -511,4 +511,7 @@ public abstract class SocketModule {
 	public boolean renderEnergyAmount() {
 		return false;
 	}
+
+	public void onSocketLoad( SideConfig config, SocketTileAccess ts, ForgeDirection side ) {}
+	public void onSocketSave( SideConfig config, SocketTileAccess ts, ForgeDirection side ) {}
 }

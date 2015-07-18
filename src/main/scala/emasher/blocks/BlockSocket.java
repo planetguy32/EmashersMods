@@ -123,6 +123,10 @@ public class BlockSocket extends BlockContainer {
 					int dam = player.getCurrentEquippedItem().getItemDamage();
 					if( dam == 1 ) {
 						ItemStack theStack = new ItemStack( this, 1, 0 );
+
+						for( int i = 0; i < 6; i++ ) {
+							ts.getSide( ForgeDirection.getOrientation( i ) ).onSocketSave( ts.configs[i], ts, ForgeDirection.getOrientation( side ) );
+						}
 						
 						NBTTagCompound data = new NBTTagCompound();
 						ts.writeToNBT( data );

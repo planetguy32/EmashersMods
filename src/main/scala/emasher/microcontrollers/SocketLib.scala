@@ -2,6 +2,7 @@ package emasher.microcontrollers
 
 import emasher.EngineersToolbox
 import emasher.api.{SocketModule, SideConfig}
+import emasher.modules.{ModTrack, ModElevator}
 import emasher.packethandling.SocketStateMessage
 import emasher.tileentities.TileSocket
 import net.minecraftforge.common.util.ForgeDirection
@@ -12,16 +13,42 @@ class SocketLib extends TwoArgFunction {
   implicit var tileEntity: Option[TileSocket] = None
 
   val getModuleIdInstance = new getModuleId
+
   val setInventoryInstance = new setInventory
   val setTankInstance = new setTank
   val setCircuitInstance = new setCircuit
   val setLatchInstance = new setLatch
   val toggleCircuitInstance = new toggleCircuit
   val toggleLatchInstance = new toggleLatch
+
   val getInventoryInstance = new getInventory
   val getTankInstance = new getTank
   val getCircuitInstance = new getCircuit
   val getLatchInstance = new getLatch
+
+  val getCircuitValueInstance = new getCircuitValue
+  val getLatchValueInstance = new getLatchValue
+  val setCircuitValueInstance = new setCircuitValue
+  val setLatchValueInstance = new setLatchValue
+  val toggleCircuitValueInstance = new toggleCircuitValue
+  val toggleLatchValueInstance = new toggleLatchValue
+
+  val getInventoryAmountInstance = new getInventoryAmount
+  val getInventoryItemInstance = new getInventoryItem
+  val getInventoryMetaInstance = new getInventoryMeta
+
+  val getTankAmountInstance = new getTankAmount
+  val getTankFluidInstance = new getTankFluid
+  val getTankCapacityInstance = new getTankCapacity
+
+  val getStoredEnergyInstance = new getStoredEnergy
+  val getEnergyCapacityInstance = new getEnergyCapacity
+
+  val sendGenericSignalInstance = new sendGenericSignal
+  val isSolidBlockOnSideInstance = new isSolidBlockOnSide
+  val setElevatorDirectionInstance = new setElevatorDirection
+  val toggleElevatorDirectionInstance = new toggleElevatorDirection
+  val setTrackDirectionInstance = new setTrackDirection
 
   override def call( modName: LuaValue, env: LuaValue ): LuaValue = {
     val library = LuaValue.tableOf
@@ -39,6 +66,30 @@ class SocketLib extends TwoArgFunction {
     library.set( "getTank", getTankInstance )
     library.set( "getCircuit", getCircuitInstance )
     library.set( "getLatch", getLatchInstance )
+
+    library.set( "getCircuitValue", getCircuitValueInstance )
+    library.set( "getLatchValue", getLatchValueInstance )
+    library.set( "setCircuitValue", setCircuitValueInstance )
+    library.set( "setLatchValue", setLatchValueInstance )
+    library.set( "toggleCircuitValue", toggleCircuitValueInstance )
+    library.set( "toggleLatchValue", toggleLatchValueInstance )
+
+    library.set( "getInventoryAmount", getInventoryAmountInstance )
+    library.set( "getInventoryItem", getInventoryItemInstance )
+    library.set( "getInventoryMeta", getInventoryMetaInstance )
+
+    library.set( "getTankAmount", getTankAmountInstance )
+    library.set( "getTankFluid", getTankFluidInstance )
+    library.set( "getTankCapacity", getTankCapacityInstance )
+
+    library.set( "getStoredEnergy", getStoredEnergyInstance )
+    library.set( "getEnergyCapacity", getEnergyCapacityInstance )
+
+    library.set( "sendGenericSignal", sendGenericSignalInstance )
+    library.set( "isSolidBlockOnSide", isSolidBlockOnSideInstance )
+    library.set( "setElevatorDirection", setElevatorDirectionInstance )
+    library.set( "toggleElevatorDirection", toggleElevatorDirectionInstance )
+    library.set( "setTrackDirection", setTrackDirectionInstance )
 
     env.set( "SocketLib", library )
     val socketValue = env.get( "socketObject" )
@@ -340,7 +391,7 @@ class SocketLib extends TwoArgFunction {
   }
 
   class getTankCapacity extends ZeroArgFunction {
-    override def call(): LuaValue = {
+    override def call: LuaValue = {
       Run { ( t ) =>
         LuaValue.valueOf( t.tanks(0).getCapacity )
       }
@@ -348,7 +399,7 @@ class SocketLib extends TwoArgFunction {
   }
 
   class getStoredEnergy extends ZeroArgFunction {
-    override def call(): LuaValue = {
+    override def call: LuaValue = {
       Run { ( t ) =>
         LuaValue.valueOf( t.capacitor.getEnergyStored )
       }
@@ -356,15 +407,86 @@ class SocketLib extends TwoArgFunction {
   }
 
   class getEnergyCapacity extends ZeroArgFunction {
-    override def call(): LuaValue = {
+    override def call: LuaValue = {
       Run { ( t ) =>
         LuaValue.valueOf( t.capacitor.getMaxEnergyStored )
       }
     }
   }
 
+  class sendGenericSignal extends OneArgFunction {
+    override def call( side: LuaValue ): LuaValue = {
+      SidedRun( side ) { ( t, theSide, theConfig, theModule ) =>
+        theModule.onGenericRemoteSignal( t, theConfig, theSide )
+        LuaValue.NIL
+      }
+    }
+  }
+
+  class isSolidBlockOnSide extends OneArgFunction {
+    override def call( side: LuaValue ): LuaValue = {
+      SidedRun( side ) { ( t, theSide, theConfig, theModule ) =>
+        val xo = t.xCoord + theSide.offsetX
+        val yo = t.yCoord + theSide.offsetY
+        val zo = t.zCoord + theSide.offsetZ
+        val block = t.getWorldObj.getBlock( xo, yo, zo )
+        LuaValue.valueOf( block.isAir( t.getWorldObj, xo, yo, zo ) || block.isReplaceable( t.getWorldObj, xo, yo, zo ) )
+      }
+    }
+  }
+
+  class setElevatorDirection extends OneArgFunction {
+    override def call( direction: LuaValue ): LuaValue = {
+      Run { ( t ) =>
+        val theDirection = direction.checkint
+        for( i <- 2 to 5 ) {
+          val theModule = t.getSide( ForgeDirection.getOrientation( i ) )
+          if( theModule.isInstanceOf[ModElevator] ) {
+            if( theDirection == 0 ) {
+              t.configs( i ).rsLatch( 0 ) = false
+            } else {
+              t.configs( i ).rsLatch( 0 ) = true
+            }
+            updateClientSide( ForgeDirection.getOrientation( i ) )
+          }
+        }
+        LuaValue.NIL
+      }
+    }
+  }
+
+  class toggleElevatorDirection extends ZeroArgFunction {
+    override def call: LuaValue = {
+      Run { ( t ) =>
+        for( i <- 2 to 5 ) {
+          val theModule = t.getSide( ForgeDirection.getOrientation( i ) )
+          if( theModule.isInstanceOf[ModElevator] ) {
+            t.configs( i ).rsLatch( 0 ) = ! t.configs( i ).rsLatch( 0 )
+            updateClientSide( ForgeDirection.getOrientation( i ) )
+          }
+        }
+        LuaValue.NIL
+      }
+    }
+  }
+
+  class setTrackDirection extends OneArgFunction {
+    override def call( direction: LuaValue ): LuaValue = {
+      Run { ( t ) =>
+        val theDirection = direction.checkint
+        val theModule = t.getSide( ForgeDirection.getOrientation( 0 ) )
+        if( theModule.isInstanceOf[ModTrack] ) {
+          t.configs( 0 ).meta = theDirection % 4
+          updateClientSide( ForgeDirection.DOWN )
+        }
+        LuaValue.NIL
+      }
+    }
+  }
+
   object SidedRun {
-    def apply( side: LuaValue )( impl: ( TileSocket, ForgeDirection, SideConfig, SocketModule ) => LuaValue )( implicit te: Option[TileSocket] ): LuaValue = {
+    def apply( side: LuaValue )( impl: ( TileSocket, ForgeDirection, SideConfig, SocketModule ) => LuaValue )
+             ( implicit te: Option[TileSocket] ): LuaValue = {
       tileEntity match {
         case Some( t: TileSocket ) =>
           val theSide = ForgeDirection.getOrientation( side.checkint )

@@ -10,12 +10,12 @@ import org.mod.luaj.vm2.lib.jse.{JseMathLib, JseBaseLib}
 import org.mod.luaj.vm2._
 
 class LuaScript( chunk: LuaValue, setHook: LuaValue, globals: Globals ) {
-  def run(): Unit = {
+  def run(): Boolean = {
     val thread = new LuaThread( globals, chunk )
     setHook.invoke( LuaValue.varargsOf( Array[LuaValue]( thread, LuaScript.instructionLimitHook, LuaValue.EMPTYSTRING,
       LuaValue.valueOf( LuaScript.MAX_INSTRUCTIONS ) ) ) )
     val result = thread.resume( LuaValue.NIL )
-    println( result )
+    result.arg1().checkboolean
   }
 
   def saveGlobalsToNBT( nbt: NBTTagCompound ): Unit = {

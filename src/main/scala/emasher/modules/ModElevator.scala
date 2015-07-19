@@ -92,7 +92,7 @@ class ModElevator( id: Int ) extends SocketModule( id, "eng_toolbox:elevatorUp",
       val xo = ts.xCoord + d.offsetX
       val zo = ts.zCoord + d.offsetZ
 
-      val t = ts.getWorldObj( ).getTileEntity( xo, ts.yCoord, zo )
+      val t = ts.getWorldObj.getTileEntity( xo, ts.yCoord, zo )
       if( t != null && t.isInstanceOf[ TileDirectionChanger ] ) {
         val td = t.asInstanceOf[ TileDirectionChanger ]
         td.directions( d.getOpposite.ordinal( ) ) match {

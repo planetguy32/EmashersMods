@@ -53,8 +53,6 @@ object EngineersToolbox {
     }
   }
 
-  val system = ActorSystem( "microcontrollers" )
-
   var innerTextures: java.util.Map[String, IIcon] = null
 
   @SidedProxy(clientSide = "emasher.client.ClientProxy", serverSide = "emasher.CommonProxy")

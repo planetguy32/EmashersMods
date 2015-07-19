@@ -82,11 +82,11 @@ class ModTrack( id: Int ) extends SocketModule( id, "eng_toolbox:trackUp", "eng_
     //val dir = ForgeDirection.getOrientation(config.meta + 2)
 
     //val bId =
-    val b = ts.getWorldObj( ).getBlock( nx, ts.yCoord - 1, nz )
+    val b = ts.getWorldObj.getBlock( nx, ts.yCoord - 1, nz )
     val canMove = hasElevator( ts ) || ( b != null && b.isOpaqueCube )
 
     if( canMove ) {
-      val world = ts.getWorldObj( )
+      val world = ts.getWorldObj
       val x = ts.xCoord
       val y = ts.yCoord
       val z = ts.zCoord
@@ -96,8 +96,8 @@ class ModTrack( id: Int ) extends SocketModule( id, "eng_toolbox:trackUp", "eng_
       if( done ) {
         ts.dead = true
 
-        ts.getWorldObj( ).playSoundEffect( ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.getWorldObj( ).rand.nextFloat( ) * 0.25F + 0.6F )
-        ts.getWorldObj( ).playSoundEffect( ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.getWorldObj( ).rand.nextFloat( ) * 0.25F + 0.6F )
+        ts.getWorldObj.playSoundEffect( ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.out", 0.5F, ts.getWorldObj.rand.nextFloat( ) * 0.25F + 0.6F )
+        ts.getWorldObj.playSoundEffect( ts.xCoord + 0.5D, ts.yCoord + 0.5D, ts.zCoord + 0.5D, "tile.piston.in", 0.5F, ts.getWorldObj.rand.nextFloat( ) * 0.25F + 0.6F )
       }
     }
 
@@ -116,7 +116,7 @@ class ModTrack( id: Int ) extends SocketModule( id, "eng_toolbox:trackUp", "eng_
   }
 
   override def onSocketPlaced( config: SideConfig, ts: SocketTileAccess, side: ForgeDirection ): Unit = {
-    val t = ts.getWorldObj( ).getTileEntity( ts.xCoord, ts.yCoord - 1, ts.zCoord )
+    val t = ts.getWorldObj.getTileEntity( ts.xCoord, ts.yCoord - 1, ts.zCoord )
     if( t != null && t.isInstanceOf[ TileDirectionChanger ] ) {
       val td = t.asInstanceOf[ TileDirectionChanger ]
       td.directions( ForgeDirection.UP.ordinal( ) ) match {

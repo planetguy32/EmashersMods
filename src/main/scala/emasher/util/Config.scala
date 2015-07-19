@@ -95,6 +95,7 @@ object Config {
   var enableHusher: Boolean = false
   var oreRetrogenValue: Int = 1
   var shaleRetrogenValue: Int = 1
+  var allowMicrocontrollers: Boolean = true
 
   var PREF_BLUE: AnyRef = EnumChatFormatting.BLUE
   var PREF_GREEN: AnyRef = EnumChatFormatting.GREEN
@@ -207,6 +208,8 @@ object Config {
 
     oreRetrogenValue = config.get( Configuration.CATEGORY_GENERAL, "Change to a different value between 1 and 15 inclusive to re-generate ores", 1 ).getInt
     shaleRetrogenValue = config.get( Configuration.CATEGORY_GENERAL, "Change to a different value between 1 and 15 inclusive to re-generate shale resources", 1 ).getInt
+
+    allowMicrocontrollers = config.get( Configuration.CATEGORY_GENERAL, "Allow Microcontrollers", true ).getBoolean
 
     if( oreRetrogenValue < 1 || oreRetrogenValue > 15 ) {
       oreRetrogenValue = 1

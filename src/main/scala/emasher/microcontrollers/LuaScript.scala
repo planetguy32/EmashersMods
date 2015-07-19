@@ -10,12 +10,23 @@ import org.mod.luaj.vm2.lib.jse.{JseMathLib, JseBaseLib}
 import org.mod.luaj.vm2._
 
 class LuaScript( chunk: LuaValue, setHook: LuaValue, globals: Globals ) {
-  def run(): Boolean = {
+  def run: Boolean = {
+    globals.set( "socket", new SocketLib )
     val thread = new LuaThread( globals, chunk )
     setHook.invoke( LuaValue.varargsOf( Array[LuaValue]( thread, LuaScript.instructionLimitHook, LuaValue.EMPTYSTRING,
       LuaValue.valueOf( LuaScript.MAX_INSTRUCTIONS ) ) ) )
     val result = thread.resume( LuaValue.NIL )
     result.arg1().checkboolean
+  }
+
+  def runWithIndexAndState( name: String, index: Int, state: Boolean ): Boolean = {
+    globals.set( name + "Index", index )
+    globals.set( name + "State", state match {
+      case true => 1
+      case false => 0
+    })
+
+    run
   }
 
   def saveGlobalsToNBT( nbt: NBTTagCompound ): Unit = {
@@ -140,14 +151,16 @@ object LuaScript {
     globals.load( new JseMathLib )
     globals.load( new TableLib )
     val socketLib = new SocketLib
-    globals.load( socketLib )
 
     val socketData = new LuaUserdata( tileEntity )
     globals.set( "socketObject", socketData )
 
+    socketLib.install( globals )
+
     globals.load( new DebugLib )
     val setHook = globals.get( "debug" ).get( "sethook" )
     globals.set( "debug", LuaValue.NIL )
+    globals.set( "require", LuaValue.NIL )
     val chunk = runGlobals.load( stream, entryPoint, "t", globals )
     new LuaScript( chunk, setHook, globals )
   }

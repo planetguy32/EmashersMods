@@ -2,6 +2,7 @@ package emasher.modules
 
 import cpw.mods.fml.common.Loader
 import emasher.api.ModuleRegistry
+import emasher.util.Config
 import scala.collection.JavaConversions._
 import emasher.util.Config._
 
@@ -93,8 +94,8 @@ object Modules {
     ModuleRegistry.registerModule(new ModRefinery(107))
     ModuleRegistry.registerModule(new ModPlasmaReactor(108))
 
-    if( Loader.isModLoaded( "ComputerCraft") ) {
-      ModuleRegistry.registerModule( new ModMicroController( 109 ) )
+    if( Config.allowMicrocontrollers ) {
+      ModuleRegistry.registerModule( new ModMicrocontroller( 109 ) )
     }
 
     //Register 3rd party modules

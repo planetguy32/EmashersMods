@@ -56,6 +56,8 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 
 	public int scriptStack = 0;
 	public LuaScript genericScript = null;
+	public LuaScript circuitScript = null;
+	public LuaScript latchScript = null;
 	
 	public TileSocket() {
 		tanks = new FluidTank[3];

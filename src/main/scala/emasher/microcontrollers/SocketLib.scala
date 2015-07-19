@@ -7,7 +7,7 @@ import emasher.packethandling.SocketStateMessage
 import emasher.tileentities.TileSocket
 import net.minecraftforge.common.util.ForgeDirection
 import org.mod.luaj.vm2.lib.{ZeroArgFunction, ThreeArgFunction, OneArgFunction, TwoArgFunction}
-import org.mod.luaj.vm2.{LuaUserdata, LuaValue}
+import org.mod.luaj.vm2.{Globals, LuaUserdata, LuaValue}
 
 class SocketLib extends TwoArgFunction {
   implicit var tileEntity: Option[TileSocket] = None
@@ -49,6 +49,57 @@ class SocketLib extends TwoArgFunction {
   val setElevatorDirectionInstance = new setElevatorDirection
   val toggleElevatorDirectionInstance = new toggleElevatorDirection
   val setTrackDirectionInstance = new setTrackDirection
+
+  def install( library: Globals ): Unit = {
+    library.set( "getModuleId", getModuleIdInstance )
+
+    library.set( "setInventory", setInventoryInstance )
+    library.set( "setTank", setTankInstance )
+    library.set( "setCircuit", setCircuitInstance )
+    library.set( "setLatch", setLatchInstance )
+    library.set( "toggleCircuit", toggleCircuitInstance )
+    library.set( "toggleLatch", toggleLatchInstance )
+
+    library.set( "getInventory", getInventoryInstance )
+    library.set( "getTank", getTankInstance )
+    library.set( "getCircuit", getCircuitInstance )
+    library.set( "getLatch", getLatchInstance )
+
+    library.set( "getCircuitValue", getCircuitValueInstance )
+    library.set( "getLatchValue", getLatchValueInstance )
+    library.set( "setCircuitValue", setCircuitValueInstance )
+    library.set( "setLatchValue", setLatchValueInstance )
+    library.set( "toggleCircuitValue", toggleCircuitValueInstance )
+    library.set( "toggleLatchValue", toggleLatchValueInstance )
+
+    library.set( "getInventoryAmount", getInventoryAmountInstance )
+    library.set( "getInventoryItem", getInventoryItemInstance )
+    library.set( "getInventoryMeta", getInventoryMetaInstance )
+
+    library.set( "getTankAmount", getTankAmountInstance )
+    library.set( "getTankFluid", getTankFluidInstance )
+    library.set( "getTankCapacity", getTankCapacityInstance )
+
+    library.set( "getStoredEnergy", getStoredEnergyInstance )
+    library.set( "getEnergyCapacity", getEnergyCapacityInstance )
+
+    library.set( "sendGenericSignal", sendGenericSignalInstance )
+    library.set( "isSolidBlockOnSide", isSolidBlockOnSideInstance )
+    library.set( "setElevatorDirection", setElevatorDirectionInstance )
+    library.set( "toggleElevatorDirection", toggleElevatorDirectionInstance )
+    library.set( "setTrackDirection", setTrackDirectionInstance )
+
+    val socketValue = library.get( "socketObject" )
+    socketValue match {
+      case u: LuaUserdata =>
+        u.userdata() match {
+          case s: TileSocket =>
+            tileEntity = Option( s )
+          case _ =>
+        }
+      case _ =>
+    }
+  }
 
   override def call( modName: LuaValue, env: LuaValue ): LuaValue = {
     val library = LuaValue.tableOf

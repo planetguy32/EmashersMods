@@ -156,7 +156,7 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		configs[side] = new SideConfig();
 		sideLocked[side] = false;
 		sideInventory.setInventorySlotContents( side, null );
-		EngineersToolbox.network().sendToDimension(new SocketStateMessage(this, (byte) side), worldObj.provider.dimensionId);
+		EngineersToolbox.network().sendToDimension( new SocketStateMessage( this, ( byte ) side ), worldObj.provider.dimensionId );
 	}
 	
 	@Override
@@ -336,7 +336,10 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 	
 	@Override
 	public SideConfig getConfigForSide( ForgeDirection direction ) {
-		return configs[direction.ordinal()];
+		if( direction != ForgeDirection.UNKNOWN ) {
+			return configs[direction.ordinal( )];
+		}
+		return null;
 	}
 	
 	public void lockSide( int side ) {

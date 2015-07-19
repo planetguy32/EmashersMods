@@ -41,7 +41,9 @@ class ModMicroController( id: Int ) extends SocketModule( id, "eng_toolbox:range
 
   override def onGenericRemoteSignal(ts: SocketTileAccess, config: SideConfig, side: ForgeDirection): Unit =  {
     val t = ts.asInstanceOf[TileSocket]
-    if( t.genericScript != null ) t.genericScript.run()
+    if( t.genericScript != null ) {
+      runScript( t.genericScript, config )
+    }
   }
 
   override def onSocketLoad( config: SideConfig, ts: SocketTileAccess, side: ForgeDirection ): Unit = {
@@ -50,16 +52,6 @@ class ModMicroController( id: Int ) extends SocketModule( id, "eng_toolbox:range
       val media = is.getItem.asInstanceOf[IMedia]
       val mount = media.createDataMount( is, ts.getWorldObj )
       initScripts( mount, ts, config )
-    }
-  }
-
-  override def onSocketSave( config: SideConfig, ts: SocketTileAccess, side: ForgeDirection ): Unit = {
-    val te = ts.asInstanceOf[TileSocket]
-
-    if( te.genericScript != null ) {
-      val genericData = new NBTTagCompound
-      te.genericScript.saveGlobalsToNBT( genericData )
-      config.tags.setTag( "genericData", genericData )
     }
   }
 
@@ -77,12 +69,30 @@ class ModMicroController( id: Int ) extends SocketModule( id, "eng_toolbox:range
 
   private def initScripts( mount: IMount, ts: SocketTileAccess, config: SideConfig ): Unit = {
     val te = ts.asInstanceOf[TileSocket]
-    if( mount.exists( "generic.lua" ) ) {
-      val stream = mount.openForRead( "generic.lua" )
-      te.genericScript = LuaScript.createFromStream( stream, "generic", te )
-      if( config.tags.hasKey( "genericData" ) ) {
-        te.genericScript.readGlobalsFromNBT( config.tags.getCompoundTag( "genericData" ) )
-      }
+    te.genericScript = prepareScript( mount, te, "generic" )
+  }
+
+  def prepareScript( mount: IMount, ts: TileSocket, name: String ): LuaScript = {
+    if( mount.exists( name + ".lua" ) ) {
+      val stream = mount.openForRead( name + ".lua" )
+      LuaScript.createFromStream( stream, name, ts )
+    } else {
+      null
     }
+  }
+
+  def runScript( script: LuaScript, config: SideConfig ): Unit = {
+    val data = if( config.tags.hasKey( "luaData" ) ) {
+      val d = config.tags.getCompoundTag( "luaData" )
+      script.readGlobalsFromNBT( d )
+      d
+    } else {
+      new NBTTagCompound
+    }
+
+    script.run()
+
+    script.saveGlobalsToNBT( data )
+    config.tags.setTag( "luaData", data )
   }
 }

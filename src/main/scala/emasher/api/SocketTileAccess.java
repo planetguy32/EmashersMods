@@ -279,6 +279,4 @@ public abstract class SocketTileAccess extends TileEntity {
 	public World getWorldObj() {
 		return worldObj;
 	}
-
-	public abstract void addGenericScript( LuaScript script );
 }

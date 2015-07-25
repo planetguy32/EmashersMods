@@ -51,7 +51,13 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 	
 	public boolean isRSShared;
 
-	public LuaScript genericScript;
+	private boolean luaInit = false;
+	private boolean loaded = false;
+
+	public int scriptStack = 0;
+	public LuaScript genericScript = null;
+	public LuaScript circuitScript = null;
+	public LuaScript latchScript = null;
 	
 	public TileSocket() {
 		tanks = new FluidTank[3];
@@ -97,10 +103,17 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 			SideConfig c;
 			for( int i = 0; i < 6; i++ ) {
 				d = ForgeDirection.getOrientation( i );
-				m = getSide( d );
+				m = getSide(d);
 				c = configs[i];
 
+				if( loaded && ! luaInit ) {
+					m.onSocketLoad( c, this, d );
+				}
 				m.updateSide( c, this, d );
+			}
+
+			if( loaded && ! luaInit ) {
+				luaInit = true;
 			}
 		}
 		
@@ -146,7 +159,7 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		configs[side] = new SideConfig();
 		sideLocked[side] = false;
 		sideInventory.setInventorySlotContents( side, null );
-		EngineersToolbox.network().sendToDimension(new SocketStateMessage(this, (byte) side), worldObj.provider.dimensionId);
+		EngineersToolbox.network().sendToDimension( new SocketStateMessage( this, ( byte ) side ), worldObj.provider.dimensionId );
 	}
 	
 	@Override
@@ -242,12 +255,21 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		if( data.hasKey( "powerCap2" ) ) this.setMaxEnergyStored( ( int ) data.getInteger( "powerCap2" ) );
 		if( data.hasKey( "realPower" ) ) power = data.getInteger( "realPower" );
 		capacitor.setEnergyStored( power );
+
+		loaded = true;
 	}
 	
 
 	@Override
 	public void writeToNBT( NBTTagCompound data ) {
 		super.writeToNBT( data );
+
+		for( int i = 0; i < 6; ++i ) {
+			ForgeDirection side = ForgeDirection.getOrientation( i );
+			SocketModule m = getSide( side );
+			SideConfig config = configs[i];
+			m.onSocketSave( config, this, side );
+		}
 		
 		NBTTagList itemList = new NBTTagList();
 		NBTTagList sideItemList = new NBTTagList();
@@ -317,7 +339,10 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 	
 	@Override
 	public SideConfig getConfigForSide( ForgeDirection direction ) {
-		return configs[direction.ordinal()];
+		if( direction != ForgeDirection.UNKNOWN ) {
+			return configs[direction.ordinal( )];
+		}
+		return null;
 	}
 	
 	public void lockSide( int side ) {
@@ -530,12 +555,6 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		return false;
 	}
 
-	/*@Override
-	public boolean isInvNameLocalized()
-	{
-		return false;
-	}*/
-
 	@Override
 	public int getInventoryStackLimit() {
 		return 64;
@@ -546,29 +565,10 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		return true;
 	}
 
-	/*@Override
-	public void openChest() {}
-
-	@Override
-	public void closeChest() {}*/
-
 	@Override
 	public boolean isItemValidForSlot( int i, ItemStack itemstack ) {
 		return true;
 	}
-
-//	@Override
-//	public void onInventoryChanged()
-//	{
-//		for(int i = 0; i < 6; i++)
-//		{
-//			for(int j = 0; j < 3; j++)
-//			{
-//				SocketModule m = getSide(ForgeDirection.getOrientation(i));
-//				m.onInventoryChange(configs[i], j, this, ForgeDirection.getOrientation(i), false);
-//			}
-//		}
-//	}
 	
 	// ISidedInventory
 	
@@ -628,13 +628,6 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		TileEntity t = worldObj.getTileEntity( xo, yo, zo );
 		
 		if( t instanceof IInventory ) {
-//			if(t instanceof ISpecialInventory)
-//			{
-//				ISpecialInventory isi = (ISpecialInventory)t;
-//				ItemStack[] items = isi.extractItem(doPull, side.getOpposite(), 1);
-//				if(items != null && items.length > 0) return items[0];
-//			}
-//			else
 			if( t instanceof ISidedInventory ) {
 				ISidedInventory isi = ( ISidedInventory ) t;
 				int[] slots = isi.getAccessibleSlotsFromSide( side.getOpposite().ordinal() );
@@ -929,7 +922,7 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		SocketModule m = getSide( direction );
 		SideConfig c = configs[direction.ordinal()];
 		
-		if( m.isFluidInterface() && m.canInsertFluid() ) return m.fluidFill( resource, doFill, c, this, direction );
+		if( m.isFluidInterface() && m.canInsertFluid( ) ) return m.fluidFill( resource, doFill, c, this, direction );
 		return 0;
 	}
 	
@@ -1141,7 +1134,7 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 
 	@Override
 	public int getEnergyStored() {
-		return capacitor.getEnergyStored();
+		return capacitor.getEnergyStored( );
 	}
 	
 	@Override
@@ -1165,7 +1158,7 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 
 	@Override
 	public boolean canFill( ForgeDirection from, Fluid fluid ) {
-		return this.getSide( from ).canInsertFluid();
+		return this.getSide( from ).canInsertFluid( );
 	}
 
 	@Override
@@ -1244,26 +1237,26 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 	public int receiveEnergy( ForgeDirection from, int maxReceive, boolean simulate ) {
 		if( from == ForgeDirection.UNKNOWN ) return 0;
 		SocketModule m = getSide( from );
-		return m.receiveEnergy( maxReceive, simulate, configs[from.ordinal()], this );
+		return m.receiveEnergy( maxReceive, simulate, configs[from.ordinal( )], this );
 	}
 
 	@Override
 	public int extractEnergy( ForgeDirection from, int maxExtract, boolean simulate ) {
 		if( from == ForgeDirection.UNKNOWN ) return 0;
 		SocketModule m = getSide( from );
-		return m.extractEnergy( maxExtract, simulate, configs[from.ordinal()], this );
+		return m.extractEnergy( maxExtract, simulate, configs[from.ordinal( )], this );
 	}
 
 	@Override
 	public boolean canConnectEnergy( ForgeDirection from ) {
 		if( from == ForgeDirection.UNKNOWN ) return false;
 		SocketModule m = getSide( from );
-		return m.isEnergyInterface( configs[from.ordinal()] );
+		return m.isEnergyInterface( configs[from.ordinal( )] );
 	}
 
 	@Override
 	public int getEnergyStored( ForgeDirection from ) {
-		return capacitor.getEnergyStored();
+		return capacitor.getEnergyStored( );
 	}
 
 	@Override
@@ -1271,8 +1264,4 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		return capacitor.getMaxEnergyStored();
 	}
 
-	@Override
-	public void addGenericScript( LuaScript script ) {
-		genericScript = script;
-	}
 }

@@ -123,6 +123,10 @@ public class BlockSocket extends BlockContainer {
 					int dam = player.getCurrentEquippedItem().getItemDamage();
 					if( dam == 1 ) {
 						ItemStack theStack = new ItemStack( this, 1, 0 );
+
+						for( int i = 0; i < 6; i++ ) {
+							ts.getSide( ForgeDirection.getOrientation( i ) ).onSocketSave( ts.configs[i], ts, ForgeDirection.getOrientation( side ) );
+						}
 						
 						NBTTagCompound data = new NBTTagCompound();
 						ts.writeToNBT( data );
@@ -355,15 +359,15 @@ public class BlockSocket extends BlockContainer {
 		if( t != null && t instanceof TileSocket ) {
 			TileSocket ts = ( TileSocket ) t;
 			
-			if( ts.facID[blockSide] > 0 && Block.getBlockById( ts.facID[blockSide] ) != null ) {
-				Block b = Block.getBlockById( ts.facID[blockSide] );
-				result = b.getIcon( blockSide, ts.facMeta[blockSide] );
-			} else if( ts.sides[blockSide] != 0 ) {
+			//if( Block.getBlockById( ts.facID[blockSide] ) != null ) {
+			//	Block b = Block.getBlockById( ts.facID[blockSide] );
+			//	result = b.getIcon( blockSide, ts.facMeta[blockSide] );
+			//} else {
 				SocketModule m = ts.getSide( ForgeDirection.getOrientation( blockSide ) );
 				SideConfig c = ts.configs[blockSide];
 				int index = m.getCurrentTexture( c, ts, ForgeDirection.getOrientation( blockSide ) );
 				result = textures[m.moduleID][index];
-			}
+			//}
 		}
 		
 		return result;
@@ -376,7 +380,7 @@ public class BlockSocket extends BlockContainer {
 		int l;
 		int temp;
 		
-		this.blockIcon = ir.registerIcon( "eng_toolbox:bg" );
+		this.blockIcon = ir.registerIcon( "eng_toolbox:socketItem" );
 		
 		textures = new IIcon[ModuleRegistry.numModules][];
 		tankIndicator = new IIcon[4];
@@ -389,7 +393,11 @@ public class BlockSocket extends BlockContainer {
 		
 		for( int i = 0; i < ModuleRegistry.numModules; i++ ) {
 			m = ModuleRegistry.getModule( i );
-			if( m != null ) {
+			if( i == 0 ) {
+				textures[0] = new IIcon[1];
+				textures[0][0] = ir.registerIcon( "eng_toolbox:bg" );
+				EngineersToolbox.innerTextures().put( "eng_toolbox:inner_circuit", ir.registerIcon( "eng_toolbox:inner_circuit" ) );
+			} else if( m != null ) {
 				l = m.textureFiles.length;
 				textures[i] = new IIcon[l];
 				for( int j = 0; j < l; j++ ) {

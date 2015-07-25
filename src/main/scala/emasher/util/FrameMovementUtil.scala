@@ -2,7 +2,7 @@ package emasher.util
 
 import emasher.EngineersToolbox
 import emasher.api.{SocketTileAccess, Util}
-import emasher.modules.ModMagnet
+import emasher.modules.{ModRummager, ModMagnet}
 import emasher.packethandling.{AdapterSideMessage, ChangerSideMessage}
 import emasher.tileentities.{TileAdapterBase, TileDirectionChanger, TileFrame}
 import net.minecraft.block.Block
@@ -158,7 +158,7 @@ object FrameMovementUtil {
     for( i <- 0 to 5 ) {
       val d = ForgeDirection.getOrientation( i )
       val m = ts.getSide( d )
-      if( m.isInstanceOf[ ModMagnet ] ) {
+      if( m.isInstanceOf[ ModMagnet ] || ( m.isInstanceOf[ModRummager] && ts.getConfigForSide( d ).meta == 1 ) ) {
         result.append( d )
       }
     }

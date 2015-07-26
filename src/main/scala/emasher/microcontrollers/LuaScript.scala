@@ -11,7 +11,6 @@ import org.mod.luaj.vm2._
 
 class LuaScript( chunk: LuaValue, setHook: LuaValue, globals: Globals ) {
   def run: Boolean = {
-    globals.set( "socket", new SocketLib )
     val thread = new LuaThread( globals, chunk )
     setHook.invoke( LuaValue.varargsOf( Array[LuaValue]( thread, LuaScript.instructionLimitHook, LuaValue.EMPTYSTRING,
       LuaValue.valueOf( LuaScript.MAX_INSTRUCTIONS ) ) ) )
@@ -150,11 +149,11 @@ object LuaScript {
     globals.load( new StringLib )
     globals.load( new JseMathLib )
     globals.load( new TableLib )
-    val socketLib = new SocketLib
 
     val socketData = new LuaUserdata( tileEntity )
     globals.set( "socketObject", socketData )
 
+    val socketLib = new SocketLib
     socketLib.install( globals )
 
     globals.load( new DebugLib )

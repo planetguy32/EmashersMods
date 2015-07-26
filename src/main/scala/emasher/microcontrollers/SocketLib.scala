@@ -2,14 +2,14 @@ package emasher.microcontrollers
 
 import emasher.EngineersToolbox
 import emasher.api.{SocketModule, SideConfig}
-import emasher.modules.{ModTrack, ModElevator}
+import emasher.modules.{ModRummager, ModTrack, ModElevator}
 import emasher.packethandling.SocketStateMessage
 import emasher.tileentities.TileSocket
 import net.minecraftforge.common.util.ForgeDirection
 import org.mod.luaj.vm2.lib.{ZeroArgFunction, ThreeArgFunction, OneArgFunction, TwoArgFunction}
 import org.mod.luaj.vm2.{Globals, LuaUserdata, LuaValue}
 
-class SocketLib extends TwoArgFunction {
+class SocketLib {
   implicit var tileEntity: Option[TileSocket] = None
 
   val getModuleIdInstance = new getModuleId
@@ -50,6 +50,11 @@ class SocketLib extends TwoArgFunction {
   val toggleElevatorDirectionInstance = new toggleElevatorDirection
   val setTrackDirectionInstance = new setTrackDirection
 
+  val moveItemInstance = new moveItem
+  val extractWithRummagerInstance = new extractWithRummager
+  val insertWithRummagerInstance = new insertWithRummager
+  val moveFluidInstance = new moveFluid
+
   def install( library: Globals ): Unit = {
     library.set( "getModuleId", getModuleIdInstance )
 
@@ -89,6 +94,11 @@ class SocketLib extends TwoArgFunction {
     library.set( "toggleElevatorDirection", toggleElevatorDirectionInstance )
     library.set( "setTrackDirection", setTrackDirectionInstance )
 
+    library.set( "moveItem", moveItemInstance )
+    library.set( "extractWithRummager", extractWithRummagerInstance )
+    library.set( "insertWithRummager", insertWithRummagerInstance )
+    library.set( "moveFluid", moveFluidInstance )
+
     val socketValue = library.get( "socketObject" )
     socketValue match {
       case u: LuaUserdata =>
@@ -99,61 +109,6 @@ class SocketLib extends TwoArgFunction {
         }
       case _ =>
     }
-  }
-
-  override def call( modName: LuaValue, env: LuaValue ): LuaValue = {
-    val library = LuaValue.tableOf
-
-    library.set( "getModuleId", getModuleIdInstance )
-
-    library.set( "setInventory", setInventoryInstance )
-    library.set( "setTank", setTankInstance )
-    library.set( "setCircuit", setCircuitInstance )
-    library.set( "setLatch", setLatchInstance )
-    library.set( "toggleCircuit", toggleCircuitInstance )
-    library.set( "toggleLatch", toggleLatchInstance )
-
-    library.set( "getInventory", getInventoryInstance )
-    library.set( "getTank", getTankInstance )
-    library.set( "getCircuit", getCircuitInstance )
-    library.set( "getLatch", getLatchInstance )
-
-    library.set( "getCircuitValue", getCircuitValueInstance )
-    library.set( "getLatchValue", getLatchValueInstance )
-    library.set( "setCircuitValue", setCircuitValueInstance )
-    library.set( "setLatchValue", setLatchValueInstance )
-    library.set( "toggleCircuitValue", toggleCircuitValueInstance )
-    library.set( "toggleLatchValue", toggleLatchValueInstance )
-
-    library.set( "getInventoryAmount", getInventoryAmountInstance )
-    library.set( "getInventoryItem", getInventoryItemInstance )
-    library.set( "getInventoryMeta", getInventoryMetaInstance )
-
-    library.set( "getTankAmount", getTankAmountInstance )
-    library.set( "getTankFluid", getTankFluidInstance )
-    library.set( "getTankCapacity", getTankCapacityInstance )
-
-    library.set( "getStoredEnergy", getStoredEnergyInstance )
-    library.set( "getEnergyCapacity", getEnergyCapacityInstance )
-
-    library.set( "sendGenericSignal", sendGenericSignalInstance )
-    library.set( "isSolidBlockOnSide", isSolidBlockOnSideInstance )
-    library.set( "setElevatorDirection", setElevatorDirectionInstance )
-    library.set( "toggleElevatorDirection", toggleElevatorDirectionInstance )
-    library.set( "setTrackDirection", setTrackDirectionInstance )
-
-    env.set( "SocketLib", library )
-    val socketValue = env.get( "socketObject" )
-    socketValue match {
-      case u: LuaUserdata =>
-        u.userdata() match {
-          case s: TileSocket =>
-            tileEntity = Option( s )
-          case _ =>
-        }
-      case _ =>
-    }
-    library
   }
 
   class getModuleId extends OneArgFunction {
@@ -534,6 +489,95 @@ class SocketLib extends TwoArgFunction {
       }
     }
   }
+
+  class moveItem extends ThreeArgFunction {
+    override def call( source: LuaValue, destination: LuaValue, amount: LuaValue ): LuaValue = {
+      Run { ( t ) =>
+        val theSource = source.checkint
+        val theDestination = destination.checkint
+        val theAmount = amount.checkint
+
+        if( theSource < 3 && theSource >= 0 && theDestination < 3 && theDestination >= 0 && theSource != theDestination && theAmount > 0 ) {
+          val sourceStack = t.getStackInInventorySlot( theSource )
+          if( sourceStack != null ) {
+            val sourceCopy = sourceStack.copy
+
+            val maxAmount = Math.min( sourceCopy.stackSize, theAmount )
+            sourceCopy.stackSize = maxAmount
+            val amountAdded = t.addItemInternal( sourceCopy, true, theDestination )
+
+            t.extractItemInternal( true, theSource, amountAdded )
+          }
+        }
+        LuaValue.NIL
+      }
+    }
+  }
+
+  class extractWithRummager extends ThreeArgFunction {
+    override def call( itemName: LuaValue, destination: LuaValue, amount: LuaValue ): LuaValue = {
+      Run { ( t ) =>
+        val theItemName = itemName.checkjstring
+        val theDestination = destination.checkint
+        val theAmount = amount.checkint
+
+        if( theAmount > 0 && theAmount < 64 && theDestination >= 0 && theDestination < 3 ) {
+          val side = t.getRummagerSide
+          if( side != ForgeDirection.UNKNOWN ) {
+            val m = t.getSide( side )
+            m.asInstanceOf[ModRummager].extractItemToInventory( t, t.getConfigForSide( side ), side, theItemName, theAmount, theDestination )
+          }
+        }
+
+        LuaValue.NIL
+      }
+    }
+  }
+
+  class insertWithRummager extends TwoArgFunction {
+    override def call( source: LuaValue, amount: LuaValue ): LuaValue = {
+      Run { ( t ) =>
+        val theSource = source.checkint
+        val theAmount = amount.checkint
+
+        if( theAmount > 0 && theAmount < 64 && theSource >= 0 && theSource < 3 ) {
+          val side = t.getRummagerSide
+          if( side != ForgeDirection.UNKNOWN ) {
+            val m = t.getSide( side )
+            m.asInstanceOf[ModRummager].pushItemFromInventory( t, t.getConfigForSide( side ), side, theSource, theAmount )
+          }
+        }
+
+        LuaValue.NIL
+      }
+    }
+  }
+
+  class moveFluid extends ThreeArgFunction {
+    override def call( source: LuaValue, destination: LuaValue, amount: LuaValue ): LuaValue = {
+      Run { ( t ) =>
+        val theSource = source.checkint
+        val theDestination = destination.checkint
+        val theAmount = amount.checkint
+
+        if( theSource < 3 && theSource >= 0 && theDestination < 3 && theDestination >= 0 && theSource != theDestination && theAmount > 0 ) {
+          val sourceStack = t.getFluidInTank( theSource )
+          if( sourceStack != null ) {
+            val sourceCopy = sourceStack.copy
+
+            val maxAmount = Math.min( sourceCopy.amount, theAmount )
+            sourceCopy.amount = maxAmount
+            val amountAdded = t.fillInternal( theDestination, sourceCopy, true )
+
+            t.drainInternal( theSource, amountAdded, true )
+          }
+        }
+        LuaValue.NIL
+      }
+    }
+  }
+
+
 
   object SidedRun {
     def apply( side: LuaValue )( impl: ( TileSocket, ForgeDirection, SideConfig, SocketModule ) => LuaValue )

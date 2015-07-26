@@ -24,7 +24,7 @@ class ModMicrocontroller( id: Int ) extends SocketModule( id, "eng_toolbox:micro
     CraftingManager.getInstance( ).getRecipeList.asInstanceOf[ java.util.List[ Object ] ]
       .add( new ShapedOreRecipe( new ItemStack( emasher.items.Items.module, 1, moduleID ), "cgc", " m ",
       Character.valueOf( 'c' ), emasher.items.Items.circuit,
-      Character.valueOf( 'g' ), new ItemStack( emasher.items.Items.gem, 1, 1),
+      Character.valueOf( 'g' ), "gemRuby",
       Character.valueOf( 'm' ), new ItemStack( emasher.items.Items.blankSide ) ) )
   }
 

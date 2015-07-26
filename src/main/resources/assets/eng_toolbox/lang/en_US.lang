@@ -284,7 +284,6 @@ item.socket_module.96.name=Range Selector
 item.socket_module.97.name=Husher
 item.socket_module.98.name=Stirling Generator
 item.socket_module.99.name=Enderic Fluid Pump
-
 item.socket_module.100.name=Fracker
 item.socket_module.101.name=Photobioreactor
 item.socket_module.102.name=Fan
@@ -295,3 +294,4 @@ item.socket_module.106.name=Gas Turbine
 item.socket_module.107.name=Refinery
 item.socket_module.108.name=Nether Plasma Reactor
 item.socket_module.109.name=Microcontroller
+item.socket_module.110.name=Rummager

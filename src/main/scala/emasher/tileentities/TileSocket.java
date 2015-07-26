@@ -12,6 +12,7 @@ import emasher.api.*;
 import emasher.blocks.BlockSocket;
 import emasher.microcontrollers.LuaScript;
 import emasher.modules.ModMachineOutput;
+import emasher.modules.ModRummager;
 import emasher.packethandling.RequestInfoFromServerMessage;
 import emasher.packethandling.SocketFluidMessage;
 import emasher.packethandling.SocketItemMessage;
@@ -616,6 +617,17 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		
 		return false;
 	}
+
+	@Override
+	public void markDirty() {
+		super.markDirty();
+		for( int i = 0; i < 6; i++ ) {
+			SocketModule m = getSide( ForgeDirection.getOrientation( i ) );
+			for( int j = 0; j < 3; ++j ) {
+				m.onInventoryChange( configs[i], j, this, ForgeDirection.getOrientation( i ), true );
+			}
+		}
+	}
 	
 	// ISpecialInventory
 	
@@ -632,17 +644,12 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 				ISidedInventory isi = ( ISidedInventory ) t;
 				int[] slots = isi.getAccessibleSlotsFromSide( side.getOpposite().ordinal() );
 				
-				for( int i = 0; i < slots.length; i++ ) {
-					ItemStack pulled = isi.getStackInSlot( slots[i] );
-					if( pulled != null && isi.canExtractItem( slots[i], pulled, side.getOpposite().ordinal() ) ) {
-						ItemStack result = null; //pulled.copy().splitStack(1);
-						//pulled.stackSize--;
-						//isi.setInventorySlotContents(slots[i], pulled);
-						//if(pulled.stackSize <= 0) isi.setInventorySlotContents(slots[i], null);
+				for( int slot : slots ) {
+					ItemStack pulled = isi.getStackInSlot( slot );
+					if( pulled != null && isi.canExtractItem( slot, pulled, side.getOpposite().ordinal() ) ) {
+						ItemStack result;
 						if( doPull ) {
-							result = isi.decrStackSize( slots[i], 1 );
-
-							//isi.onInventoryChanged();
+							result = isi.decrStackSize( slot, 1 );
 						} else {
 							result = pulled.copy().splitStack( 1 );
 						}
@@ -655,14 +662,10 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 				for( int i = 0; i < ii.getSizeInventory(); i++ ) {
 					ItemStack pulled = ii.getStackInSlot( i );
 					if( pulled != null ) {
-						ItemStack result = null;
-						//pulled.stackSize--;
-						//ii.setInventorySlotContents(i, pulled);
-						//if(pulled.stackSize <= 0)ii.setInventorySlotContents(i, null);
+						ItemStack result;
 						if( doPull ) {
 							result = ii.decrStackSize( i, 1 );
-							//TODO Check if it was needed
-							//ii.onInventoryChanged();
+							ii.markDirty();
 						} else {
 							result = pulled.copy().splitStack( 1 );
 						}
@@ -672,6 +675,78 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 			}
 		}
 		
+		return null;
+	}
+
+	@Override
+	public ItemStack pullItem( ForgeDirection side, boolean doPull, int amount, String nameFilter ) {
+		int xo = xCoord + side.offsetX;
+		int yo = yCoord + side.offsetY;
+		int zo = zCoord + side.offsetZ;
+
+		TileEntity t = worldObj.getTileEntity( xo, yo, zo );
+
+		if( t == null ) return null;
+
+		if( t instanceof IInventory ) {
+			if( t instanceof ISidedInventory ) {
+				ISidedInventory isi = ( ISidedInventory ) t;
+				int[] slots = isi.getAccessibleSlotsFromSide( side.getOpposite().ordinal() );
+				ItemStack result = null;
+				for( int slot : slots ) {
+					ItemStack pulled = isi.getStackInSlot( slot );
+					if( pulled != null && pulled.getUnlocalizedName().equals( nameFilter ) &&
+							isi.canExtractItem( slot, pulled, side.getOpposite().ordinal() ) ) {
+
+						if( doPull ) {
+							if( result == null ) {
+								result = isi.decrStackSize( slot, Math.min( amount, isi.getStackInSlot( slot ).stackSize ) );
+							} else {
+								result.stackSize += isi.decrStackSize( slot, Math.min( result.getMaxStackSize() - result.stackSize,
+										Math.min( amount, isi.getStackInSlot( slot ).stackSize ) ) ).stackSize;
+							}
+							isi.markDirty();
+						} else {
+							if( result == null ) {
+								result = pulled.copy().splitStack( Math.min( amount, isi.getStackInSlot( slot ).stackSize ) );
+							} else {
+								result.stackSize += pulled.copy().splitStack( Math.min( result.getMaxStackSize() - result.stackSize,
+										Math.min( amount, isi.getStackInSlot( slot ).stackSize ) ) ).stackSize;
+							}
+						}
+						if( result.stackSize == amount ) return result;
+					}
+				}
+				return result;
+			} else {
+				IInventory ii = ( IInventory ) t;
+				ItemStack result = null;
+				for( int i = 0; i < ii.getSizeInventory(); i++ ) {
+					ItemStack pulled = ii.getStackInSlot( i );
+					if( pulled != null && pulled.getUnlocalizedName().equals( nameFilter ) ) {
+						if( doPull ) {
+							if( result == null ) {
+								result = ii.decrStackSize( i, Math.min( amount, ii.getStackInSlot( i ).stackSize ) );
+							} else {
+								result.stackSize += ii.decrStackSize( i, Math.min( result.getMaxStackSize() - result.stackSize,
+										Math.min( amount, ii.getStackInSlot( i ).stackSize ) ) ).stackSize;
+							}
+							ii.markDirty();
+						} else {
+							if( result == null ) {
+								result = pulled.copy().splitStack( Math.min( amount, ii.getStackInSlot( i ).stackSize ) );
+							} else {
+								result.stackSize += pulled.copy().splitStack( Math.min( result.getMaxStackSize() - result.stackSize,
+										Math.min( amount, ii.getStackInSlot( i ).stackSize ) ) ).stackSize;
+							}
+						}
+						if( result.stackSize == amount ) return result;
+					}
+				}
+				return result;
+			}
+		}
+
 		return null;
 	}
 	
@@ -766,20 +841,6 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		return 0;
 	}
 
-	//@Override
-	public ItemStack[] extractItem( boolean doRemove, ForgeDirection direction, int maxItemCount ) {
-		if( direction.ordinal() > 0 && direction.ordinal() < 6 ) {
-			SocketModule m = getSide( direction );
-			SideConfig c = configs[direction.ordinal()];
-			
-			if( m.isItemInterface() && m.canExtractItems() ) {
-				ItemStack temp = m.itemExtract( maxItemCount, doRemove, c, this );
-				if( temp != null ) return new ItemStack[] {temp};
-			}
-		}
-		return new ItemStack[] {};
-	}
-
 	public boolean tryInsertItem( ItemStack stack, ForgeDirection side ) {
 		int xo = xCoord + side.offsetX;
 		int yo = yCoord + side.offsetY;
@@ -790,39 +851,28 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		if( stack == null ) return false;
 		
 		if( t instanceof IInventory ) {
-//			if(t instanceof ISpecialInventory)
-//			{
-//				ISpecialInventory isi = (ISpecialInventory)t;
-//				ItemStack ghost = stack.copy().splitStack(1);
-//				int used = isi.addItem(ghost, true, side.getOpposite());
-//				if(used > 0) return true;
-//
-//			}
-//			else
 			if( t instanceof ISidedInventory ) {
 				ISidedInventory isi = ( ISidedInventory ) t;
 				ItemStack ghost = stack.copy().splitStack( 1 );
 				int[] slots = isi.getAccessibleSlotsFromSide( side.getOpposite().ordinal() );
 				
-				for( int i = 0; i < slots.length; i++ ) {
-					if( isi.canInsertItem( slots[i], ghost, side.getOpposite().ordinal() ) ) {
-						ItemStack inSlot = isi.getStackInSlot( slots[i] );
+				for( int slot1 : slots ) {
+					if( isi.canInsertItem( slot1, ghost, side.getOpposite().ordinal() ) ) {
+						ItemStack inSlot = isi.getStackInSlot( slot1 );
 						if( inSlot != null && inSlot.isItemEqual( ghost ) && inSlot.stackSize < inSlot.getMaxStackSize() && inSlot.stackSize < isi.getInventoryStackLimit() ) {
 							inSlot.stackSize++;
-							//TODO Check if it was needed
-							// isi.onInventoryChanged();
+							isi.markDirty();
 							return true;
 						}
 					}
 				}
 				
-				for( int i = 0; i < slots.length; i++ ) {
-					if( isi.canInsertItem( slots[i], ghost, side.getOpposite().ordinal() ) ) {
-						ItemStack inSlot = isi.getStackInSlot( slots[i] );
+				for( int slot : slots ) {
+					if( isi.canInsertItem( slot, ghost, side.getOpposite().ordinal() ) ) {
+						ItemStack inSlot = isi.getStackInSlot( slot );
 						if( inSlot == null ) {
-							isi.setInventorySlotContents( slots[i], ghost );
-							//TODO Check if it was needed
-							// isi.onInventoryChanged();
+							isi.setInventorySlotContents( slot, ghost );
+							isi.markDirty();
 							return true;
 						}
 					}
@@ -838,8 +888,7 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 						ItemStack inSlot = ii.getStackInSlot( i );
 						if( inSlot != null && inSlot.isItemEqual( ghost ) && inSlot.stackSize < inSlot.getMaxStackSize() && inSlot.stackSize < ii.getInventoryStackLimit() ) {
 							inSlot.stackSize++;
-							//TODO Check if it was needed
-							//ii.onInventoryChanged();
+							ii.markDirty();
 							return true;
 						}
 					}
@@ -850,8 +899,7 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 						ItemStack inSlot = ii.getStackInSlot( i );
 						if( inSlot == null ) {
 							ii.setInventorySlotContents( i, ghost );
-							//TODO Check if it was needed
-							//ii.onInventoryChanged();
+							ii.markDirty();
 							return true;
 						}
 					}
@@ -861,7 +909,7 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 			}
 		}
 		
-		if( Loader.isModLoaded( "BuildCraft|Core" ) && t != null && stack != null ) {
+		if( Loader.isModLoaded( "BuildCraft|Core" ) && t != null ) {
 			if( t instanceof IPipeTile ) {
 				IPipeTile p = ( IPipeTile ) t;
 				
@@ -879,43 +927,97 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		return false;
 	}
 
-//	@Override
-//	public int recieveGas(FluidStack gas, ForgeDirection direction)
-//	{
-//		SocketModule m = getSide(direction);
-//
-//		if(m.isGasInterface())
-//		{
-//			return m.gasFill(gas, this);
-//		}
-//
-//		return 0;
-//	}
+	public int tryInsertItem( ItemStack stack, ForgeDirection side, int amount ) {
+		int xo = xCoord + side.offsetX;
+		int yo = yCoord + side.offsetY;
+		int zo = zCoord + side.offsetZ;
 
-	/*@Override
-	public void setPowerHandler(IPowerHandler provider)
-	{
-		powerHandler = (PowerHandler) provider;
+		TileEntity t = worldObj.getTileEntity( xo, yo, zo );
+
+		if( stack == null ) return 0;
+		if( t == null ) return 0;
+
+		int totalAdded = 0;
+
+		if( t instanceof IInventory ) {
+			if( t instanceof ISidedInventory ) {
+				ISidedInventory isi = ( ISidedInventory ) t;
+				ItemStack ghost = stack.copy();
+				int[] slots = isi.getAccessibleSlotsFromSide( side.getOpposite().ordinal() );
+
+				for( int slot1 : slots ) {
+					if( isi.canInsertItem( slot1, ghost, side.getOpposite().ordinal() ) ) {
+						ItemStack inSlot = isi.getStackInSlot( slot1 );
+						if( inSlot != null && inSlot.isItemEqual( ghost ) && inSlot.stackSize < inSlot.getMaxStackSize() && inSlot.stackSize < isi.getInventoryStackLimit() ) {
+							int amountAdded = Math.min( Math.min( inSlot.getMaxStackSize(), isi.getInventoryStackLimit() ) - inSlot.stackSize,
+									Math.min( amount - totalAdded, ghost.stackSize ) );
+							inSlot.stackSize += amountAdded;
+							ghost.stackSize -= amountAdded;
+							totalAdded += amountAdded;
+							isi.markDirty();
+							if( totalAdded == amount || ghost.stackSize == 0 ) return totalAdded;
+						}
+					}
+				}
+
+				for( int slot : slots ) {
+					if( isi.canInsertItem( slot, ghost, side.getOpposite().ordinal() ) ) {
+						ItemStack inSlot = isi.getStackInSlot( slot );
+						if( inSlot == null ) {
+							int amountAdded = Math.min( isi.getInventoryStackLimit(), Math.min( amount - totalAdded, ghost.stackSize ) );
+							ItemStack newStack = ghost.copy();
+							newStack.stackSize = amountAdded;
+							ghost.stackSize -= amountAdded;
+							totalAdded += amountAdded;
+							isi.setInventorySlotContents( slot, newStack );
+							isi.markDirty();
+							if( totalAdded == amount || ghost.stackSize == 0 ) return totalAdded;
+						}
+					}
+				}
+
+				return totalAdded;
+			} else {
+				IInventory ii = ( IInventory ) t;
+				ItemStack ghost = stack.copy();
+
+				for( int i = 0; i < ii.getSizeInventory(); i++ ) {
+					if( ii.isItemValidForSlot( i, ghost ) ) {
+						ItemStack inSlot = ii.getStackInSlot( i );
+						if( inSlot != null && inSlot.isItemEqual( ghost ) && inSlot.stackSize < inSlot.getMaxStackSize() && inSlot.stackSize < ii.getInventoryStackLimit() ) {
+							int amountAdded = Math.min( Math.min( inSlot.getMaxStackSize(), ii.getInventoryStackLimit() ) - inSlot.stackSize,
+									Math.min( amount - totalAdded, ghost.stackSize ) );
+							inSlot.stackSize += amountAdded;
+							ghost.stackSize -= amountAdded;
+							totalAdded += amountAdded;
+							ii.markDirty();
+							if( totalAdded == amount || ghost.stackSize == 0 ) return totalAdded;
+						}
+					}
+				}
+
+				for( int i = 0; i < ii.getSizeInventory(); i++ ) {
+					if( ii.isItemValidForSlot( i, ghost ) ) {
+						ItemStack inSlot = ii.getStackInSlot( i );
+						if( inSlot == null ) {
+							int amountAdded = Math.min( ii.getInventoryStackLimit(), Math.min( amount - totalAdded, ghost.stackSize ) );
+							ItemStack newStack = ghost.copy();
+							newStack.stackSize = amountAdded;
+							ii.setInventorySlotContents( i, newStack );
+							ghost.stackSize -= amountAdded;
+							totalAdded += amountAdded;
+							ii.markDirty();
+							if( totalAdded == amount || ghost.stackSize == 0 ) return totalAdded;
+						}
+					}
+				}
+
+				return totalAdded;
+			}
+		}
+
+		return totalAdded;
 	}
-
-	@Override
-	public IPowerHandler getPowerHandler()
-	{
-		return powerHandler;
-	}
-
-	@Override
-	public void doWork() {}
-
-	@Override
-	public int powerRequest(ForgeDirection direction)
-	{
-		SocketModule m = getSide(direction);
-		
-		if(m.isEnergyInterface(configs[direction.ordinal()]) && m.acceptsEnergy(configs[direction.ordinal()])) return Math.min(m.getPowerRequested(configs[direction.ordinal()], this), (int)(powerHandler.getMaxEnergyStored() - powerHandler.getEnergyStored()));
-		else return 0;
-	}*/
-
 
 	@Override
 	public int fill( ForgeDirection direction, FluidStack resource, boolean doFill ) {
@@ -941,18 +1043,6 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		}
 		return 0;
 	}
-	
-	/*@Override
-	public FluidStack getFluidInTank(int tank)
-	{
-		return tanks[tank].getFluid();
-	}
-
-	@Override
-	public int fill(int tankIndex, FluidStack resource, boolean doFill)
-	{
-		return 0;
-	}*/
 
 	@Override
 	public FluidStack drain( ForgeDirection direction, int maxDrain, boolean doDrain ) {
@@ -979,34 +1069,6 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 		return null;
 	}
 
-	/*@Override
-	public FluidStack drain(int tankIndex, int maxDrain, boolean doDrain)
-	{
-		return null;
-	}*/
-
-	/*@Override
-	public IFluidTank[] getTanks(ForgeDirection direction)
-	{
-		/*SocketModule m = getSide(direction);
-		if(m != null)
-		{
-			SideConfig c = configs[direction.ordinal()];
-			if(m.isFluidInterface()) return new IFluidTank[] {m.getAssociatedTank(c, this)};
-		}
-		return new IFluidTank[]{};
-	}
-
-	@Override
-	public IFluidTank getTank(ForgeDirection direction, FluidStack type)
-	{
-		/*SocketModule m = getSide(direction);
-		SideConfig c = configs[direction.ordinal()];
-		
-		if(m.isFluidInterface()) return m.getAssociatedTank(c, this);
-		return null;
-	}*/
-	
 	public void tryInsertFluid( int tank, ForgeDirection side ) {
 		int xo = xCoord + side.offsetX;
 		int yo = yCoord + side.offsetY;
@@ -1033,64 +1095,10 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 			IFluidHandler tn = ( IFluidHandler ) t;
 			
 			FluidStack ghost = tn.drain( side.getOpposite(), volume, false );
-			//int amnt = tanks[tank].fill(ghost, true);
 			int amnt = this.fillInternal( tank, ghost, true );
 			tn.drain( side.getOpposite(), amnt, true );
 		}
 	}
-
-	/*@Override
-	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction)
-	{
-		SocketModule m = getSide(direction);
-		return m.isEnergyInterface(configs[direction.ordinal()]) && m.acceptsEnergy(configs[direction.ordinal()]);
-	}
-
-	@Override
-	public boolean isAddedToEnergyNet()
-	{
-		return addedToEnergyNet;
-	}
-
-	@Override
-	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction)
-	{
-		SocketModule m = getSide(direction);
-		return m.isEnergyInterface(configs[direction.ordinal()]) && m.outputsEnergy(configs[direction.ordinal()]);
-	}
-
-	@Override
-	public int getMaxEnergyOutput()
-	{
-		return 512;
-	}
-
-	/*@Override
-	public int demandsEnergy(ForgeDirection direction)
-	{
-		return Math.min((int)(SocketsMod.EUPerMJ * 100), (int)powerHandler.getMaxEnergyStored() - (int)powerHandler.getEnergyStored());
-	}
-
-	@Override
-	public int injectEnergy(ForgeDirection directionFrom, int amount)
-	{
-		SocketModule m = getSide(directionFrom);
-		if(m.isEnergyInterface(configs[directionFrom.ordinal()]) && m.acceptsEnergy(configs[directionFrom.ordinal()]))
-		{
-			int euAmnt = (int)(amount * SocketsMod.EUPerMJ);
-			int amnt = Math.min(amount, (int)powerHandler.getMaxEnergyStored() - (int)powerHandler.getEnergyStored());
-			powerHandler.receiveEnergy(amnt, directionFrom);
-			return amount - amnt;
-		}
-		
-		return 0;
-	}
-
-	@Override
-	public int getMaxSafeInput()
-	{
-		return 100000;
-	}*/
 
 	@Override
 	public void sendClientSideState( int side ) {
@@ -1221,7 +1229,7 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 	@Override
 	@SideOnly( Side.CLIENT )
 	public IIcon getTexture( int texture, int moduleID ) {
-		return ( (BlockSocket) emasher.blocks.Blocks.socket() ).textures[moduleID][texture];
+		return ( emasher.blocks.Blocks.socket() ).textures[moduleID][texture];
 	}
 	
 	// IGasReceptor
@@ -1262,6 +1270,18 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 	@Override
 	public int getMaxEnergyStored( ForgeDirection from ) {
 		return capacitor.getMaxEnergyStored();
+	}
+
+	public ForgeDirection getRummagerSide() {
+		for( int i = 0; i < 6; ++i ) {
+			ForgeDirection side = ForgeDirection.getOrientation( i );
+			SocketModule m = getSide( side );
+			if( m != null && m instanceof ModRummager ) {
+				return side;
+			}
+		}
+
+		return ForgeDirection.UNKNOWN;
 	}
 
 }

@@ -81,28 +81,6 @@ public class ModItemDisplay extends SocketModule {
 		return null;
 	}
 	
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public Icon[] getAdditionalItemOverlays(SocketTileAccess ts, SideConfig config, ForgeDirection side)
-	{
-		if(config.inventory != -1)
-		{
-			ItemStack is = ts.inventory.getStackInSlot(config.inventory);
-			if(is != null)
-			{
-				return new Icon[] { is.getItem().getIcon(is, 0) };
-			}
-			else
-			{
-				return new Icon[] {};
-			}
-		}
-		else
-		{
-			return new Icon[] {};
-		}
-	}*/
-	
 	@SideOnly( Side.CLIENT )
 	public ItemStack getItemToRender( SocketTileAccess ts, SideConfig config, ForgeDirection side ) {
 		if( config.inventory != -1 ) return ts.getStackInInventorySlot( config.inventory );
@@ -153,8 +131,6 @@ public class ModItemDisplay extends SocketModule {
 				
 				dropItemsOnSide( ts, config, side, xo, yo, zo, dropStack );
 				ts.extractItemInternal( true, config.inventory, dropped );
-				//stack.stackSize -= dropped;
-				//if(stack.stackSize <= 0) ts.inventory.setInventorySlotContents(config.inventory, null);
 			}
 			ts.sendClientInventorySlot( config.inventory );
 		}
@@ -175,18 +151,6 @@ public class ModItemDisplay extends SocketModule {
 	@Override
 	public void indicatorUpdated( SocketTileAccess ts, SideConfig config, ForgeDirection side ) {
 		if( config.inventory != -1 ) ts.sendClientInventorySlot( config.inventory );
-	}
-
-	@Override
-	public void updateSide( SideConfig config, SocketTileAccess ts, ForgeDirection side ) {
-		if( config.inventory != -1 ) {
-			config.tank++;
-			if( config.tank >= 60 ) {
-				config.tank = 0;
-				ts.sendClientInventorySlot( config.inventory );
-			}
-		}
-
 	}
 	
 }

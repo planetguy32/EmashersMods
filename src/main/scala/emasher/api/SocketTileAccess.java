@@ -205,6 +205,8 @@ public abstract class SocketTileAccess extends TileEntity {
 	 * @return true iff the item was inserted
 	 */
 	public abstract boolean tryInsertItem( ItemStack stack, ForgeDirection side );
+
+	public abstract int tryInsertItem( ItemStack stack, ForgeDirection side, int amount );
 	
 	/**
 	 * Try to extract an item from an adjacent inventory if one exists
@@ -215,6 +217,8 @@ public abstract class SocketTileAccess extends TileEntity {
 	 * @return an ItemStack representing the item extracted, null if none was found
 	 */
 	public abstract ItemStack pullItem( ForgeDirection side, boolean doPull );
+
+	public abstract ItemStack pullItem( ForgeDirection side, boolean doPull, int amount, String nameFilter );
 	
 	/**
 	 * Attempt to output items with the first available Machine Output module
@@ -279,4 +283,6 @@ public abstract class SocketTileAccess extends TileEntity {
 	public World getWorldObj() {
 		return worldObj;
 	}
+
+	public abstract ForgeDirection getRummagerSide();
 }

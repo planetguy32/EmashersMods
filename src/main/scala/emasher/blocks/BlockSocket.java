@@ -180,7 +180,6 @@ public class BlockSocket extends BlockContainer {
 					
 					NBTTagCompound data = new NBTTagCompound();
 					ts.writeToNBT( data );
-					//data.setBoolean("ench", true);
 					theStack.setTagCompound( data );
 					
 					if( !world.isRemote ) {

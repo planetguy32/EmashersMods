@@ -1,5 +1,7 @@
 package emasher.microcontrollers
 
+import javax.print.attribute.standard.Destination
+
 import emasher.EngineersToolbox
 import emasher.api.{SocketModule, SideConfig}
 import emasher.modules.{ModRummager, ModTrack, ModElevator}
@@ -577,7 +579,14 @@ class SocketLib {
     }
   }
 
+  class uninstallModule extends TwoArgFunction {
+    override def call( side: LuaValue, inventory: LuaValue ): LuaValue = {
+      SidedRun( side ) { ( t, theSide, theConfig, theModule ) =>
 
+        LuaValue.NIL
+      }
+    }
+  }
 
   object SidedRun {
     def apply( side: LuaValue )( impl: ( TileSocket, ForgeDirection, SideConfig, SocketModule ) => LuaValue )

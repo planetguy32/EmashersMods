@@ -124,16 +124,16 @@ public class ModTankDisplay extends SocketModule {
 					FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem( filled );
 
 					if( liquid != null ) {
-						//if (!player.capabilities.isCreativeMode) {
-						if( is.stackSize > 1 ) {
-							if( player.inventory.addItemStackToInventory( filled ) ) {
+						if (!player.capabilities.isCreativeMode) {
+							if( is.stackSize > 1 ) {
+								if( player.inventory.addItemStackToInventory( filled ) ) {
+									player.inventory.setInventorySlotContents( player.inventory.currentItem, consumeItem( is ) );
+								}
+							} else {
 								player.inventory.setInventorySlotContents( player.inventory.currentItem, consumeItem( is ) );
+								player.inventory.setInventorySlotContents( player.inventory.currentItem, filled );
 							}
-						} else {
-							player.inventory.setInventorySlotContents( player.inventory.currentItem, consumeItem( is ) );
-							player.inventory.setInventorySlotContents( player.inventory.currentItem, filled );
 						}
-						//}
 						//tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
 						ts.drainInternal( config.tank, liquid.amount, true );
 					}

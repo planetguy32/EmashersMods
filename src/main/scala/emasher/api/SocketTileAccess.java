@@ -265,6 +265,8 @@ public abstract class SocketTileAccess extends TileEntity {
 	public int forceOutputFluid( FluidStack stack ) {
 		return forceOutputFluid( stack, true );
 	}
+
+	public abstract int getTankCapacity();
 	
 	//Energy
 	

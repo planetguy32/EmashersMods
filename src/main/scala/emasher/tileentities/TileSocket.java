@@ -1227,6 +1227,11 @@ public class TileSocket extends SocketTileAccess implements ISidedInventory, IFl
 	}
 
 	@Override
+	public int getTankCapacity() {
+		return tanks[0].getCapacity();
+	}
+
+	@Override
 	@SideOnly( Side.CLIENT )
 	public IIcon getTexture( int texture, int moduleID ) {
 		return ( emasher.blocks.Blocks.socket() ).textures[moduleID][texture];

@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -95,47 +96,36 @@ public class ModTankDisplay extends SocketModule {
 	@Override
 	public void onSideActivated( SocketTileAccess ts, SideConfig config, ForgeDirection side, EntityPlayer player ) {
 		ItemStack is = player.getCurrentEquippedItem();
-
 		if( config.tank != -1 && is != null ) {
-			FluidStack inContainer = FluidContainerRegistry.getFluidForFilledItem( is );
-
-			if( inContainer != null ) {
-
-				int amnt = ts.fillInternal( config.tank, inContainer, false );
-
-				if( amnt == inContainer.amount ) {
-					ts.fillInternal( config.tank, inContainer, true );
-					if( FluidContainerRegistry.isBucket( is ) ) {
-						//TODO Check if it works this way
-						// is.itemID = Item.bucketEmpty.itemID;
-						is.getItem().setContainerItem( Items.bucket );
-						is.setItemDamage( 0 );
-						is.stackSize = 1;
-						is.setTagCompound( null );
-					} else {
-						is.stackSize--;
+			if( FluidContainerRegistry.isEmptyContainer( is ) ) {
+				FluidStack fs = ts.getFluidInTank( config.tank );
+				if( fs != null && fs.amount > 0 ) {
+					ItemStack fillContainer = is.copy().splitStack( 1 );
+					FluidStack fillFluid = fs.copy( );
+					fillFluid.amount = FluidContainerRegistry.getContainerCapacity( fillFluid, fillContainer );
+					if( fillFluid.amount <= fs.amount ) {
+						ItemStack result = FluidContainerRegistry.fillFluidContainer( fillFluid, fillContainer );
+						if( result != null ) {
+							if( ! player.capabilities.isCreativeMode ) {
+								ts.drainInternal( config.tank, fillFluid.amount, true );
+								is.stackSize--;
+							}
+							player.inventory.addItemStackToInventory( result );
+						}
 					}
 				}
-			} else {
-				FluidStack available = ts.getFluidInTank( config.tank );
-				if( available != null ) {
-					ItemStack filled = FluidContainerRegistry.fillFluidContainer( available, is );
-
-					FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem( filled );
-
-					if( liquid != null ) {
-						if (!player.capabilities.isCreativeMode) {
-							if( is.stackSize > 1 ) {
-								if( player.inventory.addItemStackToInventory( filled ) ) {
-									player.inventory.setInventorySlotContents( player.inventory.currentItem, consumeItem( is ) );
-								}
-							} else {
-								player.inventory.setInventorySlotContents( player.inventory.currentItem, consumeItem( is ) );
-								player.inventory.setInventorySlotContents( player.inventory.currentItem, filled );
-							}
+			} else if( FluidContainerRegistry.isFilledContainer( is ) ) {
+				FluidStack containerStack = FluidContainerRegistry.getFluidForFilledItem( is );
+				ItemStack drainedContainer = FluidContainerRegistry.drainFluidContainer( is.copy( ) );
+				if( containerStack != null ) {
+					if( ts.fillInternal( config.tank, containerStack, false ) == containerStack.amount ) {
+						if( ! player.capabilities.isCreativeMode ) {
+							is.stackSize--;
 						}
-						//tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
-						ts.drainInternal( config.tank, liquid.amount, true );
+						ts.fillInternal( config.tank, containerStack, true );
+						if( drainedContainer != null && ! player.capabilities.isCreativeMode ) {
+							player.inventory.addItemStackToInventory( drainedContainer );
+						}
 					}
 				}
 			}

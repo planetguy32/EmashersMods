@@ -87,7 +87,10 @@ public class ModGrinder extends SocketModule {
 					
 					GrinderRecipe r = GrinderRecipeRegistry.getRecipe( toIntake );
 					if( r != null ) {
-						product = r.getOutput().get( 0 );
+						List<ItemStack> potentialOutputs=r.getOutput();
+						if(potentialOutputs.size() != 0) {
+							product = potentialOutputs.get( 0 );
+						}
 					}
 
 //					if(product == null && Loader.isModLoaded("IC2"))
